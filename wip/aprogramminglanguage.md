@@ -28,9 +28,6 @@ _May, 1962_
 
 _Mount Kisco, New York_
 
-  
-  
-
 ## Chapter 1   The Language
 
 **1.1 Introduction**
@@ -41,14 +38,14 @@ Existing languages prove unsuitable for a variety of reasons. Computer coding sp
 
 Ordinary English lacks both precision and conciseness. The widely used Goldstine-von Neumann (1947) flowcharting provides the conciseness necessary to an over-all view of the processes, only at the cost of suppressing essential detail. The so-called pseudo-English used as a basis for certain automatic programming systems suffers from the same defect. Moreover, the potential mnemonic advantage in substituting familiar English words and phrases for less familiar but more compact mathematical symbols fails to materialize because of the obvious but unwonted precision required in their use.
 
-Most of the concepts and operations needed in a programming language have already been defined and developed in one or another branch of mathematics. Therefore, much use can and will be made of existing notations. However, since most notations are specialized to a narrow field of discourse, a consistent unification must be provided. For example, separate and conflicting notations have been developed for the treatment of sets, logical variables, vectors, matrices, and trees, all of which may, in the broad universe of discourse of data processing, occur in a single algorithm.  
- 
+Most of the concepts and operations needed in a programming language have already been defined and developed in one or another branch of mathematics. Therefore, much use can and will be made of existing notations. However, since most notations are specialized to a narrow field of discourse, a consistent unification must be provided. For example, separate and conflicting notations have been developed for the treatment of sets, logical variables, vectors, matrices, and trees, all of which may, in the broad universe of discourse of data processing, occur in a single algorithm.
+
 
 **1.2 Programs**
 
 A _program statement_ is the specification of some quantity or quantities in terms of some finite operation upon specified operands. Specification is symbolized by an arrow directed toward the specified quantity. thus “`y` is specified by `sin x`” is a statement denoted by
 
-`      _y_ ← sin _x_`
+`y ← sin x`
 
 A set of statements together with a specified order of execution constitutes a _program_. The program is _finite_ if the number of executions is finite. The _results_ of the program are some subset of the quantities specified by the program. The _sequence_ or order of execution will be defined by the order of listing and otherwise by arrows connecting any statement to its successor. A cyclic sequence of statements is called a _loop_.
 
