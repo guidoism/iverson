@@ -1,3 +1,5 @@
+# A Programming Language
+
 _To My Many Teachers_
 
 ## Preface
@@ -30,7 +32,7 @@ _Mount Kisco, New York_
 
 ## Chapter 1   The Language
 
-**1.1 Introduction**
+### 1.1 Introduction
 
 Applied mathematics is concerned with the design and analysis of algorithms or _programs_. The systematic treatment of complex algorithms requires a suitable _programming language_ for their description, and such a programming language should be concise, precise, consistent over a wide area of application, mnemonic, and economical of symbols; it should exhibit clearly the constraints on the sequence in which operations are performed; and it should permit the description of a process to be independent of the particular representation chosen for the data.
 
@@ -41,7 +43,7 @@ Ordinary English lacks both precision and conciseness. The widely used Goldstine
 Most of the concepts and operations needed in a programming language have already been defined and developed in one or another branch of mathematics. Therefore, much use can and will be made of existing notations. However, since most notations are specialized to a narrow field of discourse, a consistent unification must be provided. For example, separate and conflicting notations have been developed for the treatment of sets, logical variables, vectors, matrices, and trees, all of which may, in the broad universe of discourse of data processing, occur in a single algorithm.
 
 
-**1.2 Programs**
+### 1.2 Programs
 
 A _program statement_ is the specification of some quantity or quantities in terms of some finite operation upon specified operands. Specification is symbolized by an arrow directed toward the specified quantity. thus “`y` is specified by `sin x`” is a statement denoted by
 
