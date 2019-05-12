@@ -1,7 +1,3 @@
-# A Programming Language
-
-![](APLimg/title.jpg)
-  
 _To My Many Teachers_
 
 ## Preface
