@@ -1,4 +1,3 @@
-# A Programming Language
 
 _To My Many Teachers_
 
