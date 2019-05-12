@@ -1,0 +1,893 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>SATN-23: Comparison Tolerance</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+1>SATN-23</font><br>
+<font size=+2>Comparison Tolerance</font><br>
+
+<font size=+1>Robert Bernecky</font></p>
+
+
+<br><hr><br>
+
+
+<a name="abs"></a>
+<p><b>Abstract</b></p>
+
+<p>The definition of tolerant comparison 
+used in SHARP APL has been changed.  
+This SATN describes the justification
+for and effects of that change.</p>
+
+<table>
+<tr><td><b>Keywords:</b></td><td>&nbsp;</td><td>Tolerance</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>Comparison</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>⎕ct</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>Fuzz</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>Floating point</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>Error</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>Fraction</td></tr>
+<tr><td>&nbsp;</td></tr>
+</table>
+
+
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>Error is inevitable in the computation and 
+representation of numbers in any computer system.  
+This is particularly true for large numbers and 
+numbers containing a non-zero fraction.</p>
+
+<p>APL facilitates the comparison of such numbers 
+by providing the concept of a comparison tolerance, 
+whereby two numbers are considered equal if they 
+fall within this tolerance.  The tolerance is 
+controlled by the value of a system 
+variable<tt> ⎕ct</tt>&nbsp;.</p>
+
+<p><tt>⎕ct </tt>defines a relational tolerance 
+dependent on the magnitude
+of the larger of the numbers being compared.  
+The definition
+used in the past, however, was tailored too much to the
+idiosyncracies of the computer, and too little to the needs
+of the APL user.  It was difficult to model in APL, and
+yielded anomalous results.</p>
+
+<p>R.H. Lathwell provided a more straightforward definition
+of tolerant comparison (Appendix 1) that does not differ
+greatly, in practical terms, from the old one, but is
+easier to comprehend.</p>
+
+<p>This definition has been implemented in SHARP APL,
+with the exception of Lathwell&rsquo;s definitions of floor
+and ceiling.  The definitions of floor and ceiling
+used in SHARP APL were developed by D.L. Forkes
+and R. Bernecky (I.P. Sharp Associates, Toronto)
+and represent a slight variant of an algorithm
+proposed by L.M. Breed (IBM) - reference: IBM
+Technical Report TR03.023.</p>
+
+<p>SHARP APL utilizes tolerant comparison in the following
+primitive functions, because they all imply some
+form of comparison between two numbers.</p>
+
+<table>
+<tr><td width=20>&nbsp;</td><td>less than</td>            <td>&nbsp;</td><td><tt>a&lt;b</tt></td></tr>
+<tr><td width=20>&nbsp;</td><td>less than or equal</td>   <td>&nbsp;</td><td><tt>a≤b</tt></td></tr>
+<tr><td width=20>&nbsp;</td><td>equal</td>                <td>&nbsp;</td><td><tt>a=b</tt></td></tr>
+<tr><td width=20>&nbsp;</td><td>greater than or equal</td><td>&nbsp;</td><td><tt>a≥b</tt></td></tr>
+<tr><td width=20>&nbsp;</td><td>greater than</td>         <td>&nbsp;</td><td><tt>a&gt;b</tt></td></tr>
+<tr><td width=20>&nbsp;</td><td>not equal</td>            <td>&nbsp;</td><td><tt>a≠b</tt></td></tr>
+<tr><td width=20>&nbsp;</td><td>floor</td>                <td>&nbsp;</td><td><tt>⌊a</tt></td></tr>
+<tr><td width=20>&nbsp;</td><td>ceiling</td>              <td>&nbsp;</td><td><tt>⌈a</tt></td></tr>
+<tr><td width=20>&nbsp;</td><td>membership</td>           <td>&nbsp;</td><td><tt>a∊b</tt></td></tr>
+<tr><td width=20>&nbsp;</td><td>index of</td>             <td>&nbsp;</td><td><tt>a⍳b</tt></td></tr>
+</table>
+
+<p>It is emphasized that no other primitive functions in SHARP APL
+use tolerant comparison.</p>
+
+<p>Tolerant comparison considers two numbers
+to be equal if they are within some neighborhood.
+The neighborhood has a radius of<tt> ⎕ct </tt>
+times the larger of the two in absolute value.
+In the following,
+all primitive functions are exact
+(i.e. tolerant comparison is not used).</p>
+
+<p>The formal definition for tolerant equality is now:</p>
+
+<pre>
+   ∇ r←a teq b
+[1]  r←(|a-b)≤⎕ct×(|a)⌈|b
+   ∇
+</pre>
+
+<p>Similarly,</p>
+
+<table>
+<tr><td><tt>tne</tt></td>                  <td><tt>a≠b &nbsp; &nbsp;</tt></td><td><tt>~a teq b</tt></td></tr>
+<tr><td><tt>tlt</tt></td>                  <td><tt>a&lt;b</tt></td>           <td><tt>(a&lt;b)^a tne b</tt></td></tr>
+<tr><td><tt>tle</tt></td>                  <td><tt>a≤b</tt></td>              <td><tt>(a≤b)∨a teq b</tt></td></tr>
+<tr><td><tt>tge</tt></td>                  <td><tt>a≥b</tt></td>              <td><tt>(a≥b)∨a teq b</tt></td></tr>
+<tr><td><tt>tgt</tt></td>                  <td><tt>a&gt;b</tt></td>           <td><tt>(a&gt;b)^a tne b</tt></td></tr>
+<tr><td><tt>teps</tt></td>                 <td><tt>a∊b</tt></td>              <td><tt>∨/a∘.teq ,b</tt></td></tr>
+<tr><td><tt>tiota</tt></td>                <td><tt>a⍳b</tt></td>              <td><tt>⎕io++/^\b∘.tne a</tt></td></tr>
+<tr><td><tt>floor</tt></td>                <td><tt>⌊a</tt></td>               <td><tt>(⌊.5+a)-(⌊.5+a) tgt a</tt></td></tr>
+<tr><td><tt>ceiling &nbsp; &nbsp;</tt></td><td><tt>⌈a</tt></td>               <td><tt>(⌊.5+a)+(⌊.5+a) tlt a</tt></td></tr>
+</table>
+<br>
+
+
+
+<a name="floor"></a>
+<p><b>Floor and Ceiling</b></p>
+
+<p>Choice of a suitable definition for floor and ceiling
+is more subtle than one might expect.
+Anomalies tend to creep in when<tt> ⎕ct </tt>and
+the argument are large enough so that both integers
+adjacent to the argument are tolerantly equal
+to the argument.</p>
+
+<p>Lathwell&rsquo;s definition of floor as printed
+in the APL76 proceedings results in absolute fuzzing
+for arguments<tt> &gt;1</tt>&nbsp;:</p>
+
+<pre>
+   ∇ r←f0 a
+[1]  r←⌊a+⎕ct×1⌊|a    ⍝ wrong
+   ∇
+</pre>
+
+<p>Various decorations or changes to Lathwell&rsquo;s 
+definition don&rsquo;t help:</p>
+
+<pre>
+   ∇ r←f1 a
+[1]  r←⌊a+⎕ct×1⌈|a    ⍝ can produce results many integers
+                        away from a
+   ∇
+
+   ∇ r←f2 a
+[1]  r←⌊a+1⌊⎕ct×1⌈|a  ⍝ fails for large integral values 
+                        of a
+   ∇
+</pre>
+
+<p>We could alter the definition to:</p>
+
+<pre>
+   ∇ r←f3 a
+[1]  r←⌊a+almost1⌊⎕ct×1⌈|a
+   ∇
+</pre>
+
+<p>but the result is non-intuitive, and the value
+of<tt> almost1 </tt>is machine-dependent.</p>
+
+<p>Forkes and Bernecky produced the following definition:</p>
+
+<pre>
+   ∇ r←f4 a
+[1]  r←⌊a
+[2]  r←r+(a teq r+1)^a tne r
+   ∇
+</pre>
+
+<p>The result is the smaller integer,
+unless the argument is tolerantly equal
+only to the larger integer.</p>
+
+<p>Breed pointed out an anomaly in this definition,
+for large arguments, and increasing values of<tt> ⎕ct</tt>&nbsp;:</p>
+
+<pre>
+      a←12346789123.8
+
+      ⎕ct←1e¯15 ⋄ f4 a
+123456789123
+      ⎕ct←1e¯12 ⋄ f4 a
+123456789124
+      ⎕ct←1e¯10 ⋄ f4 a
+123456789123
+</pre>
+
+<p>This oscillation of the result is undesirable.</p>
+
+<p>Breed proposed the following algorithm:</p>
+
+<pre>
+   ∇ r←f5 a
+[1]  r←(×a)×⌊almostpoint5+a   ⍝ nearest integer to a.
+[2]  r←r-(r-a)&gt;⎕ct×1⌈|a       ⍝ tgt, except near zero.
+   ∇
+</pre>
+
+<p>This algorithm doesn&rsquo;t oscillate, 
+but still contains an arcane, machine-dependent constant.</p>
+
+<p>Forkes then suggested a machine-independent variant
+that yields results only slightly different from<tt> f5</tt>&nbsp;:</p>
+
+<pre>
+   ∇ r←floor a
+[1]  r←(×a)×⌊.5+|a            ⍝ nearest integer to a.
+[2]  r←r-(r-a)&gt;⎕ct×1⌈|a
+   ∇
+</pre>
+
+<p><tt>floor </tt>differs functionally from<tt> f5 </tt>
+only in the treatment of large values of<tt> a </tt>
+such that</p>
+
+<pre>
+      (.5=1|a)^.5≤⎕ct×|a .
+</pre>
+
+<p>In such cases,<tt> f5 </tt>chooses the integer closer
+to zero, whereas<tt> floor </tt>chooses the integer
+farther away from zero.
+Since the choice is arbitrary, and since it is common
+practice to round<tt> n.5 </tt>up to<tt> n+1</tt>&nbsp;,<tt> </tt>
+this seems reasonable.</p>
+
+<p><tt>floor </tt>is the algorithm now implemented
+in SHARP APL.
+The algorithm for ceiling is:</p>
+
+
+<pre>
+   ∇ r←ceiling a
+[1]  r←-floor-a
+   ∇
+</pre>
+
+<p>Breed has recently published &ldquo;Definitions 
+for Fuzzy Floor and Ceiling&rdquo;, an IBM
+technical report TR03.034 - dated March 1977.
+The report is an analysis of several algorithms
+for floor and ceiling, including the<tt> floor </tt>
+presented here.
+<br>&nbsp;</p>
+
+
+
+<a name="signif"></a>
+<p><b>Significance of the New Definition</b></p>
+
+<table>
+<tr><td valign=top>1)</td><td>&nbsp;</td><td>
+Setting<tt> ⎕ct </tt>to a given value now 
+implies that, to be considered equal,
+two numbers must be identical to 
+approximately<tt> 10⍟÷⎕ct </tt>decimal digits.<br>
+Note: SHARP APL restricts the maximum value
+of<tt> ⎕ct </tt>to be<tt> &lt;16*¯8</tt>&nbsp;.
+<br>&nbsp;
+ </td></tr>
+<tr><td valign=top>2)</td><td>&nbsp;</td><td>
+It follows directly from the definition
+in the introduction that comparison
+of numbers of unlike signs, or comparison
+with zero, is exact.
+<br>&nbsp;
+ </td></tr>
+<tr><td valign=top>3)</td><td>&nbsp;</td><td>
+The current implementation of SHARP APL
+should product results identical to the
+models presented here.
+<br>&nbsp;
+ </td></tr>
+<tr><td valign=top>4)</td><td>&nbsp;</td><td>
+The definition is independent of the machine
+on which it is implemented.
+It is intended to facilitate interchange
+of applications.
+<br>&nbsp;
+ </td></tr>
+<tr><td valign=top>5)</td><td>&nbsp;</td><td>
+<p>Certain anomalies in the old definition disappear.
+Previously, comparisons of numbers very close
+to powers of 16 tended to produce strange results:</p>
+
+<p>Consider the regions of tolerant equality
+for both definitions, using an absurdly large
+value of<tt> ⎕ct </tt>(<tt>.1</tt>).</p>
+
+<p>Consider the point<tt> x=ugly</tt>&nbsp;,<tt> </tt>
+and the monotonically increasing 
+points<tt> y=eq1, ne1, eq2, ne2</tt>&nbsp;.</p>
+
+<p>Note that<tt> (ugly=eq1)^(ugly≠ne1) </tt>
+but<tt> ugly=eq2 </tt>as well,
+even though<tt> eq2 </tt>is further away
+from<tt> ugly </tt>than<tt> ne1</tt>&nbsp;.</p>
+
+<p>Prior to the change in the definition,
+the following could be observed:</p>
+
+
+<pre>
+   ∇ foo;⎕ct;⎕io;x
+[1]  ⎕ct←0 ⋄ ⎕io←0
+[2]  x←1+(⌽1↓(¯2×⍳10)×16*¯14),(2×⍳10)×16*¯13 
+                          ⍝ admittedly strange
+[3]  ⎕←⊖'.○'[x∘.=x]
+   ∇
+</pre>
+
+<p>See Figure 1.</p>
+
+<pre>
+      foo
+..................○
+.................○.
+................○..
+...............○...
+..............○....
+.............○.....
+............○......
+...........○.......
+..........○........
+..○○○○○○○○.........
+........○○.........
+.......○.○.........
+......○..○.........
+.....○...○.........
+....○....○.........
+...○.....○.........
+..○......○.........
+.○.................
+○..................
+</pre>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; Figure 1
+<br>&nbsp;</p>
+ </td></tr>
+<tr><td valign=top>6)</td><td>&nbsp;</td><td>
+It should be stressed that only comparisons
+between values that are on the brink of equality
+are affected.
+Essentially, a rather fuzzy border has been
+altered slightly so that,
+while still fuzzy, it is at least straight.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="ct0"></a>
+<p><b>Implications of<tt> ⎕ct←0</tt></b></p>
+
+<table>
+<tr><td valign=top>1)</td><td>&nbsp;</td><td>
+<p>It is obvious from the new definition
+of tolerant comparison that setting<tt> ⎕ct←0 </tt>
+yields exact mathematical relational functions.</p>
+
+<pre>
+      (|a-b)≤⎕ct×(|a)⌈|b
+      (|a-b)≤0×(|a)⌈|b
+      (|a-b)≤0     equal if and only if a=b
+</pre>
+ </td></tr>
+<tr><td valign=top>2)</td><td>&nbsp;</td><td>
+APL interpreter performance is improved,
+due to the utilization of more efficient algorithms.
+For most affected functions the improvement is
+measurable but not significant.
+For dyadic epsilon, certain inner 
+products<tt> </tt>(<tt>^.= , ∨.≠</tt>)<tt> </tt>
+and dyadic iota, the improvement can be considerable.
+<br>&nbsp;
+ </td></tr>
+<tr><td valign=top>3)</td><td>&nbsp;</td><td>
+<p>User functions that attempt to be exact
+(rounding functions are a common example)
+can be written in a more obvious manner:</p>
+
+<p><b>Rounding Functions</b></p>
+
+<pre>
+   ∇ r←rnd1 a
+[1]  r←⌊.5+a
+   ∇
+</pre>
+
+<p>This function fails because<tt> ⌊ </tt>
+is fuzzed and<tt> ⌊.5+3.4999999 </tt>
+might produce<tt> 4 </tt>as a result.</p>
+
+<pre>
+   ∇ r←rnd2 a
+[1]  r←⌊(.5+a)-1|.5+a
+   ∇
+</pre>
+
+<p>This works, regardless of the setting
+of<tt> ⎕ct</tt>&nbsp;,<tt> </tt>
+but is a bit obscure.  (Function, courtesy of Doug Forkes)
+
+<p><tt>⎕ct←0 </tt>allows use of the obvious rounding
+function again.</p>
+
+<pre>
+   ∇ r←rnd3 a;⎕ct
+[1]  ⎕ct←0 ⋄ r←⌊.5+a
+   ∇
+</pre>
+ </td></tr>
+<tr><td valign=top>4)</td><td>&nbsp;</td><td>
+<b>Searching</b>
+
+<p>Users frequently encode search arguments as
+floating point numbers,
+and use dyadic iota to search a catalog.
+In such a search exact comparison is absolutely necessary.
+The following function not only achieves exact comparison,
+but runs (assuming both arguments have many elements)
+considerably faster than with<tt> ⎕ct≠0</tt>&nbsp;.</p>
+
+<pre>
+   ∇ r←a exactiota b;⎕ct
+[1]  ⎕ct←0 ⋄ r←a⍳b	
+   ∇
+</pre>
+ </td></tr>
+</table>
+<br>
+
+
+
+<br><hr width=88%><br>
+
+<a name="ax"></a>
+<p align=center><b>Appendix 1</b><br><br>
+<font size=+2>APL Comparison Tolerance</font><br><br>
+<font size=+1>R.H. Lathwell</font><br>
+<b>IBM APL Design, Philadelphia</b></p>
+
+
+<a name="axintro"></a>
+<p><b>Introduction</b></p>
+
+<p>An important aspect of the original implementation
+of APL\360 was the treatment of arithmetic functions
+as abstract functions defined on the continuous set
+of real numbers 
+<acronym title="1. L.M. Breed and R.H. Lathwell, Implementation of APL\360, 
+Symposium on Interactive Systems for Experimental Applied Mathematics, eds., 
+M. Klerer and J. Reinfelds, Academic Press, New York, 1968.
+2. A.D. Falkoff and K.E. Iverson, 
+The APL\360 Terminal System, 
+Research Report RC-1922, IBM, 1967-10-16.">[1,2]</acronym>.  
+This had various consequences,
+including automatic conversion between different
+machine representations of numbers so that storage
+and other aspects of System/360 architecture
+could be used efficiently while suppressing its details 
+<acronym title="A.D. Falkoff and K.E. Iverson, 
+The APL\360 Terminal System, 
+Research Report RC-1922, IBM, 1967-10-16.">[2]</acronym>.</p>
+
+<p>&ldquo;Fuzzy&rdquo; comparisons were introduced so that the
+actual discrete, fixed-precision, hexadecimal
+representation could be partly disguised:  for
+example, a comparison between<tt> 7 </tt>and<tt> +/10⍴0.7 </tt>should
+regard the two values as equal.  
+(<tt>0.7 </tt>cannot be
+exactly represented as a hexadecimal fraction,
+and the difficulty can be observed on an IBM
+System/370 APL system by displaying<tt> 7-+/10⍴0.7</tt>).</p>
+
+<p>The technique used in the original implementation
+was to regard numbers whose difference was zero
+in the first twelve (of fourteen) hexadecimal digits
+to be equal.
+The definitions in 
+<acronym title="R.H. Lathwell and J.E. Mezei, A Formal Description of APL, 
+Colloque APL, Institute de Recherche D’Informatique, 
+Rocquencourt, France, 1971.">[3]</acronym>
+was developed by M.A. Jenkins and R.H. Lathwell in 1968
+when it was found that, for some values,
+implications for relational functions such
+as<tt> b&gt;a ←→ ~b≤a </tt>were violated.
+It was later discovered that these definitions
+did not completely correct the difficulty,
+and when APL system variables were introduced
+<acronym title="A.D. Falkoff and K.E. Iverson, The Design of APL, 
+IBM Journal of Research and Development, 
+Volume 17, Number 4, July 1973.">[4]</acronym>,
+the tolerant functions were rederived,
+resulting in the definitions given here.
+<br>&nbsp;</p>
+
+
+
+<a name="axapprox"></a>
+<p><b>Approximate Functions</b></p>
+
+Computer arithmetic functions (addition, subtraction, 
+multiplication and division) are approximations: 
+The set of real numbers is represented 
+by a set of discrete numbers
+and the functions map arguments chosen 
+from this set to range members which are closest
+to the abstract results. 
+Because the values produced by two expressions related by an
+identity might not be identical, 
+a primitive form of <i>tolerant comparison</i> is required to
+make common identities hold.</p>
+
+<p>The notion of comparing numbers 
+in mathematics arises 
+in several guises, as in the
+idea that a sequence of numbers<tt> b[1], b[2],</tt> &#133; 
+may approach some limiting value<tt> a</tt>&nbsp;.<tt> </tt>
+This is normally defined in terms of whether<tt> b </tt>
+belongs to some <i>neighborhood</i> 
+of<tt> a</tt>&nbsp;.<tt> </tt>
+The neighborhood is in turn defined 
+in terms of a <i>radius</i> about<tt> a</tt>&nbsp;.</p>
+
+<p>In order to make comparison symmetric 
+in the two arguments for equality and inequality, 
+the function which determines the radius must depend 
+on both arguments<tt> a </tt>and
+<tt> b</tt>&nbsp;;<tt> </tt>
+to allow control of the tolerance, 
+it must also depend 
+on a <i>comparison tolerance</i> value.</p>
+
+<p>The implemented relational 
+functions<tt> </tt>(<tt>&lt;,≤,=,≥,&gt;,≠</tt>)<tt> </tt>
+are approximations and use the
+value of the system variable<tt> ⎕ct </tt>
+(for comparison tolerance) as a parameter, 
+as do inverse indexing and membership 
+(dyadic<tt> ⍳ </tt>and<tt> ∊</tt>)<tt> </tt>
+because of the implied comparison, and
+floor and ceiling because of the implied comparison 
+to integers.</p>
+
+<p>In the following discussion, 
+APL primitive symbols such as<tt> ≠ </tt>denote exact
+algebraic functions, 
+while names such as<tt> tne </tt>are used 
+to denote tolerant functions.
+Function definitions are given in the 
+form<tt> f:⍺+⍵</tt>&nbsp;;<tt> </tt>
+the colon separates the name of the
+function from the expression which defines it. 
+The special symbols<tt> ⍺ </tt>and<tt> ⍵ </tt>represent
+the left and right arguments, respectively, 
+of a dyadic function. 
+Either symbol can be
+used as the argument of a monadic function. 
+<acronym title="K.E. Iverson, Elementary Analysis, 
+APL Press, Swarthmore, 1976.">[5]</acronym></p>
+
+<p>The dependence on<tt> ⎕ct </tt>of the radius 
+of the neighborhood may as well be linear, and
+to make the notion of tolerant comparison 
+the practical one commonly used, for example,
+in engineering, it should also be a function 
+of the magnitudes of the comparands. 
+The following definition is therefore 
+adopted for the radius function<tt> rct </tt>
+(Relative Comparison Tolerance):</p>
+
+<pre>
+      rct:⎕ct×⍺ f ⍵ ,
+</pre>
+
+where<tt> f </tt>is a non-negative valued function 
+of the magnitudes of its arguments.
+<br>&nbsp;</p>
+
+
+
+<a name="axrelations"></a>
+<p><b>Tolerance Relations</b></p>
+ 
+<p>Using the radius function,<tt> rct</tt>&nbsp;,<tt> </tt>
+the relational functions are
+defined to take into consideration the neighborhood 
+of equality.</p>
+
+<p>Consider the following identity:</p>
+
+<pre>
+      a≠b ←→ 0≠a-b
+          ←→ 0&lt;|a-b
+</pre>
+
+<p>Tolerant inequality must exclude the neighborhood 
+of equality, and hence can be defined as:</p>
+
+<pre>
+      tne:(⍺ rct ⍵)&lt;|⍺-⍵
+</pre>
+
+<p>Similarly, tolerant greater must exclude 
+the neighborhood, that is,<tt> a&gt;b ←→ 0&gt;b-a</tt>&nbsp;,<tt> </tt>
+and therefore<tt> tgt:(⍺ rct ⍵)&lt;⍺-⍵</tt>&nbsp;.</p>
+
+<p>Substituting for<tt> rct</tt>&nbsp;:</p>
+
+<pre>
+      a tne b ←→ (a rct b)<|a-b
+              ←→ 0<(|a-b)-a rct b
+              ←→ 0<(|a-b)-⎕ct×a f b
+              ←→ (a f b)<(|b-a)÷⎕ct  (⎕ct≠0)
+</pre>
+
+<p>and<tt> a f b </tt>is bounded by<tt> (|a)⌈|b</tt>&nbsp;.</p>
+
+<p>This bound is, in fact, a satisfactory function and:</p>
+
+<pre>
+      f:(|⍺)⌈|⍵
+</pre>
+
+<p>and therefore<tt> rct:⎕ct×(|⍺)⌈|⍵</tt>&nbsp;,<tt> </tt> 
+and symmetry is assured by the commutativity 
+of<tt> ⌈</tt>&nbsp;.<tt> </tt>
+Tolerant inequality then becomes</p>
+
+<pre>
+      tne:0<(|⍺-⍵)-⎕ct×(|⍺)⌈|⍵
+</pre>
+
+<p>A neighborhood of radius<tt> ⎕ct×(|a)⌈|b </tt>is defined, 
+and<tt> a </tt>and<tt> b </tt>are unequal if one is not
+contained within this neighborhood about the other.</p>
+
+<p>Tolerant inequality can be expressed in terms 
+of functions which are independent
+of<tt> f </tt>as follows:</p>
+
+<pre>
+      a tne b ←→ 0&lt;(|a-b)-⎕ct×(|a)⌈|b
+              ←→ 0⌈×(|a-b)-⎕ct×(|a)⌈|b
+</pre>
+
+<p>and</p>
+
+<pre>
+      a tgt b ←→ 0&lt;(a-b)-⎕ct×(|a)⌈|b
+              ←→ 0⌈×(a-b)-⎕ct×(|a)⌈|b
+</pre>
+
+<p>In order to ensure that the relational functions 
+satisfy their fundamental identities,
+the remaining four functions are defined in terms 
+of<tt> tne </tt>and<tt> tgt</tt>&nbsp;.</p>
+
+<table>
+<tr><td><tt>&nbsp; &nbsp; &nbsp;</tt><td>
+ <td><tt>teq:~⍺ tne ⍵</tt></td><td>&nbsp; &nbsp; &nbsp;</td><td>(Tolerant Equality)</td></tr>
+<tr><td>&nbsp;<td><td><tt>tle:~⍺ tgt ⍵</tt></td><td>&nbsp;</td><td>(Tolerant Not Greater)</td></tr>
+<tr><td>&nbsp;<td><td><tt>tlt:(⍺ tne ⍵)^~⍺ tgt ⍵</tt></td><td>&nbsp;</td><td>(Tolerant Less Than)</td></tr>
+<tr><td>&nbsp;<td><td><tt>tge:(⍺ tgt ⍵)^~⍺ tne ⍵</tt></td><td>&nbsp;</td><td>(Tolerant Not Less)</td></tr>
+</table>
+<br>
+
+
+
+<a name="axfloor"></a>
+<p><b>Tolerant Floor and Ceiling</b></p>
+
+<p>The fundamental identities which floor and ceiling 
+must satisfy are:</p>
+
+<pre>
+      (⌊a)≤a
+      (⌈a)≥a
+      (⌊a)=-⌈-a
+</pre>
+
+<p>Substituting tolerant relational functions, 
+these become:</p>
+
+<pre>
+      (tfl a)tle a
+      (tcl a)tge a
+      (tfl a)teq-tcl-a
+</pre>
+
+<p>If tolerant floor<tt> </tt>(<tt>tfl</tt>)<tt> </tt>
+is expressed in terms of the abstract function 
+as<tt> tfl&nbsp;a ←→ ⌊a+g&nbsp;a</tt>&nbsp;,<tt> </tt>
+and tolerant ceiling 
+as<tt> tcl&nbsp;a ←→ ⌈a-g&nbsp;a</tt>&nbsp;,<tt> </tt>
+where<tt> g </tt>is a measure of the error and depends 
+on<tt> ⎕ct</tt>&nbsp;,<tt> </tt>
+and the appropriate substitutions made, then</p>
+
+<pre>
+      (g a)≤⎕ct×|a
+</pre>
+<p>and, using the upper bound,</p>
+
+<pre>
+      tfl:⌊⍵+⎕ct×|⍵
+      tcl:⌈⍵-⎕ct×|⍵
+</pre>
+
+<p>In the above, for sufficiently large values 
+of<tt> ⎕ct </tt>and<tt> |a</tt>&nbsp;,<tt> </tt>
+there are several integers
+which will satisfy the tolerant relations. 
+If tolerant floor and ceiling are
+constrained so that the result is an integer adjacent 
+to<tt> a</tt>&nbsp;,<tt> </tt>then</p>
+
+<pre>
+      ((tfl a)=⌊a)∨(tfl a)=⌈a
+</pre>
+
+<p>Applying this additional constraint results in</p>
+
+<pre>
+      tfl:⌊⍵+⎕ct×1⌊|⍵
+      tcl:⌈⍵-⎕ct×1⌊|⍵
+      and ⎕ct&lt;1
+</pre>
+
+<p>Note that, in effect, an upper bound for<tt> ⎕ct </tt>
+is established.
+<br>&nbsp;</p>
+
+
+
+<a name="axdiscuss"></a>
+<p><b>Discussion</b></p>
+
+<p>The functions<tt> tne, tgt, teq, tge, tlt, tle, tfl</tt>,<tt> </tt>
+and<tt> tcl </tt>are approximations to the mathematical
+functions<tt> ≠, &gt, =, ≥, &lt;, ≤, ⌊,</tt> and<tt> ⌈</tt>&nbsp;.<tt> </tt>
+They use the value of<tt> ⎕ct </tt>
+to determine a neighborhood of equality.
+When<tt> ⎕ct=0</tt>&nbsp;,<tt> </tt>the approximations
+become the exact functions.</p>
+
+<p>Absolute comparison, independent of<tt> ⎕ct</tt>&nbsp;,<tt> </tt>
+can also be obtained by comparisons with
+zero:</p>
+
+<pre>
+      a tne 0 ←→ 0&lt;(|a-0)-⎕ct×(|a)⌈0
+              ←→ 0&lt;(|a)×1-⎕ct
+              ←→ a≠0
+</pre>
+
+<p>When<tt> ⎕ct&gt;0</tt>&nbsp;,<tt> </tt>
+the tolerant functions lose the property of transitivity, 
+and algebraic relations which depend on this property 
+cannot be used. 
+For example,<tt> a&nbsp;tne&nbsp;b ←→ 
+(a+c)&nbsp;tne&nbsp;b+c </tt>
+does not hold (consider<tt> c=-a</tt>).
+
+<p>The intransitivity of equality is well known 
+in practical situations and can be easily
+demonstrated by sawing several pieces of wood 
+of equal length. 
+In one case, use the
+first piece to measure subsequent lengths; 
+in the second case, use the last piece cut to
+measure the next. 
+Compare the lengths of the two final pieces.</p>
+
+<p>Large values of<tt> ⎕ct </tt>cause the tolerant 
+functions to yield results which are
+mathematically consistent but which are, 
+to some extent, counter-intuitive. 
+This generally happens when the neighborhood 
+of equality about an integer includes an
+adjacent integer:</p>
+
+<pre>
+      a teq a+1 ←→ ~a tne a+1
+                ←→ (⎕ct×|a+1)≥i
+                ←→ (|a+1)≥÷⎕ct    (⎕ct≠0)
+</pre>
+
+<p>so that for any particular non-zero value 
+of<tt> ⎕ct</tt>&nbsp;,<tt> </tt>
+adjacent integers greater in magnitude
+than<tt> ÷⎕ct </tt>will be equal. 
+For small values of<tt> ⎕ct</tt>&nbsp;,<tt> </tt>
+tolerant functions yield intuitively
+correct results in cases where the exact result is 
+not<tt> </tt>(<tt>7=+/10⍴0.7</tt>).</p>
+
+<p><tt>⎕ct </tt>can, as was the &ldquo;fuzz&rdquo;
+in APL\360, be regarded as a measure
+of the number of significant digits
+(approximately<tt> ÷⎕ct </tt>decimal digits)
+to which numbers must agree in order 
+to be considered equal.  
+In general,<tt> ⎕ct </tt>should be chosen
+to be the smallest value which is large enough
+to mask common arithmetic errors.
+<br>&nbsp;</p>
+
+
+<a name="axack"></a>
+<p><b>Acknowledgment</b></p>
+
+<p>D.L. Orth provided many useful suggestions
+in the course of discussion and careful review
+of the derivations.
+<br>&nbsp;</p>
+
+
+
+<a name="axref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+L.M. Breed and R.H. Lathwell, <i>Implementation of APL\360</i>,
+Symposium on Interactive Systems for Experimental 
+Applied Mathematics, eds., M. Klerer and J. Reinfelds, 
+Academic Press, New York, 1968.
+ </td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+A.D. Falkoff and K.E. Iverson,
+<a target=_parent href="http://www.jsoftware.com/papers/APL360TerminalSystem.htm"><i>The APL\360 Terminal System</i></a>,
+Research Report RC-1922, IBM, 1967-10-16. 
+ </td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+R.H. Lathwell and J.E. Mezei, <i>A Formal Description of APL</i>,
+Colloque APL,
+Institut de Recherche d&rsquo;Informatique et d’Automatique,
+Rocquencourt, France, 1971.
+ </td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+A.D. Falkoff and K.E. Iverson,
+<a target=_parent href="http://www.jsoftware.com/papers/APLDesign.htm"><i>The Design of APL</i></a>,
+IBM Journal of Research and Development, Volume 17, Number 4, July 1973.
+ </td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+K.E. Iverson, 
+<a target=_parent href="http://www.jsoftware.com/jwiki/Doc/Elementary%20Analysis"><i>Elementary Analysis</i></a>,
+APL Press, Swarthmore, 1976.
+ </td></tr>
+</table>
+<br>
+
+
+
+<br><hr>
+<font size=-1><p>First appeared as SHARP APL Technical Note 23, 
+<i>Comparison Tolerance</i>, 1977-06-10; revision 1, 1978-07-15. 
+Appendix 1 first appeared in the APL76 Conference Proceedings.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-07-20 12:00</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2018-06-19 18:35</font></td></tr>
+</table>
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

@@ -1,0 +1,767 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>SATN-40: Complex Numbers</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><b>SATN-40</b><br>
+<font size=+2>Complex Numbers</font><br><br>
+<b>Eugene McDonnell</b>
+<br>&nbsp;</p>
+
+
+
+<a name="abstract"></a>
+<p><b>Abstract</b></p>
+
+<p>Complex numbers have been added to SHARP APL 
+as an internal data type, 
+and most of the primitive functions have been extended, 
+where appropriate, to give complex results, 
+and to take arrays containing complex numbers as arguments. 
+Our implementation follows, in large measure, 
+the design proposed by Paul Penfield, Jr., of MIT, 
+in his &lsquo;Proposal for a Complex APL&rsquo;, 
+given at the APL79 Conference.</p>
+
+<br><hr>
+
+
+
+<a name="intro"></a>
+<p align=center><font size=+1>Complex Number APL Available</font></p>
+
+<table><tr><td nowrap><tt>&nbsp; &nbsp; &nbsp;</tt></td><td>
+Once we conceive of the real line as embedded in 
+a plane of complex numbers, 
+we have entered a whole new domain of mathematics. 
+All our old knowledge of real algebra and analysis 
+becomes enlarged and enriched 
+when reinterpreted in the complex domain. 
+In addition, we immediately see countless new problems 
+and questions which could not even have been 
+raised in the context of the real numbers alone.
+</td></tr>
+<tr><td>&nbsp;</td><td align=right>
+Philip J. Davis and Reuben Hersh, 
+<i>The Mathematical Experience</i>, Birkhausen,
+Boston, 1980</td></tr>
+</table>
+
+<p>Complex numbers have been added to SHARP APL 
+as an internal data type, 
+and most of the primitive functions have been extended, 
+where appropriate, to give complex results, 
+and to take arrays containing complex numbers as arguments.</p>
+
+<p>The extension is not complete. 
+The floor, ceiling, residue, representation, 
+and dyadic format functions have not been extended, 
+because there remain points of uncertainty 
+regarding their definitions. 
+The way in which complex numbers are displayed 
+in this release is provisional. 
+As we gain more experience in the use of these numbers, 
+we may change the form.</p>
+
+<p>Until this announcement, writers of APL applications 
+which required complex numbers had to simulate them 
+by various devices which made the use of APL&rsquo;s 
+primitive functions and operators difficult. 
+With this announcement, all the facilities of APL, 
+except as noted in the preceding paragraph, 
+may be used directly on complex numbers.</p>
+
+<p>Generally speaking, existing applications 
+are not affected by this change. 
+The potential differences are local 
+to just a few primitive functions, 
+and are relatively minor. 
+Those functions which would benefit 
+from complex numbers yield complex results 
+instead of a domain error.
+<br>&nbsp;</p>
+
+
+
+<a name="cons"></a>
+<p><b>Complex constants and display</b></p>
+
+<p>If two real scalar numeric constants are connected 
+by the letter<tt> j</tt>&nbsp;,<tt> </tt>
+as in<tt> 3j¯4</tt>&nbsp;,<tt> </tt>
+this is interpreted as the rectangular representation 
+of a complex constant, 
+with the real part first and the imaginary part second. 
+Each of the two real numbers can be written 
+using either decimal or scaled representations.</p>
+
+<p>In displaying a column of numbers, 
+some of which have nonzero imaginary parts, 
+all the numbers in the column are right justified. 
+For example, if<tt> z </tt>is the vector 
+whose elements are the fifth roots of<tt> ¯32</tt>&nbsp;,<tt> </tt>  
+a one-column matrix<tt> w </tt>derived 
+from it would be displayed as follows 
+(with<tt> ⎕pp </tt>at<tt> 6</tt>):</p>
+
+<pre>
+      ⎕←w←5 1⍴z
+  1.61803j1.17557
+ ¯0.61803j1.90211
+               ¯2
+¯0.61803j¯1.90211
+ 1.61803j¯1.17557
+
+</pre>
+
+
+
+<a name="ext"></a>
+<p><b>The extensions of the primitive functions</b></p>
+
+<p>Many of the primitive functions need no discussion 
+since their extension to complex arguments 
+is well understood. 
+Here we shall describe only those functions 
+whose extension is not obvious.</p>
+
+
+
+<a name="conjugate"></a>
+<p><b>Conjugate:</b><tt> +⍵ </tt>is the conjugate 
+of<tt> ⍵</tt>&nbsp;,<tt> </tt>
+that is, the value obtained 
+by reflecting<tt> ⍵ </tt>on the real axis. 
+The conjugate of a real number<tt> ⍵ </tt>
+is equal to<tt> ⍵</tt>&nbsp;.<tt> </tt> 
+Thus a test to see if a number is real 
+is<tt> ⍵=+⍵</tt>&nbsp;.</p>
+
+<p> &nbsp; Figure 1 <img src="img/satn40.jpg"></p>
+
+<p>The elements of the vector<tt> z </tt>d
+are shown in Figure 1. 
+The numbers<tt> z[1] </tt>
+and<tt> z[5] </tt>are conjugates, 
+as are<tt> z[2] </tt>and<tt> z[4]</tt>&nbsp;.<tt> </tt> 
+The number<tt> z[3] </tt>is equal to its own conjugate, 
+since it is real.</p>
+
+
+
+<a name="magnitude"></a>
+<p><b>Magnitude:</b><tt> |⍵ </tt>is the magnitude, 
+or modulus as it is often called, 
+of<tt> ⍵</tt>&nbsp;.<tt> </tt> 
+It is the value obtained by rotating<tt> ⍵ </tt> 
+about the origin onto the positive axis. 
+It may be defined as<tt> (⍵×+⍵)*0.5</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+      |3j¯4               ←→   5
+      |0.6j¯0.8           ←→   1
+      |1.61803j¯1.17557   ←→   2
+      |¯1j1               ←→   1.41421
+</pre>
+
+
+
+<a name="direction"></a>
+<p><b>Direction:</b><tt> ×⍵ </tt>is the direction 
+of<tt> ⍵</tt>&nbsp;,<tt> </tt>
+and is an extension of the signum function on real numbers. 
+The direction of<tt> 0 </tt>is<tt> 0</tt>&nbsp;.<tt> </tt> 
+For nonzero<tt> ⍵</tt>&nbsp;,<tt> ×⍵ </tt>
+is the value at the intersection 
+with the unit circle of the ray 
+from the origin through<tt> ⍵</tt>&nbsp;.<tt> </tt>
+The magnitude of<tt> ×⍵ </tt>
+for nonzero<tt> ⍵ </tt>is<tt> 1</tt>&nbsp;,<tt> </tt>
+and<tt> ×⍵ </tt>may be defined as<tt> ⍵÷|⍵ </tt>. 
+For example:</p>
+
+<pre>
+      ×3j¯4               ←→   0.6j¯0.8
+      ×0.03j¯0.04         ←→   0.6j¯0.8
+      ×0j10               ←→   0j1
+
+</pre>
+
+
+
+<a name="circle"></a>
+<p><b>New circular function left arguments:</b>
+Ten new left arguments<tt> ⍺ </tt>
+have been provided for<tt> ⍺○⍵</tt>&nbsp;,<tt> </tt>
+primarily for use with complex numbers.</p>
+
+<p>The correspondence between left argument value 
+and function is different from that given in 
+<acronym title="Penfield, Paul Jr., &lsquo;Proposal for a complex APL&rsquo;, 
+APL79 Conference Proceedings, ACM, 1979, pp 47-53.">[1]</acronym>. 
+The assignments described here preserve 
+as much as possible the association between odd functions 
+(real part, imaginary part) 
+with odd left arguments (9 and 11), 
+and even functions (magnitude) with even left arguments (10). 
+They also eliminate the gap 
+which the earlier scheme had left between 8 and 11.</p>
+
+
+<table border=1 cellspacing=0 cellpadding=5>
+<tr><td align=right><tt>(-⍺)○⍵ &nbsp;</tt></td><td><tt>&nbsp;⍺</tt></td><td><tt>&nbsp; &nbsp; &nbsp; ⍺○⍵</tt></td></tr>
+<tr><td align=right><tt>-8○⍵ &nbsp;</tt>  </td><td><tt>&nbsp;8</tt></td><td><tt>&nbsp;0j1×⍵×(1+⍵*¯2)*0.5</tt></td></tr>
+<tr><td align=right><tt>⍵ &nbsp;</tt>     </td><td><tt>&nbsp;9</tt></td><td><tt>&nbsp;(⍵++⍵)÷2 &nbsp;&nbsp;&nbsp;&nbsp;</tt>real part of<tt> ⍵</tt></td></tr>
+<tr><td align=right><tt>+⍵ &nbsp;</tt>    </td><td><tt>10</tt>     </td><td><tt>&nbsp;|⍵ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>magnitude, or modulus, of<tt> ⍵</tt></td></tr>
+<tr><td align=right><tt>0j1×⍵ &nbsp;</tt> </td><td><tt>11</tt>     </td><td><tt>&nbsp;(⍵-+⍵)÷0j2 &nbsp;&nbsp;</tt>imaginary part of<tt> ⍵</tt></td></tr>
+<tr><td align=right><tt>*0j1×⍵ &nbsp;</tt></td><td><tt>12</tt>     </td><td><tt>&nbsp;11○⍟⍵ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>arc or phase angle of<tt> ⍵</tt></td></tr>
+</table>
+
+<p>Two of these,<tt> 8○⍵ </tt>and<tt> ¯8○⍵</tt>&nbsp;,<tt> </tt> 
+are new Pythagorean functions, 
+based on the expression<tt> (¯1-⍵*2)*0.5</tt>&nbsp;,<tt> </tt> 
+but modified to allow for both signs of the square root. 
+The value of this function on reals is never real, 
+which is why it had not been among the APL primitives before. 
+With it, the set of Pythagorean functions is complete.</p>
+
+<p>The remaining new left arguments for<tt> ⍺○⍵ </tt>
+are used in forming and decomposing complex numbers, 
+using the rectangular and 
+the polar representations of these numbers.</p>
+
+<p>A number<tt> ⍵ </tt>may be decomposed 
+into its real and imaginary parts 
+by<tt> ¯9 ¯11○⍵</tt>&nbsp;.<tt> </tt> 
+For example:</p>
+
+<pre>
+      9 11○3j¯4  ←→  3 ¯4
+</pre>
+
+<p>Conversely, a pair of real numbers oj 
+representing the real and imaginary parts 
+of a complex number may be formed into that number 
+by<tt> ¯9 ¯11+.○⍵</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+      ¯9 ¯11+.○3 ¯4  ←→  3j¯4
+</pre>
+
+<p>A number<tt> ⍵ </tt>may be decomposed 
+into its magnitude and arc by<tt> 10 12○⍵</tt>&nbsp;.<tt> </tt> 
+For example:</p>
+
+<pre>
+      10 12○3j¯4  ←→  5 ¯0.927295
+</pre>
+
+<p>The arc is given in radians and is always greater 
+than minus pi radians and less than or equal to pi radians. 
+A positive number has an arc of 0. 
+A negative number has an arc of pi. 
+The arc of 0 is defined to be 0. For example:<p>
+
+
+<pre>
+            12○w
+      0.628319
+      1.88496 
+      3.14159
+     ¯1.88496 
+     ¯0.628319
+</pre>
+
+<p>If<tt> deg:(180×⍵))÷○1 ⍝ radians to degrees</tt>&nbsp;,<tt> </tt>
+we can display the values of<tt> 12○⍵ </tt>in degrees. 
+For example:
+</p>
+            
+
+<pre>
+            deg 12○w
+        36
+       108
+       180
+      ¯108
+       ¯36
+</pre>
+
+<p>Conversely, a pair of real numbers<tt> ⍵</tt>&nbsp;,<tt> </tt>
+representing the magnitude and arc 
+of a complex number may be formed into 
+that number by<tt> ¯10 ¯12×.○⍵</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+      ¯10 ¯12×.○5 ¯0.927295   ←→   3j¯4
+</pre>
+
+
+
+<a name="eq"></a>
+<p><b>Equals and not equals:</b> 
+Two complex numbers are considered equal 
+if the one smaller in magnitude lies on or within 
+a circle whose center is at the one 
+with larger magnitude, and whose radius is equal 
+to<tt> ⎕ct </tt>times the larger magnitude.</p>
+
+
+
+<a name="gcd"></a>
+<p><b>Greatest common divisor and least common multiple:</b> 
+A complex integer is one 
+whose real and imaginary parts are integers.</p>
+
+<p>If<tt> a </tt>and<tt> b </tt>are complex integers, 
+there are four other complex integers 
+with the property that they are the largest in magnitude 
+of all the complex integers which divide 
+both<tt> a </tt>and<tt> b</tt>&nbsp;.<tt> </tt>
+<tt> a∨b </tt>is that one of these 
+which is in the first quadrant, 
+or on the positive axis.</p>
+
+<p>For example,<tt> 117j44 </tt>and<tt> ¯63j¯16 </tt>
+have as greatest divisors the following numbers:</p>
+
+<pre>
+      3j¯4 4j3 ¯3j4 ¯4j¯3
+</pre>
+
+<p>Of these,<tt> 4j3 </tt>is given as the value 
+of<tt> 117j44∨¯63j¯16 </tt> 
+since it is the one in the first quadrant.</p>
+
+<p><tt>a∨b </tt>is defined for noninteger complex numbers as well:</p>
+
+<pre>
+      1.17j0.44∨¯0.63j¯0.16   ←→   0.04j0.03
+</pre>
+
+<p>The least common multiple 
+of two complex numbers,<tt> ⍺^⍵</tt>&nbsp;,<tt> </tt> 
+is defined by<tt> (⍺×⍵)÷⍺∨⍵</tt>&nbsp;.<tt> </tt>For example:</p>
+
+<pre>
+      ¯182j¯107^¯7j55   ←→   ¯75j¯289
+</pre>
+
+<p>The least common multiple function is also 
+defined on non-integral complex numbers.
+<br>&nbsp;</p>
+
+
+
+<a name="domain"></a>
+<p><b>Functions whose domain does not include complex numbers</b></p>
+
+<p>Because the complex numbers are not ordered, 
+those functions which depend on ordering 
+are not extended to complex numbers. 
+They are the dyadic 
+functions<tt> ⍺&lt;⍵</tt>&nbsp;,<tt> ⍺≤⍵</tt>&nbsp;,<tt> ⍺≥⍵</tt>&nbsp;,<tt> ⍺&gt;⍵</tt>&nbsp;,<tt> ⍺⌊⍵</tt>&nbsp;,<tt> ⍺⌈⍵</tt>&nbsp;,<tt> ⍺⍋⍵</tt>&nbsp;,<tt> </tt>
+and<tt> ⍺⍒⍵</tt>&nbsp;,<tt> </tt> 
+and the monadic functions<tt> ⍋⍵ </tt>and<tt> ⍒⍵</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="defer"></a>
+<p><b>Functions with deferred extensions</b></p>
+
+<p>Because we have not agreed on definitions for the 
+functions<tt> ⌈⍵</tt>&nbsp;,<tt> ⌊⍵</tt>&nbsp;,<tt> ⍺|⍵</tt>&nbsp;,<tt> </tt>
+and<tt> ⍺⊤⍵</tt>&nbsp;,<tt> </tt> 
+they have not been extended at this time.</p>
+
+<p>The formatting functions<tt> ⍺⎕fmt⍵ </tt>
+and<tt> ⍺⍕⍵ </tt>will take complex arguments, 
+but their definitions have not been extended 
+to take note of the imaginary parts of these numbers. 
+Thus they format only the real part. For example:</p>
+
+<pre>
+
+            'bi3' ⎕fmt 3j¯4 0j2 0.2 5.2 
+      3
+
+
+      5
+
+            0⍕3j¯4 0j2 0.2 5.2
+      3 0 0 5
+
+</pre>
+
+
+
+<a name="diff"></a>
+<p><b>Differences which may affect existing applications</b></p>
+
+<p>Users should be aware that with this release 
+there are differences in Sharp APL 
+even if complex numbers are not used as arguments. 
+This section describes these differences in detail.</p>
+
+<p>There are two kinds of differences. 
+In the first kind, a function which used to signal 
+a domain error for certain real arguments 
+now has a value which is not in general a real number. 
+The functions in this category 
+are<tt> ⍟⍵ </tt>and<tt> ⍺⍟⍵ </tt>
+for negative arguments,<tt> ⍺*⍵ </tt>
+for negative<tt> ⍺ </tt>and certain<tt> ⍵</tt>&nbsp;,<tt> </tt> 
+and<tt> ⍺○⍵ </tt>for certain arguments. 
+In the second kind, a function now has a different value 
+for certain arguments. 
+There are two cases of this:<tt> ⍺*⍵ </tt>
+for negative<tt> ⍺ </tt>and certain<tt> ⍵</tt>&nbsp;,<tt> </tt> 
+and<tt> ¯4○⍵</tt>&nbsp;.<tt> </tt>
+All this is covered in detail below.</p>
+
+<p>In the first case, it seems unlikely 
+that a user program would be affected, 
+since one doesn&rsquo;t ordinarily write a program 
+to cause a domain error to be signalled. 
+However, since Sharp introduced automatic trapping of errors in 1979, 
+it is possible that someone could have written a program 
+in such a way that a domain error used to be signalled 
+by an expression which now has a value. 
+This would, of course, cause the program behavior to be different. 
+We judge this to be low in probability, 
+but nonetheless feel obliged to caution our users, 
+so that they may recognize the situation if it should occur.</p>
+
+<p>We monitored the system extensively to try to judge 
+the impact of the second of these changes 
+(those where a different value is given). 
+Over a one month period in 1979 
+there were 439 cases of<tt> ⍺*⍵ </tt>with<tt> ⍺&lt;0 </tt>
+and<tt> ⍵ </tt>not an integer. 
+On investigation, almost all of these uses 
+were by Sharp development people, doing tests. 
+We consulted with the owners of the few remaining workspaces 
+and cautioned them of the impending change. 
+There were only 176 uses of<tt> ¯4○⍵</tt>&nbsp;,<tt> </tt>
+for <i>all</i> arguments. 
+This compares with 6,149,426 uses 
+of<tt> 1○⍵</tt>&nbsp;,<tt> </tt>for example. 
+Thus in both of these cases where a change in value occurs, 
+we see little risk that any programs will be affected.</p>
+
+
+
+<a name="diff1"></a>
+<p><b>First case &#151; domain error replaced by value:</b>
+There are four functions which are affected.</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+<p>The monadic logarithm function used to signal 
+a domain error for negative arguments. 
+With complex numbers available we can use 
+the compatible extended definition 
+of logarithm for all numbers except<tt> 0</tt>&nbsp;:</p>
+
+<pre>
+ ⍟⍵   ←→   (⍟|⍵)+0j1×12○⍵  
+</pre>
+
+<p>This definition is compatible since for positive arguments, 
+which have arcs of zero, the second term of the sum disappears. 
+We can thus provide a logarithm for arbitrary nonzero complex numbers, 
+and in particular for negative numbers. 
+For a negative number, the imaginary part 
+of its logarithm will be equal to pi, 
+since the arc of a negative number is pi radians.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+<p>The dyadic logarithm function<tt> ⍺⍟⍵ </tt>also used 
+to signal a domain error if either argument was negative. 
+Since we can now give a value 
+to the logarithm of a negative number, 
+we can use the definition of<tt> ⍺⍟⍵ </tt>as<tt> (⍟⍵)÷⍟⍺ </tt> 
+to give a definition for dyadic logarithms 
+of arbitrary nonzero numbers to arbitrary nonzero base, 
+and in particular to negative numbers and/or to negative bases.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+The power function<tt> ⍺*⍵ </tt>used to signal a domain error 
+for a negative<tt> ⍺ </tt>and<tt> ⍵ </tt>close or equal 
+to a rational number having an even denominator. 
+With complex numbers, such exponents are now permitted, 
+and the result in general is not real. 
+For example,<tt> ¯1*0.5 </tt>is<tt> 0j1</tt>&nbsp;.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>4a.</td><td>&nbsp;</td><td>
+<p>The dyadic circle function<tt> ⍺○⍵ </tt>
+has had the domain of its left argument extended, 
+as described above, to include the new 
+values<tt> ¯12 ¯11 ¯10 ¯9 ¯8 8 9 10 11 12</tt>&nbsp;.<tt> </tt>  
+An attempt to use any of these as a left argument 
+used to give a domain error. 
+These new left arguments are intended primarily 
+for use in forming and decomposing nonreal complex numbers, 
+but they are valid also for real right arguments.
+<br>&nbsp;</p></td></tr>
+
+</td></tr>
+<tr><td valign=top>4b.</td><td>&nbsp;</td><td>
+<p>Several of the functions determined 
+by particular left arguments of<tt> ⍺○⍵ </tt>
+have had their domains extended 
+to include more real arguments, 
+as well as having been extended to complex numbers in general. 
+These are<tt> ¯7&nbsp;¯6&nbsp;¯4&nbsp;2&nbsp;1&nbsp;0○⍵</tt>&nbsp;.</p>
+
+<p><tt>¯7○⍵</tt>&nbsp;:<tt> </tt>Formerly<tt> ⍵ </tt>
+had to be strictly between<tt> ¯1 </tt>and<tt> 1</tt>&nbsp;.<tt> </tt> 
+Now all arguments are valid except<tt> ¯1 </tt>and<tt> 1</tt>&nbsp;.</p>
+
+<p><tt>¯6○⍵</tt>&nbsp;:<tt> </tt>Formerly<tt> ⍵ </tt>
+had to be greater than or equal to<tt> 1</tt>&nbsp;.<tt> </tt> 
+Now all values are permitted.</p>
+
+<p><tt>¯4○⍵</tt>&nbsp;:<tt> </tt>Formerly<tt> ⍵ </tt>
+could not be strictly between<tt> ¯1 </tt>and<tt> 1</tt>&nbsp;.<tt> </tt> 
+Now only<tt> 0 </tt>is prohibited.</p>
+
+<p><tt>¯2 ¯1 0○⍵</tt>&nbsp;:<tt> </tt>Formerly<tt> ⍵ </tt>
+had to be between<tt> ¯1 </tt>and<tt> 1</tt>&nbsp;.<tt> </tt>
+Now all numbers are permitted.</p>
+</td></tr>
+</table>
+<br>
+
+
+
+<a name="diff2"></a>
+<p><b>Second case &#151; changes in value:</b>
+There are two functions in this category.</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+<p>The defining expression 
+for the power function<tt> ⍺*⍵ </tt>is</p>
+
+<pre>
+*⍵×⍟⍺         (a)
+</pre>
+
+<p>but this could not be used hitherto 
+for negative<tt> ⍺ </tt>since logarithms 
+of negative numbers were not defined. 
+Nonetheless an attempt was made to give an answer, 
+if<tt> ⍵ </tt>was not close or equal to a rational number 
+with an even denominator, 
+by assuming that in that case the exponent 
+had an <i>odd</i> denominator<tt> n</tt>&nbsp;,<tt> </tt>
+and thus had one of its<tt> n </tt>roots on the negative axis. 
+Up until now we have chosen to give that particular one 
+of the<tt> n </tt>roots as the value. 
+For example, referring to Figure 1, 
+the elements of<tt> z </tt>are approximations 
+to the fifth roots of<tt> ¯32</tt>&nbsp;.<tt> </tt> 
+One of these,<tt> ¯2</tt>&nbsp;,<tt> </tt>is a real number, 
+and is in fact the value that used to be given 
+for the expression<tt> ¯32*0.2</tt>&nbsp;.<tt> </tt> 
+However, now that complex numbers are available
+we can use the defining expression<tt> (a) </tt> 
+in every case where<tt> ⍺ </tt>is not zero. 
+This ensures that functions such as<tt> ¯32*⍵ </tt>are 
+(except for branch cuts) 
+continuous over their entire domain. 
+For example, the value of<tt> ¯32*0.2 </tt>
+is now given as<tt> 1.61803j1.17557</tt>&nbsp;.<tt> </tt> 
+The desired continuity can be seen 
+by noting the closeness of adjacent values 
+in the following example:</p>
+
+<pre>
+      3 1⍴¯32*0.1999 0.2 0.2001
+1.61784j1.17465
+1.61803j1.17557
+1.61823j1.17649
+</pre>
+</td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+<p>The definition of the<tt> ¯4○⍵ </tt>function 
+has been changed from<tt> (¯1+⍵*2)*0.5 </tt>
+to<tt> ⍵×(1-⍵*¯2)*0.5</tt>&nbsp;.<tt> </tt> 
+Effectively, this doesn&rsquo;t change the function 
+for positive arguments, 
+but for negative arguments 
+the value is now negative instead of positive. 
+For example, the value of<tt> ¯4○2&nbsp;¯2 </tt>used 
+to be<tt> 1.73205&nbsp;1.73205</tt>&nbsp;.<tt> </tt> 
+With the new definition 
+the value is<tt> 1.73205&nbsp;¯1.73205</tt>&nbsp;.
+</td></tr>
+</table>
+<br>
+
+
+
+<a name="general"></a>
+<p><b>General</b></p>
+
+<p>The amount of storage required 
+for one complex value is sixteen bytes.</p>
+
+<p><tt>⎕pp </tt>affects the display of each part 
+of a complex number separately. 
+For example, with<tt> ⎕pp←3</tt>&nbsp;,<tt> </tt>
+we have:</p>
+
+<pre>
+      ¯9 ¯11+.○ 1234 0.1234  ←→  1.23e3j0.123
+</pre>
+
+<p>An array whose type is complex can be used 
+with a function which requires a Boolean, integer, 
+or real value as argument 
+if the complex array values are sufficiently close 
+to Boolean, integer, or real values, respectively. 
+The tolerance used in making this determination 
+is not affected by<tt>  ⎕ct</tt>&nbsp;.<tt> </tt> 
+For example,<tt> 3j1e¯20 </tt>may be used 
+to index the third element of a vector, 
+or as left argument to replicate.
+<br>&nbsp;</p>
+
+
+
+<a name="ack"></a>
+<p><b>Acknowledgments</b></p>
+
+<p>The complex number extension to APL has been discussed 
+in the APL community for many years. 
+Paul Penfield, Jr., of MIT, 
+played a leading role in elucidating the design problems, 
+and made a comprehensive proposal for complex APL in 
+<acronym title="Penfield, Paul Jr., &lsquo;Proposal for a complex APL&rsquo;, 
+APL79 Conference Proceedings, ACM, 1979, pp 47-53.">[1]</acronym>. 
+The Sharp complex APL extension follows this proposal 
+in all details except for the numbering of the new left arguments 
+to<tt> ⍺○⍵ </tt>and in output formatting. 
+Professor Penfield also was kind enough to criticize 
+our implementation in the course of its development. 
+The implementation was designed and developed 
+by Doug Forkes and Gene McDonnell.</p>
+
+<p>This SATN benefitted from comments given by Arlene Azzarello, 
+Paul Berry, Caroline Colburn, Doug Forkes, Ken Iverson, 
+and Roland Pesch, of I.P. Sharp Associates.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>Reference</b></p>
+
+<table>
+<tr><td valign=top>[1]</td><td>&nbsp;</td><td>Penfield, Paul Jr., 
+&lsquo;Proposal for a complex APL&rsquo;, <i>APL79 Conference Proceedings</i>, 
+ACM, 1979, pp 47-53.</td></tr>
+</table>
+<br>
+
+
+
+<a name="bib"></a>
+<p><b>Bibliography</b></p>
+
+<p>Most high school algebra texts cover the definitions 
+of addition, subtraction, multiplication, reciprocation, 
+and division on complex numbers. 
+A.M. Gleason&rsquo;s <i>Fundamentals of Abstract Analysis</i>, 
+Addison Wesley, 1966, in chapters 10 and 15 
+covers the construction of the complex number system 
+and the definitions of the exponential, logarithm, power, 
+and trigonometric functions on complex numbers. 
+A more elementary discussion of much of the same material 
+is given in chapter 8 of K.E. Iverson&rsquo;s 
+<i>Elementary Analysis</i>, APL Press, Palo Alto. 
+In Milton Abramowitz and Irene Stegun&rsquo;s 
+<i>Handbook of Mathematical Tables</i>, Dover, N.Y., 1965, 
+may be found definitions of many of the analytic functions 
+on complex arguments. 
+A detailed exposition of the algorithm behind 
+the complex factorial and complex binomial functions 
+may be found in Hirondo Kuki&rsquo;s 
+&lsquo;Complex Gamma Function with Error Control&rsquo;, 
+<i>CACM 15</i>, 4, April 1972. 
+The paper by Paul Penfield, Jr., 
+on &lsquo;Principal Values and Branch Cuts in Complex APL&rsquo;, 
+to appear in the proceedings of APL81, 
+discusses in complete detail the choices for locations 
+of all branch cuts, direction of continuity of the branch cuts, 
+and values at the end of the branch cuts, 
+for all the analytic functions requiring them. 
+We are obliged to Professor Penfield 
+for providing us with an early draft of this valuable paper.</p>
+
+<p>Those interested in the discussion 
+regarding the extension of the floor, ceiling, residue, 
+and representation functions may read 
+E.E. McDonnell&rsquo;s &lsquo;Complex Floor&rsquo;, APL Congress 73, 
+North Holland/American Elsevier, 1973, 
+for one set of definitions, and 
+D.L. Forkes, &lsquo;Complex Floor Revisited&rsquo;, 
+to appear in the proceedings of APL81, for a counter-proposal.
+<br>&nbsp;</p>
+
+
+
+<br><hr>
+<a name="err"></a>
+<p align=center><font size=+2>Erratum</font></p>
+
+<table>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+<p>In the <a href="satn40a.htm#cons">Complex constants and display</a> section,
+the display of the fifth roots of<tt> ¯32 </tt>should read:</p>
+<pre>
+      ⎕←w←5 1⍴z
+   1.61803j1.17557
+ ¯0.618034j1.90211
+                ¯2
+¯0.618034j¯1.90211
+  1.61803j¯1.17557
+</pre>
+ </td></tr>
+</table>
+
+
+<br><hr>
+<font size=-1><p>First appeared as SHARP APL Technical Note 40, Complex Numbers, 1981-06-20.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-11-08 23:05</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2012-09-24 14:00</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

@@ -1,0 +1,2017 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Programming Style in APL</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Programming Style in APL</font><br><br>
+<b>Kenneth E. Iverson<br>
+IBM Thomas J. Watson Research Center<br>
+Yorktown Heights, New York</b></p>
+
+
+
+<br><hr>
+
+<p>When all the techniques of program management and 
+programming practice have been applied, 
+there remain vast differences in quality of code 
+produced by different programmers. 
+These differences turn not so much upon the use of specific 
+tricks or techniques as upon a general manner of expression, 
+which, by analogy with natural language, 
+we will refer to as <i>style</i>. 
+This paper addresses the question of developing 
+good programming style in APL.</p>
+
+<p>Because it does not rest upon specific techniques, 
+good style cannot be taught in a direct manner, 
+but it can be fostered by the acquisition of certain habits of thought. 
+The following sections should therefore be read more 
+as examples of general habits to be identified and fostered, 
+than as specific prescriptions of good technique.</p>
+
+<p>In programming, as in the use of natural languages, 
+questions of style depend upon the purpose of the writing. 
+In the present paper, emphasis is placed upon clarity 
+of expression rather than upon efficiency 
+in space and time in execution. 
+However, clarity is often a major contributor to efficiency, 
+either directly, in providing a fuller understanding 
+of the problem and leading to the choice of a better, 
+more flexible, and more easily documented solution, 
+or indirectly, by providing a clear and complete model 
+which may then be adapted (perhaps by programmers 
+other than the original designer) to the characteristics 
+of any particular implementation of APL.</p>
+
+<p>All examples are expressed in 0-origin. 
+Examples chosen from fields unfamiliar 
+to any reader should perhaps be skimmed 
+lightly on first reading.
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>1. Assimilation of Primitives and Phrases</b></p>
+
+<p>Knowledge of the bare definition of a primitive 
+can permit its use in situations 
+where its applicability is clearly recognizable. 
+Effective use, however, must rest upon a more intimate knowledge, 
+a feeling of familiarity, an ability to view it 
+from different vantage points, and an ability to recognize 
+similar uses in seemingly dissimilar applications.</p>
+
+<p>One technique for developing intimate knowledge 
+of a primitive or a phrase is to create at least 
+one clear and general example of its use, 
+an example which can be retained as a graphic picture 
+of its behavior when attempting 
+to apply it in complex situations. 
+We will now give examples of creating such pictures 
+for three important cases, the outer product, 
+the inner product, and the dyadic transpose.</p>
+
+
+<a name="1a"></a>
+<p><b>Outer product.</b> 
+The formal definition of the result of the 
+expression<tt> r←a∘.f&nbsp;b </tt>for a specified 
+primitive<tt> f </tt>and arrays<tt> a </tt>and<tt> b </tt>
+of ranks 3 and 4 respectively, may be expressed as:</p>
+
+<pre>
+      r[h;i;j;k;l;m;n] ←→ a[h;i;j] f b[k;l;m;n]
+</pre>
+
+<p>Although this definition is essentially complete, 
+it may not be very helpful to the beginner 
+in forming a manageable picture of the outer product.</p>
+
+<p>To this end it might be better to begin with the examples:</p>
+
+<pre>
+     n∘.+n←1 2 3 4                  n∘.×n
+2 3 4 5                         1  2  3  4
+3 4 5 6                         2  4  6  8
+4 5 6 7                         3  6  9 12
+5 6 7 8                         4  8 12 16
+</pre>
+
+<p>and emphasize the fact that these outer products 
+are the familiar addition and multiplication tables, 
+and that, more generally,<tt> a∘.f&nbsp;b </tt>yields 
+a <i>function table</i> 
+for the function f applied to the sets of 
+arguments<tt> a </tt>and<tt> b</tt>&nbsp;.</p>
+
+<p>One might reinforce the idea by examples in which 
+the outer product illuminates the definition, properties, 
+or applicability of the functions involved. 
+For example, the 
+expressions<nobr><tt> s∘.×s←¯3 ¯2 ¯1 0 1 2 3</tt> ,</nobr><tt> </tt>
+and<tt> ×s∘.×s </tt>
+yield an interesting picture of the rule of signs in multiplication, 
+and the expressions<tt> r∘.=v </tt>
+and<tt> r∘.≤v </tt>and<tt> '&nbsp;*'[r∘.=v] </tt>
+(with<tt> v←(x-3)×(x←1+⍳7)-5 </tt>and with<tt> r </tt>specified 
+as the range of<tt> v</tt>&nbsp;,<tt> </tt>
+that is,<nobr><tt> r←8 7 6 5 4 3 2 1 0 ¯1</tt>)</nobr><tt> </tt> 
+illustrate the applicability of outer products 
+in defining and producing graphs and bar charts. 
+These and other uses of outer products as function tables 
+are treated in Iverson
+<acronym title=
+"Iverson, K.E., Algebra: An Algorithmic Treatment, APL Press, 1976.">[1]</acronym>.</p>
+
+<p>Useful pictures of outer products of higher rank may also be formed. 
+For example,<tt> d∘.∨d∘.d←0&nbsp;1 </tt>
+gives a rank three function table for the 
+<i>or</i> function with three arguments, 
+and if<tt> a </tt>is a matrix of altitudes 
+of points in a rectangular area of land and<tt> c </tt>is a vector 
+of contour levels to be indicated on a map of the area, 
+then the expression<tt> c∘.≤a </tt>relates the points to the contour levels 
+and<tt> +⌿c∘.≤a </tt>gives the index of the contour 
+level appropriate to each point.</p>
+
+
+<a name="1b"></a>
+<p><b>Inner Product.</b> Although the inner product 
+is perhaps most used with at least one argument of 
+rank two or more, a picture of its behavior 
+and wide applicability is perhaps best obtained 
+(in the manner employed in Chapter 13 of 
+<acronym title=
+"Iverson, K.E., Algebra: An Algorithmic Treatment, APL Press, 1976.">Reference 1</acronym>) 
+by first exploring its significance 
+when applied to vector arguments. For example:</p>
+
+<table>
+<tr><td><tt>&nbsp; &nbsp; &nbsp; p←2 3 5 7 11</tt></td></tr>
+<tr><td><tt>&nbsp; &nbsp; &nbsp; q←2 0 2 1  0<br>&nbsp;</tt></td></tr>
+<tr><td valign=top><tt>&nbsp; &nbsp; &nbsp; +/p×q<br>21<br>&nbsp;</tt></td>
+ <td valign=top>Total cost in terms of price and quantity.</td></tr>
+<tr><td valign=top><tt>&nbsp; &nbsp; &nbsp; ⌊/p+q<br>3<br>&nbsp;</tt></td>
+ <td valign=top>Minimum trip of two legs with distances<br>
+ to and from connecting point given by<tt> p </tt>and<tt> q</tt> .</td></tr>
+<tr><td valign=top><tt>&nbsp; &nbsp; &nbsp; ×/p*q<br>700<br>&nbsp;</tt></td>
+ <td valign=top>The number whose prime factorization is specified by the exponents<tt> q</tt> .</td></tr>
+<tr><td valign=top><tt>&nbsp; &nbsp; &nbsp; +/p×q<br>21<br>&nbsp;</tt></td>
+ <td valign=top>Torque due to weights<tt> q </tt>placed at positions<tt> q </tt>relative to the axis.</td></tr>
+</table>
+
+<p>The first and last examples above illustrate 
+the fact that the same expression may be given 
+different interpretations in different fields of application.</p>
+
+<p>The inner product is defined in terms of expressions of the form used above. 
+Thus,<tt> p+.×q ←→ +/p×q </tt>and, 
+more generally for any pair of scalar 
+functions<tt> f </tt>and<tt> g</tt>&nbsp;,
+<nobr><tt> p f.g q ←→ f/p g q</tt> .</nobr><tt> </tt>
+The extension to arrays of higher rank 
+is made in terms of the definition for vectors; 
+each element of the result is the inner product 
+of a pair of vectors from the two arguments. 
+For the case of matrix arguments, 
+this can be represented by the following picture:</p>
+
+<img src="img/plusdottimes.bmp">
+
+<p>The<tt> +.× </tt>inner product applied 
+to two vectors<tt> v </tt>and<tt> w </tt>
+(as in<tt> v+.×w</tt>) can be construed 
+as a <i>weighted sum</i> of the vector<tt> v</tt>&nbsp;,<tt> </tt> 
+whose elements are each &ldquo;weighted&rdquo; 
+by multiplication by the corresponding elements 
+of<tt> w</tt>&nbsp;,<tt> </tt>and then summed. 
+This notion can be extended to give a useful interpretation 
+of the expression<tt> m+.×w </tt>
+for a matrix<tt> m</tt>&nbsp;,<tt> </tt>
+as a weighted sum of the column vectors 
+of<tt> m</tt>&nbsp;.<tt> </tt> Thus:</p>
+
+<pre>
+      w←3 1 4 
+      ⎕←m←1+3 3⍴⍳9
+1 2 3
+4 5 6
+7 8 9
+      m+.×w
+17 41 65
+</pre>
+
+<p>This result can be seen to be equivalent to 
+writing the elements of<tt> w </tt>below the columns 
+of<tt> m</tt>&nbsp;,<tt> </tt> 
+multiplying each column vector of<tt> m </tt>
+by the element below it, and adding.</p>
+
+<p>If<tt> w </tt>is replaced by a boolean vector<tt> b </tt>
+(whose elements are zeros or ones), 
+then<tt> m+.×b </tt>can still be construed as a weighted sum, 
+but can also be construed as <i>sums over subsets</i> 
+of the rows of<tt> m</tt>&nbsp;,<tt> </tt>
+the subsets being chosen by the 1&rsquo;s 
+in the boolean vector. For example:</p>
+
+<pre>
+      b←1 0 1
+      m+.×b
+4 10 6
+      b/m
+1 3
+4 6
+7 9
+      +/b/m
+4 10 16
+</pre>
+
+<p>Finally, by using an expression 
+of the form<tt> m×.*b </tt>instead 
+of<tt> m+.×b</tt>&nbsp;,<tt> </tt>
+a boolean vector can be used 
+to apply multiplication over a specified subset 
+of each of the rows of<tt> m</tt>&nbsp;.<tt> </tt>Thus:</p>
+
+<pre>
+      m×.*b
+3 24 63
+      ×/b/m
+3 24 63
+</pre>
+
+<p>This use of boolean vectors 
+to apply functions over specified subsets of arrays 
+will be pursued further in the section on generalization, 
+using boolean matrices as well as vectors.</p>
+
+
+<a name="1c"></a>
+<p><b>Dyadic transpose.</b> Although the transposition 
+of a matrix is easy to picture 
+(as an interchange of rows and columns), 
+the dyadic transpose of an array of higher rank is not, 
+as may be seen by trying to compare the following arrays:</p>
+
+<pre>
+      a              1 0 2⍉a               2 1 0⍉a
+abcd           abcd                  am 
+efgh           mnop                  eq 
+ijkl                                 iu 
+               efgh 
+mnop           qrst                  bn 
+qrst                                 fr 
+uvwx           ijkl                  jv
+               uvwx
+                                     co
+                                     gs
+                                     kw
+
+                                     dp
+                                     ht
+                                     lx
+</pre>
+
+<p>The difficulty increases when we permit left arguments 
+with repealed elements which produce &ldquo;diagonal sections&rdquo; 
+of the original array. 
+This general transpose is, however, a very useful function 
+and worth considerable effort to assimilate. 
+The following example of its use may help.</p>
+
+<p>The associativity of a function f 
+is normally expressed by the identity:</p>
+
+<pre>      x f (y f z) ←→ (x f y) f z</pre>
+
+<p>and a <i>test</i> of the associativity 
+of the function on some specified 
+domain<tt><nobr> d←1  2  3 </tt></nobr>
+can be made by comparing the two function 
+tables<tt><nobr> d∘.f(d∘.f d) </nobr></tt> 
+and<tt><nobr> (d∘.f d)∘.f d </nobr></tt>
+corresponding to the left and right sides of the identity. 
+For example:</p>
+
+<pre>
+      ⎕←l←d∘.-(d∘.-d)       ⎕←r←(d∘.-d)∘.-d)        l=r 
+ 1 2 3                ¯1 ¯2 ¯3                0 0 0 
+ 0 1 2                ¯2 ¯3 ¯4                0 0 0 
+¯1 0 1                ¯3 ¯4 ¯5                0 0 0 
+                         
+ 2 3 4                 0 ¯1 ¯2                0 0 0 
+ 1 2 3                ¯1 ¯2 ¯3                0 0 0 
+ 0 1 2                ¯2 ¯3 ¯4                0 0 0 
+                         
+ 3 4 5                 1  0 ¯1                0 0 0 
+ 2 3 4                 0 ¯1 ¯2                0 0 0 
+ 1 2 3                ¯1 ¯2 ¯3                0 0 0 
+
+      ^/,l=r
+0
+
+      ⎕←l←d∘.+(d∘.+d)       ⎕←r←(d∘.+d)∘.+d)        l=r 
+3 4 5                 3 4 5                   1 1 1 
+4 5 6                 4 5 6                   1 1 1 
+5 6 7                 5 6 7                   1 1 1 
+                     
+4 5 6                 4 5 6                   1 1 1 
+5 6 7                 5 6 7                   1 1 1 
+6 7 8                 6 7 8                   1 1 1 
+                     
+5 6 7                 5 6 7                   1 1 1 
+6 7 8                 6 7 8                   1 1 1 
+7 8 9                 7 8 9                   1 1 1 
+</pre>
+
+<p>For the case of logical functions, 
+the test made by comparing the function tables 
+can be made complete, 
+since the functions are defined on a finite 
+domain<tt> d←0&nbsp;1</tt>&nbsp;.<tt> </tt>For example:</p>
+
+<pre>
+      d←0 1
+      ∧/,(d∘.∨(d∘.∨d))=((d∘.∨d)∘.∨d)
+1
+      ∧/,(d∘.≠(d∘.≠d))=((d∘.≠d)∘.≠d)
+1
+      ∧/,(d∘.⍲(d∘.⍲d))=((d∘.⍲d)∘.⍲d)
+0
+</pre>
+
+<p>Turning to the identity for the distribution 
+of one function over another we have expressions such as:</p>
+
+<table>
+<tr><td><tt>&nbsp; &nbsp; &nbsp; x×(y+z) ←→ (x×y)+(x×z)</tt></td></tr>
+<tr><td>and</td></tr>
+<tr><td><tt>&nbsp; &nbsp; &nbsp; x∧(y∨z) ←→ (x∧y)∨(x∧z)</tt></td></tr>
+</table>
+
+<p>Attempting to write the function table comparison for the latter case as:</p>
+
+<pre>
+      l←d∘.∧(d∘.∨d)
+      r←(d∘.∧d)∘.∨(d∘.∧d)
+</pre>
+
+<p>we encounter a difficulty since the two 
+sides<tt> l </tt>and<tt> r </tt>
+do not even agree in rank, being of ranks 3 and 4.</p>
+
+<p>The difficulty clearly arises 
+from the fact that the axes of the left and right function tables 
+must agree according lo the names in the original identity; 
+in particular, the<tt> x </tt>in position 0 on the left 
+and in positions 0 and 2 on the right implies 
+that axes 0 and 2 on the right must be &ldquo;run together&rdquo; 
+to form a single axis in position 0. 
+The complete disposition of the four axes 
+on the right can be seen to be described 
+by the vector<nobr>0 1 0 2,</nobr> 
+showing where in the result 
+each of the original axes is to appear. 
+This is a paraphrase of the definition of the dyadic transpose, 
+and we can therefore compare<tt> l </tt>
+with<nobr><tt> 0 1 0 2⍉r</tt> .</nobr><tt> </tt>Thus:</p>
+
+<pre>
+      ^/,(d∘.^(d∘.∨d))=0 1 0 2⍉((d∘.^d)∘.∨(d∘.^d))
+1
+</pre>
+
+<p>The idea of thorough assimilation discussed thus far 
+in terms of primitive expressions can be applied equally 
+to commonly used phrases and defined functions.  For example:
+</p>
+
+<table>
+<tr><td><tt>⍳⍴v</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The indices of vector<tt> v </tt></td></tr>
+<tr><td><tt>⍳⍴⍴a</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The axes of<tt> a </tt></td></tr>
+<tr><td><tt>×/⍴a</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The number of elements in<tt> a </tt></td></tr>
+<tr><td><tt>v[⍋v]</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>Sorting the vector<tt> v </tt></td></tr>
+<tr><td><tt>m[⍋+⌿r<.-⍉r←m,0;]&nbsp;</tt></td><td>&nbsp;</td>
+ <td>Sorting the rows of<tt> m </tt>into lexical order</td></tr>
+<tr><td><tt>⍉f⍉m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>Applying to columns a function<tt> f </tt>defined on rows</td></tr>
+</table>
+
+<p>Collections of commonly used phrases and functions may 
+be found in Perlis and Rugaber 
+<acronym title=
+"Perlis, A.J., and S. Rugaber, The APL Idiom List, Research Report 87, Computer Sciences Department, Yale University, 1977.">[2]</acronym>
+and in Macklin 
+<acronym title=
+"Macklin, D., The APL Handbook of Techniques, Form Number S320-5996, IBM Corporation, 1977.">[3]</acronym>.
+<br>&nbsp;</p>
+
+
+
+<a name="2"></a>
+<p><b>2. Function Definition</b></p>
+
+<p>A complex system should best be designed 
+not as a single monolithic function, 
+but as a structure built from component functions 
+which are meaningful in themselves and 
+which may in turn be realized from simpler components. 
+In order lo interact with other elements of a system, 
+and therefore serve as a &ldquo;building block&rdquo;, 
+a component must possess inputs and outputs. 
+A defined function with an explicit argument, 
+or arguments, and an explicit result provides such a component.</p>
+
+<p>If a component function produces <i>side effects</i> 
+by setting global variables used by other components, 
+the interaction between components becomes much more difficult 
+to analyze and comprehend than if communication 
+between components is limited 
+to their explicit arguments and explicit results. 
+Ideally, systems should be designed with communication 
+so constrained and, in practice, the number of global variables 
+employed should be severely limited.</p>
+
+<p>Because the fundamental definition form in APL 
+(produced by the use of<tt> ∇ </tt>
+or by<tt> ⎕fx</tt>&nbsp;,<tt> </tt>
+and commonly called the <i>del</i> form) 
+is necessarily general, it permits the definition of functions 
+which produce side effects, which have no explicit arguments, 
+and which have no explicit results. 
+The <i>direct</i> form which uses the symbols<tt> ⍺ </tt>and<tt> ⍵ </tt>
+(as defined in Iverson 
+<acronym title=
+"Iverson, K.E., Elementary Analysis, APL Press, 1976.">[4]</acronym>) 
+exercises a discipline more appropriate to good design, 
+allowing only the definition of functions with explicit results, 
+and localizing all names which are specified within the function, 
+thereby eliminating side effects outside of it.</p>
+
+<p>The direct form of definition may be either simple or conditional. 
+The latter form will be discussed in section 6. 
+The simple form may be illustrated as follows. The expression</p>
+
+<pre>
+      f:⍵+4÷⍺
+</pre>
+
+<p>may be read as 
+&ldquo;<tt>f </tt>is defined by the expression<tt> ⍵+4÷⍺</tt>&nbsp;,<tt> </tt>
+where<tt> ⍺ </tt>represents the first argument of<tt> f </tt>and 
+<tt> ⍵ </tt>represents the second&rdquo;. 
+Thus<tt> 8&nbsp;f&nbsp;3 </tt>yields<tt> 3.5</tt>&nbsp;.</p>
+
+<p>If a direct definition is to produce a machine executable function, 
+the definition must be translated by a suitable function. 
+For example, if this translation 
+is called<tt> def</tt>&nbsp;,<tt> </tt>then:</p>
+
+<pre>
+      def                          def
+f:⍺+÷⍵                       sort:⍵[⍋⍵]
+f                            sort
+      3 f 4                        sort 3 1 4 3 6 2 7 6
+3.25                         1 2 3 3 4 6 6 7
+
+      def                          def
+p:+/⍺×⍵*⍳⍴⍺                  pol:(⍵∘.*⍳⍴⍺)+.×⍺
+p                            pol
+      1 3 3 1 p 4                  1 3 3 1 pol 0 1 2 3 4
+125                          1 8 27 64 125
+</pre>
+
+<p>The direct form of definition will be used in the examples which follow. 
+The question of the translation function<tt> def </tt> 
+is discussed in Appendix A.
+<br>&nbsp;</p>
+
+
+
+<a name="3"></a>
+<p><b>3. Generality</b></p>
+
+<p>It is often possible to take a function defined 
+for a specific purpose and modify it 
+so that it applies to a wider class of problems. 
+For example, the function<tt> av:(+/⍵)÷⍴⍵ </tt>
+may be applied to a numeric vector to produce its average. 
+However, it fails lo apply to average all rows in a matrix; 
+the simple modification<tt> av2:(+/⍵)÷¯1↑⍴⍵ </tt>not only permits this, 
+but applies to average the vectors along the last axis of any array, 
+including the case of a vector.</p>
+
+<p>The problem might also be generalized to a weighted average, 
+in which a vector left argument specifies the weights 
+to be applied in summation, the result being normalized 
+by division by the total weight. 
+Again this function could be defined to apply 
+to a vector right argument 
+in the form<tt> wav:(+/⍺×⍵)÷+/⍺</tt>&nbsp;,<tt> </tt> 
+but, applying the inner product in the manner discussed 
+in the preceding section, 
+we may define a function which applies to matrices:</p>
+
+<pre>
+      wav2:(⍵+.×⍺)÷+/⍺
+</pre>
+
+<p>Thus:</p>
+
+<pre>
+      ⎕←m←3 4⍴⍳12
+0 1  2  3
+4 5  6  7
+8 9 10 11
+      w←2 1 3 4
+      w wav2 m
+1.9 5.9 9.9
+</pre>
+
+<p>The same function may be interpreted in different ways 
+in different disciplines. 
+For example, if column<tt> i </tt>of<tt> m </tt>
+gives the coordinates of a mass 
+of weight<tt> w[i]</tt>&nbsp;,<tt> </tt> 
+then<tt> w wav2 m </tt>is the center 
+of gravity of the set of masses. 
+Moreover, if the elements of<tt> w </tt>
+are required to be non-negative, 
+then the result<tt> w wav2 m </tt>is always a point 
+in the convex space defined 
+by the points of<tt> m</tt>&nbsp;,<tt> </tt>
+that is a point within the body whose vertices 
+are given by<tt> m</tt>&nbsp;.<tt> </tt>
+This can be more easily seen 
+in the following equivalent function:</p>
+
+<pre>
+      wav3:⍵+.×(⍵÷+/⍺)
+</pre>
+
+<p>in which the weights are normalized to sum to 1.</p>
+
+<p>Striving to write functions in a general way 
+not only leads to functions with wider applicability, 
+but often provides greater insight into the problem. 
+We will attempt lo illustrate this in three areas, 
+functions on subsets, indexing, and polynomials.</p>
+
+
+<a name="3a"></a>
+<p><b>Functions on subsets.</b> It is often necessary 
+to apply some function (such as addition or maximum) 
+over all elements in some subset of a given list. 
+For example, to sum all non-negative elements in the 
+list<nobr><tt> x←3 ¯4 2 0 ¯3 7</tt> ,</nobr><tt> </tt> 
+we might first define the boolean vector which 
+identifies the desired subset, then select the set, 
+and then sum it:</p>
+
+<pre>
+      x
+3 ¯4 2 0 ¯3 7
+      x≥0                (x≥0)/x           +/(x≥0)/x
+1 0 1 1 0 1        3 2 0 7           12
+</pre>
+
+<p>In general, if<tt> b </tt>is a boolean vector 
+which defines a subset, 
+we may write<tt> +/b/x</tt>&nbsp;.<tt> </tt> 
+However, as seen in the discussion of inner product, 
+this may also be written 
+in the form<tt> x+.×b</tt>&nbsp;,<tt> </tt> 
+and in this form it applies more generally 
+to a boolean matrix (or higher rank array) 
+in which the columns (or vectors along the leading axis) 
+determine the different subsets. For example, if</p>
+
+<pre>
+      ⎕←b←(4⍴2)⊤⍳2*4
+0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1
+0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1
+0 0 1 1 0 0 1 1 0 0 1 1 0 0 1 1
+0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1
+</pre>
+
+<p>then the columns of<tt> b </tt>represent all possible subsets 
+of a vector of four elements, 
+and if<nobr><tt> x←2 3 5 7 </tt></nobr> then:</p>
+
+<pre>
+      x+.×b
+0 7 5 12 3 10 8 15 2 9 7 14 5 12 10 17
+</pre>
+
+<p>yields the sums over all subsets of<tt> x</tt>&nbsp;,<tt> </tt> 
+including the empty set <nobr>(<tt>0 0 0 0</tt>),</nobr> 
+and the complete set <nobr>(<tt>1 1 1 1</tt>).</nobr></p>
+
+<p>It is also easy to establish that</p>
+
+<pre>
+      x×.*b
+1 7 5 35 3 21 15 105 2 14 10 70 6 42 30 210
+</pre>
+
+<p>yields the products over all subsets, 
+and that (for non-negative vectors <tt> x </tt>) 
+the expression</p>
+
+<pre>
+      x⌈.×b
+0 7 5 7 3 7 5 7 2 7 5 7 3 7 5 7
+</pre>
+
+<p>yields the maxima over all subsets of<tt> x</tt>&nbsp;.<tt> </tt>
+This last expression holds only 
+for non-negative values of<tt> x</tt>&nbsp;,<tt> </tt> 
+but could be replaced by the more general 
+expression<tt> m+(x-m←⌊/x)⌈.×b</tt>&nbsp;.<tt> </tt> 
+A more general approach to this problem 
+(in terms of a new operator) 
+is discussed in Section 2 of Iverson 
+<acronym title=
+"Iverson, K.E., Operators and Functions, Research Report 7091, IBM Corporation, 1978.">[5]</acronym>.</p>
+
+<p>If we have a list<tt> a </tt>with repeated elements, 
+and if we need to evaluate some costly function<tt> f </tt>
+on each element of<tt> a</tt>&nbsp;,<tt> </tt>
+then it may be efficient 
+to evaluate<tt> f </tt>only on the <i>nub</i> of <tt> a </tt> 
+(consisting of the distinct elements of<tt> a</tt>)<tt> </tt> 
+and then distribute the results 
+to the appropriate positions 
+to yield<tt> fa</tt>&nbsp;.<tt> </tt> 
+Thus:</p>
+
+<table>
+<tr><td><b>Function</b></td><td>&nbsp; &nbsp;</td>
+ <td><b>Definition</b></td><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><b>Example</b></td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td colspan=4>&nbsp;</td>
+ <td><tt>&nbsp; &nbsp; &nbsp; a←3 2 3 5 2 3</tt> &nbsp;</td></tr>
+<tr><td valign=top>Nub</td><td>&nbsp;</td>
+ <td valign=top><tt>nub:((⍳⍴⍵)=⍵⍳⍵)/⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>&nbsp; &nbsp; &nbsp; nub a<br>
+ 3 2 5</tt></td></tr>
+<tr><td valign=top>Distribution</td><td>&nbsp;</td>
+ <td valign=top><tt>dis:(nub ⍵)∘.=⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>&nbsp; &nbsp; &nbsp; dis a<br>
+ 1 0 1 0 0 1<br>
+ 0 1 0 0 1 0<br>
+ 0 0 0 1 0 0</tt></td></tr>
+<tr><td valign=top>Example</td><td>&nbsp;</td>
+ <td valign=top><tt>f:⍵*2</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>&nbsp; &nbsp; &nbsp; f a<br>
+9 4 9 25 4 9<br>
+&nbsp; &nbsp; &nbsp; f nub a<br>
+9 4 25<br>
+&nbsp; &nbsp; &nbsp; (f nub a)+.×dis a<br>
+9 4 9 25 4 9</tt></td></tr>
+
+</table>
+
+<p>From the foregoing it may be seen 
+that an inner product post-multiplication 
+by the distribution matrix<tt> dis&nbsp;a </tt>distributes 
+the results<tt> f&nbsp;nub&nbsp;a </tt>appropriately. 
+The distribution function may also be used 
+to perform aggregation or summarization. 
+For example, if<tt> c </tt>is a vector of costs associated 
+with the account numbers recorded in<tt> a</tt>&nbsp;,<tt> </tt>
+then summarization of the costs for each account 
+may be obtained by pre-multiplication 
+by<tt> dis&nbsp;a</tt>&nbsp;.<tt> </tt>. Thus:</p>
+
+<pre>
+      c←1 2 3 4 5 6
+      (dis a)+.×c
+10 7 4
+</pre>
+
+
+<a name="3b"></a>
+<p><b>Indexing.</b> If<tt> m </tt>is a matrix 
+of<tt> n←¯1↑⍴m </tt>columns, 
+and if<tt> i </tt>and<tt> j </tt>are scalars, 
+then element<tt> m[i;j] </tt>
+can be selected from the ravel<tt> r←,m </tt>
+by the expression<tt> r[(n×i)+j]</tt>&nbsp;.<tt> </tt> 
+More generally, if<tt> k </tt>is a two-rowed matrix 
+whose columns are indices to elements 
+of<tt> m</tt>&nbsp;,<tt> </tt> 
+then these elements may be selected 
+much more easily from<tt> r </tt>
+(by the expression<tt> r[(n×k[0;])+k[1;]]</tt>)<tt> </tt> 
+than from<tt> m </tt>itself. 
+Moreover, the indexing expression 
+can be simplified to<tt> r[(n,1)+.×k]</tt>&nbsp;,<tt> </tt> 
+or to<tt> r[(⍴m)⊥k]</tt>&nbsp;.</p>
+
+<p>The last form is interesting in that it applies to 
+an array<tt> m </tt>of any rank<tt> p</tt>&nbsp;,<tt> </tt> 
+provided that<tt> k </tt>has<tt> p </tt>rows. 
+More generally, it applies to an index array<tt> k </tt>
+of any rank (provided that<tt> (⍴⍴m)=1↑⍴k</tt>)<tt> </tt>
+to produce a result of shape<tt> 1↓⍴k</tt>&nbsp;.<tt> </tt> 
+To summarize, we may define a general indexing function:</p>
+
+<pre>
+      sub:(,⍺)[(⍴⍺)⊥⍵]
+</pre>
+
+<p>and use it as in the following examples:</p>
+
+<pre>
+      ⎕←m←3 3⍴⍳9                 ⎕←k←3|2 5⍴⍳10
+0 1 2                      0 1 2 0 1
+3 4 5                      2 0 1 2 0
+6 7 8
+      m sub k
+2 3 7 2 3
+      m sub 3|2 3 5⍴⍳30
+0 4 8 0 4
+8 0 4 8 0
+4 8 0 4 8
+      (4 4 4⍴⍳4*3) sub 4|3 2 6⍴2×⍳36
+0 42 0 42 0 42
+0 42 0 42 0 42
+</pre>
+
+<p>This use of the base value function 
+in the expression<tt> (⍴⍺)⊥⍵ </tt>
+correctly suggests the possible use of the inverse 
+expression<tt> (⍴⍺)⊤⍵ </tt>to obtain the indices 
+to an array<tt> ⍺ </tt>
+in terms of the index to its ravel (that is,<tt> ⍵</tt>).</p>
+
+
+<a name="3c"></a>
+<p><b>Polynomials.</b> If<tt> f:+/⍺×⍵*⍳⍴⍺</tt>&nbsp;,<tt> </tt>
+then the expression<tt> c&nbsp;f&nbsp;x </tt>
+evaluates the polynomial with 
+coefficients<tt> c </tt>
+for the scalar argument<tt> x</tt>&nbsp;.<tt> </tt>
+The more general function:</p>
+
+<pre>
+       p:(⍵∘.*⍳⍴⍺)+.×⍺
+</pre>
+
+<p>applies to a vector right argument and 
+(since<tt> ⍵∘.*⍳⍴⍺ </tt>
+is then a matrix<tt> m</tt>&nbsp;,<tt> </tt> 
+and since<tt> m+.×⍺ </tt>is a linear function 
+of<tt> ⍺</tt>)<tt> </tt> 
+emphasizes the fact that the polynomial 
+is a linear function of its coefficients. 
+If<tt> (⍴⍵)=⍴⍺</tt>&nbsp;,<tt> </tt>
+then<tt> m </tt>is square, 
+and if the elements of<tt> ⍵ </tt>
+are all distinct (that is, <tt> (⍴⍵)=⍴nub ⍵</tt>),<tt> </tt> 
+then<tt> m </tt>is non-singular, and the function:</p>
+
+<pre>
+      fit:(⌹⍵∘.*⍳⍴⍺)+.×⍺
+</pre>
+
+<p>is inverse to<tt> p </tt>in the sense that:</p>
+
+<p><tt>&nbsp; &nbsp; &nbsp; c ←→ (c p x) fit x </tt>&nbsp; 
+and &nbsp;<tt> y ←→ (y fit x)p x</tt></p>
+
+<p>In other words, if<tt> y←f&nbsp;x </tt>
+for some scalar function<tt> f</tt>&nbsp;,<tt> </tt> 
+then<tt> y&nbsp;fit&nbsp;x </tt>
+yields the coefficients of the polynomial 
+which fits the function<tt> f </tt>
+at the points (arguments)<tt> x</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+      3⍕y←*x←0 .5 1 1.5
+1.000 1.649 2.718 4.482
+      3⍕c←y fit x
+1.000 1.059 0.296 0.364
+      3⍕c p x
+1.000 1.649 2.718 4.482
+</pre>
+
+<p>The function<tt> f </tt>can be defined 
+in a neater equivalent form,
+using the dyadic form of<tt> ⌹</tt>&nbsp;,<tt> </tt> 
+as<tt> fit:⍺⌹⍵∘.*⍳⍴⍺</tt>&nbsp;.<tt> </tt>
+Moreover, the more general function:</p>
+
+<pre>
+      lsf:⍺⌹⍵∘.*⍳n
+</pre>
+
+<p>(which depends upon the global variable<tt> n</tt>)<tt> </tt>  
+yields the<tt> n </tt>coefficients of the polynomial 
+of order<tt> n-1 </tt>which best fits 
+the function<tt> ⍺←f&nbsp;⍵ </tt> 
+in the least squares sense. Thus:</p>
+
+<pre>
+      n←4
+      3⍕y lsf x
+1.000 1.059 0.296 0.364
+      n←3                               n←2
+      3⍕c←y lsf x                       3⍕c←y lsf x
+1.014 0.631 1.115                 0.735 2.303
+      3⍕c p x                           3⍕c p x
+1.014 1.608 2.759 4.468           0.735 1.886 3.038 4.189
+</pre>
+
+<p>The case<tt> n←2 </tt>yields the best straight line fit. 
+It can be used, for example, in estimating 
+the &ldquo;compound interest&rdquo; 
+or &ldquo;growth rate&rdquo; of a function 
+that is assumed to be approximately exponential. 
+This is done by fitting the logarithm 
+of the values and then taking the exponential of the result. 
+For example:</p>
+
+<pre>
+      x←0 1 2 3 4 5
+      3⍕y←300×1.09*x
+ 300.000 327.000 356.430 388.509 423.474 461.587
+      n←2
+      3⍕e←(⍟y) lsf x
+ 5.704 0.086
+      *e
+300 1.09
+      3⍕(*e[0])×(*e[1])*x
+ 300.000 327.000 356.430 388.509 423.474 461.587
+      3⍕y←y+?6⍴⎕rl←50
+ 300.000 355.000 395.430 434.509 454.474 508.587
+      3⍕e←(⍟y) lsf x
+ 5.749 0.099
+      *e
+313.7594974 1.104368699
+      3⍕(*e[0])×(*e[1])*x
+ 313.759 346.506 382.671 422.609 466.717 515.427
+</pre>
+
+<p>The growth rate is<tt> *e[1]</tt>&nbsp;,<tt> </tt> 
+and the estimated compound interest rate is therefore given by the function</p>
+
+<pre>
+      eci:100×¯1+*1↓(⍟⍺) lsf ⍵
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      1⍕i←y eci x
+10.4
+      3⍕(*e[0])×(1+0.01×i)*x
+313.759 346.506 382.671 422.609 466.717 515.427
+</pre>
+
+<p>General considerations can often lead to 
+simple solutions of specific problems. 
+Consider, for example, the definition of a &ldquo;times&rdquo; 
+function<tt> t </tt>for the multiplication 
+of polynomials, that is:</p>
+
+<pre>
+      (c p x)×(d p x) ←→ (c t d) p x
+</pre>
+
+<p>The function<tt> t </tt>is easily shown to be linear 
+in both its left and right arguments, 
+and can therefore be expressed 
+in the form<tt> c+.×b+.×d</tt>&nbsp;.<tt> </tt>
+The array<tt> b </tt>is a boolean array whose unit elements serve 
+to multiply together appropriate elements 
+of<tt> c </tt>and<tt> d</tt>&nbsp;,<tt> </tt>
+and whose zeros suppress contributions from other pairs of elements. 
+The elements of<tt> b </tt>are determined by the exponents associated 
+with<tt> c</tt>&nbsp;<tt> </tt>
+with<tt> d</tt>&nbsp;<tt> </tt>and with the result vector, 
+that is,<tt> ⍳⍴c </tt>and<tt> ⍳⍴d </tt>and<tt> ⍳⍴1↓c,d</tt>&nbsp;.<tt> </tt> 
+For each element of the result, the &ldquo;deficiency&rdquo; 
+of each element of the exponents associated with<tt> d </tt> 
+is given by the table<tt> s←(⍳⍴1↓c,d)∘.-⍳⍴d</tt>&nbsp;,<tt> </tt> 
+and the array<tt> b </tt>is obtained by comparing this deficiency 
+with the contributions from the exponents 
+associated with<tt> c</tt>&nbsp;,<tt> </tt> 
+that is,<tt> (⍳⍴c)∘.=s</tt>&nbsp;.<tt> </tt>
+To summarize, the times function may be defined as follows:</p>
+
+<pre>
+      t:⍺+.×(⍺b⍵)+.×⍵
+      b:(⍳⍴⍺)∘.=(⍳⍴1↓⍺,⍵)∘.-⍳⍴⍵
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      ⎕←e←(c←1 2 1) t (d←1 3 3 1)
+1 5 10 10 5 1
+</pre>
+
+<p>For example:</p>
+
+<p>Since the expression<tt> ⍺+.×(⍺b⍵) </tt>yields a matrix, 
+it appears that the inverse problem 
+of defining a function<tt> db </tt>(divided by) 
+for polynomial division might be solved by inverting this matrix. 
+To this end we define a related function<tt> bq </tt>expressed 
+in terms of<tt> e </tt>and<tt> c</tt>&nbsp;,<tt> </tt>
+rather than in terms of<tt> c </tt>and<tt> d</tt>&nbsp;:</p>
+
+<pre>
+      bq:(⍳⍴⍺)∘.=(⍳⍴⍵)∘.-⍳1+(⍴⍵)-⍴⍺
+</pre>
+
+<p>and consider the matrix<nobr><tt> m←c+.×c bq e</tt> .</nobr></p>
+
+<p>The expression<tt> (⌹m)+.×e </tt>fails to work properly 
+because<tt> m </tt>is not square, and we recognize two cases, 
+the first being given by inverting the top part of<tt> m </tt>
+(that is,<tt> ⌹(2⍴⌊/⍴m)↑m</tt>)<tt> </tt> 
+and yielding a quotient with high-order remainder, 
+and the second by inverting the bottom part 
+and yielding a quotient with low order remainder. Thus:</p>
+
+<pre>
+      dbho:(d↑⍺)⌹(2⍴d← ⌊/⍴m)↑m←⍵+.×⍵bq⍺
+      dblo:(d↑⍺)⌹(2⍴d←-⌊/⍴m)↑m←⍵+.×⍵bq⍺
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      e←1 5 10 10 7 4                e←4 7 10 10 5 1
+      c←1 2 1                        c←1 2 1
+      ⎕←q←e dbho c                   ⎕←q←e dblo c
+1 3 3 1                        1 3 3 1
+      0⍕r←e-c t q                    0⍕r←e-c t q
+0 0 0 0 2 3                    3 2 0 0 0 0
+</pre>
+
+<p>The treatment of polynomials is a prolific source 
+of examples of the insights provided by precise general functions 
+for various processes, 
+insights which often lead to better ways 
+of carrying out commonly-needed hand calculations. 
+For example, a function<tt> e </tt>for the expansion 
+of a polynomial<tt> c </tt>
+(defined more precisely 
+by the relation<nobr><tt> (e c)p x ←→ c p x+1</tt>)</nobr><tt> </tt> 
+can be defined as:</p>
+
+<pre>
+      e:(bc ⍴⍵)+.×⍵                  bc:(⍳⍵)∘.!⍳⍵
+</pre>
+
+<p>Working out an example shows that manual expansion of<tt> c </tt>
+can be carried out be jotting down the table 
+of binomial coefficients of order<tt> ⍴c </tt>
+(that is,<tt> bc&nbsp;⍴⍵</tt>)<tt> </tt> 
+and then taking a weighted sum of its columns, 
+the weights being the elements of<tt> c</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="4"></a>
+<p><b>4. Identities</b></p>
+
+<p>An identity is an equivalence between two different expressions. 
+Although identities are commonly thought 
+of only as tools of mathematical analysis, 
+they can be an important practical tool 
+for simplifying and otherwise modifying expressions 
+used in defining functions.</p>
+
+<p>Consider, for example, a function<tt> f </tt>
+which applied to a boolean vector suppresses 
+all 1&rsquo;s after the first. 
+It could be used, for example, 
+in the expression<nobr><tt> (~f x='d')/x </tt></nobr>
+to suppress the first<tt> d </tt>
+in a character string<tt> x</tt>&nbsp;.<tt> </tt> 
+The function could be defined 
+as<tt> f:(⍵⍳1)=⍳⍴⍵</tt>&nbsp;.<tt> </tt> 
+However, the following identity holds:</p>
+
+<pre>
+      (⍵⍳1)=⍳⍴⍵ ←→ <\⍵
+</pre>
+
+<p>and we may therefore use one or other of the equivalent functions:</p>
+
+<pre>
+      f:(⍵⍳1)=⍳⍴⍵                   g:&lt;\⍵
+</pre>
+
+<p>One may react to a putative identity in several ways: 
+accept it on faith and use it as a practical tool, 
+work some examples to gain confidence and a feeling 
+for why it works, or prove its validity in a general way. 
+The last two take more time, 
+but often lead to further insights and further identities. 
+Thus the application 
+of the functions<tt> f </tt>and<tt> g </tt>
+to a few examples might lead one to see 
+that<tt> g </tt>applies in a straightforward way 
+to the rows of a matrix, 
+but<tt> f </tt>does not, that both can be applied 
+to locate the first zero 
+by the expressions<tt> ~f~b </tt>
+and<tt> ~g~b</tt>&nbsp;,<tt> </tt> 
+and (perhaps) that the latter case 
+(that is,<tt> ~&lt;\~b</tt>)<tt> </tt> 
+can be replaced by the simpler 
+expression<tt> ≤\b</tt>&nbsp;.<tt> </tt></p>
+
+<p>As a second example, consider the 
+expression<tt> y←((~b)/x),b/x </tt>with<tt> b←x≤2</tt>&nbsp;.<tt> </tt> 
+The result is to <i>classify</i> the elements of<tt> x </tt> 
+by placing all those in a specified class 
+(those less than or equal to 2) 
+at the tail end of<tt> y</tt>&nbsp;.<tt> </tt> 
+More generally, we may define a <i>classification</i> 
+function<tt> c </tt>which classifies the elements 
+of its right argument according to its boolean left argument:</p>
+
+<pre>
+      c:((~⍺)/⍵),⍺/⍵
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      x←3 1 4 7 2
+      ⎕←b←x≤2
+0 1 0 0 1
+      b c x
+3 4 7 1 2
+</pre>
+
+<p>Since the result of<tt> c </tt>is a permutation 
+of its right argument, 
+it should be possible to define an equivalent function 
+in the form<tt> ⍵[v]</tt>&nbsp;,<tt> </tt> 
+where<tt> v </tt>is some permutation vector. 
+It can be shown that the appropriate permutation vector 
+is simply<tt> ⍋⍺</tt>&nbsp;.<tt> </tt> 
+For example:</p>
+
+<pre>
+      ⍋b                        x[⍋b]
+0 2 3 1 4                 3 4 7 1 2
+</pre>
+
+<p>Thus:</p>
+
+<p><tt>&nbsp; &nbsp; &nbsp; p:⍵[⍋⍺] </tt>&nbsp; and &nbsp;<tt> c:((~⍺)/⍵),⍺/⍵</tt>
+</p>
+
+<p>are equivalent functions.</p>
+
+<p>For any given function there are often related functions 
+(such as an inverse) of practical interest. 
+For example, if<nobr><tt> v←b c x</tt> ,</nobr><tt> </tt>
+then there is some inverse function<tt> ci </tt>
+such that<tt> b&nbsp;ci&nbsp;v </tt>yields
+<tt> x</tt>&nbsp;,<tt> </tt> 
+Moreover, the definition of a related function 
+may be much easier to derive from one 
+of several different equivalent definitions 
+of the original function than from the others. 
+Thus the definition of the inverse<tt> ci </tt>may not 
+be immediately evident from the definition<tt> c</tt>&nbsp;,<tt> </tt> 
+but from the definition<tt> p </tt>it is clear that 
+what is needed is the inverse permutation. Thus:</p>
+
+<pre>
+      ci←{⍵[⍋⍋⍺]}
+
+      ⎕←v←b c x                 b ci x     
+3 7 1 4 2                 3 4 7 1 2
+</pre>
+
+<p>Finally, a given formulation of a function 
+may suggest a simple formulation for a similar function. 
+For example, the application of the function<tt> p </tt> 
+with a left argument containing a single 1 
+can be seen to effect a rotation of that suffix 
+of the right argument marked off by the location of the 1. 
+This suggests the following formulation 
+for a function which rotates each 
+of the segments marked off 
+by the 1&rsquo;s in the left argument:</p>
+
+<pre>
+      rs:⍵[⍋⍺++\⍺]
+
+      1 0 0 1 0 0 0 1 0 rs 'abcdefghi'
+bcaefgdih
+</pre>
+
+
+<a name="4a"></a>
+<p><b>Dualities</b>. We will now consider one class 
+of very useful identities in some detail. 
+The most familiar example of the class is known 
+as De Morgan&rsquo;s law and is expressed as follows:</p>
+
+<pre>
+      x^y ←→ ~(~x)∨(~y)
+</pre>
+
+<p>Useful related forms of De Morgan&rsquo;s law are:</p>
+
+<pre>
+      ^/v ←→ ~∨/~v
+      ^\v ←→ ~∨\~v
+      m∨.^n ←→ ~(~m)^.∨(~n)
+</pre>
+
+<p>De Morgan&rsquo;s law concerns a relation 
+between the functions <i>and</i>, <i>or</i>, and <i>not</i> 
+<nobr>(<tt>^ ∨ ~</tt>),</nobr><tt> </tt> 
+and we say that<tt> ^ </tt>is <i>the dual of</i><tt> ∨ </tt>
+<i>with respect to</i><tt> ~</tt>&nbsp;.<tt> </tt> 
+Each of the boolean functions of two arguments 
+possess a dual with respect to<tt> ~</tt>&nbsp;.<tt> </tt> 
+For example,<nobr><tt> x≤y ←→ ~(~x)<(~y)</tt> ,</nobr><tt> </tt>
+and from this the three related 
+identities<nobr><tt> ≤/v ←→ ~&lt;/~v</tt> ,</nobr><tt> </tt>etc.)
+follow in the manner shown above. 
+The five dual pairs of boolean functions are:</p>
+
+<pre>
+      ∨  ⍱  <  =  >
+      ^  ⍲  ≤  ≠  ≥
+</pre>
+
+<p>These dualities are frequently useful 
+in simplifying expressions used in logical selections. 
+For example, we have already seen the use of the duality 
+between<tt> ≤ </tt>and<tt> &lt; </tt>
+to replace the expression<tt> ~&lt;\~⍵ </tt>by<tt> ≤\⍵</tt>&nbsp;.</p>
+
+<p>Useful dualities are not limited to boolean functions. 
+For example, <i>maximum</i> and 
+<i>minimum</i><tt> </tt>(<tt>⌈</tt>and<tt> ⌊</tt>)<tt> </tt> 
+are dual with respect to <i>arithmetic</i> 
+negation<tt> </tt>(<tt>-</tt>)<tt> </tt>as follows:</p>
+
+<pre>
+      x⌈y ←→ -(-x)⌊(-y)
+</pre>
+
+<p>Again the related forms of duality follow.</p>
+
+<p>More generally, duality is defined in terms 
+of any monadic function<tt> m </tt>and its inverse<tt> mi </tt>as follows: 
+a function<tt> f </tt>is said to be the dual 
+of a function<tt> g </tt>with respect to<tt> m </tt>if:</p>
+
+<pre>
+      x f y ←→ mi (m x)g(m y)
+</pre>
+
+<p>In the preceding examples of duality, 
+each of the monadic functions used<tt> </tt>(<tt>~ </tt>and<tt> -</tt>)<tt> </tt> 
+happened to be self-inverse and<tt> mi </tt>
+was therefore indistinguishable from<tt> m</tt>&nbsp;.</p>
+
+<p>The general form includes the duality with respect 
+to the natural logarithm function<tt> ⍟ </tt>which lies 
+at the root of the use of logarithm tables 
+and addition to perform multiplication, namely:</p>
+
+<pre>
+      ×/x ←→ *+/⍟x
+</pre>
+
+<p>The use of base ten logarithms rests similarly 
+on duality with respect to the monadic 
+function<tt> 10⍟⍵ </tt>and its inverse<tt> 10*⍵</tt>&nbsp;:</p>
+
+<pre>
+      ×/x ←→ 10*+/10⍟x
+
+</pre>
+
+
+
+<a name="5"></a>
+<p><b>5. Proofs</b></p>
+A proof is a demonstration of the validity of an identity based 
+upon other identities or facts already proven or accepted. 
+For example, De Morgan&rsquo;s law may be proved 
+by simply evaluating the two supposedly equivalent 
+expressions<tt> </tt>(<tt>x^y </tt>and<tt> ~(~x)∨(~y)</tt>)<tt> </tt>
+for all possible combinations of boolean
+values of<tt> x </tt>and<tt> y</tt>&nbsp;:</p>
+
+<pre>
+x  y  x^y  ~x  ~y  (~x)∨(~y)  ~(~x)∨(~y)
+0  0   0    1   1      1           0
+0  1   0    1   0      1           0
+1  0   0    0   1      1           0
+1  1   1    0   0      0           1
+</pre>
+
+<p>An identity which is useful 
+and important enough to be used 
+in the proofs of other identities 
+is commonly called a theorem. Thus:</p>
+
+<table>
+<tr><td width=90 nowrap><b>Theorem 1</b></td>
+ <td>&nbsp;<tt>(a×b)∘.×(p×q) ←→ (a∘.×p)×(b∘.×q)</tt></td></tr>
+</table>
+
+<p>We will prove theorem 1 itself 
+for vectors<tt> a</tt>&nbsp;,<tt> b</tt>&nbsp;,<tt> p</tt>&nbsp;,<tt> </tt>and<tt> q </tt>
+by calling the results of the left and 
+right expressions<tt> l </tt>and<tt> r </tt>
+and showing that for any indices<tt> i </tt>
+and<tt> j</tt>&nbsp;,<tt> </tt> 
+the values of<tt> l[i;j] </tt>and<tt> r[i;j] </tt>agree. 
+We do this by writing a sequence of equivalent expressions, 
+citing at the right of each expression the basis 
+for believing it to be equivalent to the preceding one. 
+Thus:</p>
+
+<table>
+<tr><td><tt>l[i;j]</tt>&nbsp;</td><td width=43>&nbsp;</td>
+ <td>&nbsp;</td></tr>
+<tr><td><tt>((a×b)∘.×(p×q))[i;j]</tt>&nbsp;</td><td width=43>&nbsp;</td>
+ <td>Def of<tt> l </tt></td></tr>
+<tr><td><tt>(a×b)[i]×(p×q)[j]</tt>&nbsp;</td><td width=43>&nbsp;</td>
+ <td>Def of<tt> ∘.× </tt></td></tr>
+<tr><td><tt>(a[i]×b[i])×(p[i]×q[i])</tt>&nbsp;</td><td width=43>&nbsp;</td>
+ <td>Def of vector<tt> × </tt></td></tr>
+<tr><td>&nbsp;</td>
+<tr><td><tt>r[i;j]</tt>&nbsp;</td><td width=43>&nbsp;</td>
+ <td>&nbsp;</td></tr>
+<tr><td><tt>((a∘.×p)×(b∘.×q))[i;j]</tt>&nbsp;</td><td width=43>&nbsp;</td>
+ <td>Def of<tt> r </tt></td></tr>
+<tr><td><tt>(a∘.×p)[i;j]×(b∘.×q)[i;j]</tt>&nbsp;</td><td width=43>&nbsp;</td>
+ <td>Def of matrix<tt> × </tt></td></tr>
+<tr><td><tt>(a[i]×p[j])×(b[i]×q[j])</tt>&nbsp;</td><td width=43>&nbsp;</td>
+ <td>Def of matrix<tt> ∘.× </tt></td></tr>
+<tr><td><tt>(a[i]×b[i])×(p[j]×q[j])</tt>&nbsp;</td><td width=43>&nbsp;</td>
+ <td><tt> × </tt>associates and commutes</td></tr>
+</table>
+
+<p>Comparison of the expressions ending the two sequences 
+completes the proof.</p>
+
+<p>We will now state a second theorem 
+(whose proof for vector variables is given in Iverson 
+<acronym title=
+"Iverson, K.E., An Introduction to APL for Scientists and Engineers, APL Press, 1976.">[6]</acronym>), 
+and use it in a proof that the product 
+of two polynomials<tt> c&nbsp;p&nbsp;x </tt>and<tt> d&nbsp;p&nbsp;x </tt>
+is equivalent to the 
+expression<nobr><tt> +/,(c∘.×d)×x*(⍳⍴c)∘.+(⍳⍴d)</tt>&nbsp;:</nobr></p>
+
+<table>
+<tr><td width=90 nowrap><b>Theorem 2</b></td>
+ <td>&nbsp;<tt>+/,v∘.×w ←→ (+/v)×(+/w)</tt></td></tr>
+</table>
+
+<p>Thus:</p>
+
+<table>
+<tr><td width=90 nowrap><b>Theorem 3</b></td>
+ <td>&nbsp;<tt>(c p x)×(d p x)</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;<tt>(+/c×x*e←⍳⍴c)×(+/d×x*f←⍳⍴d)</tt></td>
+ <td width=43>&nbsp;</td><td>Def of<tt> p </tt></tr>
+<tr><td>&nbsp;</td><td>&nbsp;<tt>+/,(c×x*e)∘.×(d×x*f)</tt></td>
+ <td>&nbsp;</td><td>Theorem 2</tr>
+<tr><td>&nbsp;</td><td>&nbsp;<tt>+/,(c∘.×d)×((x*e)∘.×(x*f))</tt></td>
+ <td>&nbsp;</td><td>Theorem 1</tr>
+<tr><td>&nbsp;</td><td>&nbsp;<tt>+/,(c∘.×d)×x*e∘.+f</tt></td></tr>
+</table>
+
+<p>The final step is based on the fact 
+that<nobr><tt> (x*a)×(x*b) ←→ x*a+b</tt>&nbsp;.</nobr></p>
+
+<p>A proof in which every step is fully justified 
+is called a <i>formal</i> proof; 
+a step which is justified less formally by the observation 
+of some general pattern is called an <i>informal</i> proof. 
+We will now illustrate an informal proof 
+by assigning values to the arguments<tt> c </tt>and<tt> d </tt>
+and displaying the tables<tt> c∘.×d </tt>and<tt> e∘.+f </tt>
+occurring in the last line of theorem 3:</p>
+
+<pre>
+      c←3 1 4                      e←⍳⍴c
+      d←2 0 3 1                    f←⍳⍴d
+      c∘.×d                        e∘.+f
+6 0  9 3                     0 1 2 3
+2 0  3 1                     1 2 3 4
+8 0 12 4                     2 3 4 5
+</pre>
+
+<p>Since the elements of<tt> e∘.+f </tt>are exponents 
+of<tt> x</tt>&nbsp;,<tt> </tt> 
+and since the<tt> i</tt>th diagonal of<tt> e∘.+f </tt>
+(beginning with the zeroth) 
+has the values<tt> i</tt>&nbsp;,<tt> </tt> 
+each element of the<tt> i</tt>th diagonal of<tt> c∘.×d </tt>
+is multiplied by<tt> x*i</tt>&nbsp;.<tt> </tt> 
+We may therefore conclude (informally) 
+that the expression is equivalent to a polynomial 
+whose coefficient vector is formed 
+by summing the diagonals of<tt> c∘.×d</tt>&nbsp;.<tt> </tt> 
+Using theorem 3 as well, we therefore conclude 
+that this polynomial is equivalent 
+to the product of the polynomials<tt> c&nbsp;p&nbsp;⍵ </tt>
+and<tt> d&nbsp;p&nbsp;⍵</tt>&nbsp;.</p>
+
+<p>Many useful identities concern what are called 
+(in <i>APL Language</i> 
+<acronym title=
+"APL Language, Form Number GC26-3847, IBM Corporation.">[7]</acronym>) 
+<i>structural</i> and <i>selection</i> functions, 
+such as reshape, transpose, indexing, and compression. 
+For example, a succession of dyadic transpositions 
+can be reduced to a single equivalent transposition 
+by the following identity:</p>
+
+<pre>
+      i⍉j⍉a ←→ i[j]⍉a
+</pre>
+
+<p>The proof is given in Iverson 
+<acronym title=
+"Iverson, K.E., Operators and Functions, Research Report 7091, IBM Corporation, 1978.">[5]</acronym>. 
+Further examples of proofs in APL may be found in Orth 
+<acronym title=
+"Orth, D.L., Calculus in a New Key, APL Press, 1976.">[8]</acronym> 
+and in Iverson
+[<acronym title=
+"Iverson, K.E., Algebra: An Algorithmic Treatment, APL Press, 1976.">1</acronym>,
+<acronym title=
+"Iverson, K.E., Elementary Analysis, APL Press, 1976.">4</acronym>].
+<br>&nbsp;</p>
+
+
+
+<a name="6"></a>
+<p><b>6. Recursive Definition</b></p>
+
+<p>A function can sometimes be defined very neatly 
+by using it in its own definition. 
+For example, the factorial function<tt> f:×/1+⍳⍵ </tt>
+could be defined alternatively by saying that<tt> f ⍵ ←→ ⍵×f&nbsp;⍵-1 </tt>
+and giving the auxiliary information that in the case<tt> ⍵=0 </tt>
+the value of the function is 1. 
+Such a definition which utilizes the function being defined 
+is called a <i>recursive</i> definition.</p>
+
+<p>The direct definition form as defined in Iverson 
+<acronym title=
+"Iverson, K.E., Elementary Analysis, APL Press, 1976.">[4]</acronym>  
+permits a &ldquo;conditional&rdquo; definition such as:</p>
+
+<pre>
+      g:⍵:⍵&lt;0:-⍵
+</pre>
+
+<p>Such a definition includes three expressions 
+separated by colons and is interpreted 
+by executing the middle one, 
+then executing the first or the last, 
+according to whether the value of the (first element of the) 
+middle one is zero or not. 
+Thus<tt> g&nbsp;⍵ </tt>is (for scalar arguments) equivalent 
+to<tt> |⍵</tt>&nbsp;.</p>
+
+<p>This conditional form is convenient 
+for making recursive definitions. 
+For example, the factorial function discussed above 
+could be defined as<tt> f:⍵×f⍵-1:⍵=0:1</tt>&nbsp;,<tt> </tt> 
+and a function to generate the binomial coefficients 
+of a given order could be defined recursively as:</p>
+
+<pre>
+      bc: (z,0)+0,z←bc⍵-1:⍵=0:1
+</pre>
+
+<p>For example</p>
+
+<pre>
+      bc 2               bc 3               bc 4
+1 2 1              1 3 3 1            1 4 6 4 1
+</pre>
+
+<p>Recursive definition can be an extremely useful tool, 
+but one that may require considerable effort to assimilate. 
+The study of existing recursive definitions 
+(as in Chapters 7 and 8 of Orth 
+<acronym title=
+"Orth, D.L., Calculus in a New Key, APL Press, 1976.">[8]</acronym>
+and Chapter 10 of Iverson 
+<acronym title=
+"Iverson, K.E., Elementary Analysis, APL Press, 1976.">[4]</acronym>) 
+may prove helpful. 
+Perhaps the best way to grasp a particular definition 
+is to execute it in detail for a few simple cases, 
+either manually or on the computer. 
+The details of computer execution 
+can usually be suitably exhibited by 
+inserting<tt> ⎕← </tt>
+at one or more points in the definition. 
+We might, for example, modify and execute 
+the binomial coefficient function<tt> bc </tt>as follows:</p>
+
+<pre>
+      bc: (z,0)+0,z←⎕←bc⍵-1:⍵=0:1
+
+      q←bc 3
+1
+1 1
+1 2 1
+      q
+1 3 3 1
+</pre>
+
+<p>We will now give two less trivial recursive definitions for study. 
+The first generates all permutations of a specified order as follows:</p>
+
+<pre>
+      per:(-⌊(⍳!⍵)÷!x)⌽x,((!⍵),x)⍴per x←⍵-1:⍵=1:1 1⍴0
+
+      per 3                    ⍉'abcd'[per 4]
+2 1 0                    aaaaaabbbbbbccccccdddddd
+2 0 1                    bbccddaaccddaabbddaabbcc
+0 2 1                    cdbdbccdadacbdadabbcacab
+1 2 0                    dcdbcbdcdacadbdabacbcaba
+1 0 2
+0 1 2
+</pre>
+
+<p>The second is a solution of the &ldquo;topological sort&rdquo; 
+problem discussed on pages 258-268 of Knuth 
+<acronym title=
+"Knuth, D.E., The Art of Computer Programming, Addison Wesley, 1968.">[9]</acronym>. 
+Briefly stated, an<tt> n </tt>by<tt> n </tt>boolean matrix 
+can specify &ldquo;precedences&rdquo; required 
+in the ordering of<tt> n </tt>items 
+(which may represent the steps to be 
+carried out in some production process). 
+If the positions of the 1&rsquo;s in row<tt> i </tt>indicate 
+which items must precede item <tt> i</tt>&nbsp;,<tt> </tt>
+then the function:</p>
+
+<pre>
+      pr:⍺[⍋(-⍴⍺)↑s] pr s⌿s/⍵:^/s←∨/⍵:(-1↑⍴⍵)↓⍺
+</pre>
+
+<p>provides a solution in the sense that 
+it permutes its vector left argument 
+to satisfy the constraints imposed 
+by the matrix right argument. For example:</p>
+
+<pre>
+      c←'atsfx'
+      m           c pr m         proc          proc[(⍳5)pr m;]
+0 1 0 1 1   tfxas          address       text
+0 0 0 0 0                  text          figures
+0 1 0 1 1                  stamp         xerox
+0 0 0 0 0                  figures       address
+0 1 0 1 0                  xerox         stamp
+</pre>
+
+<p>If the required orderings among certain items are inconsistent 
+and cannot be satisfied, they are suppressed from the result.
+<br>&nbsp;</p>
+
+
+
+<a name="7"></a>
+<p><b>7. Properties of Defined Functions</b></p>
+
+<p>Defined functions used as building blocks in the development 
+of a complex system play much the same role as primitives, 
+and the comments made on the assimilation of primitives 
+apply equally to such defined functions. 
+Moreover, a clear understanding 
+of the properties of functions under design 
+may contribute to their design.</p>
+
+<p>Many of the general properties of primitives 
+(such as their systematic extension to arrays 
+and the existence of primitive inverse functions) 
+are also useful in defined functions 
+and should be preserved as much as possible. 
+The section on generality addressed certain aspects of this, 
+and we now briefly address some others, 
+including choice of names, application of operators, 
+and the provision of inverse functions.</p>
+
+<p>The names of primitive functions are graphic symbols, 
+and the ease of distinguishing them 
+from the names of arguments contributes 
+to the readability of expressions. 
+It is also possible to adopt naming schemes 
+which distinguish defined functions from arguments, 
+or which even distinguish 
+several subclasses of defined functions. 
+The choice of mnemonic names for functions 
+can also contribute to clarity; 
+the use of the direct form of definition 
+properly focusses attention on the choice of function names 
+rather than on the choice of argument names.</p>
+
+<p>Present APL implementations limit the application 
+of operators (such as reduction and inner product) 
+to primitive functions, 
+and do not allow the use of defined functions 
+in expressions such as<tt> f/ </tt>
+and<tt> ∘.f</tt>&nbsp;.<tt> </tt>
+For any defined function<tt> f </tt>
+it is sometimes useful (although questions of efficiency 
+may limit the usefulness to experimentation 
+rather than general use) 
+to define a corresponding outer product 
+function<tt> opf</tt>&nbsp;,<tt> </tt> 
+and a corresponding reduction 
+function<tt> rf</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+       f:⍺+÷⍵
+     opf:(⍺∘.+0×⍵) f (⍺×0)∘.+⍵
+      rf:(1↑⍵) f rf 1↓⍵:1=⍴⍵:⍵[0]
+
+      a←3 7 11
+      b←2 5 10
+
+      a f b             a opf b                rf b
+3.5 7.2 11.1       3.5  3.2  3.1         2.196078431
+                   7.5  7.2  7.1
+                  11.5 11.2 11.1
+</pre>
+
+<p>The importance of inverse functions 
+in mathematics is indicated in part 
+by the number of inverse pairs of functions provided, 
+such as the pair<tt> k○⍵ </tt>and<tt> (-k)○⍵</tt>&nbsp;,<tt> </tt> 
+the pair<tt> b⍟⍵ </tt>and<tt> b*⍵</tt>&nbsp;,<tt> </tt> 
+and the pair<tt> ⍵*n </tt>and<tt> ⍵*÷n</tt>&nbsp;.<tt> </tt> 
+Their importance in non-numeric applications 
+is not so commonly recognized, 
+and it is well to keep the matter 
+in mind in designing functions. 
+For example, in designing 
+functions<tt> get </tt>and<tt> put </tt>
+for accessing files, it is advantageous 
+to design them as inverses in the sense 
+that the expression<nobr><tt> k put k get 'filename' </tt></nobr>
+will produce no change in the file.</p>
+
+<p>Other examples of useful inverse pairs 
+include the permutations<tt> ⍵[P] </tt>and<tt> ⍵[⍋P] </tt>
+defined by a given permutation vector<tt> p</tt>&nbsp;,<tt> </tt> 
+the classification function<tt> c:⍵[⍋⍺] </tt> 
+and its inverse (discussed in Section 4)<tt> c:⍵[⍋⍋⍺]</tt>&nbsp;,<tt> </tt>
+and the &ldquo;cumulative sum&rdquo; or &ldquo;integration&rdquo; 
+function<tt> cs </tt>and its inverse, 
+the &ldquo;difference function&rdquo;<tt> df </tt>
+defined as follows:</p>
+
+<pre>
+      cs:+\⍵
+      df:⍵-0,¯1↓⍵
+
+      a←3 5 7 11 13 17
+      cs a                           df a
+3 8 15 26 39 56                3 2 2 4 2 4
+      df cs a                        cs df a
+3 5 7 11 13 17                 3 5 7 11 13 17
+
+</pre>
+
+
+<a name="8"></a>
+<p><b>8. Efficiency</b></p>
+
+<p>Emphasis on clarity of expression 
+in designing a system may contribute greatly 
+to its efficiency by leading 
+to the choice of a superior overall approach, 
+but it may also lead to solutions 
+which violate the space constraints 
+of a particular implementation 
+or make ineffective use 
+of the facilities which it provides. 
+It is therefore necessary at some point 
+to consider the characteristics 
+of the particular implementation to be used. 
+The speed and space characteristics 
+of the various implementations of APL 
+are too varied to be considered here. 
+There are, however, a number of identities 
+which are of rather general use.</p>
+
+<p>Expressions involving inner and outer products 
+often lead to space requirements 
+which can be alleviated by partitioning the arguments. 
+For example, if<tt> a </tt>and<tt> b </tt>are vectors 
+and<tt> r←a∘.f&nbsp;b</tt>&nbsp;,<tt> </tt>
+then the<tt> m </tt>by<tt> n </tt>segment 
+of the result represented by<tt> (m,n)↑r </tt>
+can be computed as<tt> (m↑a)∘.f&nbsp;(n↑b) </tt>
+and<tt> m </tt>and<tt> n </tt>can be chosen 
+to make the best use of available space. 
+The resulting segments may be stored in files or, 
+if the subsequent expressions 
+to be applied to the result permit it, 
+they may be applied to the segments. 
+For example, if the complete expression 
+is<tt> +/a∘.f&nbsp;b</tt>&nbsp;,<tt> </tt>
+then each of the segments may
+be summed as they are produced. 
+Expressions of the form<tt> (m,n)↑r </tt>
+can also be generalized to apply 
+to higher rank arrays and to select 
+any desired rectangular segment.</p>
+
+<p>If<tt> x </tt>is a vector, the reduction<tt> +/x </tt>
+can be partitioned by use of the identity:</p>
+
+<pre>
+      +/x ←→ (+/k↑x)+(+/k↓x)
+</pre>
+
+<p>and this identity applies more generally 
+for reduction by any associative 
+function<tt> f</tt>&nbsp;.<tt> </tt> 
+Moreover, this identity provides the basis 
+for the partitioning of inner products, 
+a generalization of the partitioning 
+used in matrix algebra which is discussed 
+more fully in Iverson  
+<acronym title=
+"Iverson, K.E., An Introduction to APL for Scientists and Engineers, APL Press, 1976.">[6]</acronym>.</p>
+
+<p>The direct use of the distribution function<tt> dis </tt>
+of Section 3 for summarization 
+(in the form<tt> (dis&nbsp;a)+.×c</tt>)<tt> </tt> 
+may lead to excessive use of both time and space. 
+Such problems can often be alleviated 
+in a general way by the use of sorting. 
+For example, the expression<tt> r←a[p←⍋a] </tt>
+produces an ordered list of the account numbers 
+in which all repetitions of any one account number are adjacent. 
+The points of change in account numbers 
+are therefore given by the boolean vector<tt> b←r≠¯1⌽r </tt>
+and if the costs<tt> c </tt>are ordered similarly 
+by<tt> s←c[p]</tt>&nbsp;,<tt> </tt> 
+then the summarization may be performed 
+by summing over the intervals of<tt> s </tt>marked off 
+by<tt> b</tt>&nbsp;.</p>
+
+<p>The sorting process discussed above 
+may itself be partitioned, 
+and the subsequent summarization steps may, 
+for reasons of efficiency, 
+be incorporated directly in the sorting process. 
+Many of the uses of sorting in data processing 
+are in fact obvious or disguised realizations 
+of some classification problem, 
+and a simpler statement of the essential process 
+may lead simply to different efficient realizations 
+appropriate to different implementations of APL.</p>
+
+<p>Like the inner and outer product, 
+recursive definitions often make excessive demands on space. 
+In some cases, as in the function<tt> per </tt>
+discussed in Section 6, 
+the size of the arguments to which the function 
+is successively applied decreases so rapidly 
+that the recursive definition does not 
+greatly increase the space requirements. 
+In others, as in the function<tt> pr </tt>of Section 6, 
+the space requirements may be excessive, 
+and the recursive definition can be translated 
+(usually in a straightforward manner) 
+into a more space-efficient iterative program. 
+For example, the following non-recursive definition 
+is such a translation of the function<tt> pr</tt>&nbsp;:</p>
+
+<pre>
+      z←a prn w;s 
+      l1:→(∧/s←∨/w)/l2 
+      a←a[⍋(-⍴a)↑s]
+      w←s⌿s/w
+      →l1
+      l2:z←(-1+⍴w)↓a
+
+</pre>
+
+
+
+<a name="9"></a>
+<p><b>9. Reading</b></p>
+
+<p>Perhaps the most important habit in the development 
+of good style in a language remains to be mentioned, 
+the habit of critical reading. 
+Such reading should not be limited to collections 
+of well-turned and useful phrases, 
+such as Bartlett&rsquo;s Quotations 
+or the collections of 
+<acronym title=
+"Perlis, A. J., and S. Rugaber, The APL Idiom List, Research Report 87, Computer Sciences Department, Yale University, 1977.">References 2</acronym>
+and 
+<acronym title=
+"Macklin, D., The APL Handbook of Techniques, Form Number S320-5996, IBM Corporation, 1977.">3</acronym>, 
+nor should it be limited to topics in a reader&rsquo;s 
+particular speciality.</p>
+
+<p>Manuals and other books <i>about</i> a language are, 
+like grammars and dictionaries in natural language, 
+essential, but reading should not be confined to them. 
+Emphasis should be placed rather on the reading of books 
+which use the language in the treatment of other topics, 
+as in the references already cited, in Berry et al 
+[<acronym title=
+"Berry, P.C., J. Bartoli, C. Dell’Aquila, V. Spadavecchia, APL and Insight, APL Press, 1978.">10</acronym>,
+<acronym title=
+"Berry, P.C., and J. Thorstensen, Starmap, APL Press, 1978.">11</acronym>], 
+in Blaauw 
+<acronym title=
+"Blaauw, G.A., Digital System Implementation, Prentice-Hall, 1977.">[12]</acronym>, 
+and in Spence 
+<acronym title=
+"Spence, R.L., Resistive Circuit Theory, APL Press, 1974.">[13]</acronym>.</p>
+
+<p>The APL neophyte should not be dissuaded from reading 
+by the occurrence of long expressions whose meanings 
+are not immediately clear; 
+because the sequence of execution is clear and unambiguous, 
+the reader can always work through sample executions accurately, 
+either with pencil and paper, with a computer, or both. 
+An example of this is discussed at length 
+in Section 1.1 of Iverson
+<acronym title=
+"Iverson, K.E., Elementary Analysis, APL Press, 1976.">[4]</acronym>.</p>
+
+<p>Moreover, the neophyte need not be dissuaded from reading 
+by the occurrence of some unfamiliar primitives, 
+since all primitives can be summarized (together with examples) 
+in two brief tables (pages 32 and 44 of <i>APL Language</i> 
+<acronym title=
+"APL Language, Form Number GC26-3847, IBM Corporation.">[7]</acronym>), 
+and since these tables are usable after the reading 
+of two short sections; Fundamentals (pages 21-28) 
+and Operators (pages 39-43).</p>
+
+<p>Finally, one may benefit from the critical reading 
+of mediocre writing as well as good; 
+good writing may present new turns of phrase, 
+but mediocre writing may spur the reader to improve upon it.
+<br>&nbsp;</p>
+
+
+
+<a name="10"></a>
+<p><b>10. Conclusions</b></p>
+
+<p>This paper has addressed the question of <i>style</i>, 
+the <i>manner</i> in which something is said as distinct 
+from the substance. 
+The techniques suggested for fostering good style 
+are analogous to techniques appropriate to natural language: 
+intimate knowledge of vocabulary (primitives) 
+and commonly used phrases (certain defined functions), 
+facility in abstract expression (generality), 
+mastery of a variety of equivalent ways of expressing 
+a matter (identities), a knowledge of techniques 
+for examining and establishing such equivalences (proofs), 
+a precise general method for using an expression 
+in its own definition (recursion), and an emphasis 
+on wide critical reading <i>in</i> 
+rather than <i>about</i> the language.</p>
+
+<p>If one accepts the importance of good style in APL, 
+then one should consider the implications 
+of these techniques for the teaching of APL. 
+Current courses and textbooks typically follow 
+the inappropriate model set by the teaching 
+of earlier programming languages, 
+which are not so simply structured and not so easy 
+to introduce (as one introduces mathematical notation) 
+in the context of some reasonably 
+elaborate <i>use</i> of the language. 
+Moreover, they place little or no emphasis 
+on reading in APL and little on the structure of the language, 
+often confusing, for example, the crucial distinction 
+between operators and functions by using the same term for both. 
+<i>APL Language</i> 
+<acronym title=
+"APL Language, Form Number GC26-3847, IBM Corporation.">[7]</acronym>
+does present this structure, 
+but, being designed for reference, is not itself 
+a sufficient basis for a course.
+<br>&nbsp;</p>
+
+
+
+<a name="append"></a>
+<p><b>Appendix A. Translation from Direct to Del Form</b></p>
+
+<p>The problem of translation from the direct to the del form 
+of function definition is fully discussed 
+in Section 10.4 of Iverson 
+<acronym title=
+"Iverson, K.E., Elementary Analysis, APL Press, 1976.">[4]</acronym>, 
+the discussion culminating in a set of translation functions 
+usable (or easily adapted for use) 
+on most implementations of APL. 
+Because it is aimed primarily at an exposition 
+of the translation problem, the functions developed 
+in this presentation leave many secondary problems 
+(such as the avoidance of name conflicts) to the user, 
+and the following translation functions 
+and associated variables may be found more convenient 
+for experimentation with the use of direct definition:</p>
+
+<pre>
+d←f9 e;f;i;j;k;q;⎕IO                                   
+→((2|+/e='''')∨∧/ 1 3 ≠+/':' i9 e)/⍴d←(2⍴⎕io←0)⍴''        
+f←'⍺ x9 ' R9 '⍵ y9 ' R9 e←, 1 1 ↓⎕cr ⎕fx 'q',' ',[¯0.5],e   
+f←1↓⍴d←(0,-6-+/i)↓(-(3×i)++\i←':' i9 f)⌽⍉(7,⍴f)⍴(7×⍴f)↑f
+d←3⌽(c9[((2⌊2⊥∨/'⍺⍵' i9 e),1+i),5;]),⍉d[;0,(i←2+⍳f-2),1]
+j←((¯1⌽i)∧j←>⌿ 0 ¯1 ⌽'←⎕' i9 e)/k←+\i<0,¯1↓i←e∊a9         
+k←∨/((-k)⌽i∘.>⍳1+⌈/k)[;j-1]                            
+d←d,(f,⍴e)↑⍉ 0 ¯2 ↓(k+2×k<1⌽k)⌽' ',e,[0.5] ';'            
+
+z←x R9 y;n                                  
+z←(,((1↑x) i9 y)∘.≠n↑1)/,y,((⍴y),¯1+n←⍴x)⍴1↓x
+
+z←a i9 b                       
+z←(a∘.=b)∧((⍴a),⍴b)⍴~2|+\b=''''
+
+z9←def
+z9←⎕fx f9 ⍞
+
+      c9
+   z9←     
+ y9z9←     
+ y9z9←x9   
+)/3→(0=1↑, 
+   →0,0⍴z9←
+   z9←     
+
+     a9
+012356789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN0PGRSTUVWXYZ⎕
+</pre>
+
+<p>The foregoing functions were designed more for brevity 
+than clarity; nevertheless the reader who wishes to study 
+the translation process in detail may find it useful 
+to compare them with those of 
+<acronym title=
+"Iverson, K.E., Elementary Analysis, APL Press, 1976.">Reference 4</acronym>.</p>
+
+<p>For serious use of direct definition, 
+one should augment the foregoing with functions 
+which record the definitions presented, 
+display them on demand, and provide for convenient editing. 
+For example, execution of:</p>
+
+<pre>
+      def
+defr:0⍴⍎'R',y,'←x',0⍴y←⎕fx f9 x←⍞ 
+defr
+</pre>
+
+<p>produces a function<tt> defr </tt>which, 
+like<tt> def</tt>&nbsp;,<tt> </tt>
+fixes the definition of any function<tt> f </tt>presented 
+to it in direct form, but which also records 
+the original definition (for later display or editing) 
+in the associated variable<tt> Rf </tt>. 
+The display of a desired function could then be 
+produced by the following definition:</p>
+
+<pre>
+      defr 
+display:⍎,(n^.=(¯1↑⍴n)↑'R',⍞)⌿n←⎕nl 2
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      defr 
+plus:⍺+⍵
+      display 
+plus 
+plus:⍺+⍵
+
+</pre>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td align=right valign=top>1.</td><td>&nbsp;</td><td>
+ Iverson, K.E., 
+ <a target=_parent href="http://www.jsoftware.com/jwiki/Doc/Algebra%20An%20Algorithmic%20Treatment"><i>Algebra: An Algorithmic Treatment</i></a>, 
+ APL Press, 1976.
+ </td></tr>
+<tr><td align=right valign=top>2.</td><td>&nbsp;</td><td>
+ Perlis, A.J., and S. Rugaber, <i>The APL Idiom List</i>, 
+ Research Report 87, Computer Sciences Department, Yale University, 1977.
+ </td></tr>
+<tr><td align=right valign=top>3.</td><td>&nbsp;</td><td>
+ Macklin, D., <i>The APL Handbook of Techniques</i>, 
+ Form Number S320-5996, IBM Corporation, 1977.
+ </td></tr>
+<tr><td align=right valign=top>4.</td><td>&nbsp;</td><td>
+ Iverson, K.E., 
+ <a target=_parent href="http://www.jsoftware.com/papers/DirectDef.htm"><i>Elementary Analysis</i></a>, 
+ APL Press, 1976.
+ </td></tr>
+<tr><td align=right valign=top>5.</td><td>&nbsp;</td><td>
+ Iverson, K.E., 
+ <a target=_parent href="http://www.jsoftware.com/papers/opfns.htm"><i>Operators and Functions</i></a>, 
+ Research Report 7091, IBM Corporation, 1978.
+ </td></tr>
+<tr><td align=right valign=top>6.</td><td>&nbsp;</td><td>
+ Iverson, K.E., <i>An Introduction to APL for Scientists and Engineers</i>, APL Press, 1976.
+ </td></tr>
+<tr><td align=right valign=top>7.</td><td>&nbsp;</td><td>
+ <i>APL Language</i>, Form Number GC26-3847, IBM Corporation.
+ </td></tr>
+<tr><td align=right valign=top>8.</td><td>&nbsp;</td><td>
+ Orth, D.L., <i>Calculus in a New Key</i>, APL Press, 1976.
+ </td></tr>
+<tr><td align=right valign=top>9.</td><td>&nbsp;</td><td>
+ Knuth, D.E., <i>The Art of Computer Programming</i>, 
+ Addison Wesley, 1968. 
+ </td></tr>
+<tr><td align=right valign=top>10.</td><td>&nbsp;</td><td>
+ Berry, P.C., J. Bartoli, C. Dell&rsquo;Aquila, V. Spadavecchia, 
+ <i>APL and Insight</i>, APL Press, 1978. 
+ </td></tr>
+<tr><td align=right valign=top>11.</td><td>&nbsp;</td><td>
+ Berry, P.C., and J. Thorstensen, <i>Starmap</i>, APL Press, 1978. 
+ </td></tr>
+<tr><td align=right valign=top>12.</td><td>&nbsp;</td><td>
+ Blaauw, G.A., <i>Digital System Implementation</i>, Prentice-Hall, 1977. 
+ </td></tr>
+<tr><td align=right valign=top>13.</td><td>&nbsp;</td><td>
+ Spence, R.L., <i>Resistive Circuit Theory</i>, APL Press, 1974.
+ </td></tr>
+</table>
+<br>
+
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared in the Proceedings of 
+An APL Users Meeting, I.P. Sharp Associates Limited,
+Toronto, 1978-09-18 to -20.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-02-24 23:30</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2013-02-02 08:35</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

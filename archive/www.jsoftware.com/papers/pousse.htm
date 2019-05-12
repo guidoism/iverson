@@ -1,0 +1,192 @@
+<html>
+<head>
+<title>J Papers</title>
+<link rel="stylesheet" href="https://www.jsoftware.com/papers/jweb.css" type="text/css">
+</head>
+<body>
+
+<table width="75%" border="0" cellspacing="30" cellpadding="0">
+<TR><TD>
+<h1>ICFP'98 Contest Winners</h1>
+<p>The J team won the Judge's Prize in the ICFP'98
+Functional Programming Contest. Here are the judges' comments on the J program:</P>
+<p>The contest judges selected the J program because we felt it was the 
+most thought-provoking entry. In brief, it is everything the number one Cilk 
+Pousse entry is not:</p>
+<ul>
+	<li><p class="list">It is not parallel.</p>
+	<li><p class="list">It is not even compiled -- it ran on a simple 
+    interpreter.<br>Note that J's aggregate-data operators tend to 
+    keep execution in the &quot;leaf&quot; primitives of the program, so this is 
+    rather more efficient than one might imagine.<P>
+	<li><p class="list">It is astoundingly brief.<br>Not including comments and test-case 
+    &quot;dead code,&quot; the J entry is 113 lines of code.</P>
+	<li><p class="list">It is extremely functional.<br>There is only one one 
+    loop in the whole program. J syntax allows operators such as addition to be 
+    transparently &quot;lifted&quot; to function domains.</P></li>
+</ul>
+<p>And yet the J entry proceeded to beat 17 compiled C 
+entries, which we view as at least a partial testament to the productivity gains 
+of working with a powerful notation (and a partial testament to the skill and 
+expertise of the isi team members, of course).</p>
+<p>We felt there were several lessons in the J entry for the programming 
+community. Like the other two prize-winners, it is a strong statement.
+<p>Congratulations to the isi team! Without a doubt, &quot;a bunch of 
+extremely cool hackers&quot; -- and an extremely cool programming language.</p>
+
+
+<H2>Here is a write-up from 
+the ISI team...</h2>
+<h3>Introduction</h3>
+<p>The "isi" entry in the <a href="http://www.ai.mit.edu/extra/icfp-contest/index.html" target="_blank">ICFP'98 Functional Programming Contest</a> is from <B>Iverson
+Software Inc.</b>; the team members are Chris Burke, Roger Hui, Eric Iverson,
+Ken Iverson, and Kirk Iverson. The entry is written in J, a dialect of APL. The motivation for entering the contest was the belief that J is a functional language, as reflected in item 7 of the list of major characteristics
+on page 1 of the J dictionary:</p>
+<blockquote>
+<p>The use of <i>functional</i> or <i>tacit</i> programming that requires
+no explicit mention of the arguments of a function (program) being defined,
+and the use of assignment to assign names to functions (as in<tt> 
+    sum=:+/
+</tt>and<tt> mean=:sum %#</tt>).</p></blockquote>
+<p>We normally use the carefully-defined term <i>tacit</i> instead of <i>functional</i> because we do not know of a uniformly accepted definition of the latter term.</p>
+<h3>The Game</h3>
+<p>The <a href="https://www.jsoftware.com/www.ai.mit.edu/extra/icfp-contest/task.html" target="_top">specifications</a> for the game are available at the contest website. In brief, the game of Pousse is played on an N by N board (N is between 4 and 20). Players X and O alternately enter a piece from the left, right, top or bottom, in one of 4*N possible moves, pushing the row or column forward to the next empty space or pushing a piece off the opposite end of the board. A player <i>wins</i> if he (it!) has a surplus of "straights", a row or column all
+of the same color; a player <i>loses</i> if he repeats a position, or takes
+more than 30 seconds on a move.</p>
+<p>The arena is a 4-processor 150 Mhz Pentium Pro machine with 128 Mbytes
+of memory, running Linux SMP.</p>
+<h3>The Program</h3>
+<p>Except for some knowledge of overall strategies (such as "hold the center"
+in chess) we know little of games; except for ideas like "evaluation function"
+and "minimax" dimly remembered from college courses taken long ago, we
+know little of game-playing programs. We did observe that central positions
+in Pousse were more difficult to dislodge, and adopted a weighting scheme
+based on addition tables on lists of the form<tt> 0&nbsp;1&nbsp;2&nbsp;2&nbsp;1&nbsp;0</tt>,<tt> 
+</tt>computed by the function<tt> 
+ dedge</tt>:</p>
+<p><tt><font color="#000000">&nbsp;&nbsp;&nbsp;dedge=: &gt;: @: (+/~) @:
+(i. &lt;. i.@-)<br>&nbsp;&nbsp;&nbsp;dedge 6<br>1 2 3 3 2 1<br>2 3 4 4 3 2<br>3 4 5 5 4 3<br>3 4 5 5 4 3<br>2 3 4 4 3 2<br>1 2 3 3 2 1 </font></tt></p>
+<p><font color="#000000">The definition of<tt> dedge </tt>may be read as
+increment<tt> </tt>(<tt>&gt;:</tt>)<tt> </tt>the addition table<tt> </tt>(<tt>+/~</tt>)<tt> 
+</tt>of the minimum<tt> </tt>(<tt>&lt;.</tt>)<tt> </tt>of the lists of
+increasing<tt> </tt>(<tt>i.</tt>)<tt> </tt>and decreasing<tt> </tt>(<tt>i.@-</tt>)<tt> 
+</tt>non-negative integers.</font></p>
+<p>The program has three main parts:<tt> 
+ run</tt>, <tt>ump</tt>, and evaluation
+functions.</p>
+<p><tt>run </tt>is a dyadic function on the board size and a matrix of
+the moves in the game so far. It checks whether the saved sequence of boards
+(one board per move) is valid, and as appropriate computes the entire sequence
+or adds an additional element to the sequence, and in so doing creates
+the global variables required by the other parts.</p>
+<p><tt>ump </tt>("umpire") is a dyadic operator in the sense of Heaviside,
+an entity that applies to function argument(s) and produces a function.
+The syntax is<tt> s&nbsp;(ex&nbsp;ump&nbsp;eo)&nbsp;n </tt>.<tt> ex </tt>is
+the evaluation function for <tt>X</tt>;<tt> eo </tt>is the evaluation function
+for <tt>O</tt>;<tt> n </tt>is the board size; the optional argument<tt> 
+s </tt>is 1 or 0 indicating whether to display the internal state.<tt> 
+ump</tt> is not required for purposes of the contest, but is very useful
+for evaluating the goodness of evaluation functions.</p>
+<p>Evaluation functions are dyadic. The left argument is the parity, <tt>'X'</tt>
+or <tt>'O'</tt>; the right argument is a 2- or 3-dimensional array of boards;
+the result is a vector of the scores corresponding to the boards. The main
+evaluation function is:</p>
+<p><tt>&nbsp;&nbsp;&nbsp;ev=: evline + evcount + 1e8&quot;_ * evrepeat
++ evstraight</tt></p>
+<p>That is,<tt> ev </tt>is a linear function of the component evaluation
+functions<tt> 
+ evline</tt>,<tt> evcount</tt>,<tt> 
+ evrepeat</tt>,<tt> </tt>and<tt> 
+evstraight</tt>; multiplication by the constant function<tt> 
+ 1e8&quot;_
+</tt>ensures that nonzero scores reported by<tt> 
+ evrepeat </tt>(negative
+one for a repeated board position) and<tt> evstraight </tt>(difference
+in the number of straights) dominate the calculation.</p>
+<p>It is instructive to consider<tt> 
+ evcount </tt>in detail. (The other component functions of<tt> ev </tt>work similarly, and are similarly brief.) The definitions are:</p>
+<p><tt>&nbsp;&nbsp;&nbsp;flip &nbsp;&nbsp;=: 'X'&amp;=@[ { 'XO'&quot;_<br>&nbsp;&nbsp;&nbsp;count&nbsp;&nbsp;=: +/&quot;1 @: (,&quot;2) @ (dedge@{:@$
+*&quot;2 ]) @: =<br>&nbsp;&nbsp;&nbsp;evcount=: count - flip@[ count ] </tt></p>
+<p><tt>flip </tt>switches the parity of a board, changing<tt> X </tt>to<tt> 
+O </tt>and <i>vice versa</i>;<tt> count </tt>computes the product of each
+board<tt> </tt>(<tt>*&quot;2</tt>)<tt> </tt>and the weights computed by<tt> 
+dedge </tt>(discussed above), then the sums of the products in each matrix<tt> 
+</tt>(<tt>+/&quot;1@:(,&quot;2)</tt>);<tt> </tt>finally,<tt> evcount </tt>computes
+the difference in the counts on the two parities. Thus:</p>
+<p><tt>&nbsp;&nbsp;&nbsp;b=: (?. 2 6 6$3){' XO'&nbsp;&nbsp;&nbsp; </tt><font size="-2">NB.</font><tt> 
+</tt>two pseudo random 6 by 6 boards<br><tt>&nbsp;&nbsp;&nbsp;b<br>&nbsp;OXX &nbsp;<br>OOOXXO<br>&nbsp;&nbsp;XO X<br>&nbsp;XOXOO<br>X&nbsp;XXOO<br>O&nbsp;&nbsp;O&nbsp;X<br><br>OOX OO<br>OX XO<br>XOX&nbsp; X<br>&nbsp;XOO O<br>XX&nbsp;OX<br>&nbsp;O&nbsp;XX&nbsp;<br><br>&nbsp;&nbsp; 'X'=b &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">&nbsp;&nbsp;&nbsp;dedge
+6</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(dedge@{:@$&nbsp;*&quot;2&nbsp;])&nbsp;'X'=b&nbsp;&nbsp;&nbsp;<br>0 0 1 1 0 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">1
+2 3 3 2 1</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 0 3 3 0 0<br>0 0 0 1 1 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">2
+3 4 4 3 2</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 0 0 4 3 0<br>0 0 1 0 0 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">3
+4 5 5 4 3</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 0 5 0 0 3<br>0 1 0 1 0 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">3
+4 5 5 4 3</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 4 0 5 0 0<br>1 0 1 1 0 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">2
+3 4 4 3 2</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2 0 4 4 0 0<br>0 0 0 0 0 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">1
+2 3 3 2 1 </font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 0 0 0 0 1 </tt></p>
+<p><tt>0 0 1 0 0 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+0 3 0 0 0<br>0 1 0 1 0 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+3 0 4 0 0<br>1 0 1 0 0 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3
+0 5 0 0 3<br>0 1 0 0 0 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+4 0 0 0 0<br>1 1 0 0 1 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2
+3 0 0 3 0<br>0 0 0 1 1 0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0
+0 0 3 2 0</tt></p>
+<p><tt>&nbsp;&nbsp;&nbsp;(,&quot;2)&nbsp;(dedge@{:@$&nbsp;*&quot;2&nbsp;])&nbsp;'X'=b
+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;</tt><font size="-2">NB.</font><tt> </tt>ravel
+each matrix<br><tt>0 0 3 3 0 0 0 0 0 4 3 0 0 0 5 0 0 3 0 4 0 5 0 0 2 0 4 4 0 0 0 0
+0 0 0 1<br>0 0 3 0 0 0 0 3 0 4 0 0 3 0 5 0 0 3 0 4 0 0 0 0 2 3 0 0 3 0 0 0 0 3
+2 0 </tt></p>
+<p><tt>&nbsp;&nbsp;&nbsp;+/&quot;1&nbsp;(,&quot;2)&nbsp;(dedge@{:@$&nbsp;*&quot;2&nbsp;])&nbsp;'X'=b&nbsp;&nbsp;</tt><font size="-2">NB.</font><tt> 
+</tt>sum each vector<br><tt>41 38 </tt></p>
+<p><tt>&nbsp;&nbsp;&nbsp;'X' count b<br>41 38 </tt></p>
+<p><tt>&nbsp;&nbsp;&nbsp;'O' count b<br>39 34</tt></p>
+<p><tt>&nbsp;&nbsp;&nbsp;'X' evcount b<br>2 4<br><br></tt>The evaluation function<tt> eu </tt>prompts the user to enter
+a move, so that (for example)<tt> 
+ eu&nbsp;ump&nbsp;ev&nbsp;6 </tt>allows
+the user to play<tt> 
+ X </tt>against<tt> ev </tt>playing<tt> O </tt>on a
+6-by-6 board, and<tt> ev&nbsp;ump&nbsp;eu&nbsp;6 </tt>allows the user to
+play<tt> O </tt>against<tt> ev </tt>playing<tt> X</tt>.<tt> </tt></p>
+<p>Benchmarks performed on our machines and extrapolated onto the contest
+machine indicated that 30 seconds are sufficient to execute the evaluation
+function, without any need for timer interrupts or multi-processor execution.
+The program uses the same strategy on any size board, applying the evaluation
+function on (4*N)^2 boards, selecting at random from the set of move(s)
+that minimize the maximum score for the opponent. This strategy was sufficient
+to play surprisingly well.</p>
+
+<p>The <a href="https://www.jsoftware.com/scripts/merge15.ijs">program
+source text</a> is a script of of 229 lines and 7078 characters (including
+comments and development support "dead" code). A <a href="https://www.jsoftware.com/scripts/pousse.ijs">playing
+version of the program</a> for Windows 9x/NT (with a GUI front-end added
+subsequent to the contest) is available for free. See if you can beat our
+program!</p>
+
+<h3>The Process</h3>
+<p>The contest ran from Thursday, August 27 at 5 PM EDT until Sunday, August
+30 at 5 PM EDT, but we did not start working in earnest until the end of
+the paid work week on Friday at 6 PM EDT. Team members worked separately
+in their own homes, and kept in contact by telephone calls and by dial-up
+e-mail access (about 70 e-mail messages); it was only on Sunday that two
+of us (Hui and Kirk Iverson) met to execute the last mad rush and the final
+packaging.</p>
+
+<p>Much time was spent in developing the infrastructure for the program
+(running the moves, saving the state, implementing the umpire, etc.) before
+we arrived at a point of being able to work more seriously on evaluation
+functions and game playing strategy. The structure of the evaluation function
+facilitates parallel development; for example, someone could work on a
+weighted count of the pieces while someone else is devising a measure for
+the goodness of partial straights. Work would have proceeded rapidly, but
+time ran out, alas.</p>
+
+<p>Intermediate stages of the code were distributed as e-mail attachments.
+The brevity of the code was a definite advantage: the thirteen successive
+versions of the script file ranged in size from 389 to 7588 bytes and required
+very little transmission time even at dial-up speeds.</p>
+
+<p>The development was done under Windows 95/NT, and only the packaging
+and a short <i>prima facie</i> check were done under Linux. Our associate
+Martin Neitzel of <a href="https://www.jsoftware.com/extras/euromirror.htm">G&auml;rtner Datensysteme GbR</a> in Germany kindly offered to perform this packaging for any J programmer who wished to enter the contest, but did not have access to Linux. The portability of J meant that the offer could be made with confidence.</p>
+</TD></TR></TABLE>
+</body>
+</html>

@@ -1,0 +1,1879 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Operators and Functions</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Operators and Functions</font><br>
+<font size=+1>Kenneth E. Iverson</font><br>
+APL Design Group, Research Division, Yorktown Heights</p>
+
+
+
+<p align=center><b>Abstract</b></p>
+
+<p>This paper treats the syntax of operators in APL, 
+presents definitions of a number of new operators and functions, 
+and provides examples of their use.</p>
+
+<br><hr>
+
+
+
+<a name="0"></a>
+
+<p>This paper presents some of the operators and functions 
+which I have found useful in treatments of topics 
+in mathematics and in data processing. 
+Readers are assumed to be familiar with APL 
+as defined in Reference 
+<acronym title="APL Language, Form Number GC26-3847, 
+IBM Corporation.">[1]</acronym>. 
+I am indebted to a number of my colleagues 
+for useful discussions and suggestions, 
+particularly to A.D. Falkoff and D.L. Orth. 
+I am also indebted to Michael Halpern for discussions 
+leading to the formulation of the axis operator.</p>
+
+<a name="arrowobar"></a>
+<p>To allow functions to be defined as conveniently 
+as variables we will permit the use of the assignment 
+arrow<tt> </tt><img src="imag/arrowobar.bmp"><tt> </tt>as follows: 
+a name followed 
+by<tt> </tt><img src="imag/arrowobar.bmp"><tt> </tt>followed 
+by an expression which produces a function, 
+assigns the name to the function, 
+Thus<tt> f</tt><img src="imag/arrowobar.bmp"><tt>+.× </tt>
+and<tt> g<img src="imag/arrowobar.bmp">+</tt>&nbsp;<tt> </tt>
+and<tt> h<img src="imag/arrowobar.bmp">g </tt>are valid expressions.</p>
+
+<p>Operators may take numeric, character, and even operator, 
+arguments as well as functions. 
+For example, the slash<tt> </tt>(<tt>/</tt>)<tt> </tt> 
+applied to a dyadic function (as in<tt> +/</tt>&nbsp;)<tt> </tt>
+produces the monadic reduction function, and applied to a Boolean
+vector (as in<tt> u/</tt>&nbsp;)<tt> </tt>produces 
+the monadic selection function called compression. 
+Numeric operator arguments introduce 
+the possibility of two juxtaposed vector constants 
+in a valid expression. 
+The ambiguity inherent in such juxtaposition must be 
+resolved by the use of parentheses.</p>
+
+<p>Zero-origin indexing will be used throughout this paper.</p>
+
+
+
+<br>
+<a name="1"></a>
+<p><b>1. Syntax and Order of Execution</b></p>
+
+A function produced by an operator is called a <u>derived</u> function. 
+Defined and derived functions behave like primitive functions 
+in that they may serve as arguments to operators and may be divalent. 
+Although derived functions may be divalent, 
+the operators themselves are not.
+For example, reduction<tt> </tt>(<tt>/</tt>)<tt> </tt>
+and scan<tt> </tt>(<tt>\</tt>)<tt> </tt>are monadic 
+and the dot (in inner and outer product) is dyadic.  
+The jot<tt> </tt>(<tt>∘</tt>)<tt> </tt>as used
+in the outer product<tt> </tt> (<tt>∘.×</tt>) <tt> </tt>produces, 
+in effect, a special &ldquo;monadic case&rdquo; of a dyadic operator. 
+It will be used extensively in this manner 
+in the definition of new operators.</p>
+
+<p>Since a monadic function applies to the argument to its <u>right</u>, 
+and a monadic operator applies to the argument to its <u>left</u>, 
+operators and functions behave in a syntactic sense as mirror images. 
+This behavior will be carried through 
+in the rules laid down for the order of execution.</p>
+
+<p>The order of execution of functions in an
+unparenthesized expression is governed  by a single rule:
+the right argument of any function (monadic or dyadic) 
+is the result of the entire expression to the right of it.  
+An operator (monadic or dyadic) applies in a similar manner 
+to the left except that its left argument is the result 
+of the longest possible <u>operator sequence</u> on its left. 
+An operator sequence is a portion of an expression consisting 
+of a non-operator followed by a sequence consisting 
+of monadic operators or of dyadic operators 
+each followed by one non-operator. 
+The non-operators may themselves result 
+from parenthesized expressions. 
+Finally, operators enjoy precedence over functions 
+in the sequence of execution, 
+and obey parentheses in the usual manner.</p>
+
+<a name="infinity"></a>
+<p>Composite symbols formed from the 
+dieresis<tt> </tt>(<tt>¨</tt>)<tt> </tt>
+and the overbar<tt> </tt>(<tt>¯</tt>)<tt> </tt>
+will be reserved exclusively for operators, 
+but operator symbols will not be limited to this class. 
+The symbols<tt> _ </tt>and<tt> ¯ </tt>denote 
+infinity and negative infinity, respectively.</p>
+
+
+
+<br>
+<a name="2"></a>
+<p><b>2. Power and Identity Operators</b></p>
+
+The power operator, 
+denoted by<tt> ⍣</tt>&nbsp;,<tt> </tt> 
+applies to a monadic function left argument<tt> f </tt>
+and an integer right argument<tt> k </tt>
+to produce the <tt>k</tt>th power 
+of<tt> f </tt>in the following 
+sense:<tt> f⍣k←→f f⍣k-1</tt>&nbsp;,<tt> </tt>
+and<tt> f⍣1←→f</tt>&nbsp;.<tt> </tt> 
+In particular,<tt> f⍣0 </tt>is the identity function 
+and<tt> f⍣¯1 </tt>is the inverse of<tt> f</tt>&nbsp;.<tt> </tt> 
+Moreover,<tt> f⍣_ </tt>denotes the limit 
+of<tt> f</tt>&nbsp;,<tt> </tt>that is, 
+the limiting function<tt>  f⍣n </tt>
+for<tt>  n </tt>large. 
+Similarly,<tt>  f⍣¯ </tt>denotes 
+the limit of the inverse of<tt> f</tt>&nbsp;.</p>
+
+<p>The expression<tt> f⍣∘ </tt>yields 
+the <u>identity function</u> 
+of a dyadic function<tt> f</tt>&nbsp;,<tt> </tt>
+defined to be the function<tt> g </tt>
+with the following 
+properties:<tt> a g 1←→a</tt>&nbsp;,<tt> </tt>
+and<tt> a g 0 </tt>yields the identity 
+element of<tt> f</tt>&nbsp;.<tt> </tt> 
+Thus<tt> × </tt>is the identity function 
+of<tt> + </tt>and<tt> * </tt>is 
+the identity function of<tt> ×</tt>&nbsp;,<tt> </tt> 
+properties which account for the utility 
+of expressions of the form<tt> b+.×l </tt>and<tt> b×.*l </tt>
+in applying the functions<tt> + </tt>and<tt> × </tt>over 
+subsets of the elements of a vector<tt> b </tt>
+specified by the Boolean array<tt> l</tt>&nbsp;.</p>
+
+<p>For example, if<tt> l←(k⍴2)⊤⍳2*k←⍴b</tt>&nbsp;,<tt> </tt>
+then<tt> b+.×l </tt>and<tt> b×.*l </tt>give sums and products 
+over all subsets of<tt> b</tt>&nbsp;.<tt> </tt> 
+Moreover,<tt> b⌊.(⌊⍣∘)l </tt>and<tt> b⌈.(⌈⍣∘)l </tt>
+give minima and maxima over all subsets of<tt> b</tt>&nbsp;.<tt> </tt> 
+Finally,<tt> x∨.(∨⍣∘)l </tt>and<tt> x∧.(∧⍣∘)l </tt>
+clearly apply the functions<tt> ∨ </tt>and<tt> ∧ </tt>
+over all subsets of<tt> x</tt>&nbsp;,<tt> </tt> 
+whereas the equivalent expressions<tt> x∨.∧l </tt>
+and<tt> x∧.≥l </tt>are not so obviously 
+applications of<tt> ∨ </tt>and<tt> ∧ </tt>over subsets.</p>
+
+
+
+<br>
+<a name="3"></a>
+<p><b>3. Commutator</b></p>
+
+<p>The monadic operator<tt> ⍨ </tt><u>commutes</u> the sense 
+of the arguments of a dyadic function<tt> f</tt>&nbsp;,<tt> </tt> 
+that is,<nobr><tt> x f⍨ y←→y f x</tt>&nbsp;.</nobr><tt> </tt>
+For example, the secant slope<tt> (-/f x+s,0)÷s </tt>
+may be written as<tt> s÷⍨-/f x+s,0</tt>&nbsp;,<tt> </tt>
+and<tt> (+/v*2)*.5 </tt> 
+may be written as<tt> .5*⍨+/v*2</tt>&nbsp;.<tt> </tt> 
+Moreover, the familiar transposition 
+identity<tt> a+.×b←→⍉(⍉b)+.×⍉a </tt>may be written 
+(using the dual operator of <a href="opfns1.htm#8">Section 8</a>)  
+without arguments  
+(i.e. as a relation between certain derived functions) 
+as:<tt> +.×←→+.×⍢⍉⍨</tt>&nbsp;,<tt> </tt>
+or equivalently,<tt> +.×⍨←→+.×⍢⍉</tt>&nbsp;.</p>
+
+
+<br>
+<a name="4"></a>
+<p><b>4. Scalar Operators and the Identity Function</b></p>
+
+<p>For each of the scalar dyadic primitive functions, 
+we define an associated dyadic operator denoted 
+by the symbol for the function overstruck with  the  overbar.    
+The definition will be illustrated 
+by the definition for<tt> +</tt>&nbsp;:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp;(monadic)</td><td>&nbsp;</td>
+ <td><tt>&nbsp; f<img src="imag/plusobar.jpg">g y←→(f y) + (g y)</tt></td></tr>
+<tr><td>&nbsp; &nbsp;(dyadic)</td><td>&nbsp;</td>
+ <td><tt>x f<img src="imag/plusobar.jpg">g y←→(x f y) + (x g y)</tt></td></tr>
+</table>
+
+<p>The sum over the values produced 
+by the function<tt> f </tt>applied 
+to its entire domain will be denoted 
+by<nobr><tt> f<img src="imag/plusobar.jpg">∘</tt>&nbsp;.</nobr><tt> </tt>
+A similar definition will apply 
+to each of the scalar operators. 
+For example, if<tt> p </tt>is a proposition, 
+then<tt> p<img src="imag/orobar.jpg">∘ </tt>is<tt> 1 </tt>if and only if 
+there exists an element of its domain 
+for which<tt> p </tt>is true, 
+and the number of elements 
+in the set defined by<tt> p </tt>is given 
+by<tt> p<img src="imag/plusobar.jpg">∘</tt>&nbsp;.</p>
+
+<p>If<tt> f </tt>is divalent, 
+the expression<tt> f<img src="imag/plusobar.jpg">∘ </tt> 
+applies to the monadic function denoted 
+by<tt> f</tt>&nbsp;;<tt> </tt> 
+the dyadic form must be specified explicitly 
+in the manner presented in the following section.</p>
+
+<p>One of the arguments of a scalar operator 
+may be numeric, 
+in which case the following definitions 
+(shown for the specific scalar 
+function<tt> <img src="imag/starobar.jpg"> </tt>
+and the specific numeric quantity<tt> 2</tt>&nbsp;)<tt> </tt> 
+apply:</p>
+
+<pre>
+      2<img src="imag/starobar.jpg">f y←→2*f y
+      f<img src="imag/starobar.jpg">2 y←→(f y)*2
+      x 2<img src="imag/starobar.jpg">f y←→2*x f y
+      x f<img src="imag/starobar.jpg">2 y←→(x f y)*2
+</pre>
+
+<p>Certain of the scalar operators 
+are very useful in the treatment of sets. 
+If we consider the proposition 
+(i.e., a function whose result 
+is<tt> 0 </tt>or<tt> 1</tt>&nbsp;)<tt> p </tt>
+which defines a set 
+(i.e.,<tt> p&nbsp;x </tt>is<tt> 1 </tt>if<tt> x </tt>
+belongs to the set and<tt> 0 </tt>if it does not), 
+then<tt> p<img src="imag/andobar.jpg">q </tt>defines the intersection 
+of the sets defined 
+by<tt> p </tt>and by<tt> q</tt>&nbsp;.<tt> </tt> 
+Similarly,<tt> p<img src="imag/orobar.jpg">q </tt>
+gives the union,<br><tt> p<img src="imag/gtobar.jpg">q </tt>
+the ordinary difference, 
+and<tt> p<img src="imag/neobar.jpg">q </tt>the symmetric difference.</p>
+
+<p>Use of the 
+form<tt> p<img src="imag/orobar.jpg">∘ </tt>
+will be illustrated 
+by a proof of the fact that 
+the number of elements in the union of 
+sets<tt> p </tt>and<tt> q </tt>(that 
+is,<tt> p<img src="imag/orobar.jpg">q<img src="imag/plusobar.jpg">∘</tt>&nbsp;)<tt> </tt> 
+is equal to the sum of the numbers 
+in<tt> p </tt>and<tt> q</tt>&nbsp;,<tt> </tt> 
+less the number in the 
+intersection<tt> p<img src="imag/andobar.jpg">q</tt>&nbsp;.<tt> </tt> 
+For boolean arguments<tt> a </tt>and<tt> b</tt>&nbsp;,<tt> </tt>
+the expression<tt> a∨b </tt>is equivalent 
+to<tt> (a+b)-a∧b</tt>&nbsp;.<tt> </tt>    
+Consequently,<tt> p<img src="imag/orobar.jpg">q←→(p<img src="imag/plusobar.jpg">q)<img src="imag/minusobar.jpg">(p<img src="imag/andobar.jpg">q)</tt>&nbsp;,<tt> </tt>and:</p>
+<pre>
+      p<img src="imag/orobar.jpg">q<img src="imag/plusobar.jpg">∘
+      (p<img src="imag/plusobar.jpg">q)<img src="imag/minusobar.jpg">(p<img src="imag/andobar.jpg">q)<img src="imag/plusobar.jpg">∘
+      (p<img src="imag/plusobar.jpg">q<img src="imag/plusobar.jpg">∘)-(p<img src="imag/andobar.jpg">q<img src="imag/plusobar.jpg">∘)
+      (p<img src="imag/plusobar.jpg">∘)+(q<img src="imag/plusobar.jpg">∘)-(p<img src="imag/andobar.jpg">q<img src="imag/plusobar.jpg">∘)
+</pre>
+
+<p>Further examples of the use 
+of scalar operators 
+will be found in the treatment 
+of the derivative operator 
+in <a href="opfns1.htm#11">Section 11</a>.</p>
+
+
+
+<br>
+<a name="5"></a>
+<p><b>5. Domain and Valence Operators</b></p>
+
+<p>If<tt> f </tt>is a function, 
+then<tt> f<img src="imag/deltaumlaut.jpg">∘ </tt>is a proposition of the same valence, 
+and with an unrestricted domain, 
+which defines the domain of<tt> f </tt>in the following sense:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp;</td><td>(monadic)</td><td>&nbsp;</td>
+ <td><tt>f<img src="imag/deltaumlaut.jpg">∘&nbsp;x </tt>is<tt> 1 </tt>
+ if<tt> x </tt>is in the domain of<tt> f</tt>&nbsp;.</td></tr>
+<tr><td>&nbsp; &nbsp;</td><td>(dyadic)</td><td>&nbsp;</td>
+ <td><tt>x&nbsp;f<img src="imag/deltaumlaut.jpg">∘&nbsp;y </tt>is<tt> 1 </tt>
+ if the pair<tt> x, y </tt>is in the domain of<tt> f</tt>&nbsp;.</td></tr>
+</table>
+
+<p>If<tt> f </tt>is a function 
+and<tt> p </tt>is a proposition 
+of the same valence, 
+then<tt> f<img src="imag/deltaumlaut.jpg">p </tt>is a function equivalent to<tt> f </tt>
+but further restricted to the domain defined by<tt> p</tt>&nbsp;.<tt> </tt>
+Formally:</p>
+
+<pre>
+      f<img src="imag/deltaumlaut.jpg">p<img src="imag/deltaumlaut.jpg">∘←→f<img src="imag/deltaumlaut.jpg">∘<img src="imag/andobar.jpg">p
+</pre>
+
+<a name="valenceop"></a>
+<p>The valence of a function<tt> f </tt>
+may be delimited by one of the 
+expressions<nobr><tt> f<img src="imag/deltaumlaut.jpg">1 </tt></nobr>
+or<nobr><tt> f<img src="imag/deltaumlaut.jpg">2</tt>&nbsp;,</nobr><tt> </tt> 
+the value of the right argument determining 
+the valence of the resulting derived function. 
+Thus, as noted in <a href="opfns1.htm#4">Section 4</a>, 
+the sum over the dyadic domain 
+of the bivalent function<tt> f </tt>
+would be denoted by<nobr><tt> f<img src="imag/deltaumlaut.jpg">2<img src="imag/plusobar.jpg">∘</tt>&nbsp;,</nobr><tt> </tt> 
+whereas the sum over the monadic domain 
+could be denoted by 
+either<tt> f<img src="imag/deltaumlaut.jpg">1<img src="imag/plusobar.jpg">∘ </tt>
+or<tt> f<img src="imag/plusobar.jpg">∘</tt>&nbsp;.</p>
+
+
+
+<br>
+<a name="6"></a>
+<p><b>6. Uniform Functions</b></p>
+
+<p>A number of familiar monadic functions can 
+be characterized by the rank 
+of the argument or arguments 
+for which they are defined, 
+and by the ranks of the results 
+they produce. For example:</p>
+
+
+<table>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><u>Expression</u>
+ <td>&nbsp; &nbsp; &nbsp;</td><td><u>Rank</u></td></tr>
+<tr><td>Monadic:</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>|¯3</tt></td>
+ <td>&nbsp;</td><td><tt>0 0</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>+/1 2 3 4 5</tt></td>
+ <td>&nbsp;</td><td><tt>0 1</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>⍳5</tt></td>
+ <td>&nbsp;</td><td><tt>1 0</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>⌽ 1 2 3 4 5</tt></td>
+ <td>&nbsp;</td><td><tt>1 1</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>Determinant</td>
+ <td>&nbsp;</td><td><tt>0 2</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>Matrix inverse<tt> </tt>( <tt>⌹</tt> )</td>
+ <td>&nbsp;</td><td><tt>2 2</tt></td></tr>
+<tr><td>Dyadic:</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>3+4</tt></td>
+ <td>&nbsp;</td><td><tt>0 0 0</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>2 2 2 ⊤ 6</tt></td>
+ <td>&nbsp;</td><td><tt>1 1 0</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>3 ⌽ 1 2 3 4 5</tt></td>
+ <td>&nbsp;</td><td><tt>1 0 1</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>2 1 4 ⌹ m</tt></td>
+ <td>&nbsp;</td><td><tt>1 1 2</tt></td></tr>
+</table>
+
+<p>In general, functions are defined 
+to have an explicit rank, 
+although degenerate cases of lower rank 
+are sometimes permitted, 
+as in reduction or reversal of a scalar, 
+or as in<tt> ⌹&nbsp;1&nbsp;2&nbsp;3</tt>&nbsp;.<tt> </tt> 
+We will therefore speak of the <u>rank</u> 
+of a function as a vector 
+whose first element specifies the <u>result rank</u> 
+and whose remaining element or elements 
+specify the <u>argument rank</u> or ranks.
+<a name="infinite_rank"></a>
+There remain some open questions concerning 
+the specification of the ranks 
+of certain functions (such as ravel) 
+which appear to be of unrestricted rank.</p>
+
+<p>Arguments and results of fixed ranks 
+may still vary in shape, 
+and we now define a <u>uniform</u> function 
+as one whose result shape depends 
+only upon the argument shape. 
+For example, reversal, reduction, and scan 
+are uniform functions, but<tt> ⍳n </tt>is not. 
+The importance of uniform functions is that 
+their definition can be extended to arguments 
+of higher rank in a systematic way, 
+the argument being treated as an array of 
+&ldquo;subarrays&rdquo; 
+(along final axes which define the 
+units of the function of appropriate rank), 
+and the result is treated as the same array 
+of subarrays of individual results. 
+Non-uniform functions can be extended 
+in a similar manner by employing 
+the scalar representation function 
+discussed in <a href="opfns1.htm#10">Section 10</a>.</p>
+
+<p>A uniform monadic function of rank<tt> rr,ar </tt> 
+(result rank and argument rank) applies  
+to an array<tt> x </tt>of  rank<tt> ar </tt>
+or greater, to produce an overall result of 
+rank<tt> ((-ar)↓⍴x),rr</tt>&nbsp;.<tt> </tt> 
+The result can be perceived as 
+follows:<tt> f </tt>is applied to each of 
+the rank<tt> ar </tt>&ldquo;units&rdquo; 
+of an &ldquo;array of rank<tt> (-ar)↓⍴x</tt>&nbsp;&rdquo;<tt> </tt>
+whose elements are these units, 
+the<tt> rr </tt>coordinates of the individual results 
+being placed last to produce the overall result 
+of rank<tt> ((-ar)↓⍴x),rr</tt>&nbsp;.</p>
+
+
+
+<br>
+<a name="7"></a>
+<p><b>7. Nuclear Axis Operators</b></p>
+
+<p>The <u>nuax</u> operator (denoted by<tt> ⍤</tt>&nbsp;)<tt> </tt> 
+applies to a function left argument 
+and a variable right argument to specify 
+the axes which define the <u>nuclei</u>
+to which the function is to apply. 
+For example, if<tt> ⍴a </tt>
+is<tt> 3&nbsp;4&nbsp;3&nbsp;5&nbsp;5 </tt> 
+and<tt> f </tt>is the determinant function 
+(of rank<tt> 0&nbsp;2</tt>&nbsp;),<tt> </tt> 
+then<tt> f&nbsp;a </tt>yields a result 
+of shape<tt> 3&nbsp;4&nbsp;3</tt>&nbsp;,<tt> </tt> 
+and<tt> f⍤0&nbsp;2&nbsp;a </tt>yields a result 
+of shape<tt> 4&nbsp;5&nbsp;5</tt>&nbsp;.<tt> </tt> 
+The <u>coax</u> operator<tt> ⍥ </tt>is also provided; 
+its argument specifies the axes complementary 
+to the nuclear axes. 
+For example,<tt> f⍥&nbsp;1&nbsp;3&nbsp;4&nbsp;a </tt>
+is equivalent to<tt> f⍤&nbsp;0&nbsp;2&nbsp;a</tt>&nbsp;,<tt> </tt> 
+whereas<tt> f⍥&nbsp;4&nbsp;3&nbsp;1&nbsp;a </tt>
+has shape<tt> 5&nbsp;5&nbsp;4</tt>&nbsp;.</p>
+
+<p>It must be emphasized that 
+if a function<tt> f </tt>
+has a result rank greater than zero, 
+the corresponding axes occur 
+as the final axes in the overall result, 
+and that the axial operators do not specify 
+the allocation of these &ldquo;result&rdquo; axes 
+in the overall result. 
+In this they differ from the use of brackets 
+to specify axes, as in<tt> +\[3]a </tt>
+and<tt> ⌽[3]&nbsp;a</tt>&nbsp;,<tt> </tt>
+since the<tt> 3 </tt>in these cases specifies 
+not only that the units be along 
+axis<tt> 3</tt>&nbsp;,<tt> </tt> 
+but also that the vector results 
+are to lie along the same axis. 
+For example, if<tt> ⍴a </tt>
+is<tt> 2&nbsp;3&nbsp;4&nbsp;5</tt>&nbsp;,<tt> </tt> 
+then<tt> ⍴+\[2]a </tt>is 
+also<tt> 2&nbsp;3&nbsp;4&nbsp;5</tt>&nbsp;,<tt> </tt>  
+but the result of plus scan over axis<tt> 2 </tt>
+as specified by the nuax operator 
+has shape<tt> 2&nbsp;3&nbsp;5&nbsp;4</tt>&nbsp;.</p>
+
+<p>The fact that the result axes occur last 
+in the overall result is often convenient. 
+For example,<tt> +/(,⍤i)&nbsp;a </tt>
+sums over the axes<tt> i </tt>of<tt> a</tt>&nbsp;.</p>
+
+<p>For a dyadic left argument<tt> f</tt>,<tt> </tt> 
+the right argument of the axis operator<tt> ⍤ </tt>
+has the form<tt> i,_,j</tt>&nbsp;,
+where<tt> i </tt>and<tt> j </tt>are vectors 
+(of any length, including zero) 
+specifying the units of the left and right 
+arguments respectively 
+(and where<tt> _ </tt>represents infinity).
+For example,<tt> ⌹⍤1&nbsp;_&nbsp;1&nbsp;3 </tt>
+applies<tt> ⌹ </tt>to vector left arguments 
+along axis<tt> 1 </tt>and to matrix right arguments 
+along axes<tt> 1 </tt>and<tt> 3</tt>&nbsp;.<tt> </tt>
+Similarly,<tt> k⌽⍤ _3 a </tt>rotates the vectors 
+along axis<tt> 3 </tt>of<tt> a </tt>by amounts 
+specified by the scalars of<tt> k</tt>&nbsp;.</p>
+
+<p>If the right argument of<tt> ⍤ </tt>
+requires the general 
+form<tt> i,_,j</tt>&nbsp;,<tt> </tt> 
+then any right argument<tt> k </tt>  
+which does not include an
+infinity applies to specify axes 
+of both the left and the right argument 
+of the resulting derived function 
+and is therefore equivalent 
+to<tt> k,_,k</tt>&nbsp;.<tt> </tt>       
+The argument<tt> _,k </tt>is, of course, 
+equivalent to<tt> '',_,k </tt>and 
+specifies scalar units in the left argument,  
+and<tt> k,_ </tt>specifies scalar units on the right.</p>
+
+
+<br>
+<a name="8"></a>
+<p><b>8. Composition and Duality</b></p>
+
+<p>The dual operator, denoted 
+by<tt> ⍢</tt>&nbsp;,<tt> </tt>
+is a slight extension of the notion 
+of dual functions implicit in deMorgan&rsquo;s 
+law<tt> </tt>(&nbsp;<tt>∨⍢~←→^ </tt>
+and<tt> ≠⍢~←→=</tt>&nbsp;)</tt>,<tt> </tt> 
+the extension being to include 
+a monadic left argument, 
+as in<tt> ⌊⍢-x←→⌈x</tt>&nbsp;.<tt> </tt>
+Composition, denoted by<tt> ¨</tt>&nbsp;,<tt> </tt>
+is the familiar notion 
+of the composition of two monadic 
+functions<tt> </tt>(&nbsp;<tt>f¨g&nbsp;x←→f&nbsp;g&nbsp;x</tt>&nbsp;)<tt> </tt>
+extended to the two cases of one dyadic argument, 
+as well as to the case of character arguments 
+which define a function in terms 
+of the expression represented 
+by one of the arguments.</p>
+
+<p><u>Duality and simple composition</u>. 
+Composition and the dual operator applied 
+to a divalent left argument and a monadic 
+(or divalent) right argument yield 
+parallel definitions 
+of divalent derived functions as follows:</p>
+
+<table>
+<tr><td><u>Composition</u>:</td><td>&nbsp; &nbsp;</td><td><tt>&nbsp; f¨g y←→f g y</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>x f¨g y←→(g x) f (g y)</tt></td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td align=right><u>Dual</u>:</td><td>&nbsp;</td><td><tt>&nbsp; f⍢g y←→(g⍣¯1) f (g y)</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>x f⍢g y←→(g⍣¯1) (g x) f (g y)</tt></td></tr>
+</table>
+
+<p>It should be noted that the extension 
+of the dual to include the monadic definition 
+makes the 
+identities<tt> ⌈⍢-←→⌊ </tt>
+and<tt> ⌊⍢-←→⌈ </tt> 
+hold for both the monadic case  
+(floor and ceiling) and 
+for the dyadic case (minimum and maximum). 
+Moreover, for the dyadic case the exponential 
+function yields the 
+identities<tt> ×⍢*←→+ </tt>
+and<tt> +⍢⍟←→×</tt>&nbsp;,<tt> </tt> 
+the latter of which provides the basis 
+for the use of natural logarithms in multiplication, 
+just as the 
+identity<tt> +⍢(10¨⍟)←→x </tt>
+forms the basis for the use of base ten logarithms.</p>
+
+<p>In the dyadic case of composition above, 
+the first function<tt> f </tt>is dyadic 
+and the second function<tt> g </tt>is monadic. 
+This is the case that prevails 
+when the functions have these valencies or are divalent. 
+If either<tt> f </tt>is specifically monadic 
+or<tt> g </tt>is specifically dyadic, 
+we obtain another important case defined as follows:</p>
+
+<pre>
+      x f¨g y←→f x g y
+</pre>
+
+<p>For divalent functions this form can be obtained 
+by fixing the valence of one or both 
+of the functions with the valence operator 
+defined in <a href="opfns1.htm#valenceop">Section 5</a>. 
+Frequently the valence becomes fixed 
+by composition with a variable 
+(as defined in the following subsection), 
+as in the expression<tt> 2¨*</tt>&nbsp;.</p>
+
+<p>The corresponding case for the dual 
+operator<tt> </tt>(&nbsp;<tt>f⍢dg</tt>&nbsp;)<tt>  </tt>
+would lead to the 
+definition<nobr><tt> f⍣¯1 f x dg y</tt>&nbsp;.</nobr><tt> </tt>
+It would therefore be vacuous 
+(being equivalent to<tt> dg</tt>&nbsp;)<tt> </tt>
+and is consequently excluded.</p>
+
+<p>The definition of the 
+composition<tt> f¨g </tt>
+given above must be understood as referring 
+to a single argument of rank appropriate 
+to the function<tt> g</tt>&nbsp;.<tt> </tt> 
+For example, if<tt> f </tt>is<tt> ⍉ </tt>
+and<tt> g </tt>is<tt> ⌹</tt>&nbsp;,<tt> </tt>
+and<tt> ⍴a </tt>is<tt> 3&nbsp;4&nbsp;4</tt>&nbsp;,<tt> </tt> 
+then the units of<tt> g </tt>
+are<tt> 4 </tt>by<tt> 4 </tt>matrices, 
+each of which is inverted and transposed 
+to produce an overall result of 
+shape<tt> 3&nbsp;4&nbsp;4</tt>&nbsp;.<tt> </tt> 
+Thus (assuming that<tt> ⌹ </tt>is 
+of rank<tt> 2&nbsp;2</tt>&nbsp;,<tt> </tt> 
+and extends to higher rank arrays in the normal 
+manner)<tt> ⍉¨⌹a </tt>
+differs from the 
+expression<tt> ⍉&nbsp;⌹&nbsp;a </tt>
+since the latter would invert each of the 
+three<tt> 4 </tt>by<tt> 4 </tt>matrices 
+of<tt> a </tt>
+to produce a result 
+of shape<tt> 3&nbsp;4&nbsp;4 </tt>
+which would then be transposed to produce a result 
+of shape<tt> 4&nbsp;4&nbsp;3</tt>&nbsp;.</p>
+
+<p>Similar remarks apply to the dual operator, 
+and in general to all operators. 
+In other words, a derived function applies 
+as an indivisible whole to each 
+of the nuclei of its argument. 
+The dual operator is defined formally 
+in terms of composition as 
+follows:<br><tt> f⍢g←→g⍣¯1¨(f¨g)</tt>&nbsp;.</p>
+
+<p><u>Composition with one variable argument</u>. 
+The composition operator applied to a 
+function<tt> f </tt> 
+and a variable<tt> v </tt>produces a result 
+of valence one less than the valence 
+of<tt> f</tt>&nbsp;.<tt> </tt> 
+Thus if<tt> f </tt>is dyadic, the result is monadic; 
+if<tt> f </tt>is monadic, the result is a constant.  
+For example:</p>
+
+<table>
+<tr><td><tt>&nbsp; &nbsp; &nbsp;</tt></td>
+ <td><tt>*¨.5 x←→x*.5</tt></td><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td>(&nbsp;<tt>*¨.5 </tt>is monadic)</td></tr>
+<tr><td><tt>&nbsp;</tt></td>
+ <td><tt>*¨.5←→*.5</tt></td><td>&nbsp;</td>
+ <td>(A constant value)</td></tr>
+<tr><td><tt>&nbsp;</tt></td>
+ <td><tt>2¨* x←→2*x</tt></td><td>&nbsp;</td>
+ <td>(&nbsp;<tt>2¨* </tt>is monadic)</td></tr>
+<tr><td><tt>&nbsp;</tt></td>
+ <td><tt>2¨*¨.5←→2*.5</tt></td><td>&nbsp;</td>
+ <td>(A constant value)</td></tr>
+</table>
+
+<p>This form of composition is particularly useful 
+in providing the monadic cases (both left and right) 
+of dyadic functions, 
+as illustrated above for the square 
+root<tt> </tt>(&nbsp;<tt>*¨.5</tt>&nbsp;)<tt> </tt> 
+and the powers of two<tt> </tt>(&nbsp;<tt>2¨*</tt>&nbsp;).</p>
+
+<p>The valence of the derived function 
+is determined by context, 
+and this in turn determines the valence 
+of the argument function as one greater. 
+For example, in the 
+expression<tt> *¨.5&nbsp;(4&nbsp;9)</tt>&nbsp;,<tt> </tt> 
+the function<tt> *¨.5 </tt>is monadic,<tt> * </tt>is dyadic, 
+and the result is the constant<tt> 2&nbsp;3</tt>&nbsp;;<tt> </tt> 
+in the expression<tt> *¨.5</tt>&nbsp;,<tt> </tt> 
+the function<tt> *¨.5 </tt>is niladic (a 
+constant),<tt> * </tt>is monadic, 
+and the result is the exponential<tt> *.5</tt>&nbsp;.</p>
+
+<p>Composition is useful in a wide variety of ways. 
+For example, with one variable argument 
+it provides the monadic cases  (both left and right)  
+of dyadic  functions,  as
+illustrated above for the powers of 
+two<tt> </tt>(&nbsp;<tt>2¨*</tt>&nbsp;)<tt> </tt> 
+and the square root<tt> </tt>(&nbsp;<tt>*¨.5</tt>&nbsp;).<tt> </tt>
+An example for the case of two functions is treated in 
+<a href="opfns1.htm#11">Section 11</a>.</p>
+
+<p>The dual operator is also widely useful.  
+For example,<tt> &lt;\ </tt>applied 
+to a logical vector yields the same vector 
+with all the<tt> 1</tt>&rsquo;s following 
+the first replaced by zeros, 
+whereas<tt> &lt;\⍢⌽ </tt>yields the vector 
+with all the<tt> 1</tt>&rsquo;s
+preceding the last replaced by zeros. 
+Similarly, if<tt> f </tt>is any function 
+which applies to columns of a matrix argument, 
+then<br><tt> f⍢⍉ </tt>
+applies similarly to rows. 
+A further important use of the dual is discussed in 
+<a href="opfns1.htm#each">Section 10</a>.</p>
+
+<a name="alpha"></a>
+<a name="omega"></a>
+<p><u>Composition with two variables (characters)</u>. 
+This use of composition is modeled on the <u>direct</u> 
+or<tt> ⍺ ⍵ </tt>definition form 
+defined in <u>Elementary Analysis</u> 
+<acronym title="Iverson, K. E., 
+Elementary Analysis, APL Press, 1976.">[2]</acronym>. 
+It incorporates the same abilities 
+to define functions with any number of global 
+(non-explicit) arguments, to prevent side-effects 
+(by automatically localizing all variables 
+specified within the defining expression), 
+and to make conditional and recursive definitions. 
+The definition is generalized to allow the specification 
+of the names of explicit arguments in a second argument 
+(with a jot<tt> </tt>(<tt>∘</tt>)<tt> </tt>for second argument 
+signifying the use of<tt> ⍺ </tt>and<tt> ⍵</tt>&nbsp;),<tt> </tt> 
+and to allow the specification of divalent functions. 
+Thus,<tt> f<img src="imag/arrowobar.bmp">'b÷x'¨'b' </tt>
+and<nobr><tt>  f<img src="imag/arrowobar.bmp">'⍵÷x'¨∘ </tt></nobr>
+are equivalent, 
+and if<tt> x←5</tt>&nbsp;,<tt> </tt>
+then<tt> f&nbsp;20 </tt>is<tt> 4</tt>&nbsp;,<tt> </tt>
+and<tt> 10&nbsp;'b÷x'¨'x&nbsp;b'&nbsp;20 </tt>
+is<tt> 2</tt>&nbsp;.</p>
+
+<a name="co"></a>
+<a name="alphaubar"></a>
+<p>Recursive definition requires the use 
+of the function name in its definition; 
+this name is identified by placing
+it first in the right argument, 
+separated from the other name or names by a colon. 
+For example, 
+if<tt> c←'x×f x-1:x=0:1'</tt>&nbsp;,<tt> </tt>
+then<tt> c¨'f:x' </tt>defines the factorial function 
+on non-negative integers. 
+The name<tt> f </tt>is local and is not associated 
+in any way with the derived function. 
+For the<tt> ⍺ ⍵ </tt>case<tt> c¨∘</tt>,&nbsp;<tt> </tt> 
+the name of the function is denoted
+by<tt> &#9078;</tt>&nbsp;,<tt> </tt> 
+as in<tt> c←'⍵×&#9078;&nbsp;⍵-1:⍵=0:1'</tt>&nbsp;.</p>
+
+<p>The symbols<tt> ⍺ </tt>and<tt> ⍵ </tt>may be used 
+like any other names except that 
+they must not remain as global names 
+in the resulting function. 
+For example, one may use<tt> c¨'⍺ ⍵' </tt>in lieu 
+of<tt> c¨∘</tt>&nbsp;,<tt> </tt> 
+and<tt> 'x+⍺'¨'x&nbsp;⍺' </tt>or<tt> '⍵+⍺'¨'⍵&nbsp;⍺' </tt>
+for the equivalent of<tt> '⍺+⍵'¨∘</tt>&nbsp;.</p>
+
+<p>This form of composition is very convenient 
+for defining and applying functions in computations 
+and for use in theoretical work.  For examples:</p>
+
+<pre>
+      pol<img src="imag/arrowobar.bmp">'(⍵∘.*⍳⍴⍺)+.×⍺'¨∘   [8.1]
+      1 3 3 1 pol 2 4
+27 125
+      1 3 3 1 '(⍵∘.*⍳⍴⍺)+.×⍺'¨∘ 2 4
+27 125
+      spol<img src="imag/arrowobar.bmp">'c pol ⍵'¨∘
+      c←1 4 6 4 1
+      spol 2 4
+16 625
+      '⍺+÷⍵'¨∘/1 2 1 2    (Continued fraction)
+1.375
+      '⍺+÷⍵¨∘\1 2 1 2     (Convergents)
+1 1.5 1.333 1.375
+
+      f⍨←→'⍵f⍺'¨∘
+
+      '(⍺ pol x)×⍵ pol x'¨∘←→
+      '(+⌿(-⍳⍴⍺)⌽⍺∘.×⍵,1↓0×⍺)pol x'¨∘
+</pre>
+
+<a name="coco"></a>
+<p>Divalent functions are defined 
+by catenating the arguments 
+for the monadic and dyadic cases, inserting a pair
+of colons to separate the two parts. 
+More precisely, 
+if<tt> ca¨na </tt>and<tt> cb¨nb </tt>define 
+(not necessarily respectively) 
+monadic and dyadic functions, 
+then<tt> (ca,'::',cb)¨na,'::',nb </tt>
+defines the corresponding divalent function. 
+Analogously,<tt> (ca,'::',cb)¨∘ </tt>
+defines the divalent function 
+corresponding to<tt> ca¨∘ </tt>
+and<tt> cb¨∘</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+      f<img src="imag/plusobar.jpg">g←→'(f⍵)+g⍵::(⍺f⍵)+⍺g⍵'¨∘
+</pre>
+
+<a name="id"></a>
+<p>The <u>identity element</u> (or elements) 
+of a function may be specified 
+by appending to the name (in the right argument 
+of<tt> ¨</tt>&nbsp;)<tt> </tt>
+the symbol<tt> ⍳ </tt>followed by the appropriate value. 
+For example,<nobr><tt> 'x+÷y'¨'x y⍳_'</tt>&nbsp;,</nobr><tt> </tt>
+and<nobr><tt> 'x+y'¨'x⍳0 y⍳0'</tt>&nbsp;.</nobr></p>
+
+
+
+<br>
+<a name="9"></a>
+<p><b>9. Reduction and Scan</b></p>
+
+<p>The reduction operator is defined as 
+follows:<tt> f/a </tt>is an application 
+of the dyadic function<tt> f </tt>to the set of
+arguments obtained by indexing<tt> a </tt>
+on its last axis. 
+For example, if<tt> ⍴a </tt>is<tt> 4&nbsp;4&nbsp;5</tt>&nbsp;,<tt> </tt> 
+then<tt> +.×/a </tt>applies the matrix product 
+over the five four-by-four matrices of<tt> a </tt>
+to produce a four-by-four result. 
+Similarly, if<tt> ⍴a </tt>is<tt> 4&nbsp;4&nbsp;4&nbsp;5</tt>&nbsp;,<tt> </tt>
+then<tt> +.×/a </tt>yields a result of shape<tt> 7⍴4</tt>&nbsp;,<tt> </tt>
+and<tt> +.×⍤1&nbsp;2/a </tt>yields a result of shape<tt> 3⍴4</tt>&nbsp;,<tt> </tt>
+and<tt> ∘.(+.×⍤1&nbsp;2)/a </tt>yields a result of
+shape<tt> 7⍴4</tt>&nbsp;.</p>
+
+<p>The reduction<tt> f⌿a </tt>is defined analogously 
+(the indexing applying to the leading axis), 
+as are the scans<tt> \ </tt>and<tt> ⍀</tt>&nbsp;.</p>
+
+The axis operators<tt> ⍤ </tt>and<tt> ⍥ </tt>
+apply to the reduction 
+operator<tt> </tt>(<tt>/ </tt>or<tt> ⌿</tt>)<tt> </tt> 
+to produce an operator which applies its argument function 
+to the arguments obtained by indexing the specified axis.  
+For example,<tt> +.×(/⍤0)a←→+.×⌿a</tt>&nbsp;.</p> 
+                             
+<p>It should be noted 
+that<tt> f(\⍤k) </tt>and<tt> f\[k] </tt>are not, 
+in general, equivalent, 
+since the result vectors of the former lie 
+along the last axis of the result 
+rather than along axis<tt> k</tt>&nbsp;.<tt> </tt> 
+Similarly,<tt> f(/⍤k) </tt>and<tt> f/[k] </tt> 
+are not equivalent in general, 
+although they are for a scalar function<tt> f</tt>&nbsp;.</p>
+
+
+
+<br>
+<a name="10"></a>
+<p><b>10. Scalar Representation</b></p>
+
+<p>The <u>enclose</u> function 
+(denoted by<tt> &lt;</tt>&nbsp;)<tt> </tt> 
+produces a <u>scalar representation</u> of its 
+argument in the sense 
+that the result is of rank zero, 
+and that there exists an inverse function 
+(called <u>disclose</u>, and denoted 
+by<tt> &gt;</tt>&nbsp;)<tt> </tt>
+such that<tt> a←→&gt;&lt;a </tt>
+for all<tt> a</tt>&nbsp;.<tt> </tt>
+Any result producible by an expression 
+which does not employ the enclose function 
+is called a <u>simple array</u>, 
+or is said to be <u>simple</u>.</p>
+
+<p>Selection and reshaping functions 
+apply without change to non-simple arrays.   
+However, non-simple arrays are
+outside the domain of all other functions 
+except for enclose, disclose, and equality 
+(together with those functions 
+such as<tt> ≠ </tt>and<tt> ∊ </tt> 
+which are defined in terms of equality).</p>
+
+<p>The equality function is extended 
+to non-simple scalar arguments as follows:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp;</td><td valign=top>1.</td><td>&nbsp;</td>
+<td><tt>(&lt;a)≠a </tt>for all<tt> a </tt></td></tr>
+<tr><td>&nbsp; &nbsp;</td><td valign=top>2.</td><td>&nbsp;</td>
+<td>If<tt> a </tt>equals<tt> b </tt>(in rank, shape, and all elements),
+then<tt> (&lt;a)=(&lt;b) </tt>yields<tt> 1</tt></td></tr>
+</table>
+
+<p>The enclose function applies 
+to all axes of its argument 
+(i.e., to the entire argument) 
+to produce a single scalar result, 
+but it can also be used in conjunction 
+with the axial operators to apply 
+to units determined by the specified axes. 
+For example, 
+if<tt> a←2&nbsp;3&nbsp;4&nbsp;5&nbsp;⍴⍳!5</tt>&nbsp;,<tt> </tt>
+then<tt> m←&lt;⍤1&nbsp;3&nbsp;a </tt>
+is a<tt> 2 </tt>by<tt> 4 </tt>matrix 
+such that for scalar 
+indices<tt> i </tt>and<tt> j</tt>&nbsp;,<tt> </tt>
+the element<tt> m[i;j] </tt>is a non-simple scalar 
+whose disclose<tt> (&gt;m[i;j]) </tt> 
+is a<tt> 3 </tt>by<tt> 5 </tt>simple matrix.</p>
+
+<p>The disclose function is scalar 
+in the sense that it applies to each element 
+of its argument, the new axes disclosed 
+becoming the final axes of the result. 
+For example, using the matrix<tt> m </tt>
+of the preceding paragraph, 
+<tt>&gt;m </tt>is a simple array 
+of shape<tt> 2&nbsp;4&nbsp;3&nbsp;5</tt>&nbsp;,<tt> </tt> 
+and<tt> ∧/,(&gt;m)=0&nbsp;2&nbsp;1&nbsp;3&nbsp;⍉&nbsp;a</tt>&nbsp;.</p>
+
+<p>The axial operators can also be applied 
+to the disclose function to determine 
+the axes to be disclosed. 
+For example,<tt> >⍤1 m </tt>produces a result 
+of shape<tt> 2&nbsp;4&nbsp;5 </tt>whose elements 
+are enclosed<tt> 3</tt>-element vectors.</p>
+
+<p>The disclose function applied 
+to a simple array<tt> a </tt>
+produces a result identical 
+to<tt> a</tt>&nbsp;.<tt> </tt> 
+Thus<tt> (&lt;a)=&lt;&gt;a </tt>is a test 
+for whether<tt> a </tt>is simple.</p>
+
+<a name="each"></a>
+<p>The expression<tt> f⍢&gt; </tt>
+produces a derived function 
+which applies the function<tt> f </tt>to its argument in 
+an &ldquo;item-wise&rdquo; fashion, 
+by disclosing each element of the argument, 
+applying<tt> f</tt>&nbsp;,<tt> </tt>
+and enclosing the result to produce 
+the corresponding element of the overall result. 
+Thus, if<tt> r←f⍢&gt;a </tt>
+and<tt> q </tt>is a particular 
+scalar element of<tt> a</tt>&nbsp;,<tt> </tt> 
+then the corresponding element of<tt> r </tt>
+is<tt> &lt;f&gt;q</tt>&nbsp;.<tt> </tt>
+In particular,<tt> ⍴r </tt>equals<tt> ⍴a</tt>&nbsp;.</p>
+
+
+
+<br>
+<a name="11"></a>
+<p><b>11. Derivative Operator</b></p>
+
+<p>Derivatives apply only to monadic functions, 
+but to functions of any rank<tt> r</tt>&nbsp;,<tt> </tt> 
+the derivative<tt> f∆ </tt>yielding a monadic function 
+of rank<tt> (+/r),r</tt>&nbsp;.<tt> </tt>
+Thus:</p>
+
+<table>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td align=right><u>Rank of</u><tt> f </tt></td>
+ <td>&nbsp; &nbsp; &nbsp;</td><td><u>Rank of</u><tt> f∆ </tt></td></tr>
+<tr><td>(Scalar function)</td><td>&nbsp;</td>
+ <td align=right><tt>0 0</tt></td><td>&nbsp;</td>
+ <td><tt>0 0 </tt>(Scalar function)</td></tr>
+<tr><td valign=top>(Vector function of a scalar)</td><td>&nbsp;</td>
+ <td align=right><tt>1 0</tt></td><td>&nbsp;</td>
+ <td><tt>1 1</tt></td></tr>
+<tr><td valign=top>(Scalar function of a vector)</td><td>&nbsp;</td>
+ <td align=right><tt>0 1</tt></td><td>&nbsp;</td>
+ <td><tt>1 1 </tt>(gradient)</td></tr>
+<tr><td valign=top>(Vector function<tt> v</tt>&nbsp;)</td><td>&nbsp;</td>
+ <td align=right><tt>1 1</tt></td><td>&nbsp;</td>
+ <td><tt>2 1 </tt>(Matrix of partials)</td></tr>
+<tr><td valign=top>(<tt>v∆</tt>)</td><td>&nbsp;</td>
+ <td align=right><tt>2 1</tt></td><td>&nbsp;</td>
+ <td><tt>3 1 </tt>(<tt>v∆ ∆</tt>)</td></tr>
+</table>
+
+<p>The shape of<tt> f∆ </tt>is determined as follows: 
+if<tt> u </tt>is a unit of<tt> f</tt>&nbsp;,<tt> </tt>
+then<tt> ⍴&nbsp;f∆&nbsp;u </tt>
+is<tt> (⍴&nbsp;f&nbsp;u),⍴u</tt>&nbsp;.</p>
+
+<p>The derivative operator together 
+with composition and scalar operators 
+can be used to express the familiar 
+differentiation rules as follows:</p>
+
+<pre>
+      f<img src="imag/plusobar.jpg">g∆←→f∆<img src="imag/plusobar.jpg">(g∆)
+      f<img src="imag/timesobar.bmp">g∆←→f∆<img src="imag/timesobar.bmp">g<img src="imag/plusobar.jpg">(g∆<img src="imag/timesobar.bmp">f) 
+      f¨g∆←→f∆¨g<img src="imag/timesobar.bmp">(g∆)
+      ÷¨g∆←→-¨(g∆)<img src="imag/divideobar.jpg">(g<img src="imag/starobar.jpg">2)
+      *¨n∆←→*¨(n-1)<img src="imag/timesobar.bmp">n
+        *∆←→*
+</pre>
+
+
+
+<br>
+<a name="12"></a>
+<p><b>12. Difference Operator</b></p>
+
+<p>The derivative operator<tt> ∆ </tt>
+discussed in the preceding 
+section actually yields a divalent result, 
+the dyadic form being the <u>difference</u> function 
+defined as follows:</p>
+
+<pre>
+      s f∆ x←→((f x+s)-f x)÷s
+</pre>
+
+<p>This function is also completed at zero 
+so that the expression<tt> 0 f∆ x </tt>
+equals the derivative<tt> f∆ x</tt>&nbsp;.</p>
+
+
+
+<br>
+<a name="13"></a>
+<p><b>13. Dyadic Reduction and Scan</b></p>
+
+<p>If<tt> f </tt>is a function, 
+then<tt> f/ </tt>and<tt> f\ </tt>
+produce divalent derived functions 
+whose dyadic forms are defined here. 
+If<tt> r←k f/x </tt>
+and<tt> (k≥0)∧k≤⍴x</tt>&nbsp;,<tt> </tt>
+then<tt> ⍴r </tt>is<tt> 1+(⍴x)-k</tt>&nbsp;,<tt> </tt>
+and<tt> r[i] </tt>is<tt> f/k↑i↓x</tt>&nbsp;.<tt> </tt>          
+Moreover,<tt> (-k)f/x </tt>is the dual of<tt> k&nbsp;f/x </tt>
+with respect to reversal, in the following sense:</p>
+
+<pre>
+      (-k)f/x←→⌽k f/ ⌽x
+</pre>
+
+<p>Thus<tt> 2&nbsp;-/x </tt>and<tt> ¯2&nbsp;-/x </tt>
+yield backward and forward differences 
+of<tt> x</tt>&nbsp;,<tt> </tt>respectively. 
+More generally,<tt> 2&nbsp;f/x </tt>
+and<tt> ¯2&nbsp;f/x </tt>
+yield &ldquo;pairwise&rdquo; 
+applications of<tt> f</tt>&nbsp;.<tt> </tt>
+For example,<tt> ¯2&nbsp;÷/t </tt>
+yields the ratios of terms in a series, 
+and<tt> ^/2=/v </tt>determines 
+whether all elements of<tt> v </tt>are equal.</p>
+
+<p>The new coordinate of the result produced 
+by the dyadic form precedes those of the monadic form. 
+Thus if<tt> s </tt>is the shape 
+of<tt> f/x</tt>&nbsp;,<tt> </tt>
+then the shape of<tt> k&nbsp;f/&nbsp;x </tt>has the 
+form<tt> n,s</tt>&nbsp;.<tt> </tt>
+Moreover,<tt> (⍴x)&nbsp;f/x </tt>is equivalent to<tt> f/x </tt>
+except that the shape of the result 
+has a leading element of<tt> 1</tt>&nbsp;. </p>
+
+<p>The dyadic form of<tt> f\ </tt>is defined similarly, 
+differing only in that it includes the reductions 
+over all leading prefixes so as to yield 
+a result of the same length 
+as the argument<tt> x</tt>&nbsp;.<tt> </tt>     
+More precisely, 
+if<tt> r←k&nbsp;f\x</tt>&nbsp;,<tt> </tt>
+then<tt> ⍴r </tt>is<tt> ⍴x </tt>and:</p>
+
+<pre>
+      r[i]←→f/((|k)⌊i+1)↑(0⌈i-(|k)-1)↓x
+</pre>
+
+<p>For example,<tt> ¯2&nbsp;-\x </tt>yields the forward differences 
+of<tt> x </tt>but includes the leading element of<tt> x </tt>
+so that<tt> +\ </tt>is a true inverse, that is,</p>
+
+<pre>
+      +\¯2-\x←→x 
+      ¯2-\+\x←→x
+</pre>
+
+
+
+<br>
+<a name="14"></a>
+<p><b>14. The Variant Operator</b></p>
+
+<p>Certain functions have <u>variants</u>, 
+in the sense that there exist 
+other closely related functions. 
+For example, the sine of an argument 
+in radians and the sine of an argument 
+in degrees are variants. 
+Moreover, in current APL each of the functions 
+dependent on index origin has two variants 
+(chosen by<tt> ⎕io</tt>&nbsp;)<tt> </tt>
+and each relation has 
+many variants (specified by<tt> ⎕ct</tt>&nbsp;).</p>
+
+<p>We now introduce a dyadic <u>variant operator</u> 
+denoted by<tt> <img src="imag/colonobar.jpg"> </tt>
+and called <u>mark</u> 
+whose right argument specifies the particular variant. 
+Functions are treated in seven classes as follows:</p>
+
+<table>
+<tr><td valign=top>1)</td><td>&nbsp;</td><td>
+<p>Dyadic circular functions with left 
+arguments<tt> 1</tt>&nbsp;,<tt> 2</tt>&nbsp;,<tt> 3</tt>&nbsp;,<tt> ¯1</tt>&nbsp;,<tt> ¯2</tt>&nbsp;,<tt> ¯3</tt>&nbsp;.</p>
+
+<pre>
+○<img src="imag/colonobar.jpg">d ⍵←→○⍵÷d÷○.5
+</pre>
+
+<p>Thus the right argument<tt> d </tt>
+gives the number of divisions 
+in a right angle and, 
+in particular,<tt> ○<img src="imag/colonobar.jpg">90 </tt>
+is the circular function for arguments in degrees, 
+and<tt> ○<img src="imag/colonobar.jpg">100 </tt>
+is for arguments in grads.<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>2)</td><td>&nbsp;</td><td>
+<p>Relations</p>
+
+<p><tt>f<img src="imag/colonobar.jpg">k </tt>
+uses comparison tolerance<tt> k</tt>&nbsp;.<tt> </tt>
+For example,<tt> x≤<img src="imag/colonobar.jpg">1e¯6&nbsp;y</tt>&nbsp;.<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>3)</td><td>&nbsp;</td><td>
+<p>Indexing (monadic and dyadic<tt> ⍳ </tt>and subscripting)</p> 
+
+<p><tt>⍳<img src="imag/colonobar.jpg">k </tt> 
+and<tt> [<img src="imag/colonobar.jpg">k </tt>
+(as in<tt> m[<img src="imag/colonobar.jpg">1;i;j]</tt>&nbsp;)<tt> </tt> 
+specify origin<tt> k</tt>&nbsp;.<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>4)</td><td>&nbsp;</td><td>
+<p>Random (monadic and dyadic<tt> ?</tt>&nbsp;)</p>
+
+<p>The right argument is a function 
+which specifies the distribution 
+or a <u>character</u>
+which selects one of several 
+standard distribution as follows:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td><u>Distribution</u></td></tr>
+<tr><td></td><td>R</td><td>&nbsp;</td><td>Rectangular</td></tr>
+<tr><td></td><td>G</td><td>&nbsp;</td><td>Gauss</td></tr>
+<tr><td></td><td>P</td><td>&nbsp;</td><td>Poisson</td></tr>
+</table>
+
+<p>This variant also takes an integer right argument 
+to determine the origin of the population, 
+as in<nobr><tt> ?<img src="imag/colonobar.jpg">0</tt>&nbsp;,</nobr><tt> </tt>
+or<tt> ?<img src="imag/colonobar.jpg">1</tt>&nbsp;,<tt> </tt>
+or<tt> ?<img src="imag/colonobar.jpg">'g'<img src="imag/colonobar.jpg">1</tt>&nbsp;.<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>5)</td><td>&nbsp;</td><td>
+<p>Residue arithmetic 
+(dyadic<tt> +</tt>,<tt>-</tt>,<tt>×</tt>,<tt>*</tt>&nbsp;,<tt> </tt>
+and monadic<tt> -</tt>&nbsp;)</p>
+
+<pre>
+x f<img src="imag/colonobar.jpg">k y←→k|x f y
+</pre>
+
+<p>In particular, since<tt> 0|x←→x</tt>&nbsp;,<tt> </tt>
+we have<tt> f<img src="imag/colonobar.jpg">0←→f</tt><br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>6)</td><td>&nbsp;</td><td>
+<p>The functions take and expand 
+insert at certain positions 
+a &ldquo;fill element&rdquo; 
+(blank for characters, and zero for numeric); 
+the variant operator allows 
+the specification of this element, 
+as in<tt> ↑<img src="imag/colonobar.jpg">1 </tt>
+and<nobr><tt> l\<img src="imag/colonobar.jpg">'*'</tt>&nbsp;,</nobr><tt> </tt>
+and<nobr><tt> l\<img src="imag/colonobar.jpg">_</tt>&nbsp;.</nobr><br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>7)</td><td>&nbsp;</td><td>
+<p>The conformability requirements 
+for catenation can be relaxed 
+by &ldquo;padding&rdquo; either argument 
+along the axes complementary 
+to the catenation axis, 
+using overtakes and some specified fill element. 
+This is provided by the variant operator,  
+the right argument being the fill element, 
+or a jot indicating the default fill elements blank or zero.  
+For example,<tt> m,<img src="imag/colonobar.jpg">0&nbsp;n </tt>
+and<tt> m,<img src="imag/colonobar.jpg">'*'⍤0&nbsp;n</tt>&nbsp;.</p>
+</td></tr>
+</table>
+
+<p>For any function<tt> f </tt>dominated 
+by the variant operator,
+the  function<tt> f </tt>alone 
+is treated as a <u>default</u> case, 
+the default value being given 
+by a system variable.  
+For the relations, this system variable 
+is<tt> ⎕ct</tt>&nbsp;,<tt> </tt> 
+and therefore<tt> ≤←→≤<img src="imag/colonobar.jpg">⎕ct</tt>&nbsp;.
+</p>
+
+<p>The default for the functions<tt> ⍳</tt>&nbsp;,<tt> ?</tt>&nbsp;,<tt> </tt>
+and<tt> [ </tt>is determined 
+by<tt> ⎕io</tt>&nbsp;,<tt> </tt> 
+and for the remaining cases 
+we introduce new system variables as follows:</p>
+
+<a name="sysvars"></a>
+<table>
+<tr><td>&nbsp; &nbsp;</td><td>Circular Functions:</td><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><tt>⎕cf</tt></td><td>&nbsp; &nbsp; &nbsp;</td><td align=center><tt>○.5</tt></td></tr>
+<tr><td>&nbsp; &nbsp;</td><td>Residue Arithmetic:</td><td>&nbsp;</td>
+ <td><tt>⎕ra</tt></td><td>&nbsp;</td><td align=center><tt>0</tt></td></tr>
+<tr><td>&nbsp; &nbsp;</td><td>Type of Distribution:</td><td>&nbsp;</td>
+ <td><tt>⎕dt</tt></td><td>&nbsp;</td><td align=center><tt>'r'</tt></td></tr>
+<tr><td>&nbsp; &nbsp;</td><td>Fill Element:</td><td>&nbsp;</td>
+ <td><tt>⎕fe</tt></td><td>&nbsp;</td><td align=center><tt>0</tt></td></tr>
+</table>
+
+<p>The rightmost column shows the values 
+in a clear workspace.</p>
+
+
+
+<br>
+<a name="15"></a>
+<p><b>15. Boolean Operator</b></p>
+
+<p>The boolean operator<tt> <img src="imag/boolopr.bmp"> </tt>
+is an example of a useful monadic function 
+having a numeric argument. 
+Applied to an integer<tt> i∊⍳16 </tt>
+it produces the &ldquo;<tt>i</tt>th boolean function&rdquo; 
+according to the following definition:</p>
+
+<pre>
+      i←→2⊥,0 1∘.(i<img src="imag/boolopr.bmp">)0 1
+</pre>
+
+<p>Thus<tt> 1<img src="imag/boolopr.bmp">←→∧ </tt>
+and<tt> 7<img src="imag/boolopr.bmp">←→∨</tt>&nbsp;,<tt> </tt> 
+and in general,<tt> ~¨(i<img src="imag/boolopr.bmp">)←→(15-i)<img src="imag/boolopr.bmp"></tt>&nbsp;.<tt> </tt>  
+The use of a vector<tt> i </tt>produces a vector function.</p>
+
+
+
+<br>
+<a name="16"></a>
+<p><b>16. Set Functions</b></p>
+
+<p>We define seven <u>set</u> functions as follows:</p>
+
+<table>
+<tr><td><u>Nub</u></td><td>&nbsp; &nbsp;</td><td><tt>∪w</tt></td>
+ <td>&nbsp; &nbsp;</td><td><tt>((⍳⍴w)=w⍳w)/w←,w</tt></td></tr>
+<tr><td><u>Ordered Nub</u></td><td>&nbsp;</td><td><tt>∩w</tt></td>
+ <td>&nbsp;</td><td><tt>w[⍋w←∪w]</tt></td></tr>
+<tr><td><u>Distribution</u></td><td>&nbsp;</td><td><tt><img src="imag/cupbar.jpg">w</tt></td>
+ <td>&nbsp;</td><td><tt>(∪w)∘.=w</tt></td></tr>
+<tr><td><u>Ordered Distribution</u></td><td>&nbsp;</td><td><tt><img src="imag/capbar.jpg">w</tt></td>
+ <td>&nbsp;</td><td><tt>(∩w)∘.=w</tt></td></tr>
+<tr><td><u>Union</u></td><td>&nbsp;</td><td><tt>v∪w</tt></td>
+ <td>&nbsp;</td><td><tt>(,v),,w</tt></td></tr>
+<tr><td><u>Intersection</u></td><td>&nbsp;</td><td><tt>v∩w</tt></td>
+ <td>&nbsp;</td><td><tt>((,v)∊,w)/,v</tt></td></tr>
+<tr><td><u>Difference</u></td><td>&nbsp;</td><td><tt>v~w</tt></td>
+ <td>&nbsp;</td><td><tt>(~(,v)∊,w)/,v</tt></td></tr>
+<tr><td><u>Inclusion</u></td><td>&nbsp;</td><td><tt>v&sube;w</tt></td>
+ <td>&nbsp;</td><td><tt>^/(,v)∊,w</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>v&supe;w</tt></td>
+ <td>&nbsp;</td><td><tt>w&sube;v</tt></td></tr>
+<tr><td><u>Strict Inclusion</u></td><td>&nbsp;</td><td><tt>v⊂w</tt></td>
+ <td>&nbsp;</td><td><tt>(v&sube;w)^~v&supe;w</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><tt>v⊃w</tt></td>
+ <td>&nbsp;</td><td><tt>w⊂v</tt></td></tr>
+</table>
+
+<p>Practical  and  theoretical  application  of  
+the distribution functions will now be illustrated.  
+If<tt> v </tt>is a
+vector with repeated elements 
+and<tt> f </tt>is a scalar function, 
+then every distinct element of<tt> f&nbsp;v </tt>
+is contained in<tt> f∪v</tt>&nbsp;,<tt> </tt>
+and these elements can be &ldquo;distributed&rdquo; 
+to the positions their arguments occupied in<tt> v </tt> 
+by the expression<tt> (f∪v)+.×<img src="imag/cupbar.jpg">v </tt>     
+Thus:</p>
+
+<pre>
+      f v←→(f∪v)+.×<img src="imag/cupbar.jpg">v    [16.1]
+</pre>
+
+<p>If the evaluation of<tt> f </tt>is time-consuming, 
+and if<tt> ⍴∪v </tt>is considerably less 
+than<tt> ⍴v</tt>&nbsp;,<tt> </tt> 
+this identity can provide an efficient algorithm 
+for the evaluation of<tt> f v</tt>&nbsp;.<tt> </tt> 
+Similar remarks apply to the ordered nub 
+and the ordered distribution matrix.</p>
+
+<p>The product of the sum of two vectors<tt> a </tt>and<tt> b </tt>
+(that is,<tt> ×/a+b</tt>&nbsp;)<tt> </tt>
+can be &ldquo;expanded&rdquo; to an 
+equivalent sum of<tt> 2*⍴b </tt>terms, 
+in which a typical term is a product 
+of<tt> ⍴b </tt>factors, 
+one chosen from each position of 
+either<tt> a </tt>or<tt> b</tt>.<tt> </tt> 
+Formally, each term is of the form<tt> (a×.*~l)×(b×.*l) </tt>
+where<tt> l </tt>is a logical vector of shape<tt> ⍴b</tt>&nbsp;.<tt> </tt> 
+All terms are therefore obtained by replacing<tt> l </tt>
+by the matrix<tt> t←(k⍴2)⊤⍳2*k←⍴b </tt>
+of all such logical vectors.  
+We therefore have the identity:</p>
+
+<pre>
+      ×/a+b←→(a×.*~t)+.×(b×.*t←(k⍴2)⊤⍳2*k←⍴b)
+</pre>
+
+<p>For a scalar<tt> x</tt>&nbsp;,<tt> </tt>
+the expression<tt> ×/x-r </tt>
+yields the value of a polynomial 
+with roots<tt> r </tt>evaluated 
+at<tt> x</tt>&nbsp;.<tt> </tt>            
+By substituting<tt> x </tt>for<tt> a </tt>
+and<tt> -r </tt>for<tt> b </tt>
+in the foregoing identity, 
+and using the fact that 
+(for a scalar<tt> x</tt>&nbsp;)<tt> </tt> 
+the expressions<tt> x×.*l </tt>
+and<tt> x*+/l </tt>are identical, 
+we can derive a sequence of equivalent expressions 
+which finally yield a relation 
+between the coefficients 
+and the roots of a polynomial:</p>
+
+<pre>
+×/x-r
+(x×.*~t)+.×(b×.*t←(k⍴2)⊤⍳2*k←⍴b←-r)
+(x*s←+⌿~t)+.×(b×.*t)
+((x*∩s)+.×<img src="imag/capbar.jpg">s)+.×(b×.*t)       16.1
+(x*∩s)+.×((<img src="imag/capbar.jpg">s)+.×(b×.*t))     +.× is assoc
+(x*⍳1+⍴b)+.×((<img src="imag/capbar.jpg">s)+.×(b×.*t))  ∩s←→⍳1+⍴b
+((<img src="imag/capbar.jpg">s)+.×(b×.*t)) pol x        pol in 8.1
+</pre>
+
+<p>The left argument of<tt> pol </tt>above is 
+therefore the coefficient vector of the polynomial 
+whose roots are<tt> r</tt>&nbsp;.<tt> </tt> 
+Consequently, a function<tt> cfr</tt>&nbsp;,<tt> </tt> 
+which yields the coefficients when applied 
+to the vector of roots, may be defined as follows:</p>
+
+<pre>
+      cfr<img src="imag/arrowobar.bmp">'(<img src="imag/capbar.jpg">+⌿~t)+.×(-⍵)×.*t←(k⍴2)⊤⍳2*k←⍴⍵'¨∘
+</pre>
+
+<p>The definition of<tt> cfr </tt>is,  
+of course, a definition of 
+Newton&rsquo;s symmetric functions.</p>
+
+<p>As a final example of the use 
+of the (ordered) distribution function, 
+we state the shape of the transpose<tt> i⍉a </tt>as follows:</p>
+
+<pre>
+      ⍴i⍉a←→(<img src="imag/capbar.jpg">i)⌊.(⌊⍣∘)⍨⍴a
+</pre>
+
+
+
+<br>
+<a name="17"></a>
+<p><b>17. Indexing</b></p>
+
+<p>The range of indexing will now be extended to 
+include negative numbers in a manner 
+which makes it possible to refer to an index 
+position by two different numbers,
+one relative to its position as counted forward, 
+and one (non-positive) relative 
+to its position as counted backward: 
+an axis of length<tt> n </tt>may be 
+indexed by any of the elements 
+of<tt> (⍳2×n)-n</tt>&nbsp;,<tt> </tt> 
+the position indexed by<tt> i </tt>
+being<tt> i+n×i<0</tt>&nbsp;.<tt> </tt>  
+Thus:</p>
+
+<pre>
+      n←4
+      ⎕io←1
+      ⎕←i←(⍳2×n)-n
+¯3 ¯2 ¯1 0 1 2 3 4
+      i+n×i<0
+1 2 3 4 1 2 3 4
+      ⎕io←0
+      ⎕←i←(⍳2×n)-n
+¯4 ¯3 ¯2 ¯1 0 1 2 3
+      i+n×i<0
+0 1 2 3 0 1 2 3
+</pre>
+
+<p>For example, 
+in<tt> 0</tt>-origin,<tt> x[¯1]←→x[¯1+⍴x]</tt>&nbsp;,<tt> </tt>
+and selects the last element 
+of<tt> x</tt>&nbsp;.<tt> </tt>
+Similarly, in<tt> 1</tt>-origin,<tt> x[0] </tt>
+selects the last element.</p>
+
+<p>We also introduce a form of indexing called 
+<u>from</u> denoted by<tt> ⌷</tt>&nbsp;,<tt> </tt> 
+and of rank<tt> 0,1,rr</tt>&nbsp;,<tt> </tt> 
+where<tt> r </tt>is the rank of the right argument.  
+The basic definition is:</p>
+
+<pre>
+      i⌷a←→(,a)[⍉(⍴a)⊥⍉i]
+</pre>
+
+The function<tt> ⌷ </tt>distributes 
+over any scalar function; 
+thus,<tt> i⌷a+b←→(i⌷a)+(i⌷b)</tt>&nbsp;.</p>
+
+<p>The right argument of the axis operator 
+applied to<tt> ⌷ </tt>is of the 
+form<tt> i,_,j</tt>&nbsp;.<tt> </tt>     
+For example:</p>
+
+<pre>
+      m←3 4⍴⍳12
+      m
+0 1  2  3
+4 5  6  7
+8 9 10 11
+      2 2 ⌷ m
+10
+      2 ⌷⍤_ 1 m
+2 6 10
+      2 0 1 ⌷⍤_ 1 m
+2 4 9
+      (3 2⍴3|⍳6)⌷m
+1 8 6
+</pre>
+
+<p>The use of the indexing function will be illustrated in 
+a proof of the useful 
+identity<tt> i⍉j⍉a←→i[j]⍉a</tt>&nbsp;.<tt> </tt> 
+We first state the definition of the transpose as follows:   
+if<tt> k </tt>is any vector index of<tt> j⍉a </tt>then</p>
+
+<pre>
+      k⌷j⍉a←→k[j]⌷a 
+</pre>
+
+<p>Then:</p>
+
+<pre>
+      k⌷i⍉j⍉a
+      k[i]⌷j⍉a
+      (k[i])[j]⌷a
+      k[i[j]]⌷a
+      k⌷i[j]⍉a
+</pre>
+
+
+
+<br>
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td>
+ <td><u>APL Language</u>, Form Number GC26-3847, IBM Corporation.</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td>
+ <td>Iverson, K. E., 
+ <a target=_parent href="http://www.jsoftware.com/papers/DirectDef.htm"><u>Elementary Analysis</u></a>, APL Press, 1976.</td></tr>
+</table>
+<br>
+
+
+
+<br>
+<a name="symb"></a>
+<p><b>Index of Symbols</b></p>
+
+<table>
+<tr><td>Symbol</td><td>&nbsp;</td><td align=center>Class</td><td>&nbsp; &nbsp; &nbsp;</td>
+ <td>&nbsp; &nbsp; &nbsp;Description</td>
+ <td>&nbsp;</td><td align=center>Section</td></tr>
+<tr><td align=center><img src="imag/arrowobar.bmp"></td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td>
+ <td>function assignment</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#arrowobar">0</a></td></tr>
+<tr><td align=center><tt>∘</tt></td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td>
+ <td>&ldquo;monadic case&rdquo; symbol</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#1">1</a></td></tr>
+<tr><td align=center><tt>_</tt></td><td>&nbsp;</td>
+ <td>variable</td><td>&nbsp;</td>
+ <td>infinity</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#infinity">1</a></td></tr>
+<tr><td align=center><tt>¯</tt></td><td>&nbsp;</td>
+ <td>variable</td><td>&nbsp;</td>
+ <td>negative infinity</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#infinity">1</a></td></tr>
+<tr><td align=center><tt>⍣</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>power</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#2">2</a></td></tr>
+<tr><td align=center><tt>⍨</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>commute</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#3">3</a></td></tr>
+<tr><td align=center><img src="imag/plusobar.jpg"></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>scalar</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#4">4</a></td></tr>
+<tr><td align=center><tt><img src="imag/starobar.jpg"></tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>scalar</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#4">4</a></a></td> </tr>
+<tr><td align=center><img src="imag/deltaumlaut.jpg"></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>domain</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#5">5</a></td></tr>
+<tr><td align=center><tt>⍤</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>nuax</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#7">7</a></td></tr>
+<tr><td align=center><tt>⍥</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>coax</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#7">7</a></td></tr>
+<tr><td align=center><tt>⍢</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>dual</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#8">8</a></td></tr>
+<tr><td align=center><tt>¨</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>composition</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#8">8</a></td></tr>
+<tr><td align=center><tt>⍺</tt></td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td>
+ <td>left argument</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#alpha">8</a></td></tr>
+<tr><td align=center><tt>⍵</tt></td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td>
+ <td>right argument</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#omega">8</a></td></tr>
+<tr><td align=center><tt>:</tt></td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td>
+ <td>separator</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#co">8</a></td></tr>
+<tr><td align=center><tt> &#9078; </tt></td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td>
+ <td>recursive definition</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#alphaubar">8</a></td></tr>
+<tr><td align=center><tt>::</tt></td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td>
+ <td>monadic/dyadic separator</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#coco">8</a></td></tr>
+<tr><td align=center><tt>⍳</tt></td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td>
+ <td>identity element</td><td>&nbsp;</td><td align=center><a href="opfns1.htm#id">8</a></td></tr>
+<tr><td align=center><tt>/</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>reduction</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#9">9</a>, <a href="opfns1.htm#13">13</a></td></tr>
+<tr><td align=center><tt>\</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>scan</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#9">9</a>, <a href="opfns1.htm#13">13</a></td></tr>
+<tr><td align=center><tt>⌿</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>reduction</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#9">9</a></td></tr>
+<tr><td align=center><tt>⍀</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>scan</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#9">9</a></td></tr>
+<tr><td align=center><tt>&lt;</tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>enclose</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#10">10</a></td></tr>
+<tr><td align=center><tt>&gt;</tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>disclose</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#10">10</a></td></tr>
+<tr><td align=center><tt>∆</tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>derivative/difference</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#11">11</a>, <a href="opfns1.htm#12">12</a></td> </tr>
+<tr><td align=center><tt><img src="imag/timesobar.bmp"></tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>scalar</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#11">11</a></a></td> </tr>
+<tr><td align=center><tt><img src="imag/divideobar.jpg"></tt></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>scalar</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#11">11</a></a></td> </tr>
+<tr><td align=center><img src="imag/colonobar.jpg"></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>variant</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#14">14</a></td></tr>
+<tr><td align=center><tt></tt>⎕cf</td><td>&nbsp;</td>
+ <td>variable</td><td>&nbsp;</td>
+ <td>circular functions</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#sysvars">14</a></td></tr>
+<tr><td align=center><tt></tt>⎕ra</td><td>&nbsp;</td>
+ <td>variable</td><td>&nbsp;</td>
+ <td>residue arithmetic</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#sysvars">14</a></td></tr>
+<tr><td align=center><tt></tt>⎕dt</td><td>&nbsp;</td>
+ <td>variable</td><td>&nbsp;</td>
+ <td>type of distribution</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#sysvars">14</a></td></tr>
+<tr><td align=center><tt></tt>⎕fe</td><td>&nbsp;</td>
+ <td>variable</td><td>&nbsp;</td>
+ <td>fill element</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#sysvars">14</a></td></tr>
+<tr><td align=center><img src="imag/boolopr.bmp"></td><td>&nbsp;</td>
+ <td>operator</td><td>&nbsp;</td>
+ <td>boolean</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#15">15</a></td></tr>
+<tr><td align=center><tt>∪</tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>nub/union</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#16">16</a></td></tr>
+<tr><td align=center><tt>∩</tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>ordered nub/intersection</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#16">16</a></td></tr>
+<tr><td align=center><img src="imag/cupbar.jpg"></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>distribution</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#16">16</a></td></tr>
+<tr><td align=center><img src="imag/capbar.jpg"></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>ordered distribution</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#16">16</a></td></tr>
+<tr><td align=center><tt>~</tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>difference</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#16">16</a></td></tr>
+<tr><td align=center><tt> &sube; </tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>inclusion</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#16">16</a></td></tr>
+<tr><td align=center><tt> &supe; </tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>inclusion</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#16">16</a></td></tr>
+<tr><td align=center><tt>⊂</tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>strict inclusion</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#16">16</a></td></tr>
+<tr><td align=center><tt>⊃</tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>strict inclusion</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#16">16</a></td></tr>
+<tr><td align=center><tt>⌷</tt></td><td>&nbsp;</td>
+ <td>function</td><td>&nbsp;</td>
+ <td>indexing</td><td>&nbsp;</td>
+ <td align=center><a href="opfns1.htm#17">17</a></td></tr>
+</table>
+
+
+
+<br><hr>
+<a name="err"></a>
+<p align=center><font size=+2>Errata</font></p>
+
+<table>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 2, in the first paragraph, it should 
+say<tt> f⍣k←→f f⍣(k-1) </tt>instead
+of<tt> f⍣k←→f f⍣k-1</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 4, the opening paragraph should end with
+&ldquo;... by the definition 
+for<tt> <img src="imag/plusobar.jpg"></tt>&nbsp;&rdquo;
+instead of &ldquo;... by the definition for<tt> +</tt>&nbsp;&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 5, in the closing paragraph, it should
+say &ldquo;divalent function<tt> f</tt>&nbsp;&rdquo;
+instead of &ldquo;bivalent function<tt> f</tt>&nbsp;&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 6, the closing paragraph has several
+errors that can be corrected in a variety of ways,
+such as:
+<table>
+<tr><td width=20>&nbsp;</td><td>
+<p>A uniform monadic function of rank<tt> rr,ar </tt> 
+(result rank and argument rank) applies  
+to an array<tt> x </tt>of  rank<tt> ar </tt>
+or greater, to produce an overall result of 
+rank<nobr><tt> ((⍴⍴x)-ar)+rr</tt>&nbsp;.</nobr><tt> </tt> 
+The result can be perceived as 
+follows:<tt> f </tt>is applied to each of 
+the rank<tt> ar </tt>&ldquo;units&rdquo; 
+of an &ldquo;array of shape<tt> (-ar)↓⍴x</tt>&nbsp;&rdquo;<tt> </tt>
+whose elements are these units.  
+Each unit has a (uniform) result shape<tt> rs</tt>&nbsp;;<tt> </tt> 
+the<tt> rr </tt>coordinates of the individual results 
+are placed last to produce an overall result 
+of shape<tt> ((-ar)↓⍴x),rs</tt>&nbsp;.</p>
+</td><td width=20>&nbsp;</td></tr>
+<tr><td colspan=3>The original wording:</td></tr>
+<tr><td></td><td>
+<p>A uniform monadic function of rank<tt> rr,ar </tt> 
+(result rank and argument rank) applies  
+to an array<tt> x </tt>of  rank<tt> ar </tt>
+or greater, to produce an overall result of 
+rank<nobr><tt> ((-ar)↓⍴x),rr</tt>&nbsp;.</nobr><tt> </tt> 
+The result can be perceived as 
+follows:<tt> f </tt>is applied to each of 
+the rank<tt> ar </tt>&ldquo;units&rdquo; 
+of an &ldquo;array of rank<tt> (-ar)↓⍴x</tt>&nbsp;&rdquo;<tt> </tt>
+whose elements are these units, 
+the<tt> rr </tt>coordinates of the individual results 
+being placed last to produce the overall result 
+of rank<tt> ((-ar)↓⍴x),rr</tt>&nbsp;.</p>
+</td><td></td></tr>
+</table>
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 7, in the last sentence of the third paragraph, 
+it should say<tt> k⌽⍤&nbsp;_&nbsp;3&nbsp;a </tt>
+instead of<tt> k⌽⍤&nbsp;_3&nbsp;a</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 8, in the opening sentence, 
+it should say De Morgan instead of deMorgan.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 8, in the opening sentence, it should say 
+&ldquo;the extension being to include
+a monadic right argument&rdquo; instead of 
+&ldquo;the extension being to include
+a monadic left argument&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 8, in the &ldquo;Duality and simple composition&rdquo;
+subsection, in the paragraph that begins with
+&ldquo;In the dyadic case of the composition above&rdquo;
+(the third paragraph), it should say &ldquo;valences&rdquo;
+instead of &ldquo;valencies&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 8, in the examples of composition, 
+the result of<tt> spol 2&nbsp;4 </tt>should be<tt> 81&nbsp;625 </tt>
+instead of<tt> 16&nbsp;625</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 8, in the penultimate paragraph, 
+it should say<br>
+<tt>&nbsp; &nbsp;(ca,'::',cb)¨(na,'::',nb) </tt><br>
+instead of<br>
+<tt>&nbsp; &nbsp;(ca,'::',cb)¨na,'::',nb </tt>
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 10, the description of how axial operators
+apply to the disclose function 
+contradicts the characterization 
+that the disclose function is scalar.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 14, item 3) should include
+the new indexing function 
+such that<tt> ⌷<img src="imag/colonobar.jpg">k </tt>
+specifies origin<tt> k</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 14, the text says that 
+dyadic<tt> ⍳<img src="imag/colonobar.jpg">k </tt>
+specifies the origin but is silent on
+whether comparison tolerance can be effected.
+Presumably, similar 
+to<tt> ?<img src="imag/colonobar.jpg">'g'<img src="imag/colonobar.jpg">1 </tt>
+in item 4) specifying a Gaussian distribution with 
+origin<tt> 1</tt>&nbsp;,<tt> ⍳<img src="imag/colonobar.jpg">k<img src="imag/colonobar.jpg">t </tt>
+or<tt> ⍳<img src="imag/colonobar.jpg">t<img src="imag/colonobar.jpg">k </tt>
+can specify indexing with origin<tt> k </tt>and
+comparison tolerance<tt> t</tt>&nbsp;.<tt> </tt>
+Alternatively, <nobr><tt> ⍳<img src="imag/colonobar.jpg">(k,t) </tt></nobr>
+can specify origin<tt> k </tt>and comparison tolerance<tt> t</tt>&nbsp;,<tt> </tt>
+with a scalar argument specifying the origin or, if the scalar
+is not<tt> 0 </tt>or<tt> 1</tt>&nbsp;,<tt> </tt>
+the comparison tolerance.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 14, the default fill element (the value
+of<tt> ⎕fe </tt>in a clear workspace) should 
+be<tt> ∘ </tt>rather than<tt> 0</tt>&nbsp;,<tt> </tt>
+so that take and expand on character arguments
+would give expected results.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 15, the opening sentence should say that
+&ldquo;the boolean operator<tt> <img src="imag/boolopr.bmp"> </tt>
+is an example of a monadic operator&rdquo; rather than
+&ldquo;the boolean operator<tt> <img src="imag/boolopr.bmp"> </tt>
+is an example of a monadic function&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 16, the opening sentence should say
+&ldquo;We define eleven <u>set</u> functions ...&rdquo;
+instead of
+&ldquo;We define seven <u>set</u> functions ...&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 16, the last line should say<br>
+<tt>&nbsp; &nbsp;⍴i⍉a←→(<img src="imag/capbar.jpg">i)⌊.(⌊⍣∘) ⍴a </tt><br>
+instead of<br>
+<tt>&nbsp; &nbsp;⍴i⍉a←→(<img src="imag/capbar.jpg">i)⌊.(⌊⍣∘)⍨⍴a </tt><br>
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 17, in the opening paragraph and in the 
+first displayed example, for the position indexed 
+by<tt> i</tt>&nbsp;,<tt> </tt>
+it should say<tt> i+n×i<⎕io </tt>instead 
+of<tt> i+n×i<0</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 17, the equivalence<tt> x[¯1]←→x[¯1+⍴x] </tt>
+ignores the fact that<tt> x[¯1] </tt>is a scalar
+whereas<tt> x[¯1+⍴x] </tt>is a vector.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In Section 17, it should say that 
+the function<tt> ⌷ </tt>
+has ranks<tt> 0,1,r </tt>
+rather than<tt> 0,1,rr</tt>&nbsp;.<tt> </tt>
+(Actually, it should say that<tt> ⌷ </tt>has 
+ranks<tt> 0 1 _</tt>&nbsp;,<tt> </tt>
+but the notion of infinite rank is undeveloped
+in the paper.  
+See <a href="opfns1.htm#infinite_rank">Section 6</a>.)
+ </td></tr>
+</table>
+
+
+
+<br><hr>
+<p><font size=-1>Originally appeared as IBM Research Report RC 7091 (#30399), 
+1978-04-26.</p>
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-03-09 16:25</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2017-11-22 21:25</font></td></tr>
+</table>
+
+</td></tr></table>
+<br><br><br>
+</body>
+</html>

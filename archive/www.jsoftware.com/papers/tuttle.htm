@@ -1,0 +1,158 @@
+<html>
+<head>
+<title>J Papers</title>
+<link rel="stylesheet" href="https://www.jsoftware.com/papers/jweb.css" type="text/css">
+</head>
+<body>
+
+<center><h2>Data Rummaging with J</h2>
+<h3>
+Joey Tuttle<br>J96 User Conference</h3></center>
+
+
+<h3>Background to a talk:</h3>
+
+<p>The first computer I programmed had vacuum tubes and a single I/O device which was a 
+typewriter (not a Selectric!) with a paper tape reader/punch.  The machine was a Royal McBee 
+LGP30 with 4,096 words of storage and programmed in machine instructions - not even an 
+assembler!.<p>
+
+<p>Sometime after that, I graduated to using FORTRAN on an IBM 1620. After starting to work for 
+IBM I wrote some 1401 machine language programs whose only purpose was to generate test 
+patterns on a 1403 printer.  The 1403 printer had just acquired a &quot;Universal Character Set&quot; 
+feature which meant that a program could print in upper and lower case at high-speed! (this was 
+developed under a contract from Billy Graham).<p>
+
+<p>Sometime after those early &quot;programing experiences&quot; I went back to graduate school and ended 
+up writing a FORTRAN program modeling radiation transfer in the atmosphere as a thesis 
+project in atmospheric physics. It was in the course of this work that I decided programming was 
+to be avoided if at all possible, and that the people who thought of computers as an &quot;end in 
+themselves&quot; were a little misguided.  I thought, and still believe, that the computer should be a 
+tool like a pencil or slide rule that lets one express and test thoughts, ideas and questions in a 
+flexible way. Or, on the other hand, the computer should be &quot;unseen&quot; as it is when we use an 
+ATM or drive any modern car.<p>
+
+<p>It was with that background that I &quot;discovered APL&quot; in 1968 - I was so taken by it that in one 
+way or another it has played a major role in the rest of my life. It has been with great wonder 
+(and no little amusement) that I watch others interested in APL be unable to accept the idea that 
+Ken Iverson, being a creative person, should make changes to his thoughts about how computers 
+can best be used as a tool of thought.<p>
+
+<p>I sat on a panel at APL 1991 where the &quot;debate topic&quot; was whether or not J is a dialect of APL.  I 
+couldn't think of a thing to say about the issue except, &quot;Who cares&quot;!&quot;  Just as APL liberated me 
+from the bonds of machine language and FORTRAN (and for that matter all similar languages 
+which pretty much covers everything else except perhaps LISP, FORTH, and a very few others), 
+J has liberated me from the problems of APL. I appreciate Ken's contributions to using 
+computers as tools.<p>
+
+<p>I marvel at how Roger Hui can take an algorithm and polish it and recast it to be faster, more 
+efficient, and more correct.  J is a delight because of the huge number of ways things can be 
+expressed.  I don't claim to have the most enlightened way to do any of the things that I do. But I 
+really enjoy reading through the Dictionary of J and looking at examples even though I am far 
+from being able to effectively use all the power that is sitting there ready to be unleashed.  I'm 
+happy just to be able to solve problems that interest (or trouble) me.<p>
+
+<p>I have found over the years that most &quot;real data processing&quot; is pretty boring stuff.  Usually it 
+amounts to something so mundane as processing a payroll, or trying to analyze some data. I can 
+imagine someone asking me why, if I think computers aren't a justifiable &quot;end in themselves&quot;, do 
+I spend so much time fooling with computers. When asked why he robbed banks, a famous 
+outlaw was quoted as saying, &quot;That's where the money is!&quot; In the case of computers, that's where 
+the information is!  For some access to information, a standard approach is the best one.  For 
+example, Quicken for balancing check books, Excel for table tumbling, a database manager for 
+list maintenance.  I spend a lot of time using such tools - and the computer is being a tool in that 
+case, but not a very simple one.  One can think of a car as being a transportation tool, but quite a 
+different kind of tool from a screw driver. J provides a kit of tools that interfaces very well with 
+common computer systems.<p>
+
+<p>I frequently find myself with some kind of collection (pile may be a better word) of data that 
+contains information I'm interested in.  Sometimes the data is of a form that nicely fits standard 
+tools, other times it isn't.  Sometimes the issue is a matter of scale.  For example, if I have a 
+phone bill that is 20 pages long (perhaps 1,000 calls) and I would like to analyze my phone usage 
+a spreadsheet will work very nicely.  If the phone bill is 20,000 pages long, it becomes an 
+entirely different problem.  If I have a few news stories to edit and format, a word processor 
+works nicely.  If I have four thousand news stories a day to format and index, a word processor 
+isn't much use.  If the data isn't large, but simply doesn't fit into the predetermined views of 
+standard software it cries out for something like J. I call digging around through stuff like this 
+&quot;Data Rummaging&quot;.<p>
+
+<p>Response of a system to scale of a problem can be very non-linear. Things in a software system 
+can be perceived to be working OK and then suddenly become unacceptable with larger or more 
+complex data. Acceptability is determined by whether the person using the computer thinks the 
+response is adequate for their needs and this is a matter of perception. Systems can seem to 
+degrade very badly with modest increases in size, or minor differences in the way data is 
+identified. These issues are frequently overlooked during the traditional planning phase of 
+software projects.<p>
+
+<p>In my work at Fax Focus, I deal with a fairly large and constantly changing volume of data. We 
+receive faxes from clients and store them in our machines - in the first 6 months of 1996 we have 
+received (and stored) 10,000 faxes that comprise 1,500 megabytes of compressed data. Typically 
+when we receive a fax, it is retransmitted to several people (as few as 5 or 10, or as many as 
+10,000-20,000) and this amounts to a large data flow out over T1 circuits. Each transaction in the 
+system causes information to be logged and makes large amounts of accounting and logging 
+data.<p>
+
+<p>Maintaining &quot;phone books&quot; with tens of thousands of listings is an interesting problem. J has 
+unique capabilities for tasks like finding and eliminating duplicate entries and defective phone 
+numbers.  After calls are made, we get a phone bill that needs to be analyzed and compared to 
+what calls we think we made - a couple of years ago, our phone carrier insisted on printing a bill 
+for us as well as sending a 9 track magnetic tape.  The printed bill was about 20,000 pages long 
+(and a great waste of paper!). Our current vendor provides &quot;call detail&quot;  only as a flat file of data 
+on a CDROM.<p>
+
+<p>In a different area, we receive about 200 megabytes a week of news stories via satellite feeds and 
+store the last 2 weeks of information in a realtime indexing system (Verity Topic) for selected 
+use in specialized newsletters.<p>
+
+<p>I use J in many different ways in our data processing environment.  Most of the things I do can 
+be classified as data rummaging.  Examples include extracting data for reports, cleaning 
+databases by eliminating defective or redundant phone numbers, building scripts to run in some 
+other environment, and so on. Some of the applications are array (or at least table) oriented, and 
+others are very data stream oriented.  For example, one part of the satellite feed I mentioned 
+above changed early this year. The real time software that dealt with the data packets coming 
+from the satellite refuses to recognize the new form of the data. So, a J program steps in and 
+deals with very detailed binary information to de-packetize and decrypt the data into news stories 
+that can be indexed for retrieval. Hopefully this is a temporary solution, but so far it has been in 
+operation for 4 months...<p>
+
+<p>Most of the &quot;programs&quot; I write in J are throwaway code. A few utilities are such a convenience 
+that I always include them in a script, but even though I may find a verb &quot;fread&quot; in my 
+workspace, I still frequently write 1!:1< because it is almost as easy to type. Some of my 
+programs simply use shell standard input to J and no saved J script is used. I do find that J is a 
+little unreadable when written in Unix shell script notation because the shell uses several &quot;special 
+symbols&quot; that are commonly used in J as well. Even though my programs are unstructured and 
+inelegant, I find them useful and maintainable. <p>
+
+<p>I'm glad that J seems to get more widespread academic attention than APL. The &quot;kind of 
+thinking&quot; encouraged by J is sorely needed amongst real programmers as society becomes more 
+and more dependent on computer technology. I am frequently frustrated by &quot;failing edge 
+conditions&quot; in otherwise very good products like Microsoft Excel. I think one of the biggest 
+mistakes in computing is one that has been repeated over and over from the very beginning of 
+computing. That is, &quot;saving a byte&quot; with a clever trick to minimize the cost of data storage. 
+Examples include things like using the bits above 23 in an address word as flags for the program 
+(who could possibly need to address more than 16 megabytes of working storage anyway&quot;)  
+Using packed decimal to write numeric information onto magnetic tape to save space &quot; using 80 
+byte unblocked records in homage to the original punched card storage medium. Also the, about 
+to be very popular, representation of this year as &quot;96&quot;.
+
+<p>The original Intel architecture was short sighted by not noticing that addressing more than 640 
+kilobytes had been an issue for some time in computing &quot; but who could have imagined that 
+one day a portable computer would be faster and have a lot more working storage than a multi-
+million dollar mainframe&quot; The array thinking of J and and APL before it has always encouraged 
+(or demanded) thinking about these issues (some would say ignoring these issues - perhaps that 
+is really the same thing).<p>
+
+<p>Most of the effort in &quot;data rummaging&quot; is spent in unraveling schemes used to encode or save 
+space in data. In my talk I will describe some simple verbs that I use on a frequent basis to draw 
+conclusions from data on various systems at Fax Focus. The most commonly used verbs read a 
+file and turn it into a table. After doing various selections and transformations another verb turns 
+the table into a stream of characters to be written as a file. The transformations are exceptionally 
+simple and mainly involve things like pruning characters, formatting, and sometimes 
+summations and simple arithmetic like gathering frequency distributions. J proves to be a very 
+opened ended tool to accomplish data rummaging operations.<p>
+
+<p>The fact that J fits into various environments and interfaces to system facilities in those 
+environments causes it to be practical as well as powerful. I feel unprepared to teach the skill 
+(art&quot;) of data rummaging. I think J is a valuable tool and learning aid to anyone interested in 
+learning data mining techniques.<p>
+</body>
+</html>

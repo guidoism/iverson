@@ -1,0 +1,99 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>A History of APL in 50 Functions</title>
+<link href="adoc.css" rel=stylesheet></head>
+<body>
+
+<p align=right><font size=+1>
+<a target=main href="50_intro.htm">&lt;&lt;</a> &nbsp; 
+<a target=main href="https://www.jsoftware.com/papers/50/50_01.htm">&gt;&gt;</a>
+</font></p>
+
+<table width=520 align=center><tr><td>
+
+<a name="00"></a>
+<p align=center><font size=+2>0. Array Logic</font></p>
+
+<p align=center><tt><font size=+1>(x>0)-(x<0)</font></tt></p>
+
+<p>Signum of<tt> x </tt>for real<tt> x</tt>&nbsp;,<tt> </tt>
+assuming the values<tt> 1</tt>&nbsp;,<tt> 0</tt>&nbsp;,<tt> </tt>
+or<tt> ¯1 </tt>according as<tt> x </tt>
+is strictly positive, 0, or strictly negative.</p>
+
+<pre>
+   x← 5 ¯2.7 0 6
+
+   (x>0)-(x<0)
+1 ¯1 0 1
+ 	
+   x × (x>0)-(x<0)
+5 2.7 0 6
+</pre>
+
+<p>The phrase<tt> (x>0)-(x<0) </tt>dates from the earliest days of APL,
+being found in section 1.4 of <i>A Programming Language</i>
+<acronym title="Iverson, Kenneth E., A Programming Language, Wiley, 1962-05; &sect;1.4.">[8a]</acronym>.
+Three decades later, the idea was adopted by Knuth 
+<acronym title="Knuth, Donald E., Two Notes on Notation, American Mathematical Monthly, volume 99, number 5, 1992-05-01.">[9]</acronym>,
+who wrote that &ldquo;Iverson&rsquo;s convention&rdquo; or 
+<a target=50x href="http://en.wikipedia.org/wiki/Iverson_bracket">Iverson brackets</a>
+led to improvements in exposition and technique.
+Some writers call these &ldquo;data-driven conditionals&rdquo;
+<acronym title="Scholes, John, Data-driven Conditionals, Dyalog Blog, 2014-10-13.">[10]</acronym>;
+during a discussion between Phil Last, John Scholes, and myself 
+it was suggested that they be called &ldquo;array logic&rdquo;
+<acronym title="Hui, Roger K.W., Phil Last, and John Scholes, e-mail discussion, 2014-10-18 to -20.">[11]</acronym>.</p>
+
+<p>The usefulness of array logic in APL is due to the following:</p>
+
+<table>
+<tr><td nowrap valign=top>&#149;&nbsp;</td><td>Boolean functions have value 0 or 1 rather than true or false
+ <nobr><acronym title="Hui, Roger K.W., editor, Ken Iverson Quotations and Anecdotes, 2014-10-10; #implementers2.">[12a]</acronym>.</nobr>
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>Functions apply to entire arrays, as in, for 
+ example,<tt> +/x&gt;100 </tt>to compute the number of elements of vector<tt> x </tt>
+ greater than 100
+ <nobr><acronym title="Hui, Roger K.W., editor, Ken Iverson Quotations and Anecdotes, 2014-10-10; #Maple.">[12b]</acronym>.</nobr>
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>A simple function precedence (&ldquo;right to left&rdquo;).</td></tr>
+</table>
+
+<p>Falkoff and Iverson explained the 0-1 definition in 
+<i>The Design of APL</i></a> 
+<acronym title="Falkoff, A.D., and Kenneth E. Iverson, The Design of APL, IBM Journal of Research and Development, volume 17, number 4, 1973-07; &sect;4.">[0b]</acronym>
+in characteristically plain but telling language:</p>
+
+<blockquote><p>A very general and useful set of functions 
+was introduced by adopting the relation 
+symbols<tt> &lt; ≤ = ≥ &gt; ≠ </tt>
+to represent functions (i.e., propositions) 
+rather than assertions. 
+The result of any proposition was 
+defined to be<tt> 0 </tt>or<tt> 1 </tt>
+(rather than, say, <i>true</i> or <i>false</i>) 
+so that it would lie 
+in the domain of other arithmetic functions. &#133;</p>
+
+<p>The adoption of the relation symbols as functions 
+does not preclude their use 
+as <i>assertions</i> in informal sentences. 
+For example, although one might feel 
+compelled to substitute &ldquo;<tt>x≤y </tt>is true&rdquo; 
+for &ldquo;<tt>x≤y</tt>&rdquo; in the sentence 
+&ldquo;If<tt> x≤y </tt>then<tt> (x&lt;y)∨(x=y)</tt>&rdquo;, 
+there is no more reason to do so than to substitute 
+&ldquo;Bob is there is true&rdquo; 
+for &ldquo;Bob is there&rdquo; 
+in the sentence which begins 
+&ldquo;If Bob is there then &#133;&rdquo;.
+</p></blockquote>
+<br>
+
+</td></tr></table>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+</html>

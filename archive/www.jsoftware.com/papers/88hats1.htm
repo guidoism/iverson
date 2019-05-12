@@ -1,0 +1,338 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>88 Hats</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>88 Hats</font><br>
+<b>Roger Hui</b>
+<br>&nbsp;</p>
+
+
+<a name="0"></a>
+<p><b>0. The Puzzle</b></p>
+
+<p>The &ldquo;88 Hats&rdquo; puzzle was 
+<a target=_parent href="http://www.jsoftware.com/pipermail/general/2007-June/030272.html"> 
+posed by Andrew Nikitin</a>
+to the J Forum on 2007-06-05.  
+The following is a slightly modified version.</p>
+
+<table><tr><td nowrap>&nbsp; &nbsp;</td><td>
+<p>88 people stand in a circle, each having a hat 
+with a number from 0 to 87 written on it. 
+Everyone can see the numbers on other people&rsquo;s 
+hats but can not see his own number.  
+They simultaneously write a number on a piece 
+of paper and give it to the judge.  
+If at least one of them wrote a number that is 
+on his own hat then everyone wins, otherwise everyone loses.  
+What strategy should they use to guarantee victory?</p>
+
+<p>(Numbers on the hats do not have to be all different. 
+People can not exchange any information during the procedure 
+but can agree on some strategy beforehand.)</p>
+</td><td nowrap>&nbsp; &nbsp; &nbsp; &nbsp;</td></tr></table>
+
+<p>The puzzle was 
+<a target=_parent 
+href="http://www.jsoftware.com/pipermail/chat/2007-June/000514.html"> 
+solved by John Randall</a> a day later.</p>
+
+<p><a href="88hats1.htm#1">Solution below.</a></p>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
+
+<a name="1"></a>
+<p><b>1. A Winning Strategy</b></p>
+
+<p>The strategy works for any number of hats<tt> m</tt>&nbsp;.<tt> </tt>Beforehand, 
+the people number themselves 
+from<tt> 0 </tt>to<tt> m-1</tt>&nbsp;.<tt> </tt>
+Let<tt> h </tt>be the 
+list of hat numbers, and<tt> s[n] </tt>be the sum of
+the numbers that person<tt> n </tt>sees.
+Then<tt> w[n]</tt>&nbsp;,<tt> </tt>
+the number that person<tt> n </tt>writes, is<tt> m|n-s[n]</tt>&nbsp;.</p>
+
+<pre>
+   m←13
+   random←{⎕rl←7*5 ⋄ ?⍵}  ⍝ reproducible random numbers
+
+   ⊢ h←random m⍴m
+1 9 5 6 2 0 8 8 12 4 6 10 0
+
+   ⊢ s←(∘.≠⍨⍳m)+.×h
+70 62 66 65 69 71 63 63 59 67 65 61 71
+
+   ⊢ w←m|(⍳m)-s
+8 4 1 3 0 12 8 9 1 7 10 2 6
+
+   w ,[¯0.5] h
+8 4 1 3 0 12 8 9  1 7 10  2 6
+1 9 5 6 2  0 8 8 12 4  6 10 0
+
+   +/ w=h
+1
+</pre>
+
+<p>Here&rsquo;s why it works.  
+Let<tt> t←m|+/h </tt>be the sum of all the hat numbers, 
+modulo<tt> m</tt>&nbsp;.<tt> </tt>
+The following are equal:</p>
+
+<pre>
+t
+m|s[t]+t-s[t]          ⍝ addition and subtraction
+m|s[t]+m|t-s[t]        ⍝ modulo arithmetic
+m|s[t]+w[t]            ⍝ definition of w
+</pre>
+
+<p>Moreover, since<tt> s[t] </tt>is the sum of all hats 
+excluding<tt> h[t]</tt>&nbsp;,<tt> </tt>it must 
+be that<tt> t=m|s[t]+h[t]</tt>&nbsp;.<tt> </tt>
+Therefore<tt> m|s[t]+w[t] </tt>and<tt> m|s[t]+h[t] </tt>are 
+equal and so<tt> w[t] </tt>and<tt> h[t] </tt>are equal.
+That is, the written number<tt> w[t] </tt>for person<tt> t </tt>
+matches his hat number<tt> h[t]</tt>&nbsp;.</p>
+
+<pre>
+   ⊢ t←m|+/h
+6
+   w[6]
+8
+   h[6]
+8
+</pre>
+
+<p>It is instructive to examine what the 
+&ldquo;winning strategy&rdquo; does for 2 hats.
+The strategy calls for person<tt> n </tt>
+to write<tt> m|n-s[n]</tt>&nbsp;.<tt> </tt>
+When<tt> m←2</tt>&nbsp;,<tt> </tt>
+this reduces to person 0 writing the hat number of 
+person 1 and person 1 writing 
+the negation of the hat number of person 0.
+The tabulation of all possible hat numberings
+and corresponding writings
+shows that in each scenario 
+there is a written number that equals a hat number.
+</p>
+
+<table>
+<tr><td>&nbsp; &nbsp;</td><td>numbering</td><td>&nbsp;</td><td>writing</td></tr>
+<tr><td>&nbsp;</td><td align=center>0 0</td><td>&nbsp;</td><td align=center>0 1</td></tr>
+<tr><td>&nbsp;</td><td align=center>0 1</td><td>&nbsp;</td><td align=center>1 1</td></tr>
+<tr><td>&nbsp;</td><td align=center>1 0</td><td>&nbsp;</td><td align=center>0 0</td></tr>
+<tr><td>&nbsp;</td><td align=center>1 1</td><td>&nbsp;</td><td align=center>1 0</td></tr>
+</table>
+<br>
+
+
+
+<a name="2"></a>
+<p><b>2. An Abstraction</b></p>
+
+<p>Let G be an abelian group of size<tt> m </tt>
+with operation<tt> g </tt>and 
+whose group members are items of<tt> u</tt>&nbsp;.<tt> </tt>
+Compute<tt> s←{g/(⍵≠⍳m)/u[h]}¨⍳m</tt>&nbsp;;<tt> s[n] </tt>
+is the &ldquo;sum&rdquo; 
+of hat numbers that person<tt> n </tt>sees.  
+Then the written number<tt> w[n] </tt>
+is<tt> <nobr>u⍳u[n] g gi s[n]</nobr> </tt>
+where<tt> gi x </tt>is the inverse of<tt> x </tt>in the group.
+(In Section 1<tt> G </tt>is the group of integers under addition
+modulo<tt> m</tt>&nbsp;;<tt> </tt>
+the group elements<tt> u </tt>are<tt> ⍳m</tt>&nbsp;.)</p>
+
+<p>Why does it work?  Let<tt> t←u⍳g/u[h] </tt>
+be the index of the &ldquo;sum&rdquo; of all
+the hat numbers.  The following are equal:</p>
+
+<pre>
+u[t]
+u[t] g s[t] g gi s[t]  ⍝ group inverse and identity
+s[t] g u[t] g gi s[t]  ⍝ associative and commutative
+s[t] g u[w[t]]         ⍝ definition of w
+</pre>
+
+<p>Moreover, since<tt> s[t] </tt>
+is the sum of all hats excluding<tt> u[h[t]] </tt>and
+the group is abelian, it follows 
+that<tt> u[t]=s[t] g u[h[t]]</tt>&nbsp;.<tt> </tt>
+Therefore<tt> <nobr>s[t] g u[w[t]]</nobr> </tt>
+and<tt> <nobr>s[t] g u[h[t]]</nobr> </tt>are 
+equal, and so<tt> u[w[t]] </tt>and<tt> u[h[t]] </tt>are equal and 
+consequently<tt> w[t] </tt>and<tt> h[t] </tt>are equal.  
+That is, the written number<tt> w[t] </tt>for 
+person<tt> t </tt>
+matches his hat number<tt> h[t]</tt>&nbsp;.<tt> </tt>
+<br>&nbsp;</p>
+
+
+
+<a name="3"></a>
+<p><b>3. 88 Hats</b></p>
+
+<p>The original puzzle has<tt> m←88</tt>&nbsp;.<tt> </tt>Since</p>
+
+<pre>
+   I←{⍵/⍳⍴⍵}
+   I 88 = {+/1=⍵∨⍳⍵}¨⍳1000
+89 115 178 184 230 276
+</pre>
+
+There are at least 7 different strategies,
+derived from addition modulo 88 and multiplication
+modulo each<tt> b </tt>of<tt> 89 115 178 184 230 276 </tt>
+on the numbers
+co-prime to<tt> b</tt>&nbsp;.<tt> </tt>Thus:
+
+<pre>
+win←{   
+ ⍝ winning strategy based on group table ⍺ for hat numbering ⍵
+    assert ⍵∊⍳m←⍴⍵:
+    ⍺←m|∘.+⍨⍳m       ⍝ default is + modulo m
+    assert(⍴⍺)≡m,m:
+    assert ⍺≡⍉⍺:     ⍝ must be abelian
+    G←⍺[0;]⍳⍺        ⍝ standardize group table
+    g←{G[⍺;⍵]}¨      ⍝ group operation
+    gi←{G[⍵;]⍳0}¨    ⍝ inverses
+    (⍳m) g gi (∘.≠⍨⍳m)g.×⍵
+}
+
+assert←{⍺←'assertion failure' ⋄ 0∊⍵:⍺ ⎕SIGNAL 8 ⋄ shy←0}
+</pre>
+
+<p>The left argument<tt> ⍺ </tt>of<tt> win </tt>is a group table.
+It is standardized by doing<tt> ⍺[0;]⍳⍺</tt>&nbsp;,<tt> </tt>
+whence the group elements are<tt> ⍳m </tt>
+and the identity element is<tt> 0</tt>&nbsp;.<tt> </tt>
+These properties permit the computation 
+of the &ldquo;all but&rdquo; sums 
+to be simplified from<tt> <nobr>{g/(⍵≠⍳m)/u[h]}¨⍳m</nobr> </tt>
+to<tt> (∘.≠⍨⍳m)g.×h</tt>&nbsp;.</p>
+
+<pre>
+mgrp←{⍵|∘.×⍨I 1=⍵∨⍳⍵}  ⍝ group table for × modulo ⍵
+
+   mgrp 7
+1 2 3 4 5 6
+2 4 6 1 3 5
+3 6 2 5 1 4
+4 1 5 2 6 3
+5 3 1 6 4 2
+6 5 4 3 2 1
+
+   mgrp 9
+1 2 4 5 7 8
+2 4 8 1 5 7
+4 8 7 2 1 5
+5 1 2 7 8 4
+7 5 1 8 4 2
+8 7 5 4 2 1
+</pre>
+
+<p><tt>mgrp ⍵ </tt>computes the group table 
+for the integers under multiplication modulo<tt> ⍵</tt>&nbsp;.<tt> </tt>
+The group elements are the numbers co-prime to<tt> ⍵</tt>&nbsp;.</p>
+
+<pre>
+   m←88
+   h←random m⍴m
+
+   I h = win h
+58
+
+   I h = (mgrp  89) win h
+5
+   I h = (mgrp 115) win h
+87
+   I h = (mgrp 178) win h
+27
+   I h = (mgrp 184) win h
+77
+   I h = (mgrp 230) win h
+82
+   I h = (mgrp 276) win h
+58
+</pre>
+
+<p>Even though<tt> win h </tt>and<tt> (mgrp 276) win h </tt>result
+in the same person (<tt>58</tt>) writing his hat number,
+the lists of written numbers are different:</p>
+
+<pre>
+   win h
+41 9 72 79 53 39 7 8 32 72 85 26 45 47 2 16 46 80 53 ...
+   (mgrp 276) win h
+70 39 78 9 47 11 47 52 48 20 70 32 26 60 2 76 46 16 ...
+
+   (win h)[58]
+5
+   ((mgrp 276) win h)[58]
+5
+   h[58]
+5
+
+</pre>
+
+
+
+
+<a name="4"></a>
+<p><b>4. Collected Definitions</b></p>
+
+<pre>
+assert←{⍺←'assertion failure' ⋄ 0∊⍵:⍺ ⎕SIGNAL 8 ⋄ shy←0}
+
+I←{⍵/⍳⍴⍵}
+
+mgrp←{⍵|∘.×⍨I 1=⍵∨⍳⍵}  ⍝ group table for × modulo ⍵
+
+random←{⎕rl←7*5 ⋄ ?⍵}  ⍝ reproducible random numbers
+
+win←{
+ ⍝ winning strategy based on group table ⍺ for hat numbering ⍵
+    assert ⍵∊⍳m←⍴⍵:
+    ⍺←m|∘.+⍨⍳m       ⍝ default is + modulo m
+    assert(⍴⍺)≡m,m:
+    assert ⍺≡⍉⍺:     ⍝ must be abelian
+    G←⍺[0;]⍳⍺        ⍝ standardize group table
+    g←{G[⍺;⍵]}¨      ⍝ group operation
+    gi←{G[⍵;]⍳0}¨    ⍝ inverses
+    (⍳m) g gi (∘.≠⍨⍳m)g.×⍵
+}
+
+</pre>
+
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared as a 
+<a target=_parent href="http://www.jsoftware.com/jwiki/Essays/88_Hats">Jwiki essay</a> on 2007-06-08;
+also in <i>Vector</i>, Volume 25, Number 4, 2012-11.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2011-12-08 14:45</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2013-09-28 19:10</font></td></tr>
+</table>
+
+</td></tr></table>
+<br>
+</body>
+</html>

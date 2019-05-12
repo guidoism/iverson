@@ -1,0 +1,320 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Conventions Governing Order of Evaluation</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Conventions Governing Order of Evaluation</font><br>
+<b>Kenneth E. Iverson</b>
+<br>&nbsp;</p>
+
+
+
+<p>The common conventions for the evaluation of unparenthesized 
+expressions include the rules that 
+(1) in a multilevel expression such as<tt> </tt>
+<img src="https://www.jsoftware.com/papers/imag/ab_cd.bmp" align=middle>&nbsp;,<tt> </tt> 
+each line is evaluated before the function connecting the lines
+is evaluated; 
+(2) subject to the first rule, multiplication 
+and division are performed before addition and subtraction; 
+(3) subject to the first two rules, evaluation proceeds 
+from left to right; 
+(4) division can be represented by three distinct but synonymous symbols 
+(<tt>a÷b</tt>&nbsp;,<tt> a/b</tt>&nbsp;,<tt> </tt>
+and<tt> <img src="https://www.jsoftware.com/papers/imag/a_b.bmp" align=middle></tt>&nbsp;); and 
+(5) multiplication can be represented by two distinct but
+synonymous symbols (<tt>a×b </tt>and<tt> a<img src="https://www.jsoftware.com/papers/imag/middot.bmp">b</tt>&nbsp;), 
+or the symbol can be elided. 
+The one convention used in this book is that (subject to parentheses) 
+evaluation proceeds from right to left. 
+This appendix treats the major reasons for this choice.</p>
+
+<p>The common conventions are usually defended on 
+the grounds that they are simple and well known 
+and that their use significantly simplifies 
+the reading and writing of expressions. 
+Because of the familiarity of certain common constructions, 
+these conventions appear simple, 
+but this simplicity is illusory 
+and vanishes on closer examination. 
+Inquiries among students and colleagues have shown 
+such disagreement on the interpretation of the conventions 
+as to dispel the notion that they are well known. 
+Finally, the much simpler convention adopted in this text 
+proves at least as effective in simplifying 
+the reading and writing of expressions.</p>
+
+<p>Consider, for example, 
+the expressions<tt> x÷y×z </tt>
+and<tt>  x÷yz</tt>&nbsp;.<tt> </tt>
+According to the rules, 
+both are equivalent to the expression<tt> (x÷y)×z</tt>&nbsp;.<tt> </tt>
+However,<tt> yz </tt>is frequently used as an expression 
+for multiplication which is performed first regardless of other rules. 
+Furthermore, the dot notation for multiplication yields 
+the expression<tt> x÷y<img src="https://www.jsoftware.com/papers/imag/middot.bmp">z</tt>&nbsp;,<tt> </tt> 
+which (according to the interpretations encountered) 
+seems to fall midway between the other cases. 
+Proponents of the common convention protest 
+that such expressions would be 
+parenthesized anyway for clarity; 
+but then the convention seems to lose most of its value.</p>
+
+<p>Matters are further complicated by the 
+alternative notations for division. 
+For example<tt> x÷y÷z </tt>
+and<tt> x÷y/z </tt>should have the same
+interpretation, but frequently they do not. 
+Similarly, the formally equivalent 
+expressions<tt> x+a÷y+b </tt>
+and<tt> x+a/y+b </tt>
+frequently receive different interpretations. 
+It is interesting to consider the different 
+possible evaluations of the following expressions which, 
+according to rule 3, are equivalent:</p>
+
+<table>
+<tr><td width=20>&nbsp;</td><td><tt>x÷y×z</tt></td>
+    <td width=40>&nbsp;</td><td><tt>x÷y<img src="https://www.jsoftware.com/papers/imag/middot.bmp">z</tt></td>
+    <td width=40>&nbsp;</td> <td><tt>x÷yz</tt></td><td>&nbsp;</td></tr>
+<tr><td width=20>&nbsp;</td><td><tt>x/y×z</tt></td>
+    <td width=40>&nbsp;</td><td><tt>x/y<img src="https://www.jsoftware.com/papers/imag/middot.bmp">z</tt></td>
+    <td width=40>&nbsp;</td><td><tt>x/yz</tt></td></tr>
+</table>
+
+<p>The common convention also appears to include 
+a number of tacit rules that writers obey automatically. 
+For example,<tt> xy </tt>may be written for<tt> x×y</tt>&nbsp;,<tt> </tt> 
+and any variable should be replaceable by a numerical value. 
+However, while the expression<tt> 3y </tt>is commonplace, 
+most readers would find the expressions<tt> x3 </tt>and<tt> 3&nbsp;4 </tt>
+jarring and perhaps inadmissible as expressions 
+for<tt> x×3 </tt>and<tt> 3×4</tt>&nbsp;.</p>
+
+<p>In spite of these defects, the common conventions 
+are reasonably convenient when applied to simple expressions 
+involving only the four basic arithmetic functions, 
+but more serious difficulties arise in their 
+haphazard extension to other functions. 
+For example, 
+the expression<tt> sin&nbsp;n&nbsp;×&nbsp;cos&nbsp;m </tt>
+would be interpreted as<tt> (sin&nbsp;n)×(cos&nbsp;m)</tt>&nbsp;,<tt> </tt>
+whereas<tt> sin&nbsp;n&nbsp;×&nbsp;</tt>&pi;<tt> </tt>
+would be interpreted 
+as<tt> sin(n&nbsp;×&nbsp;</tt>&pi;<tt>)</tt>&nbsp;.<tt> </tt> 
+Moreover, the expression<tt> a<sup>b<sup>c<sup>d</sup></sup></sup> </tt>
+is usually interpreted 
+as<tt> a<sup>(b<sup>(c<sup>d</sup>)</sup>)</sup> </tt>
+rather than as<tt> ((a<sup>b</sup>)<sup>c</sup>)<sup>d</sup> </tt>
+(that is, from right to left rather than from 
+left to right according to rule 3), apparently 
+because the latter case can be expressed 
+by the equivalent expression<tt> a<sup>b×c×d</sup></tt>&nbsp;.<tt> </tt> 
+In the notation used in this book 
+the first case would be expressed 
+as either<tt> a*b*c*d </tt>or<tt> */a,b,c,d </tt> 
+and the second 
+as either<tt> a*b×c×d </tt>or<tt> a*×/b,c,d</tt>&nbsp;.</p>
+
+<p>As further functions are introduced 
+(for example, absolute value, maximum, minimum, 
+residue, the relations, logical functions, 
+and the circular functions), 
+the complexity grows and the utility of 
+any relative priority of execution 
+among the functions decreases. 
+Mathematical texts handle this problem either 
+by liberal use of parentheses or by <i>ad hoc</i>
+(and frequently unstated) conventions. 
+Programming languages, which must face the 
+issue more formally, have usually treated 
+the problem by establishing a hierarchy of priorities 
+among the functions such that any function is evaluated 
+before all others having lower priorities. 
+Such a system is usually very complex 
+(Algol, one of the best known, has nine priority levels) 
+and can therefore be used efficiently only by a programmer 
+who employs it frequently. The occasional (and the prudent) 
+programmer avoids the whole issue by including all the parentheses 
+that would have been required with no convention.</p>
+
+<p>Further examples of the complexity and ambiguity 
+of the common conventions could be easily adduced. 
+However, the skeptical reader will find it 
+more instructive to scan various textbooks 
+trying to formulate precisely the rules used 
+(stated or implied) and applying them rigorously.</p>
+
+<p>The question of the efficacy of the common convention 
+in reducing the need for parentheses will now be addressed. 
+Any convention will reduce the need for parentheses, 
+but the important question is how the common convention 
+compares in this respect with other conventions, 
+and in particular with the notation used in this text.</p>
+
+<p>The utility of the common convention stands forth well 
+in the expression for a polynomial. 
+For example, in the expression</p>
+
+<pre>
+   ax<sup>p</sup> + bx<sup>q</sup> + cx<sup>r</sup>
+</pre>
+
+<p>it would be awkward to have to enclose 
+each term in parentheses. 
+However, in the present notation this would be written as</p>
+
+<pre>
+   +/(a,b,c)×x*p,q,r
+</pre>
+
+<p>or, if the vectors of coefficients and exponents 
+were denoted by<tt> c </tt>and<tt> e </tt>respectively, 
+then it would be written as</p>
+
+<pre>
+   +/c×x*e
+</pre>
+
+<p>These forms make clear the structure of the polynomial 
+while permitting suppression of detail by using vectors; 
+the corresponding expression in conventional notation is</p>
+
+<pre>
+   c<sub>1</sub>×x<sup>e<sub>1</sub></sup> + c<sub>2</sub>×x<sup>e<sub>2</sub></sup> + ... +c<sub>n</sub>×x<sup>e<sub>n</sub></sup> ,
+</pre>
+
+<p>where<tt> n </tt>is the magic variable that denotes the 
+dimensions of all vectors.</p>
+
+<p>The expression (derived in Chapter 4) 
+for the efficient evaluation of a polynomial such 
+as<tt> (a,b,c,d,e,f)&Pi;x</tt>
+provides a further example. 
+In the notation used in this text 
+it appears (without parentheses) as</p>
+
+<pre>
+   (a,b,c,d,e,f)&Pi;x ≡ a+x×b+x×c+x×d+x×e+x×f
+</pre>
+
+<p>whereas in the common convention it would appear as</p>
+
+<pre>
+   (a,b,c,d,e,f)&Pi;x ≡ a+x×(b+x×(c+x×(d+x×(e+x×f))))
+</pre>
+
+<p>Further examples could be adduced, but again the skeptical 
+reader will find it more instructive to formulate 
+a set of precise rules based on the common convention 
+and to translate into the resulting notation the expressions 
+appearing in the present text.</p>
+
+<p>There is one further argument against imposing 
+a priority among functions in the present notation. 
+If<tt> F </tt>and<tt> G </tt>are dyadic functions, 
+then the expression<tt> F/x&nbsp;G&nbsp;y </tt>
+would have either of two interpretations 
+(that is,<tt> (F/x)G&nbsp;y </tt>or<tt> F/(x&nbsp;G&nbsp;y)</tt>),
+depending upon  the relative priorities 
+of<tt> F </tt>and<tt> G</tt>&nbsp;.<tt> </tt> 
+These two interpretations differ markedly in form
+and would therefore lead to confusion. 
+For example,<tt> +/x×y </tt>
+would be interpreted as<tt> +/(x×y) </tt>
+whereas the similar expression<tt> ×/x+y </tt>would be 
+interpreted as<tt> (×/x)+y</tt>&nbsp;.<tt> </tt>
+Similar remarks apply to the matrix 
+product<tt> M&nbsp;F.G&nbsp;N </tt>
+(defined in Chapter 9).</p>
+
+<p>The reasons for choosing a right-to-left instead of a 
+left-to-right convention are:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+The usual mathematical convention 
+of placing a monadic function 
+to the left of its argument 
+leads to a right-to-left execution for monadic functions; 
+for example,<tt> F&nbsp;G&nbsp;x ≡ F&nbsp;(G&nbsp;x)</tt>&nbsp;.
+</td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+The notation<tt> F/z </tt>for reduction 
+(by any dyadic function<tt> F</tt>) 
+tends to require fewer parentheses 
+with a right-to-left convention. 
+For example, expressions such as<tt> +/(x×y) </tt>
+or<tt> +/(u/x) </tt>tend to occur more frequently 
+than<tt> (+/x)×y </tt>and<tt> (+/u)/x</tt>&nbsp;.</td></tr>
+
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+<p>An expression <i>evaluated</i> from right to left 
+is the easiest to <i>read</i> from left to right. 
+For example, the expression</p>
+
+<pre>
+   a+x×b+x×c+x×d+x×e+x×f
+</pre>
+
+<p>(for the efficient evaluation of a polynomial) 
+is read as<tt> a </tt>plus the entire expression following, 
+or as<tt> a </tt>plus<tt> x </tt>times the following expression, 
+or as<tt> a </tt>plus<tt> x </tt>times<tt> b </tt>
+plus the following expression, and so on.</p>
+</td></tr>
+
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+<p>In the definition</p>
+
+<pre>
+   F/x ≡ x<sub>1</sub> F x<sub>2</sub> F x<sub>3</sub> F ... F x<sub>⍴x</sub>
+</pre>
+
+<p>the right-to-left convention leads 
+to a more useful definition 
+for nonassociative functions<tt> F </tt>
+than does the left-to-right convention. 
+For example,<tt> -/x </tt>
+denotes the alternating sum 
+of the components of<tt> x</tt>&nbsp;,<tt> </tt>
+whereas in a left-to-right convention it would denote 
+the first component minus the sum of the remaining components. 
+Thus if<tt> d </tt>is the vector of decimal digits representing 
+the number<tt> n</tt>&nbsp;,<tt> </tt> 
+then the value of the expression<tt> 0=9|+/d </tt>
+determines the divisibility 
+of<tt> n </tt>by<tt> 9</tt>&nbsp;;<tt> </tt> 
+in the right-to-left convention, 
+the similar expression<tt> 0=11|-/d</tt>
+determines divisibility by<tt> 11</tt>&nbsp;.</p>
+</td></tr>
+</table>
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared as Appendix A of K.E. Iverson,
+<a href="http://www.jsoftware.com/jwiki/Doc/Elementary%20Functions%20An%20Algorithmic%20Treatment"><i>Elementary Functions: An Algorithmic Treatment</i></a>, 
+Science Research Associates, 1966.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-09-09 13:35</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2013-07-23 09:35</font></td></tr>
+</table>
+
+</td></tr></table>
+
+<br><br><br>
+</body>
+</html>

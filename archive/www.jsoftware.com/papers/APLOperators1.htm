@@ -1,0 +1,927 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>The Role of Operators in APL</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>The Role of Operators in APL</font><br><br>
+<b>Kenneth E. Iverson</b><br><br>
+IBM/T.J. Watson Research Center<br>
+P.O. Box 218<br>
+Yorktown Heights, NY 10598
+<br>&nbsp;</p>
+
+
+
+<a name="abs"></a>
+<p><b>Abstract</b></p>
+
+<p>Operators, which apply to functions to
+produce functions, are an important
+component of APL. 
+Despite their importance,
+their role is not well understood, 
+and they are often lumped with functions 
+in expositions of the language. 
+This paper attempts to clarify the role 
+of operators in APL by tracing their development, 
+outlining possible future directions, 
+and commenting briefly on their roles 
+in other languages, both natural and programming.</p>
+
+<br><hr>
+
+
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>According to the <i>APL Language</i>
+<acronym title="APL Language, Form No. GC26-3847, 
+IBM Corporation.">[1, p39]</acronym>
+manual, &ldquo;An <i>operator</i> may be applied to a
+function to derive a different function&rdquo;.
+This is essentially the definition given in
+the International Dictionary of Applied Mathematics 
+<acronym title="The International Dictionary of Applied Mathematics, 
+Van Nostrand, Princeton, N.J.">[2, p653]</acronym>, 
+although it is there qualified by the comment that 
+&ldquo;In its widest sense the word operator is synonymous with
+<i>function</i> &#133;&rdquo;. 
+The long list of subsequent
+dictionary entries 
+(such as <font size=-1><nobr>OPERATORS, DIFFERENCE</nobr></font>, 
+and <font size=-1><nobr>OPERATORS, VECTOR</nobr></font>) 
+testifies to the utility of the concept 
+in applied mathematics.</p>
+
+<p>The lack of appreciation of operators
+in APL may be due in part to lack of
+familiarity with the use 
+of operators in mathematics, 
+but is more probably due to two other factors: 
+a conflicting use of the term in elementary mathematics, 
+and the manner of presenting APL adopted 
+in most textbooks.</p>
+
+<p>At an elementary level, functions such
+as<tt> + </tt>and<tt> × </tt>
+are commonly called operators 
+and one might hesitate to conflict 
+with this common practice. 
+However, this use of the
+term operator should perhaps be discouraged
+in any case because it tends to impede the
+students&rsquo; grasp of the important notion 
+of <i>function</i>.</p>
+
+<p>It may be that writers of APL
+textbooks avoid the precise usage of the terms 
+&ldquo;function&rdquo; and &ldquo;operator&rdquo; 
+because they do not wish to conflict 
+with existing usage in elementary mathematics, 
+or because they feel that the concept 
+of an operator is too
+difficult for beginners. 
+Either reason seems ill-founded; 
+the former because the issue is too important 
+to dismiss lightly,
+the second because approaches can be found
+in which introduction of the operator
+concept clarifies rather than complicates matters. 
+Bach 
+<acronym title="Bach, Gottfried, Unpublished class notes.">[3]</acronym>, 
+for example, has
+developed a simple introduction of operators
+in material at high-school level.</p>
+
+<p>The definition of operators quoted
+above from 
+<acronym title="APL Language, Form No. GC26-3847, 
+IBM Corporation.">Reference 1</acronym>
+does not cover the case of the axis operator, 
+since one of its arguments is a number 
+rather than a function. 
+Moreover, it appears useful to
+extend the idea of operator to a single
+numeric argument 
+(as in the case of a boolean operator 
+to produce the 16 boolean
+functions of two arguments 
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">[4, p15]</acronym>), 
+to a character-string argument 
+which represents the function to be produced
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">[4, p9]</acronym>, 
+or even to two numeric arguments, 
+as may be convenient 
+for a &ldquo;hypergeometric&rdquo; operator.
+The essential characteristic of an operator
+therefore concerns its range only &mdash; 
+it produces a function.<br>&nbsp;</p>
+
+
+
+<a name="dev"></a>
+<p><b>The Development of Operators</b></p>
+
+<p>Although reduction, inner product, 
+and outer product appeared early 
+in the development of APL, 
+several years elapsed
+before they were recognized as operators.
+This was due in part to the typography used:
+for the dyadic cases the configurations
+<img src="img/jottimes.bmp">
+and <img src="img/plustimes.bmp">
+used to denote outer and inner product
+involved no explicit symbol for the operator, 
+and for the monadic operator reduction it was easy 
+to misconstrue the slash in an expression 
+such as<tt> +/x </tt>as a case
+of a dyadic function.</p>
+
+<p>The linearization of the typography
+forced by computer implementation 
+led to the introduction of an explicit symbol 
+for the dyadic operator, 
+and to the recognition of
+the existence of operators in the language.
+However, when this was first documented in a
+paper on the design of APL 
+<acronym title="Falkoff, A.D., and K.E. Iverson, 
+The Design of APL, IBM Journal of Research and Development, 
+Vol. 16, No. 4, July, 1973. ">[5, p328]</acronym>, 
+it was felt that 
+&ldquo;&#133; the operators had not been
+given a consistent syntax and that the
+notation should eventually be regularized to
+give operators the same syntax as functions,
+i.e., an operator taking two arguments
+occurs between the (function) arguments 
+(as in<tt> +.×</tt>) and an operator 
+taking one argument appears in front of it.&rdquo;</p>
+
+<p>Somewhat later, in working on the
+development of an APL standard 
+<acronym title="Falkoff, A.D., and D.L. Orth, 
+APL Standard, APL79 Conference Proceedings, 
+APL Quote-Quad, Volume 9, Number 4, June, 1979.">[6]</acronym>, 
+it was recognized that 
+(except for the anomalous use of brackets 
+for the axis operator)
+existing syntax <i>was</i> consistent 
+under the rule that a monadic operator 
+applied to the argument on its left, 
+making the operator syntax a &ldquo;mirror image&rdquo; 
+of function syntax.
+The &ldquo;mirror-image&rdquo; notion was used
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">[4, p2]</acronym>
+to define an order of execution for a
+sequence of operators which makes an
+operator apply to the result of the entire
+operator sequence to its left.</p>
+
+<p>Another characteristic of the operator
+which should be noted 
+is its <i>precedence</i> over functions; 
+in any expression, the operators
+are executed before functions. 
+For example,
+in the expression<tt> a+.×b</tt>&nbsp;,<tt> </tt>
+parentheses are not required around the operator 
+expression <tt> +.×</tt>&nbsp;.<tt> </tt>
+Moreover, in present computer realizations of APL, 
+parentheses used as in<tt> a(+.×)b </tt>
+are not only not required, 
+they are not permitted. 
+This must be rectified to permit
+the use of parentheses to specify the order
+of execution of operators, 
+as in<nobr><tt> f<img src="img/plusobar.bmp">(g∆) </tt></nobr>
+(the function which is the sum 
+of<tt> f </tt>and the
+derivative of<tt> g</tt>), 
+which differs 
+from<nobr><tt> (f<img src="img/plusobar.bmp">g)∆ </tt></nobr>
+or<nobr><tt> f<img src="img/plusobar.bmp">g∆ </tt></nobr> 
+(the derivative of the function
+which is the sum of functions<tt> f </tt>and<tt> g</tt>).</p>
+
+<p>Experimentation with writing according
+to these rules has shown rather pleasing results, 
+with the establishment of a function 
+(by a sequence of operators) 
+nicely set off from the argument to which it applies, 
+and with a relatively low incidence
+of required parentheses in operator expressions.</p>
+
+<p>For example, the application along
+axis 2 of an array<tt> a </tt>of the derivative of
+the composition of the sum of functions<tt> f </tt>
+and<tt> g </tt>with the function<tt> h </tt>
+would be written
+(using the operators defined in Operators and Functions 
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">[4]</acronym>) 
+as:</p>
+
+<table><tr><td width=38>&nbsp;</td><td>
+<tt>f<img src="img/plusobar.bmp">g¨h∆⍤2 a</tt>
+</td></tr></table>
+
+<p>and the sum rule and chain rule for the
+derivatives of scalar functions would be
+written as:</p>
+
+<table><tr><td rowspan=2 width=38>&nbsp;</td><td>
+ <tt>f<img src="img/plusobar.bmp">g∆ ←→ f∆<img src="img/plusobar.bmp">(g∆)</tt></td></tr>
+<tr><td><tt>f¨g∆ ←→ f∆¨g<img src="img/timesobar.bmp">(g∆)</tt>
+ </td></tr>
+</table>
+
+<p>Interest in rationalizing the syntax of operators 
+led to the recognition that
+derived functions produced by operators could, 
+like primitive functions, be ambivalent, 
+the particular valence (monadic or dyadic) 
+being determined by the context
+in which the function is used. 
+It also led to the recognition that 
+an operator could apply to both numeric 
+and character arguments as well as to functions, 
+producing different classes of derived functions 
+in the different cases. 
+These observations lead to potentially important 
+extensions to the language.</p>
+
+<p>The first published use of ambivalence
+of derived functions (allowing a monadic use
+of the result of the inner-product operator
+to denote a generalization of the
+determinant, as in<tt> -.×m </tt>for the determinant
+of<tt> m</tt>&nbsp;,<tt> </tt>
+and<tt> +.×m </tt>for the permanent) 
+appears to have been in my 
+&ldquo;Two Combinatoric Operators&rdquo;
+<acronym title="Iverson, K.E., Two Combinatoric Operators, 
+Proceedings of APL76, Ottawa, Ontario.">[7]</acronym>. 
+However, I have since been informed by
+E.E. McDonnell that a similar suggestion was
+made in 1968 by Seth Breidbart, at the time
+a summer student employee with the APL group
+in IBM Research, a suggestion which, 
+not being pursued at the time, 
+was subsequently forgotten.</p>
+
+<p>Other published proposals for
+exploiting the ambivalence of derived
+functions include the &ldquo;controlled reduction&rdquo;
+(more fully defined in <i>Operators and Functions</i>
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">[4, p12]</acronym>)
+in which the left argument 
+in the expression<nobr><tt> w f/ a </tt></nobr>
+specifies the &ldquo;width of the window&rdquo; 
+over which reduction by the function<tt> f </tt>is applied,
+allowing expressions 
+such as<nobr><tt> 12 +/ v </tt></nobr>
+(for sums over all one-year periods of monthly data), 
+and<nobr><tt> 2 -/ v </tt></nobr>
+and<nobr><tt> 2 ÷/ v </tt></nobr>
+and<nobr><tt> ∧/2 &lt;/ v </tt></nobr>
+(for pairwise difference, pairwise ratios,
+and strict monotonicity). 
+They also include a &ldquo;function-table operator&rdquo;, 
+for which the
+notation<tt> ∘.f </tt>may be employed, 
+although the published paper 
+<acronym title="Iverson, K.E., Two Combinatoric Operators, 
+Proceedings of APL76, Ottawa, Ontario.">[7]</acronym>
+improperly suggests the
+notation<tt> f </tt>followed by a period.</p>
+
+<p>Exploitation of non-function arguments
+for operators can lead to economical and
+mnemonically effective use of symbols. 
+For example, as defined in 
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">[4]</acronym>, 
+the composition operator<tt> ¨ </tt>
+can be applied to two functions
+(as in<tt> f¨g</tt>), 
+but can also be applied to a dyadic function 
+and a numeric argument 
+(as in<tt> *¨.5 </tt>for the square-root function 
+and<tt> x¨* </tt>
+for the &ldquo;powers-of-<tt>x</tt>&rdquo; function) 
+to produce monadic cases of dyadic functions, 
+and to two character arguments to &ldquo;compose&rdquo; 
+a function from a &ldquo;Lambda-Calculus&rdquo; definition
+in an expression such 
+as<nobr><tt> 'p+÷l'¨'l p'</tt>.</nobr></p>
+
+<p>It can also lead to a rationalization
+of existing constructs in APL. 
+For example, the slash is commonly construed as a monadic
+operator in the expression<tt> +/x</tt>&nbsp;,<tt> </tt> 
+but as a dyadic function 
+in the expression<tt> u/x</tt>&nbsp;,<tt> </tt> 
+where<tt> u </tt>is a boolean vector. 
+Construed as a monadic operator 
+which takes either function or numeric arguments, 
+the slash not only becomes regular in its definition and syntax
+(producing a derived function<tt> u/ </tt>
+which is a particular member, 
+specified by<tt> u</tt>&nbsp;,<tt> </tt> 
+of a family of selection functions), 
+but also permits the definition 
+of a dyadic derived function for use in expressions 
+of the form<nobr><tt> x u/ y</tt>&nbsp;.</nobr><tt> </tt> 
+This could usefully be defined to
+be the <i>mask</i> function 
+<acronym title="Iverson, K.E., A Programming Language, 
+Wiley and Sons, New York, N.Y., 1962.">[8, p19]</acronym>, 
+and, together with a similar definition 
+for<nobr><tt> x u\ y</tt>&nbsp;,</nobr><tt> </tt>
+could bring back the mesh and mask functions
+included in early APL but as yet excluded
+from all implementations.</p>
+
+<p>The mesh and mask were of course
+excluded because they took three arguments,
+and an operator which takes a non-function
+argument or arguments can be construed as a
+device for introducing further parameters
+needed in the definition of a function. 
+The introduction of system variables such as the
+index origin (<tt>⎕io</tt>) and comparison tolerance
+(<tt>⎕ct</tt>) also introduced extra parameters 
+into certain functions. 
+The two ideas can be related by the <i>variant</i> operator 
+discussed in <i>Operators and Functions</i> 
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">[4]</acronym>.</p>
+
+<p>The fact that the slash in the
+compression<tt> u/x </tt>was long considered as a
+dyadic function and can now be considered as
+a monadic operator  
+(yielding a monadic function) 
+without change to the meaning of the expression, 
+suggests that other existing dyadic functions 
+could perhaps be changed to monadic operators. 
+The answer is that any dyadic function 
+with no defined monadic case could be so treated.</p>
+
+<p>Candidates therefore include the
+relations and other logical functions, 
+the membership function<tt> ∊</tt>&nbsp;,<tt> </tt>
+and take and drop (<tt>↑ </tt>and<tt> ↓</tt>). 
+Certain symmetries in the first class, 
+such as the commutativity 
+of<tt> ∧</tt>&nbsp;,<tt> ∨</tt>&nbsp;,<tt> ⍲</tt>&nbsp;,<tt> ⍱</tt>&nbsp;,<tt> =</tt>&nbsp;,<tt> </tt>and<tt> ≠</tt>&nbsp;,<tt> </tt>
+suggest that they should remain as dyadic functions. 
+Any potential advantage in treating the others 
+(<tt>∊</tt>&nbsp;,<tt> ↑</tt>&nbsp;,<tt> </tt>and<tt> ↓</tt>) 
+as operators rests on defining a useful
+dyadic case of the derived function produced.</p>
+
+<p>Although the circle function 
+has a useful monadic case 
+(which yields pi times its argument), 
+the unusual nature of the left argument, 
+serving as it does to select
+one of a limited family of functions,
+suggests that<tt> ○ </tt>might be considered 
+as a monadic operator. 
+However, the convenience of the present dyadic function 
+in conjunction with the inner- and 
+outer-product operators, 
+as well as the convenience of the monadic case, 
+weights heavily against a change. 
+The definition of a very useful dyadic case 
+for the derived function<tt> k○ </tt>
+could conceivably change this situation.</p>
+
+<p>The inner-product, outer-product, and
+reduction operators in current
+implementations of APL apply only to
+primitive scalar functions. 
+There is no syntactic or semantic difficulty 
+in extending their domain to include 
+defined scalar functions. 
+However, to make reduction apply to empty vectors 
+as it does for primitive functions, 
+it will be necessary to provide a mechanism 
+for specifying, in its definition, 
+the identity element of the defined function. 
+The identity element is a simple example 
+of the need to specify, 
+in addition to its &ldquo;basic&rdquo; definition, 
+certain <i>characteristics</i> of the function defined. 
+Other such characteristics are discussed in 
+&ldquo;The Derivative Operator&rdquo; 
+<acronym title="Iverson, K.E., The Derivative Operator, APL79 Conference Proceedings, 
+APL Quote-Quad, Volume 9, Number 4, June, 1979.">[9]</acronym>.</p>
+
+<p>Now that the syntax of operators is understood, 
+it may be appropriate to consider the introduction 
+of a formal mechanism for operator definition, 
+so that a user might define his own operators 
+as well as his own functions. 
+Since the readability of an expression 
+is greatly enhanced by the immediate recognition 
+of the valence of each object, 
+the introduction of defined operators 
+would impose on the careful APL user the burden 
+of choosing distinctive names for them, 
+just as good writers now make it possible 
+to easily distinguish defined functions 
+from variables.
+<br>&nbsp;</p>
+
+
+
+<a name="val"></a>
+<p><b>Valence and Rank</b></p>
+
+<p>The term <i>valence</i> was introduced in 1968 
+<acronym title="Falkoff, A.D. and K.E. Iverson, 
+The APL\360 Terminal System, 
+Symposium on Interactive Systems for Experimental and Applied Mathematics, 
+eds. M. Klerer and J. Reinfelds, Academic Press, New York, 1968.">[10]</acronym>
+to describe the three types of APL functions 
+(dyadic, monadic, and niladic),
+and was used essentially as it is in
+chemistry to describe the &ldquo;binding power&rdquo; 
+of an object, describing in this case the
+number of arguments to which the object applies.</p>
+
+<p>We commonly say that most APL
+primitive functions are ambiguous in
+valence, being either monadic or dyadic
+according to context, and that certain
+functions, such as<tt> ~ </tt>and<tt> ≤</tt>&nbsp;,<tt> </tt>
+have fixed valence. 
+Strictly speaking, it is the <i>symbol</i> or 
+<i>operator expression</i> representing
+the two potential functions which has
+ambiguous valence, and the function itself,
+as selected by the context, has a fixed valence. 
+Moreover, it would seem to be more
+consistent to speak as if all function
+symbols and expressions are ambiguous, and
+that certain of the functions 
+(such as dyadic<tt> ~ </tt>and monadic<tt> ≤</tt>) 
+have empty domains.
+The practical consequence of this is that
+expressions such as<tt> x~y </tt>and<tt> ≤y </tt>should
+perhaps return<tt> domain </tt>errors 
+rather than<tt> syntax </tt>errors.</p>
+
+<p>Although ambiguous valence occurs in chemistry, 
+there is no completely satisfactory chemical term for it. 
+Thus <i>bivalence</i>, <i>divalence</i> 
+and <i>polyvalence</i> are all used to describe 
+a particular valence (2, 2, and &ge;3) 
+as well as the ambiguous character of a valence. 
+The term <i>ambivalent</i> therefore
+seems most suitable to describe ambiguous valence, 
+even though it has an accepted meaning in psychology, 
+and even though the term <i>divalence</i> has been used 
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">[4]</acronym>.</p>
+
+<p>APL arrays, both variables and
+constants, have valence 0, 
+the same valence as a niladic function. 
+It therefore appears desirable to eliminate 
+the notion of niladic functions 
+or at least to make them
+syntactically equivalent to arrays. 
+This would, in particular, eliminate all
+ambiguity from the use of expressions of the
+form<tt> f←+.×</tt>&nbsp;, or<tt> m(f←+.×)n </tt>
+(essentially as suggested in 
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">[4]</acronym>) 
+to assign a name to a function.</p>
+
+<p>We have in the past used the terms
+&ldquo;variable&rdquo; and &ldquo;argument&rdquo; 
+to refer to an object of valence 0, 
+although most such usage was not meant 
+to exclude constants,
+which also have valence 0. 
+Now, however, we may wish to speak 
+of the arguments of operators, 
+distinguishing between arguments of various valences, 
+but also distinguishing
+between the occurrence of <i>constant</i> arguments, 
+as in<tt> +.×</tt>&nbsp;,<tt> </tt>
+and <i>variable</i> arguments, 
+as in<tt> f.g</tt>&nbsp;.<tt> </tt> 
+Consequently, it seems best to characterize 
+objects by their valence. 
+To make such characterization complete, 
+one could assign to monadic and dyadic <i>operators</i> 
+the valences<tt> ¯1 </tt>and<tt> ¯2</tt>&nbsp;,<tt> </tt>
+giving a symmetric set of valences running
+from<tt> ¯2 </tt>to<tt> 2</tt>&nbsp;.</p>
+
+<p>The utility of ambivalence in functions 
+suggests a similar use of ambivalence in operators. 
+However, such ambivalence appears 
+to lead to an excessive use of parentheses, 
+since they would be required to enclose 
+every monadic use of an operator. 
+Moreover, it would alter the
+present meaning of expressions, 
+since the possibility of a dyadic use of the 
+operator<tt> / </tt>would require parentheses 
+around<tt> +/ </tt>in the
+expression<tt> +/x</tt>&nbsp;.<tt> </tt>
+It therefore appears best
+to retain the convention of present APL,
+each operator having a fixed 
+valence,<tt> ¯1 </tt>or<tt> ¯2</tt>&nbsp;.</p>
+
+<p>Finally, the use of the jot symbol<tt> ∘ </tt>
+in the outer product<tt> ∘.× </tt>
+suggests a way in which most of the advantages of ambivalence
+in operators may be obtained even with fixed valence. 
+The expression<tt> ∘.× </tt>involves a
+dyadic operator, 
+but only one significant argument. 
+Consequently, the jot can be viewed 
+as a general device for denoting a
+&ldquo;monadic case&rdquo; of a dyadic operator. 
+This device is exploited for a number of new operators in 
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">Reference 4</acronym>. 
+In fact, two distinct monadic cases could be obtained 
+(as in<tt> ∘.f </tt>and<tt> f.∘</tt>) 
+as well as a niladic case
+(as in<tt> ∘.∘</tt>).</p>
+
+<p>The operators in present APL apply to
+arguments of valence 0, 1, or 2, and produce
+results of valence 1 or 2. 
+In generalizing the reduction operator to apply to
+non-scalar functions, 
+it is useful to distinguish between the 
+expression<tt> f/⍤v</tt>&nbsp;,<tt> </tt>
+which applies reduction by<tt> f </tt>to each of the
+elements along the axis or axes specified by
+the vector or scalar<tt> v</tt>&nbsp;,<tt> </tt> 
+and the expression<tt> f(/⍤s) </tt>
+which &ldquo;partitions&rdquo; the argument along
+the single axis<tt> s </tt>and applies a reduction 
+by<tt> f </tt>which is equivalent to placing the dyadic
+function<tt> f </tt>between the resulting partitions.
+In the latter case the result of<tt> (/⍤s) </tt>is
+clearly an operator, and we have an example
+of an operator (the axis operator<tt> ⍤</tt>)
+applying to an operator (that is,<tt> /</tt>) 
+to produce a derived operator which in turn
+applies to the function<tt> f</tt>.</p>
+
+<p>The utility of operators 
+which apply to functions to produce operators 
+is also fairly obvious. 
+For example, the special symbols 
+such as<tt>  <img src="img/plusobar.bmp"> <img src="img/timesobar.bmp"> </tt>
+and<tt> <img src="img/starobar.bmp"> </tt>introduced in
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">Reference 4</acronym>
+for <i>scalar operators</i> 
+(and defined to produce operators analogous to
+the corresponding functions, 
+as in<nobr><tt> f<img src="img/plusobar.bmp">g x←→(f x)+(g x)</tt>)</nobr>
+can be considered as especially important cases 
+of the general notion of an operator which applied to a
+dyadic function<tt> f </tt>produces the corresponding operator. 
+A possible notation for such an operator 
+is a monadic case of composition,
+as in<tt> f¨∘</tt>.</p>
+
+<p>It therefore appears useful to assume
+that operators may apply to arguments of any valence, 
+including zero, and produce results 
+of any valence except zero.</p>
+
+<p>The inner product, outer product, and reduction operators 
+now apply only to scalar functions, 
+which are defined on scalar arguments 
+and produce scalar results. 
+The problem of extending these and other
+operators to non-scalar functions is closely
+related to the problem of extending a function defined 
+on an argument of a certain rank 
+to arguments of higher rank.</p>
+
+<p>If a function is <i>uniform</i> in the sense
+that the shape of its result depends only on
+the shape of its argument, 
+then it can be extended to arguments of higher rank 
+in a systematic manner, 
+since each of the results produced is 
+of the same shape and they can form 
+sub-arrays of the overall result.</p>
+
+<p>Non-uniform functions can be handled
+by the introduction of an <i>enclose</i>
+function<tt> &lt;</tt>&nbsp;,<tt> </tt>
+which &ldquo;encodes&rdquo; its argument as a scalar.
+Consequently, the composition<tt> &lt;¨f </tt>
+is a uniform function (producing scalar results)
+which can be used to effectively extend the
+application of any non-uniform function<tt> f </tt>
+to arrays of higher rank. 
+Moreover, if we
+introduce a <i>disclose</i> function<tt> &gt; </tt> 
+inverse to enclose, 
+then the composition<tt> &lt;¨f¨&gt; </tt>
+produces a scalar function which applies to the
+arguments  &ldquo;enclosed&rdquo; 
+or &ldquo;encoded&rdquo; in the
+scalar elements of its argument. 
+These matters are discussed in further detail in
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">Reference 4</acronym>.
+<br>&nbsp;</p>
+
+
+
+<a name="other"></a>
+<p><b>Operators in Other Languages</b></p>
+
+It would be astonishing if a notion so
+fruitful as the operator did not occur in
+some form in other languages, 
+both natural and formal. 
+An operator in APL can be
+conceived as modifying the behavior of a
+function to which it is applied. 
+If we make the obvious association 
+between a <i>function</i> in APL 
+(which performs some action on its argument) 
+and a <i>verb</i> in a natural language,
+then an <i>operator</i> corresponds 
+closely to an <i>adverb</i>.</p>
+
+<p>An adverb may modify an adverb 
+(as in &ldquo;run <i>very</i> quickly&rdquo;) 
+or an adjective 
+(as in &ldquo;a <i>very</i> black night&rdquo;) 
+as well as a verb.
+The first of these is interesting 
+in that it corresponds to an operator 
+applying to an operator to produce a new operator. 
+The second is interesting in that an adjective
+(and, consequently, a modified adjective)
+can be thought to modify a verb indirectly,
+as the adjective &ldquo;green&rdquo; 
+indirectly modifies the action of &ldquo;pointing&rdquo; 
+in the sentence
+&ldquo;point out all the green houses&rdquo;. 
+In this sense <i>declarations</i> 
+in programming languages
+are operators because they behave as
+adjectives modifying arguments 
+rather than functions, 
+but have the substantive effect
+of modifying the behavior of functions
+applied to these arguments.</p>
+
+<p>Mathematical notation has provided 
+the inspiration for most of the existing operators in APL, 
+the inner product being a
+generalization of matrix product, 
+the outer product a generalization 
+of the outer product of tensor analysis, 
+and reduction a generalization 
+of the sigma notation for summation. 
+The axis operator seems to have
+no counterpart in mathematical notation
+(except perhaps for the tensor notation for
+contraction which groups axes by use of
+common symbols rather than by reference to
+indices), nor, surprisingly, 
+does the very useful scan operator. 
+The needs filled by the axis and scan operators 
+in APL seem to have been filled in mathematics 
+by variations of the sigma notation, using, for
+example; expressions such as i&lt;n<sub>j</sub> 
+under the sigma to denote scan.</p>
+
+<p>Mathematical notation has also
+inspired most of the new proposals for
+operators in References 
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report No. 7091, IBM Corporation.">4</acronym> and 
+<acronym title="Iverson, K.E., The Derivative Operator, APL79 Conference Proceedings, 
+APL Quote-Quad, Volume 9, Number 4, June, 1979.">9</acronym>, 
+but again the APL operators are made more general.
+For example:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+The dyadic &ldquo;controlled reduction&rdquo;<nobr><tt> w f/ x </tt></nobr>provides 
+running sums, running maxima, and pairwise ratios as well as
+the difference operator <nobr>(<tt>¯2 -/ x</tt>)</nobr>
+found in mathematics.
+ </td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+The derivative operator<tt> ∆ </tt>
+produces the entire array of partial derivatives
+(whose determinant, in the case of a
+vector function, is called the <i>Jacobian</i>), 
+and therefore provides not
+only the derivative for scalar functions, 
+but also provides the basis
+for other operators of the vector calculus.
+ </td></tr>
+
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+The scalar operators provide obviously
+useful facilities in the case 
+of<tt> <img src="img/plusobar.bmp"> </tt>
+and<tt> <img src="img/timesobar.bmp"></tt>&nbsp;,<tt> </tt>
+but less obviously provide for the
+treatment of set theory in terms of
+the propositional functions 
+which define the sets, 
+as in<nobr><tt> p<img src="img/andobar.bmp">q </tt></nobr>for 
+intersection,<nobr><tt> p<img src="img/orobar.bmp">q </tt></nobr>for union, 
+and<nobr><tt> p<img src="img/neobar.bmp">q </tt></nobr>
+for symmetric difference.
+ </td></tr>
+
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+The dual operator provides the duals
+expressed in De Morgan&rsquo;s laws but,
+because it permits the specification
+of the monadic function involved, 
+it also covers duality with respect to
+functions other than logical negation,
+as in<nobr><tt> ⌊<img src="img/dual.bmp">-←→⌈</tt>&nbsp;.</nobr><tt> </tt>
+Moreover, because it is
+defined to accommodate mapping functions 
+which are not self-inverse,
+it applies to cases 
+such as<nobr><tt> +<img src="img/dual.bmp">⍟←→× </tt></nobr>
+and<nobr><tt> ×<img src="img/dual.bmp">*←→+</tt>&nbsp;.</nobr>
+ </td></tr>
+</table>
+
+
+<p>There remain many operators in mathematics 
+which should be explored for possible generalization 
+and inclusion in APL. 
+A limit operator would be extremely
+useful although perhaps difficult to implement well. 
+Other possible candidates include fractional derivatives 
+<acronym title="Oldham, K.B., and Jerome Spanier, 
+The Fractional Calculus, Academic Press, 1974.">[11]</acronym>,
+convolution, and correlation, as well as
+moment-generating functions and certain
+transforms such as Fourier and Laplace.</p>
+
+<p>Expressions of the 
+form<nobr><tt> a (+,×,-,÷) b</tt>&nbsp;,</nobr><tt> </tt>
+used in the Formal Description of <font size=-1>SYSTEM</font>/360 
+<acronym title="Falkoff, A.D., K.E. Iverson, 
+and E.H. Sussenguth, A Formal Description of SYSTEM/360, 
+IBM Systems Journal, October, 1964.">[12]</acronym>
+to express the application to 
+arguments<tt> a </tt>and<tt> b </tt>of a
+function selected 
+by an index<tt> i</tt>&nbsp;,<tt> </tt>
+suggest the need for a catenation operator 
+and indexing or other selection operators. 
+Collections of functions produced by catenation 
+could be used in a variety of ways.</p>
+
+<p>Control structures 
+such as the Fortran DO statement 
+occurring in programming languages 
+may be construed as operators 
+in the sense that they apply some function
+defined by certain expressions in the body
+of the DO statement over certain sets of arguments. 
+In simple cases this corresponds
+exactly to some APL function on arrays 
+(as in<tt> v×w</tt>) or APL operator 
+(as in<tt> +/v </tt>or<tt> +\v</tt>),
+but in others it may involve some test 
+for completion which depends 
+upon the function values computed, 
+and therefore cannot be mimicked 
+directly by existing APL operators.
+Many cases of DO statements not directly
+expressible in terms of present APL operators 
+could be covered by the application of operators 
+to defined functions, 
+and by the introduction of a limit operator.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+<i>APL Language</i>, Form No. GC26-3847, IBM Corporation.
+ </td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+<i>The International Dictionary of Applied
+Mathematics</i>, Van Nostrand, Princeton, N.J.
+ </td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+Bach, Gottfried, Unpublished class notes.
+ </td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/opfns.htm">
+<i>Operators and Functions</i></a>,
+Research Report No. 7091, IBM Corporation.
+ </td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+Falkoff, A.D., and K.E. Iverson, 
+<a target=_parent href="http://www.jsoftware.com/papers/APLDesign.htm">
+<i>The Design of APL</i></a>, 
+IBM Journal of Research and Development, 
+Vol. 16, No. 4, July, 1973.
+ </td></tr>
+<tr><td valign=top>6.</td><td>&nbsp;</td><td>
+Falkoff, A.D., and D.L. Orth, 
+<i>APL Standard</i>, APL79 Conference Proceedings,
+APL Quote-Quad, Volume 9, Number 4, June, 1979.
+ </td></tr>
+<tr><td valign=top>7.</td><td>&nbsp;</td><td>
+Iverson, K.E., <i>Two Combinatoric Operators</i>, 
+Proceedings of APL76, Ottawa, Ontario.
+ </td></tr>
+<tr><td valign=top>8.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/APL.htm">
+<i>A Programming Language</i></a>,
+Wiley and Sons, New York, N.Y., 1962.
+ </td></tr>
+<tr><td valign=top>9.</td><td>&nbsp;</td><td>
+Iverson, K.E., <i>The Derivative Operator</i>,
+APL79 Conference Proceedings,
+APL Quote-Quad, Volume 9, Number 4, June, 1979.
+ </td></tr>
+<tr><td valign=top>10.</td><td>&nbsp;</td><td>
+Falkoff, A.D. and K.E. Iverson, 
+<a target=_parent href="http://www.jsoftware.com/papers/APL360TerminalSystem.htm">
+<i>The APL\360 Terminal System</i></a>, 
+Symposium on Interactive Systems for Experimental
+and Applied Mathematics, 
+eds. M. Klerer and J. Reinfelds, 
+Academic Press, New York, 1968.
+ </td></tr>
+<tr><td valign=top>11.</td><td>&nbsp;</td><td>
+Oldham, K.B., and Jerome Spanier, 
+<i>The Fractional Calculus</i>, 
+Academic Press, 1974.
+ </td></tr>
+<tr><td valign=top>12.</td><td>&nbsp;</td><td>
+Falkoff, A.D., K.E. Iverson, and E.H. Sussenguth, 
+<i>A Formal Description of</i> <font size=-1>SYSTEM</font>/360, 
+IBM Systems Journal, October, 1964. </td></tr>
+</table>
+
+
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared in the APL79 Conference Proceedings, 
+APL Quote-Quad, Volume 9, Number 4, 1979-06.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size="-1">original writing: &nbsp;</font></td><td><font size="-1">2010-01-21 10:55</font></td></tr>
+<tr><td><font size="-1">last updated:</font></td><td><font size="-1">2013-05-03 06:45</font></td></tr>
+</table>
+
+</td></tr></table>
+<br>
+</body>
+</html>

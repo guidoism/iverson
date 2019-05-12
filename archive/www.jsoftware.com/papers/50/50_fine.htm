@@ -1,0 +1,94 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>A History of APL in 50 Functions</title>
+<link href="adoc.css" rel=stylesheet></head>
+<body>
+
+<p align=right><font size=+1>
+<a target=main href="https://www.jsoftware.com/papers/50/50_pers.htm">&lt;&lt;</a> &nbsp; 
+<a target=main href="https://www.jsoftware.com/papers/50/50_ref.htm">&gt;&gt;</a>
+</font></p>
+
+<table width=520 align=center><tr><td>
+
+<a name="fineprint"></a>
+<p align=center><font size=+2>The Fine Print</font>
+<br>&nbsp;</p>
+
+<p>The expressions require Dyalog APL
+<acronym title="Dyalog, Dyalog APL Language Reference, Dyalog Limited, 2016.">[136]</acronym>
+version 14.0 or later, with:</p>
+
+<table>
+<tr><td width=88 nowrap><tt>⎕io←0</tt></td><td>index origin</td></tr>
+<tr><td><tt>⎕ml←1</tt></td><td>migration level</td></tr>
+<tr><td><tt>⎕pp←6</tt></td><td>print precision</td></tr>
+<tr><td><tt>⎕div←1</tt></td><td>the result of<tt> 0÷0 </tt>is<tt> 0</tt></td></tr>
+<tr><td><tt>]box on</tt></td><td>nested arrays displayed using boxes</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td colspan=2><tt>assert←{⍺←'assertion failure' ⋄ 0∊⍵:⍺ ⎕signal 8 ⋄ shy←0}</tt></td></tr>
+<tr><td></td><td>a utility
+<acronym title="Hui, Roger K.W., Some Exercises in APL Language Design, 2016-11-27; &sect;47.">[124b]</acronym></td></tr>
+</table>
+
+<p>Some expressions use facilities not yet implemented as of this writing
+(and may never be implemented in Dyalog APL).
+They are:</p>
+
+<table>
+<tr><td width=38 nowrap valign=top><tt>x⍸y</tt></td>        
+ <td colspan=2><i>interval index</i>
+<acronym title="Hui, Roger K.W., and John Scholes, New Primitive Functions and Operators, Dyalog User Meeting, 2016-10-10.">[52]</acronym>,
+sorted<tt> x </tt>partitions the domain into contiguous intervals
+and<tt> x⍸y </tt>is the index of the interval that contain<tt> y</tt>
+ </td></tr>
+<tr><td valign=top><tt>⍸x</tt></td>        
+ <td colspan=2><i>where</i>
+<acronym title="Hui, Roger K.W., and John Scholes, New Primitive Functions and Operators, Dyalog User Meeting, 2016-10-10.">[52]</acronym>,<tt> </tt>
+<tt>{(,⍵)/,⍳⍴⍵}</tt>&nbsp;,<tt> </tt>indices of where boolean array<tt> x </tt>is<tt> 1 </tt>
+ </td></tr>
+<tr><td valign=top><tt>⊤x</tt></td>        
+ <td colspan=2><i>binary representation</i>
+<acronym title="Falkoff, A.D., Kenneth E. Iverson, and E.H. Sussenguth, A Formal Description of System/360, IBM Systems Journal, volume 3, number 3, 1964; Table 1, pp. 200-201.">[100]</acronym>,<tt> </tt>
+<tt> 2⊥⍣¯1⊢x </tt>
+ </td></tr>
+<tr><td valign=top><tt>⊥x</tt></td>        
+ <td colspan=2><i>binary value</i>
+<acronym title="Falkoff, A.D., Kenneth E. Iverson, and E.H. Sussenguth, A Formal Description of System/360, IBM Systems Journal, volume 3, number 3, 1964; Table 1, pp. 200-201.">[100]</acronym>,<tt> </tt>
+<tt> 2⊥x </tt>
+ </td></tr>
+<tr><td><tt>&infin;</tt></td>  <td colspan=2><i>infinity</i>
+[<acronym title="McDonnell, Eugene, and Jeffrey Shallit, Extending APL to Infinity, APL80, 1980.">123</acronym>,
+<acronym title="Hui, Roger K.W., Some Exercises in APL Language Design, 2016-11-27; &sect;12.">124a</acronym>]
+ </td></tr>
+
+<tr><td valign=top><tt>⍭</tt></td> 
+ <td colspan=2><i>primes</i>,<tt> ⍭i </tt>is the<tt> i</tt>-th prime, modeled by<tt> pco </tt>in the dfns workspace
+ <acronym title="Scholes, John, pco, D-Functions, 2014-05-20.">[89]</acronym>
+ </td></tr>
+
+<tr><td valign=top><tt>⍢</tt></td> <td valign=top nowrap><i>under</i>
+<acronym title="Hui, Roger K.W., and Kenneth E. Iverson, J Introduction and Dictionary, 2011-05-03; &.">[51h]</acronym>, &nbsp;</td> 
+ <td width=90%><table>
+ <tr><td></td> <td><tt>f⍢g x &nbsp; ←→ g⍣¯1 f g x</tt></td></tr>
+ <tr><td></td> <td><tt>x f⍢g y ←→ g⍣¯1 (g x)f(g y)</tt></td></tr>
+ </table></td></tr>
+
+<tr><td><tt>⍫</tt></td> 
+ <td colspan=2><i>obverse</i> <acronym title="Hui, Roger K.W., and Kenneth E. Iverson, J Introduction and Dictionary, 2011-05-03; :.">[51i]</acronym>,<tt> </tt>
+<tt> f⍫g ←→ f </tt>except that<tt> f⍫g⍣¯1 ←→ g⍫f</tt></td></tr>
+</table>
+
+<p><script src="https://www.jsoftware.com/papers/50/apldisplay.js" type="text/javascript"></script>
+<br>&nbsp;</p>
+
+
+
+</td></tr></table>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+</html>

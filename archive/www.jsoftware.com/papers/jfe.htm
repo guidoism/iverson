@@ -1,0 +1,180 @@
+<html><head>
+<title>J701 Beta Early Days</title>
+</head><body>
+
+<h1>J701 beta early days</h1>
+
+This document covers some J701 beta background, initial thoughts, and preliminary results.<br><br>
+
+We hope the development of J701 beta to a final release continues with community involvement and expect the documentation and discussion to evolve on the wiki. This document may help start the ball rolling and perhaps has some historical interest.<br><br>
+
+This document has been cleaned up a bit, sections that turned out to be dead ends or were of only passing interest have been dropped, and some status information on early internal releases has been added.<br><br>
+
+<h2>Background</h2>
+Months ago I was working on a project to allow an http browser to use a J session (on a server or the same system) as a full J development system. I've long had an interest in this and it was renewed by J on iPhone forum discussions.<br><br>
+
+I cobbled together a JFE written in J that ran but was incomplete. It was not a comfortable fit, there were rough edges, and there was no debug.<br><br>
+
+I rewrote that JFE in C. It was neither easier or harder to write than the one in J but it didn't have the rough edges and had debug.<br><br>
+
+I started thinking about changing JE so that it would be easy to write a complete JFE in J.<br><br>
+
+With perfect timing, Chris sent a message about GTK and said it might provide a JFE that could free us from the Java jwdp. As I was increasingly desperate to be freed from both j.jar and j.exe JFEs I sat bolt upright.<br><br>
+
+
+<h2>J Front End (native and foreign)</h2>
+
+Previous J systems have a JFE-JE architecture with JFE quite separate from JE. The JFE is written in C, C++, or Java and JFE logic and data processing is not coded in J and is not part of JE. The JE API made it difficult to program a JFE in J code that ran in the same JE. This served well for many years but with luck it is time for a radical change.<br><br>
+
+The 701 beta has changes that allows the JFE to be written completely in J that runs in the same J session. The phrase 'completely in J' includes use of cd for calls to external services and their callbacks.<br><br>
+
+With luck the the next J release will be a significant step forward with most [eventually all?] JFE's provided as J code.<br><br>
+
+A key assumption is that a JFE with GTK allows quick development of a portable GUI front end that replaces both jwdw (Windows j.exe) and jwdp (Java j.jar). Initial results look promising and we can hope that future development and releases will not include jwdw and jwdp. The J602 jwdw is quite stable, will work with J701, and could hang around as long as users remain interested. But there are strong reasons for killing jwdp (Java). New development of j.exe (except to faciliate the portability with new JFEs) is unlikely.<br><br>
+
+If this approach works, the significant advantage is that JFEs become open source J code and can be developed cooperatively by the community.<br><br>
+
+Initial JFE's that will be provided are: GTK and a J Browser Server (jbserver). It would also be possible to provide stdio JFE implemented in J but it is not clear if this step is desirable other than as a form of completeness.<br><br>
+
+If this goes forward I suggest we use JFE to refer to native (written in J) JFEs. When a distinction is necessary refer to JFE (native) or JFE (foreign).
+
+<h2>JE change overview</h2>
+JFE J code uses cd (calls and callbacks) for external interfaces.  A GTK JFE uses cd calls to run the GTK event loop, API, and to handle callbacks. The jbserver uses sockets (with cd). And a stdio JFE would use cd calls to fgets (readline) and fputs.<br><br>
+
+Getting native JFEs to work can be tricky. If JFE isn't working there isn't an IDE for debuging. At least until we have more experience with devloping native JFE's the following is a workable development approach. Start JE with a J602 JFE (jconsole, jwdw, or jwdp) and  toggle between use of the foreign JFE and the native JFE with <tt>15!:16</tt> .<br><br>
+
+The JE use of the foreign JFE is unchanged. That is, the interface to the J shared library (j.dll, libj.so, libj.dylib) is unchanged and will remain unchanged.<br><br>
+
+The following describes JE with <tt>15!:16[1</tt> .<br><br>
+
+When JE requires a user input line it runs sentence <tt>input_jfe_''</tt> . The string result is used as the input line. There are 4 cases:<br>
+1. immediate execution<br>
+2. debug suspension<br>
+3:  n : 0<br>
+4. 1!:1[1<br><br>
+
+The 1!:1[1 case could be killed off. J code calling <tt>1!:1[1</tt> to call <tt>input_jfe_</tt> to call ??? is unecessarily complicated and it might be easier to just call ??? as required. The general idea is to simplify 'external' mechanisms as much as possible and to rely on J code.<br><br>
+
+<tt>input_jfe_</tt> gets the prompt with <tt>15!:18''</tt> . The prompt is 0 spaces for keyboard input, 3 spaces for execution, and 6 spaces for debug suspension execution.<br><br>
+
+The native JFE implements <tt>input_jfe_</tt> to get a user input line. A stdio JFE would use cd to call fgets (or readline). The GTK JFE calls the GTK+ event loop until the user has pressed the enter key (running a callback) completing the input. The jbserver listens for a socket connection from the browser.<br><br>
+
+When JE has output it calls <tt>output_jfe_''</tt> . JFE implements <tt>output_jfe_</tt> to display the output. A stdio JFE calls fputs with cd. The GTK+ JFE calls the GTK+ API to display in an IJX window. The jbserver does html formating on the output and sends it to the socket.<br><br>
+
+<tt>output_jfe_</tt> gets the output string with <tt>15!:19''</tt> and the output type with <tt>15!:20''</tt> .<br><br>
+
+<h2>JE change summary</h2>
+
+<tt>15!:16 n</tt>  toggle between foreign and native JFE<br><br>
+
+JE calls <tt>input_jfe_''</tt> for input<br>
+<tt>15!:18''</tt> returns prompt<br><br>
+
+JE calls <tt>output_jfe_''</tt> for output<br>
+<tt>15!:19''</tt> returns output string<br>
+<tt>15!:20''</tt> returns output type (input, formatted, error, etc) <br><br>
+
+<h2>cd callback change overview</h2>
+GTK procedures and callbacks in Windows are _cdecl (not _stdcall). The cd calls requires + in the cd left argument to make _cdecl calls. Support for _cdecl callbacks, previously not available, has been added.<br><br>
+
+Pevious support is unchanged. That is:
+
+<pre>   cb=: cdcb n NB. small integer n</pre>
+
+cb is the address of a normal call (_stdcall in Windows) with a cd style prototype of an x result and n x arguments.<br><br>
+
+Now cdcb can take a cd style declaration that indicates result and argument types as well as a + to indicate Windows _cdecl.<br><br>
+<pre>
+   cb =: cdcb 2         NB. x result and 2 x arguments
+   cba=: cdcb 'x x x'   NB. x result and 2 x arguments
+   cbb=: cdcb '+ x x x' NB. _cdecl x result and 2 x arguments</pre>
+
+NOTE: cb and cba will be different addresses. Of course cbb will be different from both cb and cba.<br><br>
+
+The new callbacks are distinguished only by the declaration. A callback is made in the same locale where the call was made. This scheme is simple and seems to provide adequate functionality.
+
+<h2>GTK JFE</h2>
+A GTK JFE is available. It is rough but demonstrates all the important points and has IJX, IJS, debug, n : 0, menu, messagebox, fontdialog, isigraph (mouse and char events), plot, opengl, etc.<br><br>
+
+The ijx/ijs edit controls are in tabs that can be dragged within an IDE window and between IDE windows. Syntax colouring is supported with gtksourceview.<br><br>
+
+Chris is doing considerable cleanup on this 'proof of concept' version before an initial community release.<br><br>
+
+GTK Glade and Builder interfaces are quite interesting and are supported. See the glade demo.<br><br>
+
+<h2>GTK cd definitions</h2>
+
+The cd definitions were cobbled together by manually adding as required. Initially I thought that eventually it would be necessary to build a tool that automatically created cd definitions from the C .h files (or perhaps from Python or similar GTK bindings). But now my opinion is that this effort would have minimal benefit. The hard part is studying the documentation to decide what API calls are required and how to combine them to the desired result. The actual step of creating the cd definition is a trivial part of the process. Further experience will show whether this is a step worth automating.<br><br>
+
+The other concern was 'type safety', especially with object arguments. I assumed that this would warrant a layer on top of cd that tracked objects and validated arguments. My experience was that the number of crashes and problems in this area wouldn't warrant a complicated type safety layer. Further experience with a wider programming community will show whether this area needs attention or not. Most usage will be of utility verbs rather than direct API calls and this provides quite a bit of protection.<br><br>
+
+The key point is that I am convinced that cd is at the right level. Any automation of production of definitions and any type safety facilities should be provided by J code, not system code.<br><br>
+
+<h2>Installs and platforms</h2>
+
+Install packaging  for J701 beta are unchanged from the J602 release.<br><br>
+
+Preliminary betas have been built and tested for Windows, Windows 64, Linux, Linux 64, Mac Powerpc, and Mac Intel.<br><br>
+
+The installation and maintenance of GTK on Linux and Mac is a user responsibility. Most modern Unix systems come with GTK and install packages are available from suppliers. There is an official binary Mac version for Mac Intel. There may eventually be a Mac PowerPC version but there doesn't seem to be one now (the really ambitious could build one from the source).<br><br>
+
+GTK recommendations for Windows is that applications provide their own GTK libraries as part of their install packages. The windows GTK libraries are in the 
+J bin folder of the J windows install packages. This increases the size of the J windows package by about 6mb.<br><br>
+
+Syntax coloring is provided by the gtksourceview object. This may not be available on all platforms (currently not part of the Mac Intel binary GTK distribution).<br><br>
+
+<h2>Windows PocketPC</h2>
+GTK is not available for Windows PocketPC and for reasons I don't understand it sounds like it won't be available. There may be alternatives such as QT or WX that might provide suitable facilities. However, as the j.dll interface is unchanged the easiest solution is to just continue to use the PocketPC J602 j.exe.
+
+<h2>gl2</h2>
+
+It was possible to wrap GTK graphics with gl2 commands compatible with J602 gl2. This means that plot, grid, and gl2 applications can be ported with very little work to JFE GTK. With additional work it is likely that a gl2 layer can be provided that provides complete and seamless portability between J602 j.exe and the new GTK JFE.<br><br>
+
+The only significant compatibility difference between gl2 in GTK and jwdw (j.exe) is the requirement of a graphics locale in GTK to track the gl2 state information. Actually this is a welcome change as it removes the old gl2 problem of psel/gsel to set the gl2 target.<br><br>
+
+If gl2 core compatibility between GTK and j.exe is desired then changing gl2 coding style to always require a graphics locale would go most of the way. A few minor changes to j.exe (obviating the need for psel/gsel) could provide complete compatibility.<br><br>
+
+Of course, new graphics facilities (new gl2 verbs) will only be available in JFE's where they are implemented.
+
+<h2>gl3</h2>
+
+It was fairly easy to wrap the isigraph requirements for the current OpenGL support to provide support for OpenGL applications.<br><br>
+
+<h2>wd portability</h2>
+
+My iniitial idea was to abandon wd. So the iniitial effort was just to provide similar functionality in GTK. However as it took shape I realized that giving up the simplicity and current high portability of wd was perhaps a shame.<br><br>
+
+I think it would be possible to provide GTK (and similarly QT, WX...) compatibility with basic wd applications that were coded in an approved style.<br><br>
+
+Parsing a wd form definition to create a GTK form is not difficult. The hard part is the position and sizing, but I now think that is a sufficiently solvable problem.<br><br>
+
+The other part is the form_control_event pattern. This could be done by GTK. But, like isigraph, it would be easier if the coding requirement was that a form be in a locale and the pattern was control_event defined in the form locale.<br><br>
+
+We'll see how things go, but I think a core wd set would be worthwhile to provide for portable applications. Changes to j.exe that faciliated this might be worthwhile.<br><br>
+
+<h2>Pure J</h2>
+The introduction of cd to J started a long term trend. Old foreigns (such as the socket driver family) were replaced by scripts with cd. New external interfaces were implemented with cd without requiring new foreigns or system changes.<br><br>
+
+The new JFE facilities in a sense extend this trend to the front end. System code in a front end and hooks in JE for things like wd and gl2 are no longer required. They can all be replaced by J code (with cd).<br><br>
+
+The benefit of these changes is that development and evolution in these areas are now completely open to the community. The full application problem domain is now under control of the J programmer.<br><br>
+
+We'd like to see this trend continue quite a bit further with J701. I think it would be  good if most, if not all foreigns, that could be replaced by cd are killed of in this release. In particular the <tt> 1!:x  </tt> and <tt> 2!: </tt> families should be killed off.<br><br>
+
+If may also be possible to replace the current very host dependent jconsole (stdio/readline/etc) with a bare bones frame for the JE shared library. That is, provide stdio with a script that uses the new JFE facilities.<br><br>
+
+If we go far enough along this line, we'll have a Pure J implementation with many benefits. The source will be more portable and this will make it much easier to support additional platforms. Having everything in open J code means that the community can drive development and there are no bottlenecks.<br><br>
+
+<h2>Miscellaneous</h2>
+It would would be nice if a new GTK JFE was good enough to allow us to leave both the Windows j.exe and the Java j.jar behind. We could continue to provide jwdw and jwdp for legacy systems, but their development would be frozen.<br><br>
+
+My guess is that killing jwdp (Java) will be easy and welcome. Killing j.exe may be more difficult and as it is quite stable it probably isn't an issue as it could be available for those who want it for a long time to come.<br><br>
+
+I think some core and completely portable GUI form definition and event mechanism is desireable. This could be done many ways, but basic wd and gl2 is probably not a bad starting point.<br><br>
+
+<h2>Revision history</h2>
+
+First version distributed April 28, 2009. This final version saved on October 19, 2009.<br><br>
+
+Author: Eric Iverson
+</body></html>

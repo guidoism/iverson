@@ -1,0 +1,1030 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>Computers and Mathematical Notation</title></head><body>
+
+<h2 align="CENTER">COMPUTERS AND MATHEMATICAL NOTATION<br>
+<b><tt>Kenneth E. Iverson</tt></b></h2>
+
+<h6 align="CENTER"><img src="https://www.jsoftware.com/papers/camn_files/00.gif" alt="This document must be viewed with a graphical browser."></h6>
+
+<p></p><blockquote>By relieving the brain of all unnecesary work, a good notation
+sets it free to concentrate on more advanced problems, and in
+effect increases the mental power of the race.</blockquote><p></p>
+<p align="RIGHT"><b>A. N. Whitehead</b></p>
+
+<p></p><blockquote>Some
+symbols, like <img src="https://www.jsoftware.com/papers/camn_files/01.gif" align="TOP"> that were used originally
+for only positive integral values of <i>n</i> stimulated intellectual
+experimentation when <i> n</i> is fractional, negative, or complex,
+which led to vital extensions of ideas.</blockquote><p></p>
+<p align="RIGHT"><b>F. Cajori</b></p>
+
+<p></p><blockquote>Mathematical
+notation, like language, has grown up without much looking to,
+at the dictates of convenience and with the sanction of the majority.</blockquote><p></p>
+<p align="RIGHT"><b>A. de Morgan</b></p>
+
+
+<h3><i>A. INTRODUCTION</i></h3>
+
+<p>The foregoing quotations assert both the power
+and the muddle of mathematical notation. They may be found in
+the concluding section of Volume II of Cajori, <i>A History of
+Mathematical Notations</i> <a href="camn.htm#ref">[1]</a><i>. </i>Cajori also says: "In
+the light of the teaching of history it is clear that new forces
+must be brought into action in order to safeguard the future against
+the play of blind chance. The drift and muddle of the past is
+intolerable. We believe that this new agency will be organization
+and co-operation."</p>
+
+<p>Writing in the 1920s, Cajori could not
+have foreseen the potential impact of the computer, and of the
+programming languages that have developed to apply it to mathematical
+problems.</p>
+
+<p>For practical reasons, programming languages have largely
+adopted a standard alphabet (or <i>character set</i>, known as
+ASCII), unambiguous use of symbols (within any given language),
+and the discipline of a precisely defined grammar, or <i>syntax.</i>
+In spite of the wide use of programming languages in expressing
+and executing mathematical problems, the standardization and other
+notions from programming languages have had virtually no impact
+on the mathematical notation used in the exposition and teaching
+of mathematics.</p>
+
+<p>It might be argued that mathematical notation (to
+be referred to as <b>MN</b>) is adequate as it is, and could not
+benefit from the infusion of ideas from programming languages.
+However, <b>MN</b> suffers an important defect: it is not executable
+on a computer, and cannot be used for rapid and accurate exploration
+of mathematical notions.</p>
+
+<p>The remainder of this paper is a critique
+of <b>MN</b>, together with suggestions for improvement based
+on experience in the design of programming languages and in their
+use in the exposition of topics in mathematics.</p>
+
+<p>In any criticism,
+it is important that suggestions for improvement come from a coherent
+and tested system, lest they be dismissed as disconnected, and
+possibly conflicting, proposals. For this reason I will base all
+suggestions on a single programming system. The system <b>J</b>
+is chosen for the following reasons:</p>
+
+<p></p><ul>
+<li>It is available free from website <i>http://www.jsoftware.com</i>
+</li><li>The printed documentation <a href="camn.htm#ref">[2-5]</a> is also available on-line.
+It can be displayed by clicking on the HELP menu, and selections
+from it can be printed for perusal. In particular, the one-page
+Vocabulary provides summary definitions of the entire language.
+</li><li>It has been used in the exposition of topics ranging from
+arithmetic to calculus to fractals <a href="camn.htm#ref">[6 7]</a>, and most of these texts
+are also available on-line.
+</li><li>All expressions in the paper are executable, and the serious
+reader can experiment with them, with any component phrases, and
+with any variants that may suggest themselves.
+</li></ul><p></p>
+
+<p>The difficulty posed
+for the reader by the use of <b>J</b> (or any programming language)
+is that of understanding an unfamiliar notation. This will be
+eased by the fact that each expression can be executed, that its
+results are shown, and that most are accompanied by comments (in
+a distinct font).</p>
+
+<p>We will follow the common convention of using
+italics in the names in <b>MN</b>, and a uniformly spaced font
+for expressions in programming languages. Any  expression to be
+entered is shown indented, and its result is not indented.</p>
+
+
+<h3><i>B. RELATIONS AND ASSIGNMENT</i></h3>
+
+<p>Mathematics makes much use of relations
+such as <i>less than</i> (denoted by <tt>&lt;</tt>), <i>equals</i>
+(<tt>=</tt>), and <i>greater than</i> (<tt>&gt;</tt>); and the result
+of a relation is interpreted as <i>true</i> if the relation holds,
+and <i>false</i> otherwise.</p>
+
+<p>Boole <a href="camn.htm#ref">[8]</a> denoted <i>true</i> by <tt>1</tt>
+and <i>false</i> by <tt>0</tt>, and (by analogy with the behaviour
+of multiplication on these arguments) used the symbol for multiplication
+to denote logical <i>and</i>. By a looser analogy, he used <tt>+</tt>
+for logical <i>or</i>.</p>
+
+<p>Later workers, wishing to use logical functions
+together with arithmetic functions, introduced distinct symbols:
+<img src="https://www.jsoftware.com/papers/camn_files/02.gif" align="TOP"> (from the Latin <i>vel</i>) for
+<i>or</i>, and <img src="https://www.jsoftware.com/papers/camn_files/03.gif" align="TOP"> for <i>and</i>.
+For the same reason, <b>J</b> (being confined to the ASCII alphabet)
+uses <tt>+.</tt> for <i>or</i>, and <tt>*.</tt> for <i>and</i>. For
+example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;0 +. 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The proposition p or q is false if both p and q are false<tt><br>
+0<br>
+&nbsp;&nbsp;&nbsp;0 +. 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The proposition p or q is true if p is false and q is true<tt><br>
+1<br>
+&nbsp;&nbsp;&nbsp;1 +. 0<br>
+1<br>
+&nbsp;&nbsp;&nbsp;1 +. 1<br>
+1<br>
+&nbsp;&nbsp;&nbsp;1 *. 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>p and q is true if both  p and q are true<tt><br>
+1
+</tt></p>
+
+<p><b>MN</b>
+uses the symbol <tt>=</tt> for a relation, but also uses it for
+<i>assignment</i>, as in the expression (Let) <i>x</i><tt>=3</tt>. Again,
+to denote these two distinct notions without ambiguity, programming
+languages use distinct notation (that usually includes the symbol
+<tt>=</tt>), as in <tt>:=</tt> (in ALGOL), and <tt>=:</tt> (in <b>J</b>).
+For example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;a=: 4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>a <i>is</i> four<tt><br>
+&nbsp;&nbsp;&nbsp;v=: 2 3 5 7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>v is the vector of the first four primes<tt><br>
+&nbsp;&nbsp;&nbsp;plus=: +&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>plus is the function <tt>+<br>
+&nbsp;&nbsp;&nbsp;a * v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>a times v<tt><br>
+8 12 20 28<br>
+&nbsp;&nbsp;&nbsp;v plus v&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>v plus v<tt><br>
+4 6 10 14
+</tt></p>
+
+
+
+<h3><i>C. EXPLORATION</i></h3>
+
+<p>The use of executable notation for exploration
+is illustrated by the following passage from Chapter 2 of <i>Exploring
+Math</i> <a href="camn.htm#ref">[6]</a>:</p>
+
+<p>It is commonly thought that math is about
+numbers. So it is, but numbers are not the only, nor even
+the most important, concern of math. It would be more accurate
+to say that math is concerned with <i>relations</i>,
+and with <i>proofs</i> of relations.</p>
+
+<p>Although the
+first chapter dealt only with numbers, it should be clear that
+the interesting aspects were the <i>relations</i>
+between results. For example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;a=: i. 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The first six non-negative integers<tt><br>
+&nbsp;&nbsp;&nbsp;b=: ?.~ 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The integers in random order<tt><br>
+&nbsp;&nbsp;&nbsp;b<br>
+5 1 2 4 3 0<br>
+&nbsp;&nbsp;&nbsp;3*a<br>
+0 3 6 9 12 15<br>
+&nbsp;&nbsp;&nbsp;a+a+a<br>
+0 3 6 9 12 15<br>
+&nbsp;&nbsp;&nbsp;(3*a) = (a+a+a)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The relation between multiplication and addition<tt><br>
+1 1 1 1 1 1<br>
+&nbsp;&nbsp;&nbsp;a = b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The lists <tt>a</tt> and <tt>b</tt> are not equal<tt><br>
+0 1 1 0 0 0<br>
+&nbsp;&nbsp;&nbsp;sort=: /:~<br>
+&nbsp;&nbsp;&nbsp;sort b<br>
+0 1 2 3 4 5<br>
+&nbsp;&nbsp;&nbsp;sort a<br>
+0 1 2 3 4 5<br>
+&nbsp;&nbsp;&nbsp;(sort a)=(sort b)&nbsp;&nbsp;&nbsp;</tt>But are similar; one is a permutation of the other<tt><br>
+1 1 1 1 1 1</tt></p>
+
+<p>We
+will further illustrate this matter of relations
+by examples that do not concern numbers. For example, the word
+<tt>'POST'</tt> is said to be an <i>anagram</i> of
+the word <tt>'SPOT'</tt> because the letters of <tt>'SPOT'</tt> can
+be permuted to give the word <tt>'POST'</tt>. Thus
+<tt>'SPOT'</tt> and <tt>'POST'</tt> are <i>similar</i>
+in the sense already defined for lists. The similarity of these
+words may be tested as follows:</p>
+
+<pre>   w=: 'SPOT'
+   x=: 'POST' 
+   sort w
+OPST
+   sort x
+OPST 
+   (sort w)=(sort x)
+1 1 1 1</pre>
+
+<p>Sorting <tt>w</tt>
+produces <tt>OPST</tt>. Is it an anagram? We
+will say that it is, although it is not an English
+word.</p>
+
+<p>You could (and should) attempt to write down <i>all</i> distinct
+anagrams of <tt>'SPOT'</tt>, finding a surprising number of English
+words among them. However, this might be rather difficult to do;
+in a long list of words it is easy to overlook
+repetitions, and you may not even know how many anagrams
+to expect all together.</p>
+
+<p>We will now use the anagram
+function <tt>A.</tt> for this purpose. Its
+left argument chooses one of many permutations
+to apply to the list right argument. Thus:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;w<br>
+SPOT<br>
+&nbsp;&nbsp;&nbsp;8 A. w<br>
+POST<br>
+&nbsp;&nbsp;&nbsp;12 A. 8 A. w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The permutation <tt>12 A.</tt> is the inverse of <tt>8 A.<br>
+SPOT<br>
+&nbsp;&nbsp;&nbsp;0 1 2 3 4 5 6 7 8 A. w<br>
+SPOT<br>
+SPTO<br>
+SOPT<br>
+SOTP<br>
+STPO<br>
+STOP<br>
+PSOT<br>
+PSTO<br>
+POST<br>
+<br>
+&nbsp;&nbsp;&nbsp;30 A. w<br>
+|index error<br>
+|&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A.w
+</tt></p>
+
+<p>The last result
+shows that there is a limit to the valid left argument; properly
+so, since there is a limit to the number of different permutations
+of a list. But how many are there? In the case
+of a two-item list <tt>'AB'</tt> there are clearly only two possibilities,
+the <i>identity</i> permutation
+that leaves the list unchanged, and the one that gives <tt>'BA'</tt>.
+Thus:</p>
+
+<pre>   0 1 A. 'AB'
+AB
+BA</pre>
+
+<p>Write down all permutations
+of the list <tt>'ABC'</tt> to convince yourself
+that there are six possible permutations. Thus:</p>
+
+<pre>   (i. 6) A. 'ABC'
+ABC
+ACB
+BAC
+BCA
+CAB
+CBA</pre>
+
+
+<h3><i>D. NUMBER SYSTEMS AND OPERATORS</i></h3>
+
+<p>In discussing number systems
+it is common to use a phrase such as "<img src="https://www.jsoftware.com/papers/camn_files/04.gif" align="TOP"> is 555" to
+indicate that the base-8 representation of the number of days
+in a year is 555. This is predicated on the fact that the 365
+is "obviously" expressed in decimal. How, then, do we
+indicate the inverse case? what would the result of <img src="https://www.jsoftware.com/papers/camn_files/05.gif" align="TOP"> be?
+And what is one to make of the expression "<img src="https://www.jsoftware.com/papers/camn_files/06.gif" align="TOP"> is 365"?</p>
+
+<p>These
+matters may be clarified by the use of lists; a number is <i>represented</i>
+by a list of digits. For example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;d=: 3 6 5<br>
+&nbsp;&nbsp;&nbsp;w=: 100 10 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Weights for decimal (base 10)<tt><br>
+&nbsp;&nbsp;&nbsp;d * w<br>
+300 60 5<br>
+</tt></p>
+
+<p>It
+remains to apply addition <i>over</i> the list <tt>d*w</tt>, a matter
+expressed in <b>MN</b> by <img src="https://www.jsoftware.com/papers/camn_files/07.gif" align="TOP">. The applications of other functions
+over a list are denoted similarly, using <img src="https://www.jsoftware.com/papers/camn_files/08.gif" align="TOP">
+for product, <img src="https://www.jsoftware.com/papers/camn_files/09.gif" align="TOP"> for <i>and</i>,
+and <img src="https://www.jsoftware.com/papers/camn_files/10.gif" align="TOP"> for <i>or</i>. The general notion is simply the modification
+of a function by an <i>operator</i> in the sense introduced by
+Heaviside <a href="camn.htm#ref">[9]</a>.</p>
+
+<p>As used by Heaviside in the treatment of differential
+equations, the notion seems too difficult for use at an elementary
+level. However, the obvious analogy between a <i>function</i>
+in math, and a <i>verb</i> in English, leads to the notion of
+a Heaviside operator as the analog of an <i>adverb</i>, something
+that modifies a verb to produce a different, though related, verb.
+Not only is the term <i>adverb</i> more suggestive than <i>operator</i>,
+but it avoids conflict with its use in <b>MN</b> as a synonym
+for <i>function</i>. Finally:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;+/d*w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Sum over product of <tt>d</tt> and <tt>w</tt>. The <tt>/</tt> is an adverb that modifies <tt>+<br>
+365<br>
+</tt>
+
+</p><p>The parallel
+with the adverb is apropos: in English (and other natural languages),
+the use of m verbs together with n adverbs permits the prescription
+of m times n related verbs. The adverb is equally prolific in
+a mathematical context. For example:</p>
+
+<p>
+<tt>&nbsp;&nbsp;&nbsp;+/ d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Sum over (<img src="https://www.jsoftware.com/papers/camn_files/07.gif" align="TOP">)<br>
+<tt>&nbsp;&nbsp;&nbsp;*/ d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Product over (<img src="https://www.jsoftware.com/papers/camn_files/08.gif" align="TOP">)<br>
+<tt>&nbsp;&nbsp;&nbsp;*./ d &lt; w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>And over (<img src="https://www.jsoftware.com/papers/camn_files/09.gif" align="TOP">)<br>
+<tt>&nbsp;&nbsp;&nbsp;+./ d &lt; w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Or over (<img src="https://www.jsoftware.com/papers/camn_files/10.gif" align="TOP">)<br>
+<tt>&nbsp;&nbsp;&nbsp;&gt;./ d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Max (greater of) over<br>
+<tt>&nbsp;&nbsp;&nbsp;&lt;./ d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Min (lesser of) over
+</p>
+
+<p>In English, a
+conjunction (such as the copulative conjunction <i>and</i> in
+the phrase <i>run and hide</i>) can apply to two verbs to produce
+a related verb. Analogously, an operator in math may apply to
+two functions (as in the composition <img src="https://www.jsoftware.com/papers/camn_files/11.gif" align="TOP">, and in convolution),
+or to a verb and a noun, as in <a href="camn.htm#foot1"><i>Currying</i></a><img src="https://www.jsoftware.com/papers/camn_files/1.gif" align="TOP"> or <i>bonding</i>.
+For example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;pof=: */ @ !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Product over <i>atop</i> factorial<tt><br>
+&nbsp;&nbsp;&nbsp;pof d=: 3 6 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(!3)*(!6)*(!5)<br>
+518400<br>
+&nbsp;&nbsp;&nbsp;cube=: ^&amp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Power <i>with</i> 3<tt><br>
+&nbsp;&nbsp;&nbsp;cube d<br>
+27 216 125<br>
+&nbsp;&nbsp;&nbsp;^.
+d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Natural logarithm<tt><br>
+1.09861 1.79176 1.60944<br>
+&nbsp;&nbsp;&nbsp;10&amp;^. d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Base 10 logarithm<tt><br>
+0.4771213 0.7781513 0.69897<br>
+</tt></p>
+
+<p>Conjunctions, like adverbs, are very prolific,
+providing simple expressions for a host of special notations in
+<b>MN</b>. For example, <i>falling</i> and <i>rising</i> factorial
+functions (denoted in <i>Concrete Mathematics</i> <a href="camn.htm#ref">[11]</a> by underscored
+and overscored superscripts) may be expressed in the form of the
+product <i>x</i>(<i>x</i><tt>+</tt><i>s</i>)(<i>x</i><tt>+</tt>2<i>s</i>)(<i>x</i><tt>+</tt>3<i>s</i>)
+for <i>s</i><tt>=-1</tt> and <i>s</i><tt>=1</tt>, respectively. Since the case <i>s</i><tt>=0</tt>
+is equivalent to the power function, the factorial functions are
+denoted by <tt>^!._1</tt> and <tt>^!.1</tt>, using the conjunction
+<tt>!.</tt> (called <i>fit</i>). For example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;x=: 5<br>
+&nbsp;&nbsp;&nbsp;m=: 4<br>
+&nbsp;&nbsp;&nbsp;x ^!._1 m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Falling factorial<tt><br>
+120<br>
+&nbsp;&nbsp;&nbsp;x*(x-1)*(x-2)*(x-3)<br>
+120<br>
+&nbsp;&nbsp;&nbsp;*/x,(x-1),(x-2),(x-3)<br>
+120<br>
+&nbsp;&nbsp;&nbsp;x - i. m<br>
+5 4 3 2<br>
+&nbsp;&nbsp;&nbsp;*/ x - i. m<br>
+120<br>
+&nbsp;&nbsp;&nbsp;x ^!.0 m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Power<tt><br>
+625<br>
+&nbsp;&nbsp;&nbsp;rf=: ^!.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Rising factorial<tt><br>
+&nbsp;&nbsp;&nbsp;x rf m<br>
+1680
+</tt></p>
+
+<p><a name="foot1"></a></p><hr>
+<a name="foot1"><img src="https://www.jsoftware.com/papers/camn_files/1.gif" align="TOP"> Named for Haskell Curry, who introduced
+the notion in discussing Combinators </a><a href="camn.htm#ref">[10]</a>.<p></p>
+
+
+
+<h3><i>E. AMBIVALENCE</i></h3>
+
+<p>In chemistry, the number of atoms that will
+bind with a given atom is called its <i>valence</i>. Adopting
+this notion, we will say that a function such as addition (that
+applies to two arguments) has valence 2, that the sum function
+<tt>+/</tt> derived from it has valence 1, and that (because it
+may be used with either one argument or two), the function denoted
+by <tt>-</tt> is <i>ambivalent</i>. The <i>effective</i> valence
+of <tt>-</tt> is determined by context. For example:</p>
+
+<pre>   d=: 3 6 5
+
+   5-d
+2 _1 0
+   -d
+_3 _6 _5</pre>
+
+<p>Not only does ambivalence obviate
+a further symbol for negation, but it provides a useful mnemonic:
+<tt>-d</tt> is equivalent to <tt>0-d</tt>.</p>
+
+<p>This ambivalence of <tt>-</tt>
+goes unremarked in <b>MN.</b> Moreover, the notion remains unexploited;
+it could be used to good effect for a wide class of dyadic functions:</p>
+
+<p>
+<tt>&nbsp;&nbsp;&nbsp;3 % 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Division<br><tt>
+0.6<br>
+&nbsp;&nbsp;&nbsp;% 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Reciprocal (<tt>1%5</tt>)<br><tt>
+0.2<br>
+&nbsp;&nbsp;&nbsp;3 ^ 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Power<br><tt>
+243<br>
+&nbsp;&nbsp;&nbsp;^ 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Exponential (<tt>e^5</tt>, where <tt>e</tt> is Euler's number 2.71828...)<br><tt>
+148.413<br>
+&nbsp;&nbsp;&nbsp;3 ! 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Binomial coefficient (<tt>(!5) % (!3) * (!5-3)</tt>)<br><tt>
+10<br>
+&nbsp;&nbsp;&nbsp;!5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Factorial<br><tt>
+120<br>
+&nbsp;&nbsp;&nbsp;3 &lt; d<br>
+0 1 1<br>
+&nbsp;&nbsp;&nbsp;&lt; d<br>
+<img src="https://www.jsoftware.com/papers/camn_files/12.gif"><br>
+&nbsp;&nbsp;&nbsp;3 &gt; d<br>
+0 0 0<br>
+&nbsp;&nbsp;&nbsp;&gt; &lt; d<br>
+3 6 5
+</tt></p>
+
+<p>The final examples illustrate how
+the mnemonic may be visual rather than relational: <tt>&lt;</tt>
+packs its argument into a <i>box</i>, and <tt>&gt;</tt> opens it.</p>
+
+<p>In
+<b>J</b>, all functions are ambivalent, including not only primitive
+functions but those derived from them by the use of operators.
+For example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;*/ d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Times over<tt><br>
+90<br>
+&nbsp;&nbsp;&nbsp;1 2 3 4 */ 1 2 3 4&nbsp;&nbsp;&nbsp;</tt>Times table<tt><br>
+1 2  3  4<br>
+2 4  6  8<br>
+3 6  9 12<br>
+4 8 12 16<br>
+&nbsp;&nbsp;&nbsp;pt=: 0 1 2 3 4 !/ 0 1 2 3 4<br>
+&nbsp;&nbsp;&nbsp;pt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Pascal's Triangle (with meaningful zeros)<tt><br>
+1 1 1 1 1<br>
+0 1 2 3 4<br>
+0 0 1 3 6<br>
+0 0 0 1 4<br>
+0 0 0 0 1<br>
+<br>
+&nbsp;&nbsp;&nbsp;X=: +/ . *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Matrix product produced by the <i>dot</i> operator<tt><br>
+&nbsp;&nbsp;&nbsp;pt X pt<br>
+1 2 4  8 16<br>
+0 1 4 12 32<br>
+0 0 1  6 24<br>
+0 0 0  1  8<br>
+0 0 0  0  1<br>
+&nbsp;&nbsp;&nbsp;X pt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The monadic case is the <i>permanent</i><tt><br>
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>(<tt>-/ . *&nbsp;</tt> is the <i>determinant</i>)
+</p>
+
+
+
+<p>Altogether, ambivalence provides an enormous, unobtrusive,
+and mnemonic economy of symbols.</p>
+
+
+
+<h3><i>F. MISSING SYMBOLS</i></h3>
+
+<p>In <b>MN</b>, a product may be written in
+the form <img src="https://www.jsoftware.com/papers/camn_files/13.gif" align="TOP"> (or, perhaps <i>x</i><tt>*</tt><i>y</i>), but can also
+be written as <i>xy</i> or <i>x y</i>, omitting the symbol for
+multiplication. The brevity achieved by such elision is attractive,
+and is widely used.</p>
+
+<p>Other function symbols are also elided, as
+in <img src="https://www.jsoftware.com/papers/camn_files/14.gif" align="TOP"> for power (the function being indicated only by the
+raised position of the exponent <i>n</i>), and in <i>MN</i> or
+<i>M N</i> for the matrix product (distinguished from the elided
+product <i>xy</i> only by the capital letters that must be used
+to denote the arguments).</p>
+
+<p>The consequences of such elision are often overlooked:</p>
+
+<p></p><ul>
+<li>Expressions of the form <tt>a +/ b</tt> and <tt>a */ b</tt> used
+for addition and multiplication tables in <b>J</b> could not be
+used for any functions (such as power in <tt>MN</tt>) not provided
+with a symbol. It may be noted that the power table yields the
+important Vandermonde matrix ( as in <tt>0 1 2 3 ^/ 0 1 2 3</tt>).
+</li><li>Multi-character names (as in <tt>bob=: 7</tt> and <tt>pat=: 5</tt>
+for the ages of two children, and <tt>bob-pat</tt> for the difference)
+cannot be used because they would denote products. This may explain
+why  such mnemonic names are not used in teaching elementary algebra,
+where they would reinforce the important notion that algebra is
+about <i>names</i>, not <i>letters</i>.
+</li><li>Some multi-character names are permitted, as in a family such
+as <i>x1</i> and <i>x2</i> and <i>x3</i> (which do <i>not</i>
+denote the products of <i>x</i> with the integers <i>1</i> and
+<i>2</i> and <i>3</i>), and in certain function names such as
+<i>sin</i> and <i>cos</i>.
+</li></ul><p></p>
+
+<p>Programming languages avoid such issues
+very simply: every function must have a symbol, and it must be
+used.</p>
+
+
+
+<h3><i>G. EMPTY VECTORS</i></h3>
+
+<p>Although <b>MN</b> deals with scalars, vectors,
+matrices, and higher-rank arrays, it fails to provide a complete
+and uniform system, particularly in the case of empty arrays.
+For example, the definition of the falling factorial in <i>Concrete
+Mathematics</i> <a href="camn.htm#ref">[11]</a> reads as <i>x</i>(<i>x</i><tt>-</tt>1)...(<i>x</i><tt>-</tt><i>m</i><tt>+</tt>1),
+together with an indication that <i>m</i> factors are to be taken.
+This pattern provides clear instructions for <i>m</i> down to
+1, but the case of 0 requires the following note: "When <i>m</i>
+= 0, we have <img src="https://www.jsoftware.com/papers/camn_files/15.gif" align="TOP"> = 1, because a product of no factors
+is <i>conventionally</i> [italics added] taken to be 1 (just as
+a sum of no terms is conventionally 0)."</p>
+
+<p>A vector may be partitioned
+by taking and dropping <tt>k</tt> items from it, and (because addition
+is associative) the sum of the sums of the parts will equal the
+sum over the original vector. For example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;x=: 2 3 5 7 11<br>
+&nbsp;&nbsp;&nbsp;k=: 3<br>
+<br>
+&nbsp;&nbsp;&nbsp;a=: k {. x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>k take from x<tt><br>
+&nbsp;&nbsp;&nbsp;a<br>
+2 3 5<br>
+&nbsp;&nbsp;&nbsp;b=: k }. x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>k drop from x<tt><br>
+&nbsp;&nbsp;&nbsp;b<br>
+7 11<br>
+<br>
+&nbsp;&nbsp;&nbsp;f=: +<br>
+&nbsp;&nbsp;&nbsp;f/a<br>
+10<br>
+&nbsp;&nbsp;&nbsp;f/b<br>
+18<br>
+&nbsp;&nbsp;&nbsp;(f/a) f (f/b)<br>
+28<br>
+&nbsp;&nbsp;&nbsp;f/x<br>
+28
+</tt></p>
+
+<p>The <i>link</i> function (<tt>;</tt>) <i>boxes</i>
+its arguments and then catenates them; it can be used to display
+related results compactly for comparison. For example:</p>
+
+<p>
+<tt>&nbsp;&nbsp;&nbsp;k=: 3<br>
+&nbsp;&nbsp;&nbsp;a=: k {. x<br>
+&nbsp;&nbsp;&nbsp;b=: k }. x<br>
+&nbsp;&nbsp;&nbsp;b ; |. b<br>
+<img src="https://www.jsoftware.com/papers/camn_files/16.gif"><br>
+&nbsp;&nbsp;&nbsp;a ; b ; (f/a) ; (f/b) ; ((f/a)f(f/b)) ; (f/x)<br>
+<img src="https://www.jsoftware.com/papers/camn_files/17.gif">
+</tt></p>
+
+<p>The
+case <tt>k=: 0</tt> selects an empty vector, and the sum over it
+("obviously" zero) satisfies the required identity:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;k=: 0<br>
+&nbsp;&nbsp;&nbsp;a=: k {. x<br>
+&nbsp;&nbsp;&nbsp;b=: k }. x<br>
+&nbsp;&nbsp;&nbsp;a ; b ; (f/a) ; (f/b) ; ((f/a)f(f/b)) ; (f/x)<br>
+<img src="https://www.jsoftware.com/papers/camn_files/18.gif">
+</tt></p>
+
+<p>Because
+ multiplication is also associative, it satisfies a similar identity:</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;a ; b ; (*/a) ; (*/b) ; ((*/a)*(*/b)) ; (*/x)</tt><br>
+<img src="https://www.jsoftware.com/papers/camn_files/19.gif"></p>
+
+<p>Again
+the function over the empty vector satisfies the identity, but
+its value may no longer seem so obvious. The case of the minimum
+function (also associative) may be even more surprising:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;f=: &lt;.<br>
+<br>
+&nbsp;&nbsp;&nbsp;a ; b ; (f/a) ; (f/b) ; ((f/a)f(f/b)) ; (f/x)<br>
+<img src="https://www.jsoftware.com/papers/camn_files/20.gif"></tt></p>
+
+<p>Since <tt>0+x</tt> equals <tt>x</tt> for any value of <tt>x</tt>, zero is
+said to be the <i>identity element</i> or <i>neutral</i> of the
+function <tt>+</tt>. Similarly, <tt>1</tt> is the identity element
+of <tt>*</tt>, and it is clear that the result of <tt>f/</tt> on an
+empty vector must be the identity element of <tt>f</tt> if the identity
+over partitions is to hold.</p>
+
+<p>Why the result <tt>_</tt> (infinity) for the case of minimum? Because
+that is its identity element.</p>
+
+<p>These
+results for empty vectors are of practical significance, and arise
+frequently. Consider, for example, the following calculation of
+the falling factorial:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;x=: 5<br>
+&nbsp;&nbsp;&nbsp;m=: 4<br>
+&nbsp;&nbsp;&nbsp;i. m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The first <tt>m</tt> non-negative integers<tt><br>
+0 1 2 3<br>
+&nbsp;&nbsp;&nbsp;x - i. m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The factors of the falling factorial<tt><br>
+5 4 3 2<br>
+&nbsp;&nbsp;&nbsp;*/ x - i. m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>The falling factorial<tt><br>
+120<br>
+&nbsp;&nbsp;&nbsp;*/ x - i. 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>This correct result is the product over an empty vector<tt><br>
+1
+</tt></p>
+
+
+<h3><i>H. MATRIX ALGEBRA</i></h3>
+
+<p>Matrices, matrix product, and matrix inverse
+are commonly introduced at high-school level and used in the treatment
+of linear equations. However, we fail to exploit them in many
+elementary and interesting ways. This failure rests partly on
+the propensity to present significant matrices in truncated form
+by suppressing (presumably for readability) zero elements.</p>
+
+<p>For
+example, the table of binomial coefficients introduced in Section
+E appears as:</p>
+
+<pre>   pt=: 0 1 2 3 4 !/ 0 1 2 3 4
+   pt
+1 1 1 1 1
+0 1 2 3 4
+0 0 1 3 6
+0 0 0 1 4
+0 0 0 0 1</pre>
+
+<p>but is commonly presented
+as a <i>triangle</i> (Pascal's triangle) by suppressing the zeros
+in the lower left. These zeros are <i>meaningful</i> results.
+For example, the number of ways of choosing 4 elements from a
+list of three items (<tt>4!3</tt>) is <tt>0</tt>.</p>
+
+<p>Although Pascal's
+triangle cannot be treated as a matrix, the table <tt>pt</tt> can.
+For example, its inverse (produced by the function <tt>%.</tt>)
+is the table of alternating binomial coefficients:</p>
+
+<pre>   abc=: %. pt
+   abc
+1 _1  1 _1  1
+0  1 _2  3 _4
+0  0  1 _3  6
+0  0  0  1 _4
+0  0  0  0  1</pre>
+
+<p>Moreover, the sums of the columns of these matrices
+produce interesting results:</p>
+
+<pre>   +/ pt
+1 2 4 8 16
+   +/ abc
+1 0 0 0 0</pre>
+
+<p>The "expansion" of the coefficients of a polynomial
+may be expressed simply and clearly as a matrix product of the
+matrix of binomial coefficients and the coefficients. For example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;X=: +/ . *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Matrix product<tt><br>
+&nbsp;&nbsp;&nbsp;x=: 0 1 2 3 4 5 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Argument of polynomial<tt><br>
+&nbsp;&nbsp;&nbsp;c=: 3 1 4 2 1<br>
+<br>
+&nbsp;&nbsp;&nbsp;c p. 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Polynomial (ascending powers)<tt><br>
+53<br>
+<br>
+&nbsp;&nbsp;&nbsp;c p. x<br>
+3 11 53 177 455 983 1881<br>
+&nbsp;&nbsp;&nbsp;d=: pt X c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Expanded coefficients<tt><br>
+&nbsp;&nbsp;&nbsp;d<br>
+11 19 16 6 1<br>
+<br>
+&nbsp;&nbsp;&nbsp;d p. x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Equivalent to <tt>c p. (x+1)<br>
+11 53 177 455 983 1881 3293  <br>
+<br>
+&nbsp;&nbsp;&nbsp;c p. x+1<br>
+11 53 177 455 983 1881 3293
+</tt></p>
+
+
+<h3><i>I. TERMINOLOGY</i></h3>
+
+<p>The following is from Chapter 6 of <i>Exploring
+Math</i> <a href="camn.htm#ref">[6]</a>:</p>
+
+<p>Special terminology used in various branches of knowledge
+often imposes a serious burden on a beginner. It may sometimes
+be safely dismissed as pretentious and no better than familiar
+terms, but serious treatment of a topic may well require finer
+distinctions than those provided by familiar language. For example,
+the familiar <i>average</i> may sometimes be substituted
+for <i>mean</i> as defined in math and statistics.
+However, <i>mean</i> refers not only to <i>average</i> (the <i>arithmetic</i>
+mean), but also to various ways of characterizing a collection
+by a single number, including the <i>geometric mean</i>, <i>harmonic
+mean</i>, and <i>common mean</i>.</p>
+
+<p>Similarly, the grammatical terms
+adopted in <b>J</b> (from English) may seem
+pretentious to anyone familiar with corresponding terms in math,
+but they make possible significant distinctions that are not easily
+made in <b>MN</b>. We illustrate this by a few sentences
+and the classification of items from them in both <b>J</b> and
+<b>MN</b>:</p>
+
+<pre>   with=: &amp;
+   cube=: ^ with 3
+   commute=: ~
+   into=: % commute
+   pi=: 7 into 22
+   2 into cube a=: i. 6</pre>
+
+
+
+<pre><b>    J                                           MN</b>
+Noun                       22               Constant
+Pronoun                    pi               Variable
+
+Verb or Function           %                Function or Operator
+Proverb                    cube
+
+Adverb or Operator         ~                Operator
+Pro-adverb                 commute
+
+Conjunction or Operator    &amp;                Operator
+Pro-conjunctionx           with
+
+List or Vector             a                Vector
+Table or Matrix            a*/a             Matrix
+Report or Array            a +/ a */ a      Array</pre>
+
+<p>In the foregoing, <b>MN</b> makes the
+same distinction made by <i>noun</i> and <i>pronoun</i>
+in <b>J</b>, but uses the terms <i>constant</i>
+and <i>variable</i>. The term <i>variable</i> may
+prove somewhat misleading, particularly when used for a pronoun
+such as <tt>pi</tt> (for the ratio of the circumference to the
+diameter of a circle), which is not expected to <i>vary</i>. The
+following sentences may be used to clarify the choice of the word
+<i>variable</i>:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;sqr=: *:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt> The square function in <b>J</b><tt><br>
+&nbsp;&nbsp;&nbsp;(sqr 0)=(0+0)<br>
+&nbsp;&nbsp;&nbsp;(sqr 2)=(2+2)<br>
+<br>
+&nbsp;&nbsp;&nbsp;(sqr 0)=(0*0)<br>
+&nbsp;&nbsp;&nbsp;(sqr 2)=(2*2)<br>
+&nbsp;&nbsp;&nbsp;(sqr 3)=(3*3)
+</tt></p>
+
+<p>Each of these sentences
+express a "true" relation
+in the sense that each comparison yields <tt>1</tt>. However, the first
+pair are true only for the specific arguments
+<tt>0</tt> and <tt>2</tt>, and for no other. The last three suggest (correctly)
+that the indicated relation remains true for <i>any</i> argument,
+or, as we say, the argument is allowed to <i>vary</i>. This generality
+is commonly indicated by using a <i>pronoun</i> argument, or,
+as stated in <b>MN</b>, a <i>variable</i>:</p>
+
+<pre>   (sqr x)=(x*x)</pre>
+
+<p>In <b>MN</b>, the term <i>operator</i>
+(or <i>functional</i>) is used for both of the cases distinguished
+in <b>J</b> by <i>adverb</i> and <i>conjunction</i>.
+Moreover, in <b>MN</b> the term <i>operator</i> is also commonly
+used to refer to functions.</p>
+
+<p>The terms <i>list</i>, <i>table</i>,
+and <i>report</i> are used in <b>J</b> with
+meanings familiar to anyone, whereas the corresponding terms <i>vector</i>,
+<i>matrix</i>, and <i>array</i> might
+be known only to specialists. The familiar use of <i>vector</i>
+is as a carrier, as in <i>disease vector</i>. It might be thought
+that a vector "carries" its items, but
+the actual etymology of the term in math
+is quite different, although not as bizarre as that of <i>matrix</i>.</p>
+
+<p>New
+terminology should be approached by using dictionaries to learn
+the etymology of terms, both old and new. For
+example, a <i>verb</i> is defined as a word that (amongst other
+things) expresses an action; the corresponding word <i>function</i>
+comes from a root meaning "to perform".</p>
+
+<p>Attention
+to etymology is also rewarding in every-day work.
+For example, the meaning of <i>atom</i> appears clearly
+in its derivation (a[not] <tt>+</tt> tem[cut]) as something that could
+not be cut.</p>
+
+<p>The <i>American Heritage Dictionary</i> <a href="camn.htm#ref">[12]</a> presents
+etymology in a particularly revealing manner:
+all words derived from a given root are listed together in an
+appendix. This highlights surprising and insightful relations,
+such as that between <i>tree</i> and <i>true</i>.
+As a further example, the root <i>tem</i> that occurs in <i>atom</i>
+also occurs in <i>anatomy</i>, <i>microtome</i>, and <i>tome</i>.
+Incidentally, <i>tome</i> does not necessarily mean
+a big book, but rather one of the volumes "cut" from
+a book, such as the 24 tomes of the original Oxford English
+Dictionary.</p>
+
+<p>Lewis Thomas, a noted bio-chemist,
+explored the pleasure and profit of etymology
+in his delightful book <i>et cetera, et cetera.</i> <a href="camn.htm#ref">[13]</a>. It is
+well worth reading.</p>
+
+
+<h3><i>J. CONCLUSION</i></h3>
+
+<p>The discussion thus far has proceeded largely
+by taking phrases in <b>MN</b> and showing how they might be re-expressed
+in <b>J</b>. Moreover, the examples used have all been elementary,
+being restricted to topics treated in high-school math, and to
+an elementary subset of the facilities available in <b>J</b>.</p>
+
+<p>The
+reader may gain a deeper appreciation of the weaknesses of <b>MN</b>
+by the converse: take statements from some of the <b>J</b> publications
+listed in the references, and attempt to re-express them in <b>MN</b>,
+avoiding as much as possible the use of English phrases to paper
+over any deficiencies. In particular, it will be helpful to compare
+the treatment in <i>Concrete Math Companion</i> <a href="camn.htm#ref">[14]</a> with the
+conventional treatment of the same topics in <i>Concrete Mathematics</i>
+<a href="camn.htm#ref">[11]</a>.</p>
+
+<p>We will illustrate the process by a few examples, showing
+the complete results of all <b>J</b> expressions used so that
+the reader may see clearly what is to be produced, even though
+all details of the <b>J</b> expressions may not be clear.  For
+example:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;x=: 2 3 5 7 11<br>
+&nbsp;&nbsp;&nbsp;+/x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Sum<tt><br>
+28<br>
+&nbsp;&nbsp;&nbsp;-/x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Alternating sum<tt><br>
+8
+</tt></p>
+
+<p>These may be re-expressed as <img src="https://www.jsoftware.com/papers/camn_files/21.gif" align="TOP"> and
+<img src="https://www.jsoftware.com/papers/camn_files/22.gif" align="TOP">, respectively. In general, the use
+of <tt>-/</tt> and the correspondingly modified matrix product <tt>&nbsp;-/ . *&nbsp;</tt>
+obviates the use of the phrase <img src="https://www.jsoftware.com/papers/camn_files/23.gif" align="TOP">.</p>
+
+<p>The prefix scan adverb <tt>\</tt> leads
+to a more interesting case:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;&lt;\x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Box each prefix of x<tt><br>
+<img src="https://www.jsoftware.com/papers/camn_files/24.gif"><br>
+&nbsp;&nbsp;&nbsp;st=: +/\x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Subtotals (sum each prefix)<tt><br>
+&nbsp;&nbsp;&nbsp;st<br>
+2 5 10 17 28<br>
+</tt></p>
+
+<p>In
+<b>MN</b> it is usual to express the element <img src="https://www.jsoftware.com/papers/camn_files/25.gif" align="TOP">
+by using <img src="https://www.jsoftware.com/papers/camn_files/07.gif" align="TOP"> with upper and lower
+limits, but it should be noted that this specifies the complete
+result <i>st</i> only implicitly by specifying a typical element.</p>
+
+<p>As shown in Section H, multiplication of a vector
+of polynomial coefficients by the binomial coefficients table
+<tt>pt</tt> (to be called <tt>bc</tt> here) served to produce the
+expanded coefficients. The conjunction <tt>&amp;</tt> (<i>with</i>)
+may therefore be used to produce an expansion function <tt>exp</tt>
+as follows:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;X=: +/ . *<br>
+<br>
+&nbsp;&nbsp;&nbsp;bc=: 0 1 2 3 4 !/ 0 1 2 3 4<br>
+<br>
+&nbsp;&nbsp;&nbsp;bc<br>
+1 1 1 1 1<br>
+0 1 2 3 4<br>
+0 0 1 3 6<br>
+0 0 0 1 4<br>
+0 0 0 0 1<br>
+<br>
+&nbsp;&nbsp;&nbsp;exp=: bc&amp;X<br>
+&nbsp;&nbsp;&nbsp;c=: 3 1 4 2 1<br>
+&nbsp;&nbsp;&nbsp;x=: 0 1 2 3 4 5 6<br>
+&nbsp;&nbsp;&nbsp;c p. x<br>
+3 11 53 177 455 983 1881<br>
+<br>
+&nbsp;&nbsp;&nbsp;exp c<br>
+11 19 16 6 1<br>
+&nbsp;&nbsp;&nbsp;(exp c) p. x<br>
+11 53 177 455 983 1881 3293<br>
+&nbsp;&nbsp;&nbsp;c p. x+1<br>
+11 53 177 455 983 1881 3293<br>
+<br>
+&nbsp;&nbsp;&nbsp;exp exp c<br>
+53 73 40 10 1<br>
+&nbsp;&nbsp;&nbsp;(exp exp c) p. x<br>
+53 177 455 983 1881 3293 5387<br>
+&nbsp;&nbsp;&nbsp;c p. x+2<br>
+53 177 455 983 1881 3293 5387<br>
+<br>
+&nbsp;&nbsp;&nbsp;exp ^: 3 c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>Apply <tt>exp</tt> three times<tt><br>
+177 187 76 14 1<br>
+&nbsp;&nbsp;&nbsp;(exp ^: 3 c) p. x<br>
+177 455 983 1881 3293 5387 8355<br>
+&nbsp;&nbsp;&nbsp;c p. x+3<br>
+177 455 983 1881 3293 5387 8355
+</tt></p>
+
+<p>The
+expansion function may also be applied to the table <tt>bc</tt>
+itself, to produce successive matrix products of the binomial
+coefficients table:</p>
+
+<pre>   exp bc
+1 2 4  8 16
+0 1 4 12 32
+0 0 1  6 24
+0 0 0  1  8
+0 0 0  0  1</pre>
+<p><tt>
+&nbsp;&nbsp;&nbsp;&lt;"2 exp^:0 1 2 3 bc<br>
+<img src="https://www.jsoftware.com/papers/camn_files/26.gif"></tt></p>
+
+<p> These tables show a pattern, and if we could find some
+alternative expression
+for each of them we would, in effect, express a host of identities
+concerning the binomial coefficients. If we divide each table
+by <tt>bc</tt> itself (using ordinary element-by-element division)
+we do obtain a simple pattern of powers of the "order"
+of each table:</p>
+
+<p><tt>
+&nbsp;&nbsp;&nbsp;&lt;"2 (exp^:0 1 2 3 bc) %"2 bc<br>
+<img src="https://www.jsoftware.com/papers/camn_files/27.gif"></tt></p>
+
+<p>May
+we expect programming languages to have a salutary effect on <b>MN</b>?
+Not if  it continues as de Morgan says "at the dictates
+of convenience". In particular, any ideas from programming
+languages would then be adopted piecemeal, further muddying the
+waters.</p>
+
+<p>Perhaps, on the other hand, the practical advantages of
+ executable notation, and the pedagogical advantages of a strict
+and simple grammar, will lead to the adoption of more fundamental
+and systematic change.</p>
+
+
+<a name="ref"></a><h3 align="CENTER"><a name="ref">REFERENCES</a></h3>
+
+<p></p><ol>
+<li><a name="ref">Cajori, F., <i>A History of Mathematical Notations</i>,
+The Open Court Publishing Company, Chicago, 1929 (Available from
+Dover).
+</a></li><li><a name="ref">Iverson, Kenneth E., <i>J Introduction and Dictionary</i>,
+Iverson Software Inc. (ISI), Toronto, Ontario, 1995
+</a></li><li><a name="ref">Burke, Chris,
+<i>J User Manual</i>, ISI, 1995.
+</a></li><li><a name="ref">Burke, Chris, et al., <i>J
+Phrases</i>, ISI, 1996.
+</a></li><li><a name="ref">Iverson, Eric, <i>J primer</i>, ISI,
+1996
+</a></li><li><a name="ref">Iverson, Kenneth E., <i>Exploring Math</i>, ISI, 1996.
+</a></li><li>
+<a name="ref">Clifford A. Reiter <i>, Fractals, Visualization and J</i>, ISI,
+1995.
+</a></li><li><a name="ref">Boole, G., <i>An Investigation of the Laws of Thought</i>,
+Dover Publications, N.Y., 1951. (Originally published in 1854
+by Walton and Maberly, London).
+</a></li><li><a name="ref">Heaviside, Oliver, <i>Electromagnetic
+Theory</i>, Dover Publications, N.Y., 1958. (Vols 1-3 originaly
+published in 1893, 1899, 1912). 
+</a></li><li><a name="ref">Haskell B. Curry and Robert
+Feys, <i>Combinatory Logic</i>, Volume 1, North Holland, 1974
+</a></li><li>
+<a name="ref">Ronald L Graham, D. E. Knuth, and O. Patashnik, <i>Concrete Mathematics</i>,
+Addison Wesley, 1989.
+</a></li><li><a name="ref"><i>American Heritage Dictionary of the
+English Language</i>, Houghton-Mifflin, (Any edition that includes
+the appendix of Indo-European roots.)
+</a></li><li><a name="ref">Thomas, Lewis, <i>et
+cetera, et cetera: Notes of a Word-Watcher</i>, Little, Brown
+and Company, 1990<i> </i>
+</a></li><li><a name="ref">Iverson, Kenneth E., <i>Concrete
+Math Companion</i>, ISI, 1995.
+</a></li></ol><p></p>
+
+</body></html>

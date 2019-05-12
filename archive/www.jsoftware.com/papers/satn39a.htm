@@ -1,0 +1,491 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;chars_et=utf-8">
+<title>SATN-39: The SHARP APL S-task Interface</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><b>SATN-39</b><br>
+<font size=+2>The SHARP APL S-task Interface</font><br><br>
+<b>Richard H. Lathwell</b>
+<br>&nbsp;</p>
+
+
+
+<a name="abs"></a>
+<p><b>Abstract</b></p>
+
+<p>An S-task is a SHARP APL task which obtains its input
+and delivers its output as character-vector values
+of a shared variable, 
+but is otherwise identical to a T-task.
+<br>&nbsp;</p>
+
+
+
+<a name="0"></a>
+<p><b>Introduction</b></p>
+
+<p>An S-task is a SHARP APL task which obtains its input
+and delivers its output as character-vector values
+of a shared variable,
+but is otherwise identical to a T-task.
+The S-task interface permits any program which is capable
+of communicating with the Sharp Shared-Variable Processor
+(i.e., any program which can share variables)
+to communicate with SHARP APL in the manner 
+of a user at a terminal.
+This description of the S-task interface is 
+from the point of view of APL programs;
+in order to prepare non-APL programs for this purpose,
+refer to SIN-48 SHARP APL Installation-written 
+Auxiliary Processors,
+and to the DSECT TYIOMODE contained
+in the APE APL source libraries.
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>SHARP APL Processor Characteristics</b></p>
+
+<p>In order to communicate with any processor with shared variables,
+a definition of its characteristics is required.
+To this end, the SHARP APL Processor is designed
+to behave as follows:</p>
+
+<table>
+<tr><td valign=top nowrap>&#149; &nbsp;</td>
+ <td>A <b>line</b> of input or output consists of 
+a sequence of APL characters.
+ </td></tr>
+<tr><td valign=top>&#149; &nbsp;</td>
+ <td>The APL Processor waits for a <b>single line</b> of input.
+ </td></tr>
+<tr><td valign=top>&#149; &nbsp;</td>
+ <td>The line of input is processed and results in
+an arbitrary number of lines of output,
+but no fewer than one.
+ </td></tr>
+<tr><td valign=top>&#149; &nbsp;</td>
+ <td>The final line of output is an 
+<b>input prompt</b> which contains an indication
+that the APL Processor is waiting for input.
+ </td></tr>
+</table>
+
+&nbsp;
+
+
+
+<a name="2"></a>
+<p><b>Establishing an S-task</b></p>
+
+<p>When SHARP APL has been installed 
+with appropriate configuration parameters,
+it connects itself to the shared variable processor 
+as <b>processor 1</b>.
+An S-task may then be created by offering to share a variable 
+with processor 1:</p>
+
+<pre>
+   1 ⎕svo 'name'
+</pre>
+
+<p>where<tt> name </tt>is a vector of 15 or fewer characters
+denoting the name of a variable to be used
+for the interface.
+The account which offers the variable to processor-1 is known
+as the <b>initiator</b> of the S-task.
+When resources permit, the S-task controller
+will allocate the necessary tables,
+obtain a clear workspace, assign a task identification number,
+and then match the offer to share.
+When the degree of coupling becomes 2,
+the task is in the same state as a T-task 
+after a terminal has become connected to the system,
+but before the user has signed on.</p>
+
+<p>The normal system limits on the number of tasks
+which can be created by a single user also apply to S-tasks;
+if the total number of tasks signed on with the initiator&rsquo;s
+account number has reached this limit,
+a new offer to processor 1 will be ignored,
+and the variable must be re-offered after the number
+of tasks has been reduced.
+The initiator of an S-task is analogous to the initiator 
+of an N-task in that the S-task may be terminated
+at any time by a<tt> ⎕bounce</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="3"></a>
+<p><b>Communication with an S-task</b></p>
+
+<p>S-task input and output is in the form of APL character vectors
+of four or more elements.
+The first four characters of each value contain control information
+which must be present.
+The first two of these characters are not used at the present time,
+and must be binary zeroes, i.e.,<tt> ⎕av[0&nbsp;0]</tt>&nbsp;.<tt> </tt>
+(<b>Note:</b> index origin 0 is assumed throughout this discussion.)
+The third element is used to denote commands to the S-task controller
+from the initiator and responses from the S-task controller
+(see below);<tt> ⎕av[0] </tt>in this position
+indicates that the value is to be passed on to APL.
+The fourth element is used to indicate the meaning
+of the value which is being passed from SHARP APL
+to the initiator.</p>
+
+<p>For example, the first input to an S-task will normally
+be an attempt to sign on to SHARP APL:</p>
+
+<pre>
+   name←⎕av[0 0 0 0],')1234:key'
+</pre>
+
+<p>Assuming that the account number and key are valid,
+the response returned in<tt> name </tt> will be:</p>
+
+<pre>
+   prefix,'2134)22.13.00 04/01/80 sueblue'
+</pre>
+
+<p>i.e. the normal indication of a successful signon.
+Otherwise the response might be:</p>
+
+<pre>
+   prefix,'incorrect signon'
+</pre>
+
+<p>or</p>
+
+<pre>
+   prefix,'number not in system'
+</pre>
+
+<p>The important point to note is that,
+for every value set in the interface variable,
+APL or the S-task controller will respond
+with one or more values in reply.
+<br>&nbsp;</p>
+
+
+
+<a name="4"></a>
+<p><b>APL Output Blocking</b></p>
+
+<p>While APL sends output a line at a time,
+the S-task controller will catenate several lines together
+in order to reduce the number of shared variable accesses required.
+Each line is preceded by two characters
+which define the length of the line 
+including the two length characters.
+Each line must be &ldquo;deblocked&rdquo;
+by a code segment such as the following:</p>
+
+<pre>
+   read:→(0&lt;⍴block)/take       ⍝ branch if block contains lines
+     block←name                ⍝ receive output from APL
+   take:k←256⊥⎕av⍳2↑block      ⍝ length of next line
+     output←2↓k↑block          ⍝ next line
+     block←k↓block             ⍝ drop line from block
+     &#133;
+
+</pre>
+
+
+
+<a name="5"></a>
+<p><b>Qualification of Values Received from APL</b></p>
+
+<p>The fourth element of prefixes received from APL
+indicates the meaning of the rest of the vector.
+Common combinations are shown in
+<a href="satn39a.htm#fig1">figure 1</a>.</p>
+
+<p>If</p>
+
+<pre>
+   mode←(8⍴2)⊤⎕av⍳output[3]
+</pre>
+
+<p>then the elements of<tt> mode </tt>have the following meaning
+when their values are 1:</p>
+
+<table>
+<tr><td valign=top nowrap><tt>mode[0]</tt> - &nbsp;</td>
+ <td>The S-task workspace is in immediate execution mode,
+i.e., is in a state where system commands will be recognized
+and processed.
+The purpose of this signal is so that initiator programs
+can provide &ldquo;system commands&rdquo; of their own:
+when this mode element is 1, 
+input lines with a right parenthesis as the first non-blank
+character can safely be intercepted by the initiator.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>mode[1]</tt> - &nbsp;</td>
+ <td>The rest of the line contains an obfuscating blot
+to obscure passwords, etc.
+The blot can consists of more than one line.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>mode[2]</tt> - &nbsp;</td>
+ <td>The S-task is not signed on to SHARP APL.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>mode[3]</tt> - &nbsp;</td>
+ <td>A keyboard-locked terminal is ready for input.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>mode[4]</tt> - &nbsp;</td>
+ <td>APL wishes the terminal cursor or carrier reset 
+to the left margin of a new line.
+This may be received following a break signal.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>mode[5]</tt> - &nbsp;</td>
+ <td>The vector containing arbitrary output from<tt> ⎕arbin </tt>
+or<tt> ⎕arbout</tt>&nbsp;.<tt> </tt>
+This will occur alone when more arbitrary output will follow,
+and with<tt> mode[6] </tt>or<tt> mode[7] </tt>
+for the final block of a<tt> ⎕arbin </tt>prompt
+or<tt> ⎕arbout </tt>data respectively.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>mode[6]</tt> - &nbsp;</td>
+ <td>The vector is a prompt for input:
+SHARP APL expects input after this output.
+Normally, the input will be catenated with this prompt
+by the initiator, and returned to APL.
+However, the initiator may instead process the prompt
+in conjunction with additional input,
+and return the processed information to APL.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>mode[7]</tt> - &nbsp;</td>
+ <td>The value is output, and more output will follow.
+ <br>&nbsp;</td></tr>
+</table>
+
+
+
+<a name="6"></a>
+<p><b>Control Characters</b></p>
+
+<p>Certain character values have meanings of a control nature
+when passed to or from APL as normal input or output.
+Common control characters are:</p>
+
+<table>
+<tr><td align=right valign=top nowrap><tt>crlf ⎕av[156] </tt>&nbsp;</td>
+ <td>Carriage return/linefeed. Advance the medium to a new line
+with the carriage or cursor positioned at the left margin.
+APL regards the<tt> crlf </tt>character as an
+&ldquo;end of input&rdquo; marker,
+and it does not examine characters which follow it.
+ <br>&nbsp;</td></tr>
+<tr><td align=right valign=top><tt>lf ⎕av[159] </tt>&nbsp;</td>
+ <td>Linefeed.  Advance the medium to a new line without repositioning
+the cursor or carriage.
+ <br>&nbsp;</td></tr>
+<tr><td align=right valign=top><tt>bs ⎕av[158] </tt>&nbsp;</td>
+ <td>Backspace.  Reposition the cursor one position to the left.
+ <br>&nbsp;</td></tr>
+<tr><td align=right valign=top><tt>tab ⎕av[2] &nbsp; </tt>&nbsp;</td>
+ <td>Tabulation. Never included in the S-task output.
+When included with the S-task input,<tt> tab </tt>
+will be evaluated with respect to<tt> ⎕ht</tt>&nbsp;.
+ <br>&nbsp;</td></tr>
+<tr><td align=right valign=top><tt>eob ⎕av[157] </tt>&nbsp;</td>
+ <td>End-of-block. This character commonly occurs in S-task output
+for historical reasons.
+It has no meaning and should be ignored 
+when it occurs in normal output.
+ <br>&nbsp;</td></tr>
+</table>
+
+
+
+<a name="7"></a>
+<p><b>S-task Controller Commands</b></p>
+
+<p>The third element of values set by the initiator
+is a command to the S-task controller as follows:</p>
+
+<table>
+<tr><td valign=top nowrap><tt>⎕av[0]</tt> - &nbsp;</td>
+ <td>indicates the character vector is APL input.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>⎕av[1]</tt> - &nbsp;</td>
+ <td>is a request for accounting information.
+The response from the S-task controller is a three-element
+<b>integer</b> vector containing<tt> 3↑⎕ai </tt>
+of the S-task.
+If the S-task is not signed on to APL all three elements
+will be zero.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>⎕av[2]</tt> - &nbsp;</td>
+ <td>is a request to signal BREAK, analogous to depressing
+the BREAK key on a terminal connected to a T-task.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>⎕av[3]</tt> - &nbsp;</td>
+ <td>is a request for disconnect permission,
+which allows the initiator to retract the interface variable
+without immediately terminating the S-task.
+If permission has not been requested,
+retracting the variable will result in the immediate termination
+of the S-task in a manner similar to the termination
+of a T-task when the telecommunication line is disconnected.
+After retraction, the interface variable remains
+as an offer from processor 1 to the initiator;
+resharing resets the permission to retract.
+The S-task terminates if it requests input 
+while the variable retracted.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>⎕av[4]</tt> - &nbsp;</td>
+ <td>is a request to reset the retraction permission
+obtained previously by<tt> ⎕av[3]</tt>&nbsp;.
+ <br>&nbsp;</td></tr>
+</table>
+
+
+
+<a name="8"></a>
+<p><b>S-task Controller Responses</b></p>
+
+<p>The S-task controller responds to each non-zero command
+(except for accounting information which returns an integer vector)
+with a four-element character vector
+(preceded by a two-character length)
+whose third element indicates the result of the command:</p>
+
+<table>
+<tr><td valign=top nowrap><tt>⎕av[0]</tt> - &nbsp;</td>
+ <td>indicates the command was successfully executed.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>⎕av[1]</tt> - &nbsp;</td>
+ <td>indicates an invalid value: an invalid command value,
+non-character value, non-vector value,
+or a character vector of fewer than four elements.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>⎕av[2]</tt> - &nbsp;</td>
+ <td>indicates that APL could not accept input
+because of insufficient workspace.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap><tt>⎕av[3]</tt> - &nbsp;</td>
+ <td>indicates that the S-task controller refused to honour
+a request because the S-task was not signed on to SHARP APL.
+ <br>&nbsp;</td></tr>
+</table>
+
+
+
+<a name="9"></a>
+<p><b>S-task Termination</b></p>
+
+<p>An S-task will be terminated by any of the following:</p>
+
+<table>
+<tr><td valign=top nowrap>&#149; &nbsp;</td>
+ <td><tt>⎕bounce</tt></td></tr>
+<tr><td valign=top>&#149; &nbsp;</td>
+ <td>Sending a valid signoff command, e.g.,<tt> )off</tt>&nbsp;<tt> </tt>
+when<tt> mode[0] </tt>is 1.</td></tr>
+<tr><td valign=top>&#149; &nbsp;</td>
+ <td>Retracting the interface variable,
+e.g.<tt> ⎕svr 'name'</tt>&nbsp;<tt> </tt>
+without disconnect permission.</td></tr>
+<tr><td valign=top>&#149; &nbsp;</td>
+ <td>A request by the S-task for input while 
+the interface variable is retracted 
+with disconnect permission.
+ <br>&nbsp;</td></tr>
+</table>
+
+
+
+<a name="fig1"></a>
+<p><b>Figure 1: Typical Model Combinations</b></p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Mode Index</p>
+
+<table border=1 cellspacing=0 cellpadding=3>
+<tr>
+ <td align=center width=30>0<br>immx</td>
+ <td align=center width=30>1<br>blot</td>
+ <td align=center width=30>2<br>nso</td>
+ <td align=center width=30>3<br>kbli</td>
+ <td align=center width=30>4<br>back</td>
+ <td align=center width=30>5<br>arb</td>
+ <td align=center width=30>6<br>in</td>
+ <td align=center width=30>7<br>out</td>
+ <td>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td align=center>x</td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td>Occurs with all modes when the S-task is not signed on to APL.</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td align=center>x</td>
+ <td>Normal output.</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td><td align=center>x</td><td>&nbsp;</td>
+ <td>Normal input.</td>
+ </tr>
+<tr><td align=center>x</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td><td align=center>x</td><td>&nbsp;</td>
+ <td>Immediate execution prompt.</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td align=center>x</td>
+ <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td align=center>x</td>
+ <td>KB locked terminal ready for input.
+Input prompt will be emitted upon receipt 
+of &ldquo;break&rdquo; signal.</td>
+ </tr>
+<tr><td align=center>x</td><td align=center>x</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td><td align=center>x</td><td>&nbsp;</td>
+ <td>Input prompt text is a blot.</td>
+ </tr>
+<tr><td>&nbsp;</td><td align=center>x</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td align=center>x</td>
+ <td>Output text is a partial blot.</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp;</td><td align=center>x</td><td>&nbsp;</td><td align=center>x</td>
+ <td><tt>arbout </tt>final sequence.</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp;</td><td align=center>x</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>arbout </tt>&mdash; more to follow.</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp;</td><td align=center>x</td><td align=center>x</td><td>&nbsp;</td>
+ <td><tt>arbin </tt>input prompt.</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+ <td align=center>x</td><td>&nbsp;</td><td>&nbsp;</td><td align=center>x</td>
+ <td>APL requests cursor at the left margin, new line.</td>
+ </tr>
+</table>
+
+<br>
+
+<br><hr>
+<font size=-1><p>First appeared as SHARP APL Technical Note 39, The SHARP APL S-task Interface, 1981-06-01.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2012-09-27 09:45</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2012-09-27 16:10</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

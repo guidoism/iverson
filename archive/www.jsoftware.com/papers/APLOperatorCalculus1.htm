@@ -1,0 +1,1205 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>An Operator Calculus</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>An Operator Calculus</font><br><br>
+
+<table>
+<tr><td><p align=center><b>Kenneth E. Iverson</b><br>
+I.P. Sharp Associates<br>
+Suite 1900<br>
+2 First Canadian Place<br>
+Toronto, Ontario<br>
+Canada &nbsp; M5X 1E3</p></td><td>&nbsp; &nbsp;</td>
+<td><p align=center><b>Roland Pesch</b><br>
+I.P. Sharp Associates<br>
+Suite 201<br>
+220 California Ave.<br>
+Palo Alto, California<br>
+U.S.A. &nbsp; 94306-1638</p></td><td>&nbsp; &nbsp;</td>
+<td><p align=center><b>J. Henri Schueler</b><br>
+I.P. Sharp Associates<br>
+Suite 1900<br>
+2 First Canadian Place<br>
+Toronto, Ontario<br>
+Canada &nbsp; M5X 1E3</p></td>
+</tr></table>
+</p>
+<br>
+
+
+
+<a name="abs"></a>
+<p><b>Abstract</b></p>
+
+<p>This paper extends a line of APL development
+presented in a sequence of papers <nobr>[1-7]</nobr>
+over the past six years. 
+The main topics addressed 
+are the interactions of operators such as rank,
+composition, derivative, and inverse 
+(i.e., the beginnings of a calculus of operators), 
+a simplification in the complement of attributes
+tentatively presented in
+<acronym title=
+"Kenneth E. Iverson, APL Syntax and Semantics (ACM, APL83)">[6]</acronym>, 
+and a treatment of the shapes of individual results 
+(as defined in 
+<acronym title=
+"Kenneth E. Iverson, Rationalized APL (I.P. Sharp Associates 1983).">[7]</acronym>)
+in the case of empty frames.</p>
+
+<p>Brief treatments are also given 
+to a number of smaller matters: 
+a <i>transliteration</i> or 
+<i>token substitution</i> facility, 
+the treatment of niladic functions, 
+a custom (variant) operator, 
+the obsolescence of certain system variables, 
+and some changes in the function definition operator 
+and in the treatment of supernumerary axes.</p>
+
+<br><hr>
+
+
+
+<a name="structure"></a>
+<p><b>The Structure of Functions</b></p>
+
+<p>The term &ldquo;attribute&rdquo;, 
+used in earlier papers,
+led to some misunderstanding 
+because it improperly suggested 
+two conclusions:</p>
+
+<table>
+<tr><td valign=top>1)</d><td>&nbsp;</td><td>
+That a function, like most entities, 
+is something more than a collection of its.
+attributes.
+<tr><td valign=top>2)</d><td>&nbsp;</td><td>
+<p>That &ldquo;attribute&rdquo; means the same as
+&ldquo;property&rdquo; in discussing mathematical functions. 
+An attribute merely determines what
+the result of a particular operator is. 
+To be useful, this attribute will approximate some
+mathematical property, 
+but in principle it need not.</p>
+
+<p>For example, the inverse operator applied to
+the sine function<tt> </tt>(<tt>1¨○</tt>)<tt> </tt> 
+will yield the arcsine (<tt>¯1¨○</tt>),<tt> </tt> 
+although these functions are proper
+inverses only over a sub-domain 
+of &ldquo;principal&rdquo; values, 
+and even on that sub-domain there any
+implementation provides only an approximation.
+Moreover, such approximations have long been
+incorporated in APL, as in the result 0 given
+for the identity element of<tt> &lt; </tt>
+(resulting from<tt> &lt;/⍳0</tt>)<tt> </tt> 
+although it is a left identity only, 
+and only over the boolean sub-domain.</p>
+</td></tr>
+</table>
+
+<p>We will therefore adopt the more neutral term
+&ldquo;part&rdquo; instead of &ldquo;attribute&rdquo;.</p>
+
+<p>A function comprises one or more parts: 
+a core, and zero or more ancillary parts 
+that extend the domain of, or otherwise modify, 
+the function defined by the core.</p>
+
+<p>For example, if the core of<tt> f </tt>
+is the function<tt> ⌹ </tt>
+as defined in APL\360, 
+and if<tt> f </tt>possesses no other
+parts, then the right domain of<tt> f </tt>includes
+arguments of rank 2, but none of higher rank.
+However, if<tt> f </tt>also contains a <i>rank</i> part that
+specifies how an argument of higher rank is to be
+split into cells of rank 2 for application 
+of the core function, 
+then the domain of<tt> f </tt>
+is extended to right arguments of higher rank. 
+Finally, the domain of the <i>derived</i> 
+function<tt> f⌿ </tt>will include an array of
+shape<nobr><tt> 3 4 4</tt>&nbsp;,</nobr><tt> </tt>
+but will exclude one of 
+shape<nobr><tt> 0 4 4</tt>&nbsp;;</nobr><tt> </tt>
+the addition of an <i>identity function</i> part 
+to<tt> f </tt>will extend the domain 
+of<tt> f⌿ </tt>to include arguments 
+with a shape such as<nobr><tt> 0 4 4 </tt></nobr>
+in which the split along the leading axis induced 
+by the reduction produces 
+an empty collection of slices.</p>
+
+<p>The core itself has five parts, 
+two <i>kernels</i> (monadic and dyadic), 
+and three parameters, referred to 
+in the APL expressions that comprise
+the kernels by the distinguished 
+names<tt> ⎕A</tt>&nbsp;,<tt> ⎕B</tt>&nbsp;,<tt> </tt>
+and<tt> ⎕C</tt>&nbsp;.<tt> </tt> 
+The first two of these were formerly
+referred to as underscored<tt> F </tt>and<tt> G </tt>
+[<acronym title=
+"Arthur Whitney and Kenneth E. Iverson, Practical Uses of a Model of APL (APL Quote Quad, Volume 13, Number 1, Proceedings of APL82, ACM, New York 1982)">5</acronym>
+<acronym title=
+"Kenneth E. Iverson, APL Syntax and Semantics (ACM, APL83).">6</acronym>], 
+and are specified by the arguments of most operators.</p>
+
+<p>For example, if<tt> c </tt>is the composition 
+<acronym title=
+"Robert Bernecky and Kenneth E. Iverson, Operators and Enclosed Arrays (I.P. Sharp, Proceedings of the User Meeting, 1980).">[3]</acronym>
+of functions<tt> a </tt>and<tt> b </tt>
+(that is,<tt> c←a⍤b</tt>), 
+then the kernels of<tt> c </tt>are the 
+vectors<nobr><tt> '⎕A ⎕B⍤¯ ⍵' </tt></nobr>
+and<tt> '(⎕B⍤¯&nbsp;⍺)&nbsp;⎕A&nbsp;⎕B⍤¯&nbsp;⍵'</tt>&nbsp;,<tt> </tt>
+and the parameters<tt> ⎕A </tt>and<tt> ⎕B </tt>
+are the functions<tt> a </tt>and<tt> b</tt>&nbsp;.<tt> </tt> 
+In the case of the definition operator
+<acronym title=
+"Kenneth E. Iverson and Peter K. Wooster, A Function Definition Operator (APL Quote Quad, Volume 12, Number 1, Proceedings of APL81, ACM September 1981).">[4]</acronym>, 
+the kernels of the
+function<tt> d←'÷⍵'∇'⍺+÷⍵' </tt>
+are<tt> '÷⍵' </tt>and<tt> '⍺+÷⍵' </tt>
+and the (unused) parameters<tt> ⎕A </tt>and<tt> ⎕B </tt>
+have the same values<tt> '÷⍵' </tt>
+and<tt> '⍺+÷⍵'</tt>&nbsp;.</p>
+
+<p>The third parameter (<tt>⎕C</tt>) 
+is the <i>custom</i> or <i>variant</i> parameter 
+that can be used to provide variants of a function 
+in the sense introduced in
+<acronym title=
+"Kenneth E. Iverson, Operators and Functions (IBM Corporation, RC7091, 1978).">[1]</acronym>. 
+It is respecified by the right argument of the
+variant operator (assumed here to be the
+function-variable case of the dot, 
+as in<tt> ⍋.&nbsp;0 </tt>for 0-origin grade, 
+and<tt> =.tol </tt>for equality comparison
+with a specific tolerance<tt> tol</tt>).</p>
+
+<p>For example, if the function<tt> sin </tt>
+has a monadic kernel<tt> '1○⍵×○÷2×⎕C' </tt> 
+and<tt> ⎕C </tt>set to<tt> ○.5</tt>&nbsp;,<tt> </tt>
+then<tt> sin&nbsp;⍵ </tt>yields the sine 
+of an argument expressed in 
+radians,<tt> sin.&nbsp;90&nbsp;⍵ </tt>
+yields the sine of an argument in degrees, 
+and<tt> sin.(○.5) </tt>is equivalent to<tt> sin</tt>.</p>
+
+<p>In principle, a function may incorporate 
+any number of ancillary parts, 
+but the present treatment is limited to seven: 
+rank, coherence, shape surrogate, inverse, dyad, 
+derivative, and identity.</p>
+
+<p>If a part referred to 
+by some operator is not present, 
+the operator does not produce a domain error, 
+but does produce a derived function with a
+restricted (perhaps empty) domain. 
+For example, the &ldquo;dual&rdquo; operator<tt> ¨ </tt>
+in the expression<tt> h←⌽¨| </tt>
+does not produce a domain error, 
+but any subsequent application of<tt> h </tt>does, 
+since the operator requires the inverse of its right argument
+<acronym title=
+"Robert Bernecky and Kenneth E. Iverson, Operators and Enclosed Arrays (I.P. Sharp, Proceedings of the User Meeting, 1980).">[3]</acronym>, 
+and the magnitude function does not possess
+an inverse part.</p>
+
+<p>Absence of the rank part is equivalent to the
+presence of an infinite rank, 
+and the same is true of coherence.
+<br>&nbsp;</p>
+
+
+
+<a name="rank"></a>
+<p><b>Rank</b></p>
+
+<p>The rank part is a three-element vector whose
+elements limit the ranks of the argument cells
+presented to the function defined by the core; the
+successive elements apply to the monadic, left
+dyadic, and right dyadic arguments.</p>
+
+<p>The <i>rank operator</i> is the function-variable case
+of<tt> ⍤</tt>&nbsp;,<tt> </tt>
+and<tt> f⍤k </tt>is equivalent to<tt> f </tt>
+with its rank part specified by<tt> ⌽3⍴⌽k</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="coherence"></a>
+<p><b>Coherence</b></p>
+
+<p>The following definition is adapted from
+<acronym title=
+"Kenneth E. Iverson, Rationalized APL (I.P. Sharp Associates 1983).">[7]</acronym>
+with the arguments of the corresponding operator
+reversed and with the term &ldquo;coherence&rdquo; 
+used instead of &ldquo;conformance&rdquo;.</p>
+
+<p>In the application of a dyadic function<tt> f</tt>&nbsp;,<tt> </tt>the
+outer shapes<tt> ol </tt>and<tt> or </tt>are each split into two sets
+of axes (called <i>bound</i> and <i>free</i>) 
+such that<tt> ol≡bl,fl </tt>and<tt> or≡br,fr</tt>;<tt> </tt> 
+the shape of the overall result 
+is<tt> b,fl,fr,sir</tt>&nbsp;,<tt> </tt>
+where<tt> b </tt>is one of<tt> bl </tt>
+and<tt> br</tt>&nbsp;,<tt> </tt>and<tt> sir </tt>
+is the shape of the individual results
+of applying the function to its cells.</p>
+
+<p>A shape s is said to be <i>single</i> 
+if<tt> 1=×/s</tt>&nbsp;;<tt> </tt>if <i>one</i>
+of<tt> bl </tt>and<tt> br </tt>is single, 
+then<tt> b </tt>equals the other; if
+both are, then<tt> b </tt>equals the one of greater length;
+if neither is single, then<tt> bl </tt>and<tt> br </tt>must agree,
+and<tt> b </tt>is chosen as either one.</p>
+
+<p>The lengths of<tt> bl </tt>and<tt> br </tt>(that determine the
+number of bound axes) are each limited by the
+<i>coherence part</i> of a function; all primitive
+functions have infinite coherence. The <i>coherence
+operator</i> (denoted by<tt> k.f</tt>&nbsp;,<tt> </tt>
+where<tt> k </tt>is a
+non-negative integer), produces a derived
+function equivalent to<tt> f</tt>&nbsp;,<tt> </tt>
+but having coherence<tt> k</tt>.<tt> </tt>
+For example:</p>
+
+<pre>
+      ⍴(a←2 3 4⍴⍳24)0 .×(b←2 3 5⍴⍳30)
+2 3 4 2 3 5
+      ⍴a 1 .× b
+2 3 4 3 5
+      ⍴a 2 .× b
+2 3 4 5
+      ⍴a 3 .× b
+length error
+      ⍴a 1 .×(1 4⍴9)
+2 3 4 4
+      ⍴(1 1 1⍴8)+(1 1⍴9)
+1 1 1
+      ⍴2 3+1 1 1 1⍴4
+2
+</pre>
+
+<p>The case of zero coherence<tt> </tt>(<tt>0&nbsp;.f</tt>)<tt> </tt>is
+equivalent to outer product<tt> </tt>(<tt>∘.f</tt>).<tt> </tt>
+The reason for
+reversing the arguments of the earlier conformance operator
+<acronym title=
+"Kenneth E. Iverson, Rationalized APL (I.P. Sharp Associates 1983).">[7]</acronym>
+is to leave the case<tt> f.k </tt>free for the
+variant operator, with no inhibition on the use 
+of<tt> k←<'' </tt>or<tt> k←∘ </tt>that would have been required in
+using the form<tt> k.f</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="surrogate"></a>
+<p><b>Surrogate Arguments</b></p>
+
+<p>In applying a monadic function<tt> f </tt>of
+(non-negative) rank<tt> k </tt>
+to an argument<tt> a</tt>&nbsp;,<tt> </tt>the
+shape of the overall result is<tt> os←(-k)↓⍴a </tt>suffixed
+by<tt> sir</tt>&nbsp;,<tt> </tt>the (necessarily common) shape of the
+individual results obtained in applying<tt> f </tt>to each of
+the<tt> ×/os </tt>cells of shape<tt> cs←(-k⌊⍴⍴a)↑⍴a</tt>&nbsp;.</p>
+
+<p>If there are no cells (i.e.,<tt> 0=×/os</tt>),<tt> </tt>the value
+of<tt> sir </tt>cannot be determined 
+by applying<tt> f</tt>&nbsp;,<tt> </tt>and
+must be determined from the cell shape<tt> cs </tt>alone.
+It will be defined as the shape of the value of
+lowest rank and smallest shape that could be
+produced by applying<tt> f </tt>to any argument of shape
+<tt> cs</tt>&nbsp;.<tt> </tt>For example:</p>
+
+<pre>
+  f:   ⍴⍤k    ,⍤k    <⍤k    ⍉⍤k    ⍕⍤k
+sir:   ⍴cs    ×/cs   ⍳0     ⌽cs    cs
+</pre>
+
+<p>The dyadic case is treated similarly (in terms
+of the left cell shape<tt> ls </tt>and the right cell 
+shape<tt> rs</tt>),<tt> </tt>but is complicated by the cases 
+of &ldquo;scalar extension&rdquo;, 
+that is, a left cell <i>value</i><tt> lv </tt>will be
+present if the left outer shape is <i>single</i> (i.e., the
+product over it is unity), and a right value<tt> rv </tt>will
+be present if the right outer shape is single.</p>
+
+<p>For example, if<tt> f </tt>is the dyadic 
+function<tt> ⍴⍤(1,k) </tt>and a left value<tt> lv </tt>is present, 
+then<tt> sir </tt>
+is<tt> lv</tt>&nbsp;;<tt> </tt>
+if only<tt> ls </tt>is available, the value of<tt> sir </tt>
+is<tt> ls⍴0</tt>&nbsp;,<tt> </tt>
+since the value that serves as<tt> lv </tt>
+must be<tt> ls⍴0</tt>&nbsp;,<tt> </tt>that is, 
+something of shape<tt> ls </tt>that
+produces a result of minimum shape.</p>
+
+<p>The entire situation can be handled by
+providing <i>surrogate argument functions</i> that, in
+each case of an empty frame, apply to the cell
+shape and function argument to produce a
+surrogate argument (whose shape equals the cell
+shape). This surrogate is submitted to the original
+function to produce a result whose shape properly
+determines the &ldquo;individual result shape&rdquo; required.
+Table 1 specifies surrogate argument functions for
+existing primitives.</p>
+
+<p>As examples of the use of Table 1, consider the
+following cases:</p>
+
+<pre>
+      ⍴ ⍉⍤3(0 1 2 3 4⍴0)
+0 1 4 3 2
+      ⍴ 1 0 2⍉⍤1 3(0 1 2 3 4⍴0)
+0 1 3 2 4
+      ⍴ (1 0 3⍴0)⍉⍤1 3(2 3 4⍴0)
+0 1
+      ⍴ 2↑⍤1(0 3⍴0)
+0 2
+      ⍴ (0 2⍴0)⍴0
+0 0 0
+      ⍴ 1 2⍴⍤1(0 2⍴0)
+0 1 2
+      ⍴ 1 2⍴⍤1(0 0⍴0)
+length error
+
+</pre>
+
+
+
+<a name="inverse"></a>
+<p><b>Inverse</b></p>
+
+<p>The result of the inverse operator<tt> ⊂ </tt>
+applied to<tt> f </tt>is the inverse part of<tt> f</tt>&nbsp;,<tt> </tt>
+except that <i>its</i> inverse part is respecified as<tt> f</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="derivative"></a>
+<p><b>Derivative</b></p>
+
+<p>Consider a dyadic operator<tt> DOP </tt>such 
+that<tt> <nobr>f DOP k</nobr> </tt>
+yields the<tt> k</tt>th derivative of<tt> f </tt>if the
+scalar<tt> k≥0</tt>&nbsp;,<tt> </tt>and the<tt> (|k)</tt>th 
+integral if<tt> k<0</tt>&nbsp;.<tt> </tt>In
+order to provide all derivatives, the derivative
+part of<tt> f </tt>must have two components, a dyadic
+function<tt> df </tt>and an index<tt> k </tt>
+such that<tt> <nobr>k df ⍵</nobr> </tt>
+yields the<tt> k</tt>th derivative of<tt> f </tt>
+evaluated at<tt> ⍵</tt>&nbsp;.</p>
+
+<p>More generally, we will assume that<tt> df </tt>is
+defined to apply to a vector index<tt> v </tt>that specifies
+successive derivatives. 
+For example,<tt> <nobr>2 ¯3 4 df ⍵</nobr> </tt>
+yields the second derivative of the third integral
+of the fourth derivative of<tt> f</tt>&nbsp;.</p>
+
+<p>The derivative part of<tt> f</tt>&nbsp;,<tt> </tt>
+and the action of the
+derivative operator, may now be defined as
+follows. The derivative part of<tt> f </tt>has the monadic
+kernel<tt> '⎕B ⎕A ⍵'</tt>&nbsp;,<tt> </tt>
+a null dyadic kernel, and the
+parameters<tt> df </tt>and<tt> v</tt>&nbsp;.<tt> </tt>
+Both the core and the
+derivative part of<tt> <nobr>f DOP k</nobr> </tt>
+become the derivative
+part of<tt> f </tt>
+with the parameter<tt> ⎕B </tt>
+replaced by<tt> k,⎕B</tt>&nbsp;.<tt> </tt>
+Moreover, the dyads of<tt> <nobr>f DOP k</nobr> </tt>become null
+(because the derivative has no dyadic definition),
+but all remaining attributes are inherited from<tt> f</tt>&nbsp;.</p>
+
+<p>As pointed out in 
+<acronym title=
+"Kenneth E. Iverson, The Derivative Operator (Proceedings of APL79: ACM 0-89791-005 2/79/0500 0347), 347.">[2]</acronym>, 
+the derivative of a
+function<tt> f </tt>having a &ldquo;result rank&rdquo; of<tt> r </tt>and an
+argument rank<tt> a </tt>
+must have a result rank of<tt> r+a</tt>&nbsp;.<tt> </tt>
+This behaviour must be incorporated in the
+definition of the function<tt> df </tt>referred to in the
+preceding paragraphs. Moreover, integration must
+produce an indefinite integral, and<tt> <nobr>f DOP (-k)</nobr> </tt>
+therefore incorporates a supernumerary axis of
+length<tt> 1+k </tt>such that<tt> <nobr>(c,1)+.xf DOP (-k)⍵</nobr> </tt>
+yields the value for any specified constants of
+integration<tt> c</tt>.
+<br>&nbsp;</p>
+
+
+
+<a name="identity"></a>
+<p><b>Identity Function</b></p>
+
+<p>In extending the notion of an identity element,
+first introduced to give meaning to expressions
+such as<tt> +/⍳0 </tt>and<tt> ∧/⍳0</tt>&nbsp;,<tt> </tt>
+it is clear that the result
+for a non-scalar function must depend upon the
+shape of the cell to which it is applied. For
+example, in<tt> <nobr>+.×⌿0 4 4⍴?9</nobr></tt>&nbsp;,<tt> </tt>the identity element
+must be the 4 by 4 identity matrix<tt> (⍳4)∘.=⍳4</tt>&nbsp;.</p>
+
+<p>The notion of an identity element must
+therefore be replaced by adding a new part that is
+an identity <i>function</i> (that applies to the cell
+shape), and by adding an operator that assigns a
+value to the part.
+<br>&nbsp;</p>
+
+
+
+<a name="dyads"></a>
+<p><b>Dyads</b></p>
+
+<p>Monadic functions such as<tt> 10¨⍟ </tt>(the base-10
+logarithm) and<tt> *¨2 </tt>(the square function) might
+appear to be fully defined by the arguments of the
+operator<tt> ¨</tt>&nbsp;,<tt> </tt>
+and therefore require no special part
+in the function to which the operator is applied.
+However, each such function may have parts such
+as derivative and inverse, and even a dyadic case.</p>
+
+<p>For example, the inverse and derivative of<tt> a¨+ </tt>
+are<tt> (-a)¨+ </tt>and the constant function<tt> 1</tt>&nbsp;,<tt> </tt>
+respectively, and if<tt> f </tt>is a selection function, 
+then<tt> i¨f </tt>can have a dyadic case that provides a <i>merge</i>
+of its arguments, as described in 
+<acronym title=
+"Arthur Whitney and Kenneth E. Iverson, Practical Uses of a Model of APL (APL Quote Quad, Volume 13, Number 1, Proceedings of APL82, ACM, New York 1982);
+Kenneth E. Iverson, APL Syntax and Semantics (ACM, APL83).">[5 6]</acronym>
+for the
+case where<tt> f </tt>is 
+the indexing function <i>from</i><tt> </tt>(<tt>{</tt>).</p>
+
+<p>We define the monadic cases of the derived
+functions<tt> a¨f </tt>and<tt> f¨b </tt>as follows:</p>
+
+<pre>
+   f¨b a ←→ a 0 .f b
+   a¨f b ←→ b 0 .f⊂ a
+</pre>
+
+<p>where<tt> ⊂ </tt>denotes the commute operator
+<acronym title=
+"Kenneth E. Iverson, Rationalized APL (I.P. Sharp Associates 1983).">[7]</acronym>.
+Moreover, the dyads each inherit the appropriate
+dyadic rank of<tt> f</tt>&nbsp;,<tt> </tt>as well as the appropriate dyadic
+surrogate.</p>
+
+<p>Any inverse, derivative, or dyadic case of the
+derived functions<tt> a¨f </tt>and<tt> f¨b </tt>are determined
+from the information provided in the dyad parts of<tt> f</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="calculus"></a>
+<p><b>Calculus of Operators</b></p>
+
+<p>In the case of an operator such as inverse, the
+entire derived function is determined by the
+inverse part of the original function, and there is
+no question of parts of the derived function being
+determined from any other parts of the original.
+However, in the case of an operator such as
+composition, it is clear that certain parts of the
+derived function should be inherited from (or at
+least derived from) various parts of the original
+functions.</p>
+
+<p>For example, if<tt> h←f⍤g</tt>&nbsp;,<tt> </tt>
+then the inverse part
+of<tt> h </tt>should have the monadic 
+kernel<tt> '⎕B⊂⍤(⎕A⊂)&nbsp;⍵'</tt>&nbsp;,<tt> </tt>
+and parameters<tt> f </tt>and<tt> g</tt>&nbsp;.</p>
+
+<p>The cases of the rank and coherence operators
+are the most interesting, since a number of parts
+of the function argument might be usefully passed
+on to the derived function with little or no change.</p>
+
+<p>The effect that the coherence operator should
+have on the parts of the derived function is rather
+straightforward, but that of the rank operator is
+more problematical. For example, the proper
+inverse of<tt> ⍉⍤r </tt>
+is clearly<tt> ⍉⍤r</tt>&nbsp;,<tt> </tt>but since the
+inverse of the enclose<tt> </tt>(<tt><</tt>),<tt> </tt>
+of infinite rank, is the
+disclose<tt> </tt>(<tt>></tt>)<tt> </tt>
+of rank 0, what rank should be
+assigned to the inverse<tt> <⍤3⊂</tt>&nbsp;?<tt> </tt>
+Moreover, in the
+dual<tt> f¨g</tt>&nbsp;,<tt> </tt>
+the inverse of<tt> g </tt>is applied to an
+argument of whatever rank is produced by
+applying<tt> f </tt>to the result produced by<tt> g </tt>on one of
+its cells. What then should be the rank of the
+inverse<tt> h←g⍤r⊂ </tt>to apply properly in<tt> f¨h</tt>&nbsp;?</p>
+
+<p><i>Composition</i>. The rank part of the function<tt> f⍤g </tt>is
+the monadic rank of<tt> g</tt>&nbsp;,<tt> </tt>
+giving &ldquo;close composition&rdquo;
+as defined in 
+<acronym title=
+"Robert Bernecky and Kenneth E. Iverson, Operators and Enclosed Arrays (I.P. Sharp, Proceedings of the User Meeting, 1980).">[3]</acronym>; 
+the kernels are<tt> <nobr>'⎕A ⎕B⍤¯ ⍵'</nobr> </tt>
+and<nobr><tt> '(⎕B⍤¯ ⍺)⎕A ⎕B⍤¯ ⍵'</tt>&nbsp;.</nobr></p>
+
+<p>The reason for using<tt> ⎕B </tt>of infinite rank (that
+is,<tt> ⎕B⍤¯</tt>)<tt> </tt>rather than<tt> ⎕B </tt>
+in the kernel is
+illustrated by the following example. If<tt> f←⌽ </tt>
+and<tt> g←⍉⍤¯1</tt>&nbsp;,<tt> </tt>and<tt> <nobr>a←2 3 4 5p⍳120</nobr> </tt>
+then (because the
+rank of<tt> f⍤g </tt>is<tt> ¯1</tt>),<tt> </tt>
+the cells of<tt> f⍤g&nbsp;a </tt>
+have shape<tt> 3&nbsp;4&nbsp;5</tt>&nbsp;,<tt> </tt>
+and the application of<tt> g </tt>with infinite rank
+would transpose each of them to shape<tt> 5&nbsp;4&nbsp;3 </tt>
+before applying<tt> f</tt>&nbsp;.<tt> </tt>
+However, if<tt> g </tt>itself were
+applied, it, being of rank<tt> ¯1</tt>&nbsp;,<tt> </tt>
+would transpose each of the<tt> 4 </tt>by<tt> 5 </tt>
+cells of each shape<tt> 3&nbsp;4&nbsp;5 </tt>cell
+presented to it, providing arguments of 
+shape<tt> 3&nbsp;5&nbsp;4 </tt>to<tt> f</tt>&nbsp;.<tt> </tt>
+In effect, the proposed definition
+prevents a double application of the rank of<tt> g</tt>&nbsp;.</p>
+
+<p><i>Operators related to composition</i>. 
+The kernels and 
+ranks of the derived functions of three other
+operators show marked similarity to those produced
+by composition<tt> </tt>(<tt>⍤</tt>).</p>
+
+<table>
+<tr><td></td> <td colspan=3>&nbsp; &nbsp; &nbsp; &nbsp; <i>Ranks and Kernels</i><br>&nbsp;</td></tr>
+<tr><td><tt>f⍥g &nbsp; &nbsp; &nbsp; &nbsp;</tt></td> <td><tt>mg</tt></td> <td><tt>lg</tt></td> <td><tt>rg</tt></td></tr>
+<tr><td></td> <td valign=top><tt>⎕A ⎕B⍤¯ ⍵</tt></td> <td colspan=2><tt>⎕A ⍺ ⎕B⍤¯ ⍵</tt><br>&nbsp;</td></tr>
+<tr><td><tt>f¨g &nbsp; &nbsp;</tt></td> <td><tt>mg</tt></td> <td><tt>mg</tt></td> <td><tt>mg</tt></td></tr>
+<tr><td></td> <td valign=top><tt>⎕B⊂ ⎕A ⎕B⍤¯ ⍵ &nbsp; &nbsp; &nbsp;</tt></td> <td colspan=2><tt>⎕B⊂(⎕B⍤¯ ⍺)⎕A ⎕B⍤¯ ⍵</tt><br>&nbsp;</td></tr>
+<tr><td><tt>f}g &nbsp; &nbsp;</tt></td> <td><tt>mg</tt></td> <td><tt>mg</tt></td> <td><tt>rf</tt></td></tr>
+<tr><td></td> <td valign=top><tt>(⎕B⍤¯ ⍵)⎕A⍵</tt></td> <td colspan=2><tt>(⎕B⍤¯ ⍺)⎕A⍤¯ ⍺</tt><br>&nbsp;</td></tr>
+
+</table>
+
+<p><i>Intrinsic rank</i>. Although<tt> ⊢ </tt>is the identity function
+and is of unbounded rank, the composed 
+function<tt> g←f⍤⊢ </tt> may differ from<tt> f</tt>&nbsp;,<tt> </tt>
+the difference becoming
+apparent only when the rank operator is applied to
+the functions.</p>
+
+<p>For example, if<tt> f←⍉⍤2 </tt>(where<tt> ⍉ </tt>itself is of
+infinite rank), then<tt> f⍤3 </tt>is equivalent 
+to<tt> ⍉⍤3</tt>&nbsp;,<tt> </tt>
+but<tt> g⍤3 </tt>is equivalent to<tt> ⍉⍤2</tt>&nbsp;.<tt> </tt>
+We will therefore say
+that<tt> h←g⍤3 </tt>has <i>extrinsic</i> rank<tt> 3</tt>&nbsp;,<tt> </tt> 
+but <i>intrinsic</i> rank<tt> 2</tt>&nbsp;.</p>
+
+<p>More generally, if<tt> p←q⍤j⍤⊢⍤k</tt>&nbsp;,<tt> </tt>
+then<tt> p </tt>is said
+to have intrinsic rank<tt> j </tt>
+and extrinsic rank<tt> k</tt>;<tt> </tt>the
+extrinsic rank is immediately respecified by
+application of the rank operator, but the intrinsic
+rank is unaffected.</p>
+
+<p>Every primitive function will be defined to have
+an intrinsic rank that is equal to its extrinsic
+rank, and is non-negative.</p>
+
+<p><i>The results of rank</i>. Except for the derivative,
+dyads, and inverse parts, all parts of<tt> f </tt>
+(including, in particular, its coherence) are
+inherited by<tt> f⍤r</tt>&nbsp;.</p>
+
+<p>Since a derivative of a function<tt> f </tt>must apply to
+the same cells as<tt> f</tt>&nbsp;,<tt> </tt>
+the rank must be inherited by
+the derivative.</p>
+
+<p>The dyad parts are not inherited 
+by<tt> f⍤r</tt>&nbsp;,<tt> </tt>but
+the monadic cases of<tt> a¨(f⍤r) </tt>and<tt> f⍤r¨b </tt>are, of
+course, defined as stated earlier.</p>
+
+<p>As remarked earlier, there is no relation
+between the rank of a function and the rank of its
+inverse that applies for all functions. However, in
+the case of a rank-preserving 
+function<tt> f</tt>&nbsp;,<tt> </tt>the
+inverse function<tt> f⊂ </tt>would be expected to have the
+same rank, and we propose to choose the treatment
+of<tt> f⍤r⊂ </tt>to provide behaviour appropriate to such a
+function. Moreover, appropriate behaviour of the
+dual<tt> g¨(f⍤r) </tt>can be expected only in the case
+where<tt> g </tt>is also rank-preserving.</p>
+
+<p>A necessary condition that<tt> f⊂ </tt>be a proper
+inverse is that<tt> f⊂⍤f </tt>be the identity function; it is
+also desirable that<tt> f⍤(f⊂) </tt>be an identity. The
+problems of defining the inverse appropriate to a
+function<tt> f⍤r </tt>will first be illustrated by the
+function<tt> t⍤r</tt>&nbsp;,<tt> </tt>
+where<tt> t </tt>is a self-inverse transpose
+of intrinsic rank<tt> 3 </tt>(i.e.,<tt> t ←→ t⊂ ←→ ⍉⍤3⍤⊢</tt>),
+and the argument<tt> a </tt>
+has shape<nobr><tt> 2 3 4 5 6 7 8</tt>&nbsp;.</nobr></p>
+
+<p>We will examine two main cases, the direct
+inheritance of<tt> t⊂ </tt>by<tt> t⍤r</tt>&nbsp;,<tt> </tt>and the modified
+inheritance of<tt> t⊂⍤r</tt>&nbsp;.<tt> </tt>
+Within each of these we will
+examine the cases of rank restriction and
+expansion.</p>
+
+<table>
+<tr><td colspan=3>Case 1:<tt> t⍤r⊂ ←→ t⊂</tt><br>&nbsp;</td></tr>
+<tr><td valign=top align=right><tt>r</tt></td> <td>&nbsp; &nbsp;</td> 
+    <td valign=top><tt>⍴t⍤r⊂⍤(t⍤r) a</tt></td> <td nowrap>&nbsp; &nbsp; &nbsp;</td> 
+    <td><tt>⍴t⍤r⍤(t⍤r⊂) a</tt><br>&nbsp;</td></tr>
+<tr><td align=right><tt>        2</tt></td> <td></td> <td><tt>2 3 4 5 6 7 8</tt></td> <td></td> <td><tt>2 3 4 5 8 7 6</tt></td></tr>
+<tr><td align=right><tt>&nbsp; ¯3</tt></td> <td></td> <td><tt>2 3 4 5 6 7 8</tt></td> <td></td> <td><tt>2 3 4 6 7 8 5</tt></td></tr>
+<tr><td align=right><tt>        4</tt></td> <td></td> <td><tt>2 3 4 5 6 7 8</tt></td> <td></td> <td><tt>2 3 4 6 7 8 5</tt></td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td colspan=3>Case 2:<tt> t⍤r⊂ ←→ t⊂⍤r</tt><br>&nbsp;</td></tr>
+<tr><td align=right><tt>        2</tt></td> <td></td> <td><tt>2 3 4 5 6 7 8</tt></td> <td></td> <td><tt>2 3 4 5 8 7 6</tt></td></tr>
+<tr><td align=right><tt>       ¯3</tt></td> <td></td> <td><tt>2 3 4 5 8 7 6</tt></td> <td></td> <td><tt>2 3 4 5 8 7 6</tt></td></tr>
+<tr><td align=right><tt>        4</tt></td> <td></td> <td><tt>2 3 4 5 6 7 8</tt></td> <td></td> <td><tt>2 3 4 5 6 7 8</tt></td></tr>
+</table>
+
+<p>From the foregoing it is clear that only case 1
+(direct inheritance) gives correct behaviour for all
+sub-cases for the more important 
+left-inverse<tt> </tt>(<tt>t⍤r⊂⍤(t⍤r)</tt>)<tt> </tt>
+and that neither case can give
+correct behaviour for all sub-cases of the
+right-inverse. We therefore propose adoption of
+the rule of direct adoption of the inverse<tt> f⊂ </tt>for
+the inverse of the derived function<tt> f⍤r</tt>&nbsp;.</p>
+
+<p><i>The results of coherence</i>. Since coherence
+determines only which pairs of cells of the two
+arguments are submitted to the function, <i>all</i> parts
+of<tt> f </tt>save the coherence are passed on to the
+derived function<tt> k.f</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="supernumerary"></a>
+<p><b>Supernumerary Axes</b></p>
+
+<p>As remarked in
+<acronym title=
+"Kenneth E. Iverson, Rationalized APL (I.P. Sharp Associates 1983).">[7]</acronym>, 
+certain operators
+introduce one or more <i>supernumerary</i> axes in
+addition to the axes produced by the particular
+function to which the operator is applied. Although
+such supernumerary axes should <i>precede</i> the
+normal axes, the cited paper proposed an
+exception for the case of<tt> f\ </tt>(scan along the last
+axis) as a means of maintaining compatibility with
+the present behaviour of scan for primitive scalar
+functions.</p>
+
+<p>A more palatable way of retaining compatibility
+is to assign rank 1 to the derived function<tt> f\ </tt>(and
+also to<tt> f/</tt>).<tt> </tt>
+Formally,<tt> f\←→f⍀⍤1</tt>&nbsp;,<tt> </tt>
+and<tt> f/←→f⌿⍤1</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="transliteration"></a>
+<p><b>Transliteration</b></p>
+
+<p>The ability to represent letters or words in the
+corresponding characters in another alphabet,
+known in natural languages as <i>transliteration</i>, can
+also be very useful in formal languages. For
+example, in APL one might substitute for the 
+word<tt> RHO </tt>(entered by someone using a deficient
+terminal, or frightened of symbols other than the
+Roman alphabet) the symbol<tt> ⍴</tt>&nbsp;,<tt> </tt>or conversely
+substitute for<tt> ⍴ </tt>(entered by someone who wishes
+to exploit the brevity and connotations of that
+symbol to refer to a related, but different, defined
+function) the word<tt> RHO</tt>&nbsp;.</p>
+
+<p>We will consider only substitutions for
+individual tokens (that is, those elements of APL
+such as<tt> abc2</tt>&nbsp;,<tt> 2.34e6</tt>&nbsp;,<tt> </tt>
+and<tt> +</tt>)<tt> </tt> 
+that serve as words in APL, and will exclude substitution at a
+character level (such as<tt> TCH </tt>for<tt> CH </tt>
+in the word<tt> CHEBYCHEV</tt>) as well as substitution for phrases
+(such as<tt> 1 2 3 </tt>for<tt> ⍳3</tt>).</p>
+
+<p>Substitution for phrases will be avoided
+because it would necessarily concern syntax
+analysis of the sentence (to avoid, for example,
+substituting<tt> 1 2 3 </tt>for<tt> ⍳3 </tt>
+in the expression<tt> <nobr>2 3 5 7 11 ⍳3</nobr></tt>)<tt> </tt>
+rather than simple word
+substitution. However, there is no difficulty in
+allowing the entity that <i>replaces</i> a token to be a
+string of tokens as well as a single token. For
+example, substituting<tt> </tt>(<tt>○1</tt>) for<tt> PI </tt>
+would allow<tt> PI </tt>
+to be used as a constant, 
+and substituting<tt> </tt>(<tt>1{⎕ai</tt>)<tt> </tt>for<tt> CPU </tt>
+would allow the use of<tt> CPU </tt>as a
+niladic function to give the computer time used.</p>
+
+<p>We propose the introduction of a <i>transliteration</i>
+system variable (to be referred to here as<tt> ⎕tr</tt>)<tt> </tt>
+such that<tt> ⎕tr </tt>is a two-row matrix whose rows
+consist of enclosed strings of tokens. Just before
+evaluating any token in an APL sentence, a
+substitution is made if the token occurs in the first
+row of<tt> ⎕tr</tt>&nbsp;.<tt> </tt>
+Moreover, substituted elements are
+treated exactly as if they occurred in the original
+sentence and, as a consequence, substitutions may
+be chained.
+<br>&nbsp;</p>
+
+
+
+<a name="defn"></a>
+<p><b>Function Definition</b></p>
+
+<p>Because an ambivalent function is evaluated
+only in the context of arguments, the three
+expressions<tt> mpf←+.× </tt>
+and<tt> mp←m+.×n </tt>and<tt> per←+.×n </tt>
+can be used to assign names to three distinct
+entities, a matrix product function<tt> </tt>(<tt>mpf</tt>),<tt> </tt>
+a matrix
+product of two arguments<tt> </tt>(<tt>mp</tt>),<tt> </tt>
+and the <i>permanent</i>
+of a matrix<tt> </tt>(<tt>per</tt>).</p>
+
+<p>Because a niladic function<tt> nf </tt>requires no
+argument, a similar distinction between an
+evaluation of the function, and the function itself,
+cannot be made. Consequently,<tt> f←nf </tt>must be used
+for <i>one</i> of the possible meanings.</p>
+
+<p>If we choose to mean that<tt> f </tt>becomes the niladic
+function<tt> nf</tt>&nbsp;,<tt> </tt>then there is no mechanism for
+indicating evaluation of a niladic function.
+However, if we choose to mean that<tt> f </tt>becomes the
+result of executing<tt> nf</tt>&nbsp;,<tt> </tt>then niladic functions will
+continue to behave as they always have; moreover,
+canonical definition provides a means for
+associating any desired name with a niladic
+function.</p>
+
+<p>We therefore propose that niladic functions
+continue to be used and defined in the established
+manner.</p>
+
+<p>The most recent statement of the evolving
+&ldquo;direct&rdquo; definition operator occurs in 
+<acronym title=
+"Kenneth E. Iverson, Rationalized APL (I.P. Sharp Associates 1983).">[7]</acronym>. 
+We now introduce a slightly modified statement that 1)
+makes explicit the use of a system variable<tt> ⎕s </tt>for
+the sequence control vector (making branching and
+the re-starting of a halted function possible
+through expressions of the form<tt> ⎕s← </tt>rather than
+through the introduction of the branch arrow),
+and 2) makes indexing of the segments 0-origin:</p>
+
+<table>
+<tr><td valign=top>1.</td><td><tt>m∇d </tt>produces a function, 
+with<tt> m </tt>and<tt> d </tt>being
+the representations of the monadic and
+dyadic cases.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top>2.</td><td>The general form of each representation is a
+vector<tt> r </tt>of enclosed <i>segments</i>, the segments
+being executed in an order determined by a
+(shared) <i>sequence control</i> vector<tt> ⎕s </tt>that is
+initially set to<tt> ⍳⍴r</tt>&nbsp;.<tt> </tt>Termination occurs upon
+exhaustion of the sequence control vector.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top>3.</td><td>A label in element<tt> k{r </tt>
+is assigned the value<tt> k↓⍳⍴r</tt>&nbsp;.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top>4.</td><td>The symbols<tt> ⍺ </tt>and<tt> ⍵ </tt>denote the left and
+right arguments, and<tt> ∆ </tt>is used for
+<i>self-reference</i> to the function itself, being
+used in recursive definitions as well as for
+defining one of the two cases in terms of the
+other.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top>5.</td><td>A name is localized 
+if it occurs <i>immediately</i> to
+the left of an assignment arrow in any
+segment; for example,<tt> <nobr>3×a←4+b ←⍵</nobr> </tt>
+localizes<tt> a </tt>but not<tt> b</tt>&nbsp;.<tt> </tt>
+Name localizations for the
+monadic and dyadic cases are independent.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top>6.</td><td>The explicit result of a function is the result
+of the last statement executed which
+produced an explicit result, where
+expressions such as<tt> x←3+4 </tt>or<tt> 3+4 </tt>are
+assumed to produce explicit results, but<tt> ⍎'' </tt>
+and<tt> ⊣a </tt>are not. Automatic output is not
+produced by an expression 
+such as<tt> 3+4</tt>&nbsp;;<tt> </tt>
+such output is produced only by expressions
+using<tt> ⎕←</tt>&nbsp;.
+ <br>&nbsp;</td></tr>
+<tr><td valign=top nowrap>7. &nbsp;</td><td>Every 
+vector<tt> v </tt>is treated as<tt> ,⊃v</tt>&nbsp;,<tt> </tt>
+that is, a
+simple vector is treated as a single segment.
+Single segments may therefore be written in
+the form<nobr><tt> '0⌈⍵' ∇ '⍺||⍵'</tt>&nbsp;.</nobr>
+ </td></tr>
+</table>
+
+<p>A function produced by the definition operator<tt> ∇ </tt>
+has unbounded ranks and coherence, and the
+custom parameter<tt> ⎕C </tt>set to<tt> ⍳0</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="sysvars"></a>
+<p><b>System Variables</b></p>
+
+<p>As remarked earlier, the variant operator could
+be employed to make less cumbersome the use of
+functions now dependent upon system variables.
+Nevertheless, efforts to remove dependence on
+system variables should be continued, especially in
+cases where the dependence was inessential, and
+therefore ill-considered, and in cases where the
+need has been obviated by other developments in
+the language.</p>
+
+<p>Index origin is an example of the former,
+introduced in
+<acronym title=
+"Kenneth E. Iverson, A Programming Language, John Wiley and Sons, New York, N.Y. 1962.">[8]</acronym>
+(not only for indexing, but for
+other functions such as residue) because of
+awareness of the convenience of 0-origin in
+treating computer hardware, and of the familiarity
+of 1-origin to people not acquainted with
+computers.</p>
+
+<p>The situation has changed radically since then:
+the convenience of 0-origin in <i>all</i> areas has become
+more apparent; familiarity with 0-origin and its
+convenience has grown; and the bane of forever
+specifying index origin has become apparent to
+most APL programmers. We therefore re-iterate the
+proposal made in
+<acronym title=
+"Kenneth E. Iverson, Rationalized APL (I.P. Sharp Associates 1983).">[7]</acronym>
+that index origin be
+considered obsolescent, that is, maintained
+unchanged in existing primitive functions, but
+used in no new functions or operators.</p>
+
+<p>Printing width (first controlled by a system
+command) is an example of a parameter which,
+though essential when introduced (before the
+existence of the format function, when there was
+no way within the language of controlling the width
+of output), is no longer essential, and may, in
+fact, impede the full exploitation of scrolling
+facilities now available on video terminals.</p>
+
+<p>For example, in the implementation of Sharp
+APL on the IBM PC, a long row of a matrix may be
+shown &ldquo;extended&rdquo; rather than &ldquo;folded&rdquo; to fit the
+screen width, and the &ldquo;window&rdquo; may be scrolled
+over the row to view all parts of it. 
+However, a narrow setting 
+of print width<tt> </tt>(<tt>⎕PW</tt>)<tt> </tt>will cause each
+row to be emitted as a sequence of independent
+segments. An infinite setting of<tt> ⎕PW </tt>could
+overcome this difficulty, but may be impossible due
+to limitations in an APL system, or to implicit
+assumptions about<tt> ⎕PW </tt>made in applications
+designed for the system.
+<br>&nbsp;</p>
+
+
+
+<a name="cat"></a>
+<p><b>Catenation and Reshape Operators</b></p>
+
+<p>Consider a catenation operator<tt> COP </tt>and a
+reshape operator<tt> ROP </tt>such that the 
+functions<tt> f←+COP-COP×COP÷ </tt>
+and<tt> g←2 2 ROP f </tt>would each
+have rank<tt> 0</tt>&nbsp;,<tt> </tt>and would produce (for each cell)
+results of shape<tt> 4 </tt>and<tt> 2&nbsp;2 </tt>respectively.</p>
+
+<p>More generally, we define<tt> <nobr>f COP g</nobr> </tt>as a
+function having the (necessarily common) rank 
+of<tt> f </tt>and<tt> g</tt>&nbsp;,<tt> </tt>
+and producing a leading axis catenation
+of the results of<tt> f </tt>and<tt> g</tt>&nbsp;.<tt> </tt>
+For example, if<tt> f</tt>&nbsp;,<tt> g</tt>&nbsp;,<tt> </tt>
+and<tt> h </tt>all have result shapes<tt> 4&nbsp;5</tt>&nbsp;,<tt> </tt> 
+then the result
+shape of<tt> <nobr>f COP g COP h</nobr> </tt>
+is<tt> 12&nbsp;5</tt>&nbsp;,<tt> </tt>
+and (since the result shape 
+of<tt> ,¨<⍥h </tt>is<tt> <nobr>1 4 5</nobr></tt>)<tt> </tt> 
+the result shape
+of<tt> <nobr>f COP g COP (,¨<⍥h)<nobr> </tt>
+is<tt> <nobr>3 4 5</nobr></tt>&nbsp;.</p>
+
+<p>Finally, we define<tt> s ROP f </tt>as equivalent 
+to<tt> s¨⍴⍥f</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Kenneth E. Iverson, 
+<a target=_parent href="http://www.jsoftware.com/papers/opfns.htm"><i>Operators and Functions</i></a> 
+(IBM Corporation, RC7091, 1978).
+ </td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+Kenneth E. Iverson, <i>The Derivative Operator</i> 
+(Proceedings of APL79: ACM
+0-89791-005 2/79/0500 0347), 347. </td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+Robert Bernecky and Kenneth E. Iverson,
+<a target=_parent href="http://www.jsoftware.com/papers/opea.htm"><i>Operators and Enclosed Arrays</i></a> 
+(I.P. Sharp, Proceedings of the User Meeting, 1980).
+ </td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+Kenneth E. Iverson and Peter K. Wooster, 
+<i>A Function Definition Operator</i> 
+(APL Quote Quad, Volume 12, Number 1, 
+Proceedings of APL81, ACM September 1981).
+ </td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+Arthur Whitney and Kenneth E. Iverson,
+<a target=_parent href="http://www.jsoftware.com/papers/APLModel.htm"><i>Practical Uses of a Model of APL</i></a>
+(APL Quote Quad, Volume 13, Number 1, 
+Proceedings of APL82, ACM, New York 1982).
+ </td></tr>
+<tr><td valign=top>6.</td><td>&nbsp;</td><td>
+Kenneth E. Iverson,
+<a target=_parent href="http://www.jsoftware.com/papers/APLSyntaxSemantics.htm"><i>APL Syntax and Semantics</i></a>
+(ACM, APL83).
+ </td></tr>
+<tr><td valign=top>7.</td><td>&nbsp;</td><td>
+Kenneth E. Iverson,
+<a target=_parent href="http://www.jsoftware.com/papers/RationalizedAPL.htm"><i>Rationalized APL</i></a>
+(I.P. Sharp Associates 1983).
+ </td></tr>
+<tr><td valign=top>8.</td><td>&nbsp;</td><td>
+Kenneth E. Iverson,
+<a target=_parent href="http://www.jsoftware.com/papers/APL.htm"><i>A Programming Language</i></a>,
+John Wiley and Sons, New York, N.Y. 1962.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="tab1"></a>
+
+<p><b>Table 1: Function Ranks and Surrogates</b></p>
+
+<table>
+<tr><td>&nbsp;</td> <td>&nbsp; &nbsp; &nbsp; &nbsp;</td> <td colspan=3 align=center>Rank</td> <td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+  <td colspan=3 align=center>Surrogate &nbsp;</td></tr>
+<tr><td></td> <td></td> <td>m</td> <td>&nbsp;l</td> <td>&nbsp;r</td> <td></td>
+ <td>&nbsp;m</td> <td>&nbsp; l</td> <td>&nbsp;r</td></tr>
+<tr><td><tt>+</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>-</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>×</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>⌈</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td></tr>
+<tr><td><tt>⌊</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>|</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>></tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td></tr>
+<tr><td><tt>!</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td></tr>
+<tr><td><tt>></tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴○1</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>*</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴1 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>÷</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴1</tt></td></tr>
+<tr><td><tt>⍟</tt></td> <td></td> <td>0 &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴1</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>~</tt></td> <td></td> <td>0 &nbsp;</td><td></td><td></td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td></td><td></td></tr>
+<tr><td><tt>∧</tt></td> <td></td> <td></td><td>0 &nbsp;</td> <td>0 &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>∨</tt></td> <td></td> <td></td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>≤</tt></td> <td></td> <td></td><td>0 &nbsp;</td> <td>0 &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>=</tt></td> <td></td> <td></td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>≥</tt></td> <td></td> <td></td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>≠</tt></td> <td></td> <td></td><td>0 &nbsp;</td> <td>0 &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>⍲</tt></td> <td></td> <td></td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>⍱</tt></td> <td></td> <td></td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>?</tt></td> <td></td> <td>0 &nbsp;</td><td>1 &nbsp;</td><td>1 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴¯</tt></td></tr>
+<tr><td><tt>⌹</tt></td> <td></td> <td>2 &nbsp;</td><td>¯ &nbsp;</td><td>2 &nbsp;</td> <td></td>
+ <td>note &nbsp;</td><td><tt>⍺⍴0 &nbsp;</tt></td><td>note</td></tr>
+<tr><td><tt><</tt></td> <td></td> <td>¯ &nbsp;</td><td>0 &nbsp;</td><td>0 &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>⍴</tt></td> <td></td> <td>¯ &nbsp;</td><td>1 &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵</tt></td></tr>
+<tr><td><tt>⍉</tt></td> <td></td> <td>¯ &nbsp;</td><td>1 &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1↑,⍵ &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵</tt></td></tr>
+<tr><td><tt>⍳</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>⊃</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>⍋</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴' ' &nbsp;</tt></td><td><tt>⍺⍴' '</tt></td></tr>
+<tr><td><tt>⍒</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴' '</tt> &nbsp;</tt></td><td><tt>⍺⍴' '</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>⌽</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1↑,⍵ &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>⊖</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1↑,⍵ &nbsp;</tt></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴' '</tt></td></tr>
+<tr><td><tt>,</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1↑,⍵ &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵ &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>⊣</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1↑,⍵ &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵ &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵</tt></td></tr>
+<tr><td><tt>⊢</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴1↑,⍵ &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵ &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵</tt></td></tr>
+<tr><td><tt>⍕</tt></td> <td></td> <td>¯ &nbsp;</td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td><tt>⍺⍴' ' &nbsp;</tt></td><td><tt>⌽⍺⍴0 1 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>∊</tt></td> <td></td> <td></td><td>0 &nbsp;</td> <td>¯ &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>⊥</tt></td> <td></td> <td></td><td>1 &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>↑</tt></td> <td></td> <td></td><td>1 &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵</tt></td></tr>
+<tr><td><font size=-2>&nbsp;</font></td></tr>
+
+<tr><td><tt>↓</tt></td> <td></td> <td></td><td>1 &nbsp;</td> <td>¯ &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴¯ &nbsp;</tt></td><td><tt>⍺⍴1↑,⍵</tt></td></tr>
+<tr><td><tt>⊤</tt></td> <td></td> <td></td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+<tr><td><tt>≡</tt></td> <td></td> <td></td><td>¯ &nbsp;</td><td>¯ &nbsp;</td> <td></td>
+ <td></td><td><tt>⍺⍴0 &nbsp;</tt></td><td><tt>⍺⍴0</tt></td></tr>
+</table>
+
+<p>Note:<tt> ⍺⍴id ¯2↑1 1,⍺ </tt>where<tt> id:(⍳1↑⍵)∘.=⍳1↓⍵</tt></p>
+
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared in the APL84 Conference Proceedings, 
+APL Quote Quad, Volume 14, Number 4, 1984-06.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font></p>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2010-01-22 09:30</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2013-10-01 16:25</font></td></tr>
+</table>
+
+</td></tr></table>
+<br><br><br>
+
+</body>
+</html>

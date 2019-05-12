@@ -1,0 +1,236 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>APL Exercises</title>
+<link href="adoc.css" rel=stylesheet></head>
+<body>
+
+<p align=right><a href="intro.htm">&lt;&lt;</a> &nbsp; &nbsp; <a href="https://www.jsoftware.com/papers/APL_exercises/ex1.htm">&gt;&gt;</a></p>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>APL Exercises 0</font><br>
+<font size=+3>Beginnings</font><br>&nbsp;</p>
+
+
+
+<p><tt>⎕io←0 </tt>throughout.
+<br>&nbsp;</p>
+
+<p><b>0.0 Outer Product (Function Table)</b></p>
+
+<p><b>0.0.1 Boolean Functions</b></p>
+
+<p>Predict the result of each expression before evaluating it.</p>
+
+<table>
+<tr><td><tt>∘.^ ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.∨ ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.⌊ ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.⌈ ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.= ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.≠ ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.< ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.≤ ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.≥ ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.> ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.⍲ ⍨ 0 1</tt></td></tr>
+<tr><td><tt>∘.⍱ ⍨ 0 1</tt></td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td><tt>∘.= ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.≠ ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.< ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.≤ ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.≥ ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.> ⍨ ⍳11</tt></td></tr>
+</table>
+<br>
+
+<table>
+<tr><td nowrap valign=top>&#149; &nbsp;</td><td>Which of the function tables are symmetric?<tt> </tt>(<tt>t≡⍉t</tt>)</td></tr>
+<tr><td valign=top>&#149;</td><td>What can you say about the functions whose tables are symmetric?</td></tr>
+<tr><td valign=top>&#149;</td><td><p>If<tt> f </tt>is a boolean function (with 0-1 arguments and results),<tt> ∘.f⍨0 1 </tt>
+is its <i>truth table</i> and the ravel of that is its <i>intrinsic vector</i>.
+For<tt> f </tt>with valence<tt> n </tt>there are<tt> 2*2*n </tt>possible intrinsic vectors.
+Find an APL function for each of the following intrinsic vectors:</p>
+<pre>
+0 0 0 0
+0 0 0 1
+0 0 1 0
+0 0 1 1
+0 1 0 0
+0 1 0 1
+0 1 1 0
+0 1 1 1
+1 0 0 0
+1 0 0 1
+1 0 1 0
+1 0 1 1
+1 1 0 0
+1 1 0 1
+1 1 1 0
+1 1 1 1
+</pre>
+</td></tr>
+</table>
+
+<p><b>0.0.2 Arithmetic Functions</b></p>
+
+<p>Predict the result of each expression before evaluating it.</p>
+
+<table>
+<tr><td><tt>∘.+ ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.- ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.× ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.÷ ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.⌊ ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.⌈ ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.| ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.∧ ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.∨ ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.! ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.* ⍨ ⍳11</tt></td></tr>
+<tr><td><tt>∘.⍟ ⍨ 1+⍳11</tt></td></tr>
+</table>
+<br>
+
+<table>
+<tr><td nowrap valign=top>&#149; &nbsp;</td><td>Which of the function tables are symmetric?</td></tr>
+<tr><td valign=top>&#149;</td><td>Why is it<tt> ∘.⍟ ⍨ 1+⍳11 </tt>and not<tt> ∘.⍟ ⍨ ⍳11</tt>&nbsp;?</td></tr>
+<tr><td valign=top>&#149;</td><td>If<tt> t←x∘.f y</tt>&nbsp;,<tt> </tt>what is the shape of<tt> t</tt>&nbsp;?<br>
+<tr><td valign=top>&#149;</td><td>If<tt> x </tt>and<tt> y </tt>are vectors and<tt> t←x∘.f y</tt>&nbsp;,<tt> </tt>
+how is<tt> t[i;j] </tt>computed?</td></tr>
+</table>
+<br><br>
+
+
+
+<p><b>0.1 Reduction</b></p>
+
+<p><b>0.1.1 Boolean Functions</b></p>
+
+<p>Predict the result of each expression before evaluating it.</p>
+
+<pre>
+odometer←{⍉⍵⊤⍳×/⍵}
+b←odometer 5⍴2
+</pre>
+
+<table>
+<tr><td><tt>∧/b</tt></td></tr>
+<tr><td><tt>∨/b</tt></td></tr>
+<tr><td><tt>⌊/b</tt></td></tr>
+<tr><td><tt>⌈/b</tt></td></tr>
+<tr><td><tt>=/b</tt></td></tr>
+<tr><td><tt>≠/b</tt></td></tr>
+<tr><td><tt></b</tt></td></tr>
+<tr><td><tt>≤/b</tt></td></tr>
+<tr><td><tt>≥/b</tt></td></tr>
+<tr><td><tt>>/b</tt></td></tr>
+<tr><td><tt>⍲/b</tt></td></tr>
+<tr><td><tt>⍱/b</tt></td></tr>
+</table>
+
+<p><b>0.1.2 Arithmetic Functions</b></p>
+
+<p>Predict the result of each expression before evaluating it.</p>
+
+<pre>
+x←1+?7⍴20
+</pre>
+
+<table>
+<tr><td><tt>+/x</tt></td></tr>
+<tr><td><tt>-/x</tt></td></tr>
+<tr><td><tt>×/x</tt></td></tr>
+<tr><td><tt>÷/x</tt></td></tr>
+<tr><td><tt>⌊/x</tt></td></tr>
+<tr><td><tt>⌈/x</tt></td></tr>
+<tr><td><tt>|/x</tt></td></tr>
+<tr><td><tt>∧/x</tt></td></tr>
+<tr><td><tt>∨/x</tt></td></tr>
+<tr><td><tt>!/x</tt></td></tr>
+<tr><td><tt>*/x</tt></td></tr>
+<tr><td><tt>⍟/x</tt></td></tr>
+</table>
+
+<p><b>0.1.3 Model</b></p>
+
+<table>
+<tr><td nowrap valign=top>&#149; &nbsp;</td><td>Write a d-operator<tt> Reduce </tt>
+such that<tt> (f/v)≡f Reduce v </tt>for vector<tt> v</tt>&nbsp;.
+ </td></tr>
+</table>
+<br>
+
+
+
+<p><b>0.2 Scan</b></p>
+
+<p><b>0.2.1 Boolean Functions</b></p>
+
+<p>Predict the result of each expression before evaluating it.</p>
+
+<pre>
+b←odometer 5⍴2
+</pre>
+
+<table>
+<tr><td><tt>∧\b</tt></td></tr>
+<tr><td><tt>∨\b</tt></td></tr>
+<tr><td><tt>⌊\b</tt></td></tr>
+<tr><td><tt>⌈\b</tt></td></tr>
+<tr><td><tt>=\b</tt></td></tr>
+<tr><td><tt>≠\b</tt></td></tr>
+<tr><td><tt><\b</tt></td></tr>
+<tr><td><tt>≤\b</tt></td></tr>
+<tr><td><tt>≥\b</tt></td></tr>
+<tr><td><tt>>\b</tt></td></tr>
+<tr><td><tt>⍲\b</tt></td></tr>
+<tr><td><tt>⍱\b</tt></td></tr>
+</table>
+<br>
+
+<table>
+<tr><td nowrap valign=top>&#149; &nbsp;</td><td>Describe in words what each 
+of the above scans does on a boolean vector<tt> b</tt>&nbsp;.<tt> </tt>
+For example,<tt> ∧\b </tt>is &ldquo;all 1s until the first 0; 0 thereafter&rdquo;.</td></tr>
+</table>
+
+<p><b>0.2.2 Arithmetic Functions</b></p>
+
+<p>Predict the result of each expression before evaluating it.</p>
+
+<pre>
+x←1+?7⍴20
+</pre>
+
+<table>
+<tr><td><tt>+\x</tt></td></tr>
+<tr><td><tt>-\x</tt></td></tr>
+<tr><td><tt>×\x</tt></td></tr>
+<tr><td><tt>÷\x</tt></td></tr>
+<tr><td><tt>⌊\x</tt></td></tr>
+<tr><td><tt>⌈\x</tt></td></tr>
+<tr><td><tt>|\x</tt></td></tr>
+<tr><td><tt>∧\x</tt></td></tr>
+<tr><td><tt>∨\x</tt></td></tr>
+<tr><td><tt>!\x</tt></td></tr>
+<tr><td><tt>*\x</tt></td></tr>
+<tr><td><tt>⍟\x</tt></td></tr>
+</table>
+
+<p><b>0.2.3 Model</b></p>
+
+<table>
+<tr><td nowrap valign=top>&#149; &nbsp;</td><td>Write a d-operator<tt> Scan </tt>
+such that<tt> (f\v)≡f Scan v </tt>for vector<tt> v</tt>&nbsp;.</td></tr>
+</table>
+<br>
+
+</td></tr></table>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+</body>
+</html>

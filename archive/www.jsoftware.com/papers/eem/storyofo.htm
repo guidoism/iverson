@@ -1,0 +1,754 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>The Story of o</title>
+<link href="https://www.jsoftware.com/papers/eem/adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+1><b>Recreational APL</b></font><br>
+<b>Eugene McDonnell<br>December 1977</b></p>
+
+
+
+<br>
+<p align=center><font size=+1>The Story of</font><font face="APL385 Unicode" size=+1> ○ </font></p>
+<br>
+
+<table>
+<tr><td nowrap><tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt></td><td>
+The circle is a perfect thing.</td></tr>
+<tr><td>&nbsp;</td><td align=right>&#151; Aristotle <i>De Caelo</i>,I,2</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>
+&ldquo;...many different notations 
+for the circular and hyperbolic functions 
+were entertained over a period of more than a year 
+before the present scheme was proposed, 
+whereupon it was quickly adopted.&rdquo;</td></tr>
+<tr><td>&nbsp;</td><td align=right>&#151; Falkoff and Iverson 
+<acronym title="Falkoff, A. P., and Iverson, K. E. 
+The design of APL. IBM Journal of Research and Development 17 (1973).">[2]</acronym>
+</td></tr>
+</table>
+
+<p>To facilitate working with complex numbers, 
+proposals were made at the APL Minnowbrook Workshop 
+last September to augment the number 
+of left arguments to the dyadic circle function. 
+My principal purpose in this article is 
+to describe several of those proposals. 
+Before doing that, however, 
+I&rsquo;ll give you the history of the circle notation in APL.
+<br>&nbsp;</p>
+
+
+
+<p><b>History</b></p>
+
+<p>After the initial implementation of APL\360 
+in November 1966, 
+the lack of a suitable notation for the trigonometric functions 
+and their inverses was felt very strongly. 
+There was no difficulty in obtaining 
+accurate and efficient algorithms, 
+since the excellent subroutines developed 
+by the late Hirondo Kuki of the University of Chicago 
+were available.</p>
+
+<p>In Iverson&rsquo;s 1962 book
+<acronym title="Iverson, K. E. A Programming Language. 
+Wiley, New York, 1962.">[3]</acronym>, 
+there are two fleeting uses of the trigonometric functions. 
+In both places they relate not to functions on real numbers, 
+but rather to dyadic functions between vector arguments.  
+In the first instance 
+<acronym title="Iverson, K. E. A Programming Language. 
+Wiley, New York, 1962.">[3, p.40]</acronym>, 
+the notation &ldquo;<tt>Cos(x,y)</tt>&rdquo; is used 
+as the name of a subroutine that determines<tt> z </tt>
+as the cosine of the angle 
+between the vectors<tt> x </tt>and<tt> y</tt>&nbsp;.<tt> </tt> 
+In the second instance
+<acronym title="Iverson, K. E. A Programming Language. 
+Wiley, New York, 1962.">[3, p. 70]</acronym>, 
+the notations<tt> x</tt>&gamma;<tt>y </tt>
+and<tt> x</tt>&sigma;<tt>y </tt>are used 
+to describe dyadic functions 
+that give the cosine and the sine, respectively, 
+of the angle between the vector arguments<tt> x </tt>
+and<tt> y</tt>&nbsp;.</p>
+
+<p>In Iverson&rsquo;s 1966 book 
+<acronym title="Iverson, K. E. Elementary Functions. 
+Science Research Associates, Chicago, 1966. ">[4]</acronym>, 
+there is a development from the exponential function<tt> *x </tt>
+to a function<tt> Ax </tt>that is the average 
+of<tt> *x </tt>and<tt> *-x</tt>&nbsp;,<tt> </tt> 
+and then to a function<tt> Bx </tt>
+that is half the difference 
+of<tt> *x </tt>and<tt> *-x</tt>&nbsp;,<tt> </tt> 
+and finally to two functions 
+that can be obtained by reversing 
+the signs of alternate nonzero terms 
+of the series expressions for<tt> Ax </tt>
+and<tt> Bx</tt>&nbsp;.<tt> </tt> 
+The first of these is denoted<tt> Cx</tt>&nbsp;,<tt> </tt> 
+while the second (are you following?) 
+is denoted<tt> Sx</tt>&nbsp;.</p>
+
+<p>Of course, it develops that 
+the functions<tt> Cx </tt>and<tt> Sx </tt>
+are the cosine and sine functions.<tt> Ax </tt>
+and<tt> Bx </tt>are shown to be 
+the hyperbolic cosine and hyperbolic sine functions, 
+and two other notations,<tt> Tx </tt>and<tt> Ux</tt>&nbsp;,<tt> </tt>
+are employed for the tangent and hyperbolic tangent functions.</p>
+
+<p>In this book 
+<acronym title="Iverson, K. E. Elementary Functions. 
+Science Research Associates, Chicago, 1966. ">[4]</acronym>, 
+the notation for an inverse function was obtained 
+by adding a prime sign to the notation for the function. 
+Thus, the logarithm function was denoted by<tt> *' </tt>
+and the arctangent function by<tt> T'</tt>&nbsp;.<tt> </tt>  
+Also, the reciprocal of a function was denoted by an overbar.  
+The secant function was denoted 
+by<tt> </tt><img src="https://www.jsoftware.com/papers/eem/coverbar.jpg">&nbsp;,<tt> </tt> 
+and the cotangent 
+by<tt> </tt><img src="https://www.jsoftware.com/papers/eem/toverbar.jpg">&nbsp;.</p>
+
+<p>APL\360 followed shortly after the appearance of this book. 
+By the time it appeared, the typography of APL 
+had taken on some definite characteristics.  
+In particular, each primitive function was denoted by a nonalphabetic symbol.  
+It was strongly felt by the language designers that alphabetic notations, 
+such as<tt> sin</tt>&nbsp;,<tt> cos</tt>&nbsp;,<tt> S</tt>&nbsp;,
+or<tt> C</tt>&nbsp;,<tt> </tt> 
+should not be used for primitive functions.  
+Furthermore, inverse functions were acquiring their own symbols, 
+for example, the logarithm function being denoted 
+by<tt> ⍟ </tt>rather than<tt> *'</tt>&nbsp;.<tt> </tt>  
+(By the way, there is a visual pun here &#151;
+this symbol looks like the cross-section of a felled tree, 
+that is, a log.)</p>
+
+<p>This meant that the three trigonometric functions, 
+their inverses, their reciprocals, and the inverses of the reciprocals, 
+and then the same panoply for the hyperbolic functions, 
+all were lacking notations &#151; 24 functions in all. 
+In the meantime, the complaints from users 
+who were having to define functions or copy defined functions 
+from a workspace when they needed a trigonometric function were pouring in. 
+I still have copies of some of these defined functions, 
+found in early public libraries.  
+These were generally not particularly efficient 
+nor were they very accurate.</p>
+
+<p>There was thus a good deal of dissatisfaction with the situation. 
+The proposal being considered in early Spring 1968 
+was to use the monadic forms of the six relational 
+functions<tt> </tt>(<tt>&lt; ≤ = ≥ &gt; ≠</tt>)<tt> </tt> 
+for the sine, cosine, tangent, and their inverses, 
+and the same symbols, overstruck with the dieresis, 
+for the hyperbolic functions and their inverses. 
+No one was particularly happy with this design.</p>
+
+<p>It was at this point that I put three thoughts together, 
+and invented what Paul Penfield has so aptly called 
+&ldquo;this arbitrary and slightly distasteful&rdquo; notation 
+<acronym title="Penfield, P., Jr. Notation for complex “part” functions. 
+APL Quote Quad 8, 1, (Sept. 1977), 11-13.">[5]</acronym>.
+The first thought was a principle enunciated by Iverson in his first book 
+<acronym title="Iverson, K. E. A Programming Language. 
+Wiley, New York, 1962.">[3, p. 8]</acronym>:</p>
+
+<table><tr><td nowrap><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>
+A concise programming language must incorporate families 
+of operations whose members are related in a systematic manner. 
+Each family will be denoted by a specific operation symbol, 
+and the particular member of the family will be designated 
+by an associated controlling parameter ... 
+which immediately precedes the main operation symbol. 
+The operand is placed after the main operation symbol.
+</td></tr></table>
+
+<p>This gave the method of unifying the members 
+of a family of functions, but it lacked two things: 
+the values of the controlling parameters and the operation symbol.</p>
+
+<p>The second thought determined the values 
+of the controlling parameters, 
+by recalling that the sine and the tangent functions 
+were odd functions, as were the hyperbolic sine and hyperbolic tangent. 
+This suggested that odd numbers be used to designate them. 
+The values<tt> 1</tt>&nbsp;,<tt> 3</tt>&nbsp;,<tt> 5</tt>&nbsp;,<tt> </tt>
+and<tt> 7 </tt>seemed appropriate.  
+(An odd function is one for which<tt> F-x </tt>
+is equal to<tt> -Fx</tt>&nbsp;.<tt> </tt> 
+Signum is an odd function, for example;<tt> ×-5 </tt>is equal to<tt> -×5</tt>.)</p>
+
+<p>Actually,<tt> 1 </tt>and<tt> 3 </tt>were chosen first, 
+more or less by accident, 
+for the sine and tangent, 
+along with<tt> 2 </tt>for the cosine function, 
+by listing the functions in the order 
+in which they were taught me in high school, 
+and then the observation was made 
+about sine and tangent being odd functions. 
+The hyperbolic functions simply fell into place afterwards.</p>
+
+<p>Also, cosine is an even function. 
+(An even function is one 
+for which<tt> F-x </tt>is equal to<tt> Fx</tt>&nbsp;.<tt> </tt> 
+The magnitude function is even;<tt> |-5 </tt>is equal to<tt> |5</tt>&nbsp;.) 
+Thus the<tt> 2</tt>&nbsp;,<tt> </tt>which had been associated with the cosine, 
+turned out to have some mnemonic value. 
+This burgeoning correspondence between control parameter value 
+and odd and even functions led to the assignment 
+of control parameter value<tt> 6 </tt>to the hyperbolic cosine function, 
+also an even function.</p>
+
+<p>The availability of the negative integers made the determination 
+of control parameter values for the inverse functions 
+(arcsine and so on) simple. 
+This left three gaps in the numbering scheme &#151; 
+at<tt> ¯4</tt>&nbsp;,<tt> 0</tt>&nbsp;,<tt> </tt>and<tt> 4</tt>.</p>
+
+<p>The third thought had to do with the function symbol.  
+In the layout of the APL printing element, 
+several symbols had been put on it 
+in order to be used with other symbols:  
+the dieresis, overbar, underbar, quad, and circle. 
+Nevertheless, when a symbol 
+for the circular function notation was needed, 
+what better symbol than the circle by itself? 
+This was proposed and ultimately accepted. 
+There were some feelings 
+that it would not make a very good symbol 
+for hand exposition (say, at a blackboard), 
+but there was such a right feeling 
+about it that this objection was overcome.</p>
+
+<p>The monadic use of the circle notation was part of the initial proposal. 
+There was already a way to obtain the useful 
+constant<tt> e</tt>&nbsp;,<tt> </tt>namely<tt> *1</tt>&nbsp;,<tt> </tt>
+but no way to obtain that equally useful constant pi. 
+So the monadic use of the circle was used to denote multiplication by pi. 
+Iverson toyed briefly with the notion of having this monadic use mean division by pi, 
+but eventually decided that multiplication by pi had just as strong a claim, 
+if not a greater one, to be the monadic significance.</p>
+
+<p>The original proposal for the gaps 
+at<tt> ¯4</tt>&nbsp;,<tt> 0</tt>&nbsp;,<tt> </tt>and<tt> 4 </tt>
+was to assign to them (redundantly) the meanings logarithm, pi times, 
+and exponential. 
+Logarithm and exponential are neither odd nor even, 
+and pi times is odd, whereas<tt> 0 </tt>is even, 
+but these functions occur so frequently in combination 
+with the others that it was thought they would have some marginal use.</p>
+
+<p>On the day after the meeting at which this proposal was laid 
+before Ken Iverson, Adin Falkoff, and Larry Breed, 
+Breed called an emendation meeting. 
+He suggested that we discard the assignments proposed 
+for<tt> ¯4</tt>&nbsp;,<tt> 0</tt>&nbsp;,<tt> </tt>and<tt> 4</tt>&nbsp;.<tt> </tt>  
+In their place, he suggested that we retain 
+the parity scheme for the functions 
+to be associated with these control parameter values, 
+that the functions assigned to<tt> ¯4 </tt>and<tt> 4 </tt>be inverses, 
+and that the function assigned to<tt> 0 </tt>be self-inverse. 
+Furthermore, these functions should be allied 
+with the circular and hyperbolic functions. 
+In fact, he proposed the functions 
+that are now associated with these numbers.</p>
+
+<p>At that point the suggestion was made that we needn&rsquo;t stop there: 
+that functions could be associated with parameter values<tt> 8 </tt>and up.  
+In fact, the functions<tt> (x-1)÷x+1 </tt>and<tt> (1+x)÷1-x </tt>were inverses, 
+and could be associated with<tt> 8 </tt>and<tt> ¯8</tt>&nbsp;.<tt> </tt> 
+It was at this point that Iverson and Falkoff 
+decided to be quite cautious 
+about enlarging the left domain of this function. 
+To quote from 
+<acronym title="Falkoff, A. P., and Iverson, K. E. The design of APL. 
+IBM Journal of Research and Development 17 (1973).">[2]</acronym>:</p>
+
+<table><tr><td nowrap><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>
+The notational scheme employed for the circular functions 
+must clearly be used with discretion; 
+it could be used to replace all monadic functions 
+by a single dyadic function with an integer left argument 
+to encode each monadic function.
+</td></tr></table>
+
+<p>I do not know whether anyone 
+who participated in this design session 
+was aware that the digit<tt> 1 </tt>is vertical, 
+whereas the digit<tt> 2 </tt>has a strong horizontal base, 
+and that the sine function relative 
+to the unit circle in the Cartesian plane 
+is depicted vertically, 
+and the cosine function is shown horizontally. 
+But remember that.</p>
+
+<img src="https://www.jsoftware.com/papers/eem/storyofo_a.jpg">
+
+<p>The news of this notation was communicated to a group 
+at Science Research Associates in Chicago 
+which was working on an implementation of APL for the IBM 1500 computer.  
+In a few days they had implemented all of the functions.  
+This group included Harold Driscoll, Scott Kreuger, and Tom McMurchie. 
+To them goes the distinction 
+of having provided the first implementation 
+of APL&rsquo;s circular functions. 
+Not far behind, the group at Watson Research 
+in Yorktown Heights, New York, 
+had them implemented a week later. 
+We had to wait for K. M. Brown, then of Cornell University, 
+to design algorithms for some of the hyperbolic functions.</p>
+
+<p>The<tt> ¯4</tt>&nbsp;,<tt> 0</tt>&nbsp;,<tt> </tt>and<tt> 4 </tt>
+circle functions went nameless for years. 
+Not until <i>APL Language</i> (IBM publication GC26-3847) 
+was being prepared in early 1975, 
+did it occur to me that since these were intimately related 
+to the theorem of Pythagoras and in fact dealt 
+with the catheti and hypotenuse of right-angled triangles 
+having one unit-length leg, 
+it was possible to call them the Pythagorean functions. 
+This was proposed to Iverson, 
+with the consequence that this IBM manual 
+has a section in it with the resounding title, 
+&ldquo;The Circular, Hyperbolic, 
+and Pythagorean Functions&rdquo;.</p>
+
+<p>I wish I could tell you how endlessly useful 
+these functions have been to users of APL. 
+Instead I have to confess that, 
+though most of these are essential functions 
+for any general purpose programming language, 
+in the general run of applications 
+they are not used very much at all. 
+In Bingham&rsquo;s static analysis of APL programs 
+<acronym title="Bingham, H. W. Content analysis of APL defined functions. 
+APL 75 Congress Proc. (Pisa), ACM, New York, 1975, pp. 60-66.">[1]</acronym>, 
+the dyadic circular functions are lumped together 
+with general logarithm, binomial, nand, and nor 
+as &ldquo;other&rdquo;, 
+and this entire group represents only 1.2% 
+of all dyadic scalar functions and 0.1% of all tokens.  
+Similar statistics have been obtained 
+for the monadic circle function.</p>
+
+<p>Another incident indicates the frequency 
+of use of some of the circular functions. 
+Someone called me in Palo Alto from the IBM plant in Endicott, New York, 
+one day to say that the inverse hyperbolic tangent function 
+did not appear to be giving proper results for nonscalar arguments. 
+I verified that the report was true, 
+and found that, sure enough, 
+a register that should have been preserved 
+by this function was destroyed, 
+not by the function itself but 
+by the square root subroutine it called.  
+The requirement for preserving the register had arisen 
+when Jim Brown&rsquo;s scalar function compiler had appeared, 
+in release 3 of APLSV. 
+Earlier versions of APLSV had not had this compiler facility. 
+Now, release 3 of APLSV had been in daily use by tens of thousands 
+of users at many, many locations, 
+inside IBM and at customer sites, 
+for over six months before this bug was found. 
+No customer ever experienced it, to my knowledge. 
+So much for the utility 
+of the inverse hyperbolic tangent function.
+<br>&nbsp;</p>
+
+
+
+<p><b>Some Problems</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+The formula for the area of a circle or for the volume 
+of a sphere can be generalized to give the hypervolume 
+of a hypersphere in<tt> n</tt>-space for any positive<tt> n</tt>&nbsp;.<tt> </tt> 
+For a unit radius hypersphere, 
+the hypervolume for dimension<tt> ⍵ </tt>is given by</p>
+
+<pre>
+nvol:(2÷⍵)×((○1)*.5×⍵))÷!¯1+.5×⍵
+</pre>
+
+<p>What dimension of space gives the maximum hypervolume 
+to the unit radius hypersphere?<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+Since<tt> 2○0 </tt>is<tt> 1 </tt>
+and<tt> 2○○÷2 </tt>is<tt> 0</tt>&nbsp;,<tt> </tt>
+there must be a value of the argument 
+to cosine that is equal to its own cosine. 
+What is a simple way to compute this value?
+</td></tr>
+</table>
+<br>
+
+
+
+<p><b>The New Proposals</b></p>
+
+<p>Penfield&rsquo;s paper 
+<acronym title="Penfield, P., Jr. Notation for complex “part” functions. 
+APL Quote Quad 8, 1, (Sept. 1977), 11-13.">[5]</acronym> 
+appeared in the September 1977 issue 
+of Quote Quad and also was distributed to those 
+attending the Minnowbrook APL Workshop.  
+Since no session was scheduled to discuss his paper, 
+he and I organized a special session during free time one afternoon. 
+This special session had to compete 
+not only with people&rsquo;s desire to relax, 
+but with the only sunshine of the three days 
+and a floatplane taking passengers 
+for tours at the dock near the classroom 
+(and visible from the classroom windows).  
+It is some indication of the interest in this topic 
+that about half of the attendees gave up those other attractions 
+to listen to the talk Penfield gave on his paper.</p>
+
+<p>He reports elsewhere in this issue 
+on the overall subject of complex numbers in APL 
+(see &ldquo;Extension of APL Primitive Functions 
+to the Complex Domain&rdquo;). 
+Here I shall report only on some recommendations 
+that came from this meeting concerning notation for functions 
+to provide the real and imaginary parts 
+and the magnitude and arc of a complex number.</p>
+
+<p>On all of the schemes proposed in Penfield&rsquo;s paper, 
+a consensus was quickly reached that the fifth showed the greatest promise.  
+This proposal provided the additional left arguments for the dyadic
+circle function 
+of<tt> 8</tt>&nbsp;,<tt> 9</tt>&nbsp;,<tt> 10</tt>&nbsp;,<tt> </tt>
+and<tt> 11</tt>&nbsp;,<tt> </tt>
+in order to signify the real part, 
+imaginary part, magnitude, and arc, respectively. 
+Suitable inverses were proposed for the negatives of these values. 
+There was, however, the feeling that these assignments 
+appeared to be quite arbitrary, 
+and lacked any mnemonic significance.</p>
+
+<p>Glen Seeds of MCM, Ltd., made an interesting observation and a suggestion. 
+He pointed out that we could exploit the fundamental similarity 
+of the Cartesian plane and the complex plane. 
+Just as in the Cartesian plane, 
+the sine is related to the vertical displacement 
+of a point on the unit circle, and the cosine to the horizontal displacement, 
+so in the complex plane, the imaginary part is related to the vertical displacement 
+of a point with respect to the real axis, 
+and the real part is related to the horizontal displacement 
+of a point with respect to the imaginary axis.</p>
+
+<img src="https://www.jsoftware.com/papers/eem/storyofo_b.jpg">
+
+<p>Seeds suggested that we exploit the similarity 
+between the planes in providing new left arguments 
+for the dyadic circle function. 
+In particular, he suggested we correlate the imaginary part function 
+with the sine function by assigning<tt> 11 </tt>as the left argument 
+that denotes the imaginary part function &#151; 
+<tt> 11 </tt>being<tt> 10 </tt>more than 
+the argument that denotes the sine function;
+he also suggested we denote the real part function 
+by left argument<tt> 12</tt>&nbsp;,<tt> </tt>
+that is,<tt> 10 </tt>more than the argument 
+that denotes the cosine function.</p>
+
+<p>This scheme continues, Seeds noted, 
+as we seek appropriate left arguments to denote the arc function 
+and its companion, the magnitude function. 
+The arc function 
+(which Penfield calls the phase function) is computed, 
+for nonzero arguments, as the arctangent of the ratio 
+of the imaginary part to the real part.  
+We could denote this function 
+with left argument<tt> 13</tt>&nbsp;,<tt> </tt> 
+that is,<tt> 10 </tt>more than the argument that denotes the tangent function. 
+Finally, the magnitude function is defined as the positive square root 
+of the sum of the squares of the real and imaginary parts. 
+We could normalize this by factoring out, say, the real part, 
+as the product of the real part and the<tt> 4 </tt>circle function 
+of the ratio of the imaginary and real parts. 
+Thus we have some justification, and a mnemonic device, 
+for associating the left argument<tt> 14 </tt>with the magnitude function. 
+The inverses for these functions would be essentially 
+as given by Penfield&rsquo;s fifth proposal.</p>
+
+<p>To summarize Glen Seed&rsquo;s memorable suggestion, 
+the chart for the circle functions under this scheme 
+would be augmented with four more rows:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp;</td><td align=center><tt>(-a)○b</tt></td><td>&nbsp; &nbsp;</td><td><tt>&nbsp;a</tt></td><td>&nbsp; &nbsp;</td><td><tt>a○b</tt></td></tr>
+<tr><td>&nbsp;</td><td align=center><tt>------</tt></td><td>&nbsp;</td><td><tt>&nbsp;-</tt></td><td>&nbsp;</td><td><tt>---</tt></td></tr>
+<tr><td>&nbsp;</td><td align=center><tt>0j1×b </tt></td><td>&nbsp;</td><td><tt>11</tt></td><td>&nbsp;</td><td><tt>Imag b</tt></td></tr>
+<tr><td>&nbsp;</td><td align=center><tt>+b    </tt></td><td>&nbsp;</td><td><tt>12</tt></td><td>&nbsp;</td><td><tt>Real b</tt></td></tr>
+<tr><td>&nbsp;</td><td align=center><tt>*0j1×b</tt></td><td>&nbsp;</td><td><tt>13</tt></td><td>&nbsp;</td><td><tt>Arc b</tt></td></tr>
+<tr><td>&nbsp;</td><td align=center><tt>     b</tt></td><td>&nbsp;</td><td><tt>14</tt></td><td>&nbsp;</td><td><tt>Magnitude b</tt></td></tr>
+</table>
+
+<p>These proposals brought the unplanned meeting to a close. 
+However, it wasn&rsquo;t very long before the gap in the series, 
+between<tt> 7 </tt>and<tt> 11</tt>&nbsp;,<tt> </tt>was noticed. 
+What should we do 
+with<tt> 8</tt>&nbsp;,<tt> 9</tt>&nbsp;,<tt> </tt>
+and<tt> 10</tt>&nbsp;?<tt> </tt>
+We couldn&rsquo;t just leave them unassigned, could we?</p>
+
+<p>The next suggestion rather startled me, 
+since I had proposed it nine years earlier 
+as the meanings to be assigned 
+to<tt> 4○b </tt>and<tt> ¯4○b</tt>&nbsp;:<tt> </tt> 
+and that was to use one of the unassigned numbers 
+to signify the exponential of the right argument, 
+and the negative of that number 
+to signify the natural logarithm of the right argument.
+Another number could be used to signify 
+the reciprocal of the right argument. 
+Since reciprocal is self-inverse, 
+the negative would have the same meaning. 
+These proposals were both made, I believe, by Ken Iverson. 
+He said their utility would be found in producing expressions 
+involving multiple uses of the dyadic circle function, 
+since so often reciprocals, exponentials, and logarithms 
+appear in conjunction with the existing circular functions.</p>
+
+<p>Seeing the resurrection of these old nominations, 
+I ventured to suggest the functions<tt> (b-1)÷b+1 </tt>
+and<tt> (1+b)÷1-b </tt>as another candidate pair. 
+Imagine my surprise when Penfield, 
+first of all, recognized these immediately as a bilinear transformation 
+and its inverse (I didn&rsquo;t know their names), 
+and, secondly, thought that they would be 
+of utility in the complex domain. 
+The circumstance seems to be that this bilinear transformation is one 
+of the common transformations of the complex plane, 
+mapping the right half-plane into the interior 
+of the unit circle, 
+and the interior of the unit circle 
+into the left half-plane.</p>
+
+<p>All of this took place within a few hours 
+of the breaking-up of the unscheduled session. 
+The following new assignments were proposed:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp;</td><td align=center><tt>(-a)○b</tt></td><td>&nbsp; &nbsp;</td><td><tt>&nbsp;a</tt></td><td>&nbsp; &nbsp;</td><td><tt>a○b</tt></td></tr>
+<tr><td>&nbsp;</td><td align=center><tt>------</tt></td><td>&nbsp;</td><td><tt>&nbsp;-</tt></td><td>&nbsp;</td><td><tt>---</tt></td></tr>
+<tr><td>&nbsp;</td><td align=center><tt>(1+b)÷1-b</tt></td><td>&nbsp;</td><td><tt>&nbsp;8</tt></td><td>&nbsp;</td><td><tt>(b-1)÷b+1</tt></td></tr>
+<tr><td>&nbsp;</td><td align=center><tt>⍟b       </tt></td><td>&nbsp;</td><td><tt>&nbsp;9</tt></td><td>&nbsp;</td><td><tt>*b</tt></td></tr>
+<tr><td>&nbsp;</td><td align=center><tt>÷b       </tt></td><td>&nbsp;</td><td><tt>10</tt></td><td>&nbsp;</td><td><tt>÷b</tt></td></tr>
+</table>
+
+<p>These three assignments were made with 
+less certainty than the earlier four had been.
+<br>&nbsp;</p>
+
+
+
+<p><b>And Now for the Fun</b></p>
+
+<p>That night, after dinner and the evening session 
+(which broke up at 9:30), 
+several people sat in the back 
+of the pleasant lounge area, 
+as the fireplace crackled 
+and the musicians and singers began assembling. 
+One person mentioned that 
+during the afternoon meeting 
+it had been seriously proposed that a variation 
+of the arc function be provided which gave
+a result in degrees rather than radians. 
+This was really not such a bad proposal, 
+but it led to many bad ones. 
+For example, how about<tt> 16○b </tt>
+to convert from radians to degrees, 
+and<tt> ¯16 </tt>from degrees to radians? 
+And then, what about<tt> 17○b </tt>
+which converted<tt> b </tt> 
+from degrees Celsius to degrees Fahrenheit?</p>
+
+<p>I suggested, not completely in jest, 
+that<tt> 19○b </tt>convert its argument 
+from Julian day number to Gregorian date, 
+a three-element vector. 
+The inverse<tt> ¯19○b </tt>would require 
+a three-element vector argument 
+and would produce the corresponding Julian day number.</p>
+
+<p>This led to<tt> 20○b</tt>&nbsp;,<tt> </tt>
+which converts<tt> b </tt>from a Gregorian date 
+to a day of the week, 
+expressed as a value in the range<tt> ⍳7 </tt>(origin-dependent). 
+A new system variable<tt> ⎕rp </tt>(religious preference) 
+would allow the user to specify whether the week 
+begins on Saturday or Sunday (or any other day). 
+The inverse function<tt> ¯20○b </tt>is not unique, 
+and a principal value would have to be determined 
+in order to give a unique result.
+We would need a canonical Monday, Tuesday, and so on.</p>
+
+<p>This could easily be run into the ground, 
+so I will spare you most of the rest of the night&rsquo;s ingenuity. 
+What about<tt> 18</tt> ,<tt> </tt>did you ask? 
+Oh yes!<tt> 18○b </tt>would convert<tt> b </tt>
+from an Arabic number to a Roman number.  
+Then the inverse function, to convert 
+from a Roman number to an Arabic number, 
+would of course be given by<tt> ¯xviii○b</tt>&nbsp;.</p>
+
+<p>Thus the night ended, and we went off to sleep telling each other 
+that the cold light of dawn would help us determine 
+whether the day&rsquo;s work had been all nonsense 
+or just the late night part.</p>
+
+<p>The morning came, and much to everyone&rsquo;s surprise, 
+the serious discussions of the previous day held up quite well. 
+There was, unfortunately, 
+one further addition to the nonsense of the night before 
+that I cannot forbear inflicting on you. 
+Fortunately you have to be up on the recondite conflicts 
+in array theory for the thing to have any point, 
+so most of you will be spared it.  
+I shall conceal the identity of the perpetrator.</p>
+
+<p>The function<tt> 108○b </tt>
+takes an integer right argument from the set 
+of elements 0, 1, and 2, 
+and gives as result a character vector 
+which is a description of array theory according 
+to axiom system 0, 1, or 2.  
+The inverse function<tt> ¯108○b </tt>
+takes a character string right argument, 
+purporting to represent a description of array theory, 
+and the result is 0, 1, or 2, 
+according to which axiom system the description corresponded.</p>
+
+<p>As we broke up the meeting, Louis Robichaud was assuring people 
+that he would have circular 
+functions<tt> 8 </tt>through<tt> 14 </tt>implemented 
+by the following Monday back at Laval University. 
+No one dared to doubt him.
+<br>&nbsp;</p>
+
+
+
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Bingham, H.W.  Content analysis of APL defined functions. 
+APL 75 Congress Proc. (Pisa), ACM, New York, 1975, pp. 60-66.
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+Falkoff, A.D., and Iverson, K.E. 
+<a href="http://www.jsoftware.com/papers/APLDesign.htm">The Design of APL</a>.  
+<i>IBM Journal of Research and Development 17</i> (1973).
+</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+Iverson, K.E. 
+<a href="http://www.jsoftware.com/jwiki/Doc/A%20Programming%20Language"><i>
+A Programming Language</i></a>. Wiley, New York, 1962.
+</td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+Iverson, K.E. 
+<a href="http://www.jsoftware.com/jwiki/Doc/Elementary%20Functions%20An%20Algorithmic%20Treatment">
+<i>Elementary Functions</i></a>. 
+Science Research Associates, Chicago, 1966.
+</td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+Penfield, P., Jr. Notation for complex &ldquo;part&rdquo; functions. 
+<i>APL Quote Quad 8</i>, 1, (Sept. 1977), 11-13.
+</td></tr>
+</table>
+<br><br>
+
+
+
+<p align=center><font size=+1>Puzzle of the Year, 1978</font></p>
+
+<p>An anonymous contributor sent in the following challenging problem:</p>
+
+<p>The start of the new year is a good time 
+for a series of one hundred puzzles 
+using the digits<tt> 1</tt>&nbsp;,<tt> 9</tt>&nbsp;,<tt> 7</tt>&nbsp;,<tt> </tt>
+and<tt> 8</tt>&nbsp;.<tt> </tt> 
+For each number<tt> n </tt>from<tt> 1 </tt>
+through<tt> 100</tt>&nbsp;,<tt> </tt>
+write an APL expression, as short as possible, 
+using no letters and no digits except those four, 
+which must appear in the same 
+order<tt> </tt>(<tt>1</tt>&nbsp;,<tt> 9</tt>&nbsp;,<tt> 7</tt>&nbsp;,<tt> 8</tt>)<tt> </tt> 
+with other APL characters interspersed. 
+The result must be a scalar.</p>
+
+<p>For example, consider<tt> n=1</tt>&nbsp;.<tt> </tt> 
+The expression<tt> 1&nbsp;97[×8] </tt>works, 
+but requires eight characters. 
+Surely we can do better.  
+The expression<tt> ⍴,1978 </tt>is disqualified 
+because it is a vector, not a scalar.  
+The expressions<tt> ⌈19÷78 </tt>
+and<tt> ~197!8 </tt>and<tt> ⌊1.978 </tt>have length six. 
+Solutions of length five include<tt> 19≠78 </tt>
+and<tt> ×l978 </tt>and<tt> 197≥8 </tt>and<tt> 1⌊978</tt>&nbsp;.</p>
+
+<p>The lengths of the shortest expressions known so far are listed below.  
+Only six of these are of the minimum length, five; 
+all others represent opportunities for improvements from readers.  
+See how many of these lengths you can achieve, 
+and send in your solutions if they are of shorter length.</p>
+
+<pre>
+      10 10⍴lengths
+ 5  5  7 7 7 6 6 5 6  6
+ 6  9  8 8 6 7 7 6 5  6
+ 7  8  7 6 6 6 6 8 8  8
+ 8  8  8 6 8 8 7 8 8  8
+ 8  7  7 8 8 9 8 8 9  9
+ 8  8  8 9 9 6 7 9 6  7
+ 8  7  7 7 9 8 8 7 7  6
+ 8  7  7 8 6 8 7 5 6  8
+ 8  7  7 8 8 7 6 6 6  6
+10 10 10 7 7 7 5 6 7 10
+</pre>
+
+
+
+<br><hr>
+<p><font size=-1>First appeared in 
+APL Quote-Quad, Volume 8, Number 2, 1977-12.
+The text requires the APL385 Unicode font, which can be
+downloaded from 
+<a href="http://www.vector.org.uk/resource/apl385.ttf">http://www.vector.org.uk/resource/apl385.ttf</a> .
+To resolve (or at least explain) problems with displaying
+APL characters see
+<a href="http://www.vector.org.uk/archive/display.htm">http://www.vector.org.uk/archive/display.htm</a> .
+
+<br><br>
+last updated: 2009-11-23 18:55
+</font></p>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>
+
+

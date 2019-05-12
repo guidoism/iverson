@@ -1,0 +1,204 @@
+<html>
+<head>
+<title>J Papers</title>
+<link rel="stylesheet" href="https://www.jsoftware.com/papers/jweb.css" type="text/css">
+</head>
+<body>
+
+<center>
+<h2 ><i>Elegant Programming</i></h2>
+<h2 >#~ 1: = #@q:</h2>
+
+<h3> Chris Burke<br>
+<a href="mailto:cburke@jsoftware.com">cburke@jsoftware.com</a></center></h3>
+
+
+<p>This elegant expression provides an interesting exercise for the newcomer to J. The expression contains a hook, a fork, an adverb, a conjunction, and a constant function. It is fair to say that once you understand this expression, then you also understand the essence of functional programming in J.
+<p>First lets use the definition, as follows:
+
+<pre>
+   p=: #~ 1: = #@q:
+   
+   p 2+i.30
+2 3 5 7 11 13 17 19 23 29 31
+   
+   p 123456+i.50
+123457 123479 123491 123493 123499 123503
+</pre>
+<p>Thus, <code>p</code> selects the primes in a list of positive integers. How does it work?
+<p>The definition of <code>p</code> can be read from left to right as:
+<p>&nbsp;&nbsp;&nbsp; 
+<i>select where 1 equals the number of prime factors.</i></p>
+<p>Lets build up this definition step by step.</p>
+<p>
+<code>q:</code> returns the prime factors of its argument, for example:
+
+<pre>
+   q: 123456
+2 2 2 2 2 2 3 643</pre>
+<p>The verb 
+<code>#@q:</code> returns the count of the number of prime factors. 
+Here, the conjunction 
+<code>@</code> (atop) creates a new verb that applies 
+<code>q:</code> 
+to its argument, then <code>#</code> to the result of <code>q:</code>.
+
+<pre>
+   p0=: #@q:
+
+   p0 123456
+8
+</pre>
+   
+<p>We next want to generate a boolean where a 1 indicates a prime, i.e. where the count of 
+the number of prime factors is 1. This is achieved by the following fork:
+
+<pre>
+   p1=: 1: = p0
+
+   p1 2+i.12
+1 1 0 1 0 1 0 0 0 1 0 1</pre>
+<p>The <code>1:</code> needs some explanation. A fork is a sequence of three verbs, 
+<code>f g h</code> where:
+
+<pre>
+   (f g h) x   &lt;=&gt;   (f x) g (h x)
+</pre>
+
+
+<p>Note that the three elements of a fork are verbs. In the definition of 
+<code>p</code>, the leftmost verb is 
+<code>1:</code>, which is a verb that returns the value 1, given any argument. 
+Here, J makes clear the difference between a number and a verb that returns that number - 
+this distinction is blurred in standard mathematical notation.
+<p>We now use the boolean to select the primes. The selection verb is 
+<code>#</code>, which 
+takes a boolean left argument:
+
+<pre>
+   1 1 0 1 0 1 # 2 3 4 5 6 7
+2 3 5 7
+</pre>
+<p>In this case, however, we want to use 
+<code>#</code> with the boolean as a right argument. 
+To do so, we create a new verb with the adverb 
+<code>~</code> (pass), that swaps its arguments:
+
+<pre>
+   p2=: #~
+
+   2 3 4 5 6 7 p2 1 1 0 1 0 1 
+2 3 5 7</pre>
+<p>(You can read 
+<code>#</code> as select, and 
+<code>#~</code> as select where.)
+<p>Finally, we define 
+<code>p</code> as the hook 
+<code>p2 p1</code>, giving us the original 
+definition of 
+<code>p</code>. A hook is a sequence of two verbs 
+<code>f g</code>, where:
+
+<pre>
+   (f g) x   &lt;=&gt;   x f g x
+</pre>
+
+
+<h3>Box Display</h3>
+Box display helps clarify the structure of functional expressions, and should be used by default 
+as a learning aid. You graduate from the school of functional programming when you find that you 
+no longer need box display to read functional expressions! For example:
+
+<pre>
+   p
++-----+---------------+
+|+-+-+|+--+-+--------+|
+||#|~|||1:|=|+-+-+--+||
+|+-+-+||  | ||#|@|q:|||
+|     ||  | |+-+-+--+||
+|     |+--+-+--------+|
++-----+---------------+
+</pre>
+<p>In box display, elements are grouped into twos and threes, as follows:
+
+<ul><li>2 elements:	if the right element is an adverb, and then the two elements 
+represent the verb formed by applying the adverb to the argument on its left,
+otherwise, the two elements are a train (in the case of 2 verbs, a hook)
+<li>3 elements:	if the element in the centre is a conjunction, then the three 
+elements represent the verb formed by applying the conjunction to its two arguments,
+	otherwise, the three elements are a train (in the case of 3 verbs, a fork)
+ </ul>
+
+<p>With this in mind, we can see from the above box display that <code>p</code> is a hook. 
+Its left element is the result of applying the adverb <code>~</code> to the verb <code>#</code>. 
+The right element is a fork, whose rightmost element is the result of applying the 
+conjunction <code>@</code> to the verbs <code>#</code> and <code>q:</code>.
+<p>Here are a couple more examples to illustrate:
+
+<pre>
+   t0=: +/ @ (1: = (+. i.))
+
+   t0
++-----+-+--------------+
+|+-+-+|@|+--+-+-------+|
+||+|/|| ||1:|=|+--+--+||
+|+-+-+| ||  | ||+.|i.|||
+|     | ||  | |+--+--+||
+|     | |+--+-+-------+|
++-----+-+--------------+
+</pre>
+<p>Here 
+<code>t0</code> is the result of applying 
+<code>@</code>, with a left argument of sum 
+(
+<code>+/</code>),  and a right argument of a fork, whose rightmost element is the hook 
+<code> +. i. </code>.
+<p>The expression 
+<code>+. i.</code> computes the GCD (<code>+.</code>) of an integer and all 
+the integers below it. For example,
+
+<pre>
+   (+. i.) 12
+12 1 2 3 4 1 6 1 4 3 2 1
+</pre>
+<p>Thus, 
+<code>t1</code> defined below takes an integer argument and computes which integers below 
+it are relatively prime to it (i.e. the GCD is 1):
+
+<pre>
+   t1=: 1: = (+. i.)
+
+   t1 12
+0 1 0 0 0 1 0 1 0 0 0 1
+</pre>
+<p>Therefore 
+<code>t0</code>,  which is defined as 
+<code>+/ @ t1</code>, is Euler's 
+totient function, i.e. the number of integers below a number that are relatively prime to it.
+
+<pre>
+   t0 12
+4
+</pre>
+<p>A more efficient version is:
+
+<pre>   t3=: * -.@%@~.&amp;.q:
+
+   t3 12
+4
+</pre>
+<p>Can you read its box display?
+<pre>
+   t3
++-+-----------------------+
+|*|+---------------+--+--+|
+| ||+--------+-+--+|&amp;.|q:||
+| |||+--+-+-+|@|~.||  |  ||
+| ||||-.|@|%|| |  ||  |  ||
+| |||+--+-+-+| |  ||  |  ||
+| ||+--------+-+--+|  |  ||
+| |+---------------+--+--+|
++-+-----------------------+
+</pre>
+</body>
+</html>

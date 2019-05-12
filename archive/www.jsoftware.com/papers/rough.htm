@@ -1,0 +1,516 @@
+﻿<html>
+<head><head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Revisiting Rough Spots</title>
+<link href="jdoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Revisiting Rough Spots</font><br><br>
+<b>Kenneth E. Iverson</b>
+<br>&nbsp;</p>
+
+<p>Adepts in any discipline may benefit 
+from a re-examination of the more difficult parts
+of their own development in light of later experience,
+and may perhaps use the insights gained thereby
+to enlighten the presentation of topics to others.
+For example:</p>
+
+<table>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td><p>
+In APL the treatment of the outer product 
+was deferred to Chapter 40 of an early manual
+because of its perceived difficulty;
+such treatment was eventually rectified
+by the remark of a high-school teacher
+(Linda Alvord) who said that these were
+simply the addition and multiplication tables
+of elementary arithmetic rendered alarming
+by the adoption of a term 
+from tensor analysis.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td><p>
+The terms <i>vector</i> and <i>matrix</i> adopted into APL
+conjured up difficulties from matrix algebra
+that were quite unnecessary complications
+of the elementary notions of <i>list</i> and <i>table</i>.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td><p>
+Heavy going has often been made
+of ambivalent functions whose meanings
+depend upon context,
+in spite of the fact that such usage
+(of the minus sign for subtraction in<tt> a-b </tt>
+and for negation in<tt> -b</tt>)<tt> </tt>
+is not only commonplace in the most elementary math,
+but so &ldquo;natural&rdquo; as to pass
+unnoticed by most users.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td><p>
+The <i>fork</i> (used in the 
+sentence<tt> mean=. +/&nbsp;%&nbsp;#</tt>)<tt> </tt>
+to define the function<tt> mean </tt>as the sum divided
+by the number of items)
+is sometimes treated as a difficult concept 
+even though it is commonplace in mathematics,
+as in<tt> (f*g)&nbsp;' </tt>for the derivative
+(denoted by the operator<tt> '</tt>)<tt> </tt>
+of the product of two functions
+(denoted by the fork<tt> f*g</tt>).<tt> </tt>
+Again, this is a notation so &ldquo;natural&rdquo; that
+(like the ambivalence of<tt> -</tt>)<tt> </tt>
+it commonly passes unremarked.
+</p></td></tr>
+</table>
+
+<p>Even longer lists of seemingly unwarranted difficulties
+could be compiled in any discipline.
+Cynics commonly conclude that the &ldquo;high priests&rdquo;
+introduce them deliberately:
+it is more rational to think that their introduction
+results from limited tools or lack of experience in early stages,
+and that their retention results
+from inattention to difficulties long forgotten.</p>
+
+<p>Smoothing of difficulties requires more than goodwill:
+a lack of a program or guiding principle
+may only result in deepening difficulties,
+due to misguided oversimplification.
+We will explore the application
+of two main guides:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td><p>
+Take a notion perceived as difficult
+and introduce it <i>early</i>,
+in simple examples and with a minimum of fanfare.
+Early introduction allows familiarity with it
+to develop in a variety of contexts.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;</td><td><p>
+Choose a concept that has been introduced late 
+in the development of a discipline,
+and thoroughly explore its possible
+(though not necessarily desirable)
+use in notions introduced earlier.
+</p></td></tr>
+</table>
+
+<p>We will illustrate these approaches 
+by briefly reviewing 
+some early developments in APL,
+and then explore a treatment of the fork in J.</p>
+
+<p>An adept in APL may be led to bemoan
+the difficulties of newer notions 
+when compared with such &ldquo;simple&rdquo;
+and &ldquo;natural&rdquo; notions 
+as the reduction in APL,
+without realizing that these APL notions
+were equally difficult when first encountered.
+One reason for the difficulty was the scarcity
+of interesting examples;
+reduction was first limited to sums
+and to products of vectors
+because the appropriate treatment
+of higher-rank arrays had not been developed,
+and because such fruitful notions
+as comparisons and maximum had not yet been
+adopted as dyadic functions.</p>
+
+<p>Maximum was first introduced in
+<a href="http://www.jsoftware.com/jwiki/Doc/A%20Programming%20Language">
+<i>A Programming Language</i></a>
+with a logical mask that limited 
+its application to a subset.
+It was only after development
+of compression<tt> </tt>(<tt>u/x</tt>)<tt> </tt>
+and a review of <i>its</i> potential applications
+that it was realized that it could be used together 
+with reduction by appropriate functions
+in order to provide the desired 
+masked application of maximum.</p>
+
+<p>Comparisons (such as<tt> &lt; </tt>and<tt> &gt;</tt>)<tt> </tt>
+were unavailable as dyadic functions 
+for a different reason:
+following the established convention in mathematics,
+a phrase such as<tt> x&lt;2 </tt>
+was treated as an <i>assertion</i>,
+not a truth function.</p>
+
+<p>The introduction of the comparisons
+and further dyadic functions
+made notions such as reduction and
+inner and outer product much easier
+to assimilate, not by <i>simplifying</i> them,
+but by making them ubiquitous.</p>
+
+<p>The fork was introduced rather late
+in the development of J,
+and we will begin by exploring its use
+in conjunction with just three other notions,
+name assignment, reduction, and table
+(outer product):</p>
+
+<pre>
+   a=. 1 2 4        NB. a is the list 1 2 4
+   +/a              NB. Reduction
+7
+   a */ a           NB. Times table
+1 2  4
+2 4  8
+4 8 16
+   
+   sum=. +/
+   sum a
+7
+   
+   mean=. sum % #
+   mean a
+2.33333
+   
+   (sum % #) a
+2.33333
+   sum % # a
+0.333333
+</pre>
+
+<p>A beginner might be perplexed
+by the fact that the last result
+differs from the preceding two,
+but this is no more mysterious
+than the differences among the following:</p>
+
+<pre>
+   b=. 3 + 5
+   b * 7
+56
+   (3 + 5) * 7
+56
+   3 + 5 * 7
+38
+</pre>
+
+<p>In short, parentheses determine
+the parsing (or <i>order of execution</i>)
+of a sentence:
+in the case of<tt> sum&nbsp;%&nbsp;#&nbsp;a</tt>&nbsp;,<tt> </tt>
+the monadic functions <i>number of</i>,
+<i>reciprocal</i>, and <i>sum</i>
+are applied in turn,
+whereas in<tt> (sum&nbsp;%&nbsp;#)&nbsp;a</tt>&nbsp;,<tt> </tt>
+the phrase within the parentheses
+must be executed first, 
+producing a function that is <i>then</i>
+applied to the list<tt> a</tt>&nbsp;.</p>
+
+<p>The definition of a function
+can be displayed in different forms,
+and the operator<tt> f. </tt>
+can be applied to <i>fix</i>
+its definition
+(replacing each component function 
+by its definition).
+For example:</p>
+
+<pre>
+   mean
+┌───┬─┬─┐
+│sum│%│#│
+└───┴─┴─┘
+   9!:3 (5)         NB. Set linear display
+   mean
+sum % #
+   mean f.
++/ % #
+</pre>
+
+<p>Further forks can be used
+to define functions 
+for <i>c</i>entering <i>o</i>n the <i>m</i>ean
+and for its square, as follows:</p>
+
+<pre>
+   com=. ] - mean   NB. ] is an identity
+   com a
+_1.33333 _0.333333 1.66667
+   sqcom=. [: *: com
+   sqcom a
+1.77778 0.111111 2.77778
+</pre>
+
+<p>The function<tt> [: </tt>is called <i>cap</i>;
+its effect is to apply the <i>monadic</i> case
+of the function following it in a fork
+(in this case, the square<tt> *:</tt>)&nbsp;.<tt> </tt>
+A definition of the standard deviation function
+can now be completed by applying<tt> mean </tt>
+and<tt> %: </tt>(square root):</p>
+
+<pre>
+   std=. [: %: [: mean sqcom
+   std a
+1.24722
+   std f.
+[: %: [: (+/ % #) [: *: ] - +/ % #
+</pre>
+
+<p>Such a definition might be rendered
+more readable to a beginner by assigning
+other names to some of the primitives,
+as follows:</p>
+
+<pre>
+   sqrt=. %:
+   sqr =. *:
+   id  =. ]
+   S=. [:sqrt [:mean [:sqr id-mean
+   (std = S) a      NB. A tautology
+1
+</pre>
+
+<p>Forks apply dyadically in an obvious way,
+and the simple dyadic 
+functions<tt> [ </tt>(left)
+and<tt> ] </tt>(right) prove surprisingly useful
+in dyadic forks:</p>
+
+<pre>
+   a (+ * -) b=. 4 3 2
+_15 _5 12
+   (a+b) * (a-b)
+_15 _5 12
+   
+   pr=. [ + [: % ]
+   3 pr 5           NB. Plus reciprocal
+3.2
+   pr/3 7 16        NB. Continued fraction
+3.14159
+   
+   7 # 1
+1 1 1 1 1 1 1
+
+   pr/7#1           NB. Approximate golden mean
+1.61538
+   
+   pr/\7#1          NB. Convergents
+1 2 1.5 1.66667 1.6 1.625 1.61538
+   
+   into=. ] % [
+   5 into 3
+0.6
+   3 % 5
+0.6
+   from=. ]-[
+   5 from 3
+_2
+</pre>
+
+<p>The definitions of<tt> from </tt>and<tt> into </tt>
+illustrate the fact that the fork<tt> ]f[ </tt>
+provides the &ldquo;commute&rdquo;
+of the function<tt> f</tt>&nbsp;.<tt> </tt>
+Commutation is important enough
+to warrant its own adverb (or <i>operator</i>),
+and the fork<tt> ]f[ </tt>
+serves to clarify its definition:</p>
+
+<pre>
+   5 %~ 3
+0.6
+   5 -~ 3
+_2
+</pre>
+
+<p>The dyadic case of the fork<tt> [:&nbsp;f&nbsp;g </tt>
+also suggests a useful operator,
+one that applies the monadic function<tt> f </tt>
+<i>at</i> the dyadic function<tt> g</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+   mad=. [: | -     NB. magnitude atop difference
+   a mad b
+3 1 2
+   
+   MAD=. | @: -     NB. The at adverb
+   a MAD b
+3 1 2
+</pre>
+
+<p><i>At</i> can be used in an alternate
+definition of<tt> std </tt>as follows:</p>
+
+<pre>
+   astd=. %: @: (+/%#) @: *: @: (]-+/%#)
+   (std=astd) a
+1
+</pre>
+
+<p>We will conclude this exploration
+of forks by choosing a conjunction
+(operator that takes two arguments)
+and attempting to represent it as a fork.</p>
+
+<p>The <i>bond</i> conjunction<tt> &amp; </tt>
+(also called <i>currying</i>)
+bonds a dyadic function with one of its arguments,
+to produce a monadic function.
+For example:</p>
+
+<pre>
+   cube=. ^&3       NB. Power with 3
+   cube a
+1 8 64
+   log=. 8&^.       NB. Base eight log
+   log a
+0 0.333333 0.666667
+   8 ^ log a
+1 2 4
+</pre>
+
+<p>The attempted fork<tt> CUBE=.&nbsp;]&nbsp;^&nbsp;3 </tt>
+fails for obvious reasons:</p>
+
+<pre>
+   CUBE=. ] ^ 3
+   CUBE
+20.0855
+</pre>
+
+<p>Each tine of a fork must be a <i>function</i>,
+and cannot be a <i>noun</i> such as the number three.
+However, it can be the <i>constant function</i>
+denoted by<tt> 3:</tt>&nbsp;,<tt> </tt>
+as illustrated below:</p>
+
+<pre>
+   CUBE=. ] ^ 3:
+   CUBE a
+1 8 64
+   LOG=. 8: ^. ]
+   LOG a
+0 0.333333 0.666667
+</pre>
+
+<p>Other early APL facilities might also be
+re-examinated in the light of later generalizations.
+For example, the fruitful <i>scan</i> of APL
+is commonly introduced by examples such as:</p>
+
+<pre>
+      +\1 2 3 4             ×\1 2 3 4
+1 3 6 10             1 2 6 24
+</pre>
+
+<p>The same symbol is used to denote 
+a scan adverb in J, except that
+it applies to a <i>monadic</i> function
+(such as<tt> sum=. +/</tt>)
+so that the preceding examples
+would appear as:</p>
+
+<pre>
+   +/\1 2 3 4           */\1 2 3 4
+1 3 6 10             1 2 6 24
+</pre>
+
+<p>Monadic functions such as 
+<i>box</i><tt> </tt>(<tt><</tt>)<tt> </tt>
+can be used to good effect 
+to clarify the behaviour of scan:</p>
+
+<pre>
+   <\1 2 3 4
+┌─┬───┬─────┬───────┐
+│1│1 2│1 2 3│1 2 3 4│
+└─┴───┴─────┴───────┘
+   <\.1 2 3 4       NB. Suffix scan
+┌───────┬─────┬───┬─┐
+│1 2 3 4│2 3 4│3 4│4│
+└───────┴─────┴───┴─┘
+   1 <\. 1 2 3 4    NB. Outfix scan
+┌─────┬─────┬─────┬─────┐
+│2 3 4│1 3 4│1 2 4│1 2 3│
+└─────┴─────┴─────┴─────┘
+
+   ] m=. 4 4 $ 'abcdefghijklmnop'
+abcd
+efgh
+ijkl
+mnop
+
+   box=. <"2        NB. Box tables
+   toxot=. 1&(|:\.)"2
+   box toxot m
+┌───┬───┬───┬───┐
+│eim│aim│aem│aei│
+│fjn│bjn│bfn│bfj│
+│gko│cko│cgo│cgk│
+│hlp│dlp│dhp│dhl│
+└───┴───┴───┴───┘
+</pre>
+
+<p>The function<tt> toxot </tt>
+gives the transposed<tt> </tt>(<tt>|:</tt>)<tt> </tt>
+outfixes of a table (rank 2) argument.
+Applied twice, it yields all minors 
+of its matrix argument:</p>
+
+<pre>
+   minors=. toxot^:2
+   $minors m
+4 4 3 3
+   <"2 minors m     NB. Box minors
+┌───┬───┬───┬───┐
+│fgh│egh│efh│efg│
+│jkl│ikl│ijl│ijk│
+│nop│mop│mnp│mno│
+├───┼───┼───┼───┤
+│bcd│acd│abd│abc│
+│jkl│ikl│ijl│ijk│
+│nop│mop│mnp│mno│
+├───┼───┼───┼───┤
+│bcd│acd│abd│abc│
+│fgh│egh│efh│efg│
+│nop│mop│mnp│mno│
+├───┼───┼───┼───┤
+│bcd│acd│abd│abc│
+│fgh│egh│efh│efg│
+│jkl│ikl│ijl│ijk│
+└───┴───┴───┴───┘
+</pre>
+
+<p>Applied twice,<tt> minors </tt>gives
+the minors of the minors, best displayed
+as<tt> box^:2&nbsp;minors^:2 m</tt>&nbsp;.</p>
+
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared in APL Quote-Quad, Volume 24, Number 3, 1994-03.</p>
+ 
+<p><script src="https://www.jsoftware.com/papers/apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2009-11-07 22:05</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2013-07-23 22:20</font></td></tr>
+</table>
+
+</td></tr></table>
+
+<br><br><br>
+</body>
+</html>

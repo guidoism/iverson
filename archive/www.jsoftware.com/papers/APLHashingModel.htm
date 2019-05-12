@@ -1,0 +1,191 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>APL Hashing Model</title>
+<link href="https://www.jsoftware.com/papers/adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>APL and J Hashing Models</font><br>
+<b>Roger Hui</b>
+<br>&nbsp;</p>
+
+</td></tr></table>
+
+<table align=center border=1 cellspacing=0 cellpadding=18><tr><td valign=top>
+<pre>
+ z←x xiy y;⎕io;h;hf;i;j;m;n;q
+⍝ model of x⍳y using hashing; written to be easily translated into C
+
+ ⎕io←0
+ hf←{123457×⍵}                            ⍝ hash function
+ n←≢y
+ m←≢x
+ q←2*1+⌈2⍟m                               ⍝ size of hash table
+ h←q⍴m                                    ⍝ hash table; m means "free"
+ z←n⍴m                                    ⍝ initialize to "not found"
+
+ :For i :In ⍳m                            ⍝ index for each x
+     j←q|hf x[i]                          ⍝ index into hash table
+     :While m>h[j] ⋄ :AndIf x[h[j]]≠x[i]  ⍝ i.e. stop on finding m or an equal entry
+         j←q|1+j                          ⍝ the next hash table entry
+     :End
+     :If m=h[j] ⋄ h[j]←i ⋄ :End           ⍝ new hash entry
+ :End
+
+ :For i :In ⍳n                            ⍝ index for each y
+     j←q|hf y[i]                          ⍝ where to start looking in hash table
+     :While m>h[j] ⋄ :AndIf x[h[j]]≠y[i]  ⍝ i.e. stop on finding m or an equal entry
+         j←q|1+j                          ⍝ the next hash table entry
+     :End
+     z[i]←h[j]                            ⍝ here, either m=h[j] or x[h[j]]=y[i]
+ :End
+</pre>
+</td><td valign=top>
+<pre>
+xiy=: 4 : 0
+NB. model of x i. y using hashing; written to be easily translated into C 
+
+
+ hf=.123457&*                                  NB. hash function
+ n=.#y  
+ m=.#x
+ q=.2^1+>.2^.m                                 NB. size of hash table
+ h=.q$m                                        NB. hash table; m means "free"
+ z=.n$m                                        NB. initialize to "not found"
+
+ for_i. i.m do.                                NB. index for each x
+     j=.q|hf i{x                               NB. index into hash table
+     while. (m>j{h)*.((j{h){ ::0:x)~:i{x do.   NB. i.e. stop on finding m or an equal entry
+         j=.q|1+j                              NB. the next hash table entry
+     end.
+     if. m=j{h do. h=. i j}h end.              NB. new hash entry
+ end.
+
+ for_i. i.n do.                                NB. index for each y
+     j=.q|hf i{y                               NB. where to start looking in hash table
+     while. (m>j{h)*.((j{h){ ::0:x)~:i{y do.   NB. i.e. stop on finding m or an equal entry
+         j=.q|1+j                              NB. the next hash table entry
+     end.
+     z=. (j{h) i}z                             NB. here, either m=j{h or ((j{h){x)=i{y
+ end. 
+
+ z
+)
+</pre>
+</td></tr>
+<tr><td valign=top><pre>
+
+      x←14 16 8 6 5 8 6 16 16 19 13 12 3 1 9 12 17
+      y←10 13 6 7 18 21 9 3 21 15 17 16 3 13 3 3 1 3 10 6
+
+      x ⍳ y
+17 10 3 17 17 17 14 12 17 17 16 1 12 10 12 12 13 12 17 3
+      x xiy y
+17 10 3 17 17 17 14 12 17 17 16 1 12 10 12 12 13 12 17 3
+      x (⍳ ≡ xiy) y
+1
+
+      x ⍳ x
+0 1 2 3 4 2 3 1 1 9 10 11 12 13 14 11 16
+      x xiy x
+0 1 2 3 4 2 3 1 1 9 10 11 12 13 14 11 16
+      x (⍳ ≡ xiy) x
+1
+
+</pre></td>
+<td valign=top><pre>
+
+   x=: 14 16 8 6 5 8 6 16 16 19 13 12 3 1 9 12 17
+   y=: 10 13 6 7 18 21 9 3 21 15 17 16 3 13 3 3 1 3 10 6
+
+   x i. y
+17 10 3 17 17 17 14 12 17 17 16 1 12 10 12 12 13 12 17 3
+   x xiy y
+17 10 3 17 17 17 14 12 17 17 16 1 12 10 12 12 13 12 17 3
+   x (i. -: xiy) y
+1
+   
+   x i. x
+0 1 2 3 4 2 3 1 1 9 10 11 12 13 14 11 16
+   x xiy x
+0 1 2 3 4 2 3 1 1 9 10 11 12 13 14 11 16
+   x (i. -: xiy) x
+1
+
+</pre></td></tr>
+<tr><td valign=top><pre>
+ z←x xiySRloop y;⎕io;i;max;min;n;t
+⍝ small-range version of x⍳y; written to be easily translated into C
+ ⎕io←0
+ n←≢x
+ min←⌊/x,y
+ max←⌈/x,y
+ t←(1+max-min)⍴n                              ⍝ initialize table of indices
+ z←(≢y)⍴0                                     ⍝ eventual result
+ :For i :In ⌽⍳n ⋄ t[x[i]-min]←i    ⋄ :EndFor  ⍝ populate table of indices
+ :For i :In ⍳≢y ⋄ z[i]←t[y[i]-min] ⋄ :EndFor  ⍝ read off index for each item of y
+</pre></td><td valign=top><pre>
+xiySRloop=: 4 : 0
+NB. small-range version of x⍳y; written to be easily translated into C
+
+ n=. #x
+ min=. <./x,y
+ max=. >./x,y
+ t=. (1+max-min)$n                            NB. initialize table of indices
+ z=. (#y)$0                                   NB. eventual result
+ for_i. i.-n do. t=. i ((i{x)-min)}t     end. NB. populate table of indices
+ for_i. i.#y do. z=. (((i{y)-min){t) i}z end. NB. read off index for each item of y
+)
+</pre></td></tr>
+</table>
+
+<table width=520 align=center><tr><td>
+
+<br><hr><br>
+
+<table>
+<tr><td><tt>{}</tt></td>      <td>dfn (direct function)</td></tr>
+<tr><td><tt>⍵</tt></td>       <td>right argument in a dfn</td></tr>
+<tr><td><tt>←</tt></td>       <td>assignment (<tt>=. </tt>and<tt> =:</tt>)</td></tr>
+<tr><td><tt>x[y]</tt></td>    <td><tt>x </tt>indexed by<tt> y</tt></td></tr>
+<tr><td><tt>x[y]←z</tt></td>  <td>indexed assignment</td></tr>
+<tr><td><tt>+</tt></td>       <td>plus and conjugate</td></tr>
+<tr><td><tt>×</tt></td>       <td>times and signum (<tt>*</tt>)</td></tr>
+<tr><td><tt>*</tt></td>       <td>power and exponential (<tt>^</tt>)</td></tr>
+<tr><td><tt>⍟</tt></td>       <td>log (<tt>^.</tt>)</td></tr>
+<tr><td><tt>|</tt></td>       <td>residue and magnitude</td></tr>
+<tr><td><tt>⌈</tt></td>       <td>maximum and ceiling (<tt>>.</tt>)</td></tr>
+<tr><td><tt>=</tt></td>       <td>equal</td></tr>
+<tr><td><tt>≠</tt></td>       <td>not equal (<tt>~:</tt>)</td></tr>
+<tr><td><tt>></tt></td>       <td>greater than</td></tr>
+<tr><td><tt>≡</tt></td>       <td>match (<tt>-:</tt>)</td></tr>
+<tr><td><tt>≢</tt></td>       <td>not match and tally (<tt>#</tt>)</td></tr>
+<tr><td><tt>⍳</tt></td>       <td>index-of and integers (<tt>i.</tt>)</td></tr>
+<tr><td><tt>⍴</tt></td>       <td>reshape and shape (<tt>$</tt>)</td></tr>
+<tr><td><tt>⌽</tt></td>       <td>reverse and rotate (<tt>|.</tt>)</td></tr>
+<tr><td><tt>⍝</tt></td>       <td>comment (<tt>NB.</tt>)</td></tr>
+<tr><td><tt>⋄</tt></td>       <td>statement separator</td></tr>
+<tr><td><tt>⎕io</tt></td>     <td>index origin</td></tr>
+<tr><td><tt>:For </tt>etc. &nbsp;</td>     <td>control word</td></tr>
+</table>
+
+<br><hr>
+<font size=-1>
+<p><script src="https://www.jsoftware.com/papers/apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</td><td><font size="-1">2014-07-31 08:35</td></tr>
+<tr><td><font size="-1">updated:</td><td><font size="-1">2014-09-04 22:55</td></tr>
+</table>
+
+</td></tr></table>
+<br><br><br><br><br><br><br><br><br>
+</body>
+</html>

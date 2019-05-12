@@ -1,0 +1,2463 @@
+﻿<html>
+<head><title>Formalism in Programming Languages</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Formalism in Programming Languages</font><br><br>
+<b>Kenneth E. Iverson<br>
+International Business Machines Corporation
+<br>Yorktown Heights, New York</b></p>
+
+
+<p><font size=-1>Received July, 1963. 
+Presented at a Working Conference on
+Mechanical Language Structures, Princeton, N.J., August 1963,
+sponsored by the Association for Computing Machinery, the
+Institute for Defense Analyses, and the Business Equipment
+Manufacturers Association. 
+This work was done at Harvard University
+while the author was a visiting lecturer, 
+February through June, 1963.</font></p>
+
+<br><hr>
+
+
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>Although the question of equivalences 
+between algorithms expressed 
+in the same or different languages 
+has received some attention in the literature, 
+the more practical question of formal identities 
+among statements in a single language 
+has received virtually none. 
+The importance of such identities 
+in theoretical work is fairly obvious. 
+The present paper will be addressed 
+primarily to the practical
+implications for a compiler.</p>
+
+<p>The formal identities can be incorporated 
+directly into a compiler, 
+or can alternatively be used by a programmer 
+to derive a more efficient equivalent 
+of a program specified by an analyst. 
+The identities cited include 
+(1) <i>dualities</i> which permit the inclusion 
+of only one of a dual pair as a basic operator, 
+(2) <i>partitioning identities</i> which permit 
+the automatic allocation of limited 
+fast-access storage in operations on arrays, 
+(3) <i>permutation identities</i> 
+which permit the adoption of a processing sequence 
+suited to the particular representation used 
+(e.g., row list or column list of a matrix), 
+(4) <i>general associativity</i> 
+and <i>distributivity identities</i> for double operators 
+(determined as a function of the properties 
+of the basic operators) 
+which permit efficient reordering of operations, 
+(5) <i>transposition identities</i>, and
+(6) the automatic extension of the appropriate identities
+to any ad hoc operations (i.e., subroutines or procedures)
+defined by any user of the compiler.</p>
+
+<p>The discussion will be based upon a programming language
+which has been presented in full elsewhere 
+<acronym title="Iverson, Kenneth E., 
+A Programming Language. Wiley, 1962.">[1]</acronym>. 
+However, the relevant aspects of the language will first be
+summarized for reference.</p>
+
+<p>The problems of transliteration and syntax 
+which commonly dominate discussions of language 
+will here be subordinated as follows. 
+The symbols employed will permit 
+the immediate determination 
+of the <i>class</i> to which each belongs; 
+thus literals are denoted by roman type, 
+variables are denoted by italics 
+(lowercase, lowercase bold, and uppercase bold 
+for scalar, vector and matrix, respectively),
+and operators are denoted by distinct 
+(usually nonalphabetic) symbols. 
+The problems of transliteration 
+(i.e., mapping the set of symbols 
+employed onto the smaller set provided in a computer) 
+and of mapping positional information
+(such as subscripts and superscripts) 
+onto a linear representation therefore can, 
+and will, be subordinated to questions 
+of the structure of an adequate language.
+<br>&nbsp;</p>
+
+
+
+
+<a name="lang"></a>
+<p><b>The Language</b><sup><a href="FPL1.htm#notea">[a]</a></sup></p>
+
+<table>
+<tr><td valign=top>1.<sup>&nbsp;</sup></td><td>&nbsp;</td><td>
+<p>The left arrow &ldquo;&larr;&rdquo; denotes 
+&ldquo;specification&rdquo;, 
+and each<sup><a href="FPL1.htm#noteb">[b]</a></sup> statement in the language 
+is of the form
+
+<table><td width=31>&nbsp;</td><td>
+<i>x</i> &larr; <tt>⍺</tt>
+</td></tr></table>
+
+where <i>x</i> is a variable and <tt>⍺</tt> is some function.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+The application of any unary operator 
+&Omicron; to a scalar
+argument <i>x</i> is denoted 
+by <nobr>&Omicron;<i>x</i>,</nobr> 
+and the application of a
+binary operator &Omicron; to the arguments <i>x</i>, <i>y</i> 
+is denoted by <i>x</i>&Omicron;<i>y</i>. 
+The set of basic operators and symbols in shown in
+Table 1. 
+The use of the same symbol for a binary and a
+unary operator (e.g., <i>x</i><tt>⌊</tt><i>y</i> 
+for min(<i>x</i>,&nbsp;<t>y</i>) and <tt>⌊</tt><i>x</i> 
+for largest integer not exceeding <i>x</i>) 
+produces no ambiguity and does conserve symbols.</p>
+
+<p>As shown in Table 1, 
+any relation is treated as an operator
+(denoted by the usual symbol for the relation) having
+the range <i>zero</i> and <i>one</i> (logical variables). 
+Thus, for integers <i>i</i> and <i>j</i>, 
+the operator &ldquo;=&rdquo; 
+is equivalent to the Kronecker delta.</p>
+</td></tr>
+
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+The <i>i</i>th component of a vector <b><i>x</i></b> 
+is denoted by <b><i>x</i></b><sub><i>i</i></sub>,
+the <i>i</i>th row vector of a matrix <b><i>M</i></b> 
+by <b><i>M</i></b><sup>&nbsp;<i>i</i></sup>, 
+the <i>j</i>th column
+vector by <b><i>M</i></b><sub><i>j</i></sub>, 
+and the (<i>i</i>, <i>j</i>)th element by 
+<b><i>M</i></b><sub><i>j</i></sub><sup><i>i</i></sup>. 
+A vector may be represented by a list of its components 
+separated by commas. Thus, the statement
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>x</i></b> &larr; 1,2,3,4
+</td></tr></table>
+
+specifies <b><i>x</i></b> as a vector 
+of dimension 4 comprising the first
+four positive integers.
+In particular, catenation of two vectors
+<b><i>x</i></b> and <b><i>y</i></b> is denoted by
+<b><i>x</i></b>,<b><i>y</i></b>.
+<br>&nbsp;
+</td></tr>
+
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+Operators are extended component-by-component to
+arrays. Thus if &Omicron; is any operator 
+(unary or binary as appropriate),<sup><a href="FPL1.htm#notec">[c]</a></sup>
+
+<table><tr><td width=31>&nbsp;</td>
+ <td><b><i>r</i></b> &larr; &Omicron;<b><i>x</i></b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b><i>r</i></b><sub><i>i</i></sub> &larr; &Omicron;<b><i>x</i></b><sub><i>i</sub></td></tr>
+<tr><td>&nbsp;</td>
+ <td><b><i>r</i></b> &larr; <b><i>x</i></b>&Omicron;<b><i>y</i></b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b><i>r</i></b><sub><i>i</i></sub> &larr; <b><i>x</i></b><sub><i>i</i></sub>&Omicron;<b><i>y</i></b><sub><i>i</i></sub></td></tr>
+<tr><td>&nbsp;</td>
+ <td><b><i>R</i></b> &larr; &Omicron;<b><i>N</i></b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b><i>R</i></b><sub><i>j</i></sub><sup><i>i</i></sup> &larr; 
+  &Omicron;<b><i>M</i></b><sub><i>j</i></sub><sup><i>i</i></sup></td></tr>
+<tr><td>&nbsp;</td>
+ <td><b><i>R</i></b> &larr; <b><i>M</i></b>&Omicron;<b><i>N</i></b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b><i>R</i></b><sub><i>j</i></sub><sup><i>i</i></sup> &larr; 
+  <b><i>M</i></b><sub><i>j</i></sub><sup><i>i</i></sup>&Omicron;<b><i>N</i></b><sub><i>j</i></sub><sup><i>i</i></sup>.</td></tr>
+</table>
+<br>
+</td></tr>
+
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+The order of execution of operations is determined by
+parentheses in the usual way and, 
+except for intervening parentheses, 
+operations are executed in order from 
+<i>right to left</i>, 
+with no priorities accorded to multiplication 
+or other operators.
+<br>&nbsp;
+</td></tr>
+
+<tr><td valign=top>6.</td><td>&nbsp;</td><td>
+Certain unary operators are defined upon vectors
+and matrices rather than upon scalars. 
+These appear in Table 2 
+and include the <i>dimension</i> operators 
+<i>&nu;</i> and <i>&mu;</i> 
+as well as the <i>transposition</i> operators 
+<nobr><img src="APLimg/owe.bmp">,</nobr>
+<nobr><img src="APLimg/ons.bmp">,</nobr>
+<nobr><img src="APLimg/oslash.bmp">,</nobr>
+<nobr><img src="APLimg/obackslash.bmp">,</nobr>
+in which the symbols indicate 
+the axis of transposition of a matrix.
+<br>&nbsp;
+</td></tr>
+
+<tr><td valign=top>7.</td><td>&nbsp;</td><td>
+It is convenient to provide symbols for certain constant
+vectors and matrices as shown in Table 3. 
+The parenthetic expression indicating the dimension 
+of each may be elided when it is otherwise determined 
+by conformability with some known vector.
+<br>&nbsp;
+</td></tr>
+
+<tr><td valign=top>8.<sup>&nbsp;</sup></td><td>&nbsp;</td><td>
+If <i>&alpha;</i>(<i>i</i>) denotes 
+one of a family of variables 
+(e.g, scalars <i>x</i><sup><i>i</i></sup> 
+or <b><i>x</i></b><sub><i>i</i></sub>, 
+vectors <b><i>x</i></b><sup><i>i</i></sup> 
+or <b><i>X</i></b><sup>&nbsp;<i>i</i></sup> or 
+<b><i>X</i></b><sub><i>i</i></sub>, 
+or matrices <sup><i>i</i></sup><b><i>X</i></b>)
+for <i>i</i> belonging to some index set <b><i>i</i></b>, 
+and if &Omicron; is a binary operator,
+then for any set <b><i>s</i></b> &sube; <b><i>i</i></b>,
+
+<table><tr><td width=31>&nbsp;</td><td>
+&Omicron;<sup><b><i>s</i></b></sup><sub><i>i</i></sub>/<i>&alpha;</i>(<i>i</i>)
+&harr; <i>&alpha;</i>(<b><i>s</i></b><sub>1</sub>) &Omicron;
+<i>&alpha;</i>(<b><i>s</i></b><sub>2</sub>) &Omicron; &#133; &Omicron; 
+<i>&alpha;</i>(<b><i>s</i></b><sub><i>&nu;</i><b><i>s</i></b></sub>).
+</td></tr></table>
+
+If
+
+<table><tr><td width=31>&nbsp;</td><td>
+<i>&alpha;</i>(<i>i</i>) = <b><i>x</i></b><sub><i>i</i></sub> and
+<b><i>s</i></b> = <tt><b>⍳</b></tt><sup>1</sup>(<i>&nu;</i><b><i>x</i></b>),
+</td></tr></table>
+
+or if
+
+<table><tr><td width=31>&nbsp;</td><td>
+<i>&alpha;</i>(<i>i</i>) = <b><i>X</i></b><sub><i>i</i></sub> and
+<b><i>s</i></b> = <tt><b>⍳</b></tt><sup>1</sup>(<i>&nu;</i><b><i>X</i></b>),
+</td></tr></table>
+
+<p>then <b><i>s</i></b> and <i>i</i> may he elided. Thus,</p>
+
+<table><tr><td width=31>&nbsp;</td>
+ <td>+/<b><i>x</i></b></td><td>&nbsp;=&nbsp;</td>
+ <td><b><i>x</i></b><sub>1</sub> + <b><i>x</i></b><sub>2</sub> + &#133; + 
+  <b><i>x</i></b><sub><i>&nu;</i><b><i>x</i></b></sub>,</td></tr>
+<tr><td>&nbsp;</td>
+ <td>&and;/<b><i>x</i></b></td><td>&nbsp;=&nbsp;</td>
+ <td><b><i>x</i></b><sub>1</sub> &and; <b><i>x</i></b><sub>2</sub> &and; &#133; &and; 
+  <b><i>x</i></b><sub><i>&nu;</i><b><i>x</i></b></sub>,</td></tr>
+<tr><td>&nbsp;</td>
+ <td>+/<b><i>X</i></b></td><td>&nbsp;=&nbsp;</td>
+ <td><b><i>X</i></b><sub>1</sub> + <b><i>X</i></b><sub>2</sub> + &#133; + 
+  <b><i>X</i></b><sub><i>&nu;</i><b><i>X</i></b></sub>, etc.</td></tr>
+</table>
+
+<p>If <i>&alpha;</i>(<i>i</i>) = <b><i>X</i></b><sup>&nbsp;<i>i</i></sup> 
+and <b><i>s</i></b> = 
+<tt><b>⍳</b></tt><sup>1</sup>(<i>&mu;</i><b><i>X</i></b>), 
+then the <b><i>s</i></b> and <b><i>i</i></b> may be
+elided provided that a second slash be added to distinguish
+this case from the preceding one. Thus,
+
+<table><tr><td width=31>&nbsp;</td>
+ <td>&Omicron;//<b><i>X</i></b> &nbsp;=&nbsp; 
+  <b><i>X</i></b><sup>1</sup> &Omicron; <b><i>X</i></b><sup>2</sup> &Omicron; &#133; &Omicron; 
+  <b><i>X</i></b><sup><i>&mu;</i><b><i>X</i></b></sup>.
+</td></tr></table>
+<br></p>
+
+<tr><td valign=top>9.<sup>&nbsp;</sup></td><td>&nbsp;</td><td>
+If <i>&alpha;</i> is any argument and &Omicron; is any binary operator,
+then &Omicron;<sup><i>n</i></sup>/<i>&alpha;</i> 
+denotes the <i>n</i>th power of <i>&alpha;</i> with respect to &Omicron;.
+Formally,
+
+<table><tr><td width=31>&nbsp;</td><td>
+&Omicron;<sup><i>n</i></sup>/<i>&alpha;</i> &harr;
+<i>&alpha;</i> &Omicron; <i>&alpha;</i> &Omicron; &#133; &Omicron; <i>&alpha;</i> 
+(to <i>n</i> terms).
+</td></tr></table>
+
+Hence &Omicron;<sup>1</sup>/<i>&alpha;</i> = <i>&alpha;</i>, 
+&Omicron;<sup>&ndash;1</sup>/<i>&alpha;</i> is the inverse 
+of <i>&alpha;</i> with respect to &Omicron;, 
+and &Omicron;<sup>&ndash;1</sup>/<i>&alpha;</i> 
+is the identity element of the operator &Omicron;
+(if they exist).
+<br>&nbsp;
+</td></tr>
+
+<tr><td valign=top>10.</td><td>&nbsp;</td><td>
+If &Omicron;<sub>1</sub> and &Omicron;<sub>2</sub> are binary operators, 
+then the <i>matrix</i> product 
+<nobr><b><i>A</i></b> <img align=top src="APLimg/circle1circle2.bmp"> <b><i>B</i></b></nobr> 
+is a matrix of dimension 
+<nobr><i>&mu;</i><b><i>A</i></b> &times; <i>&nu;</i><b><i>B</i></b></nobr> defined by:</p>
+
+<table><tr><td width=31>&nbsp;</td><td>
+(<b><i>A</i></b> <img src="APLimg/circle1circle2.bmp"> <b><i>B</i></b>)<sub><i>j</i></sub><sup><i>i</i></sup> =
+&Omicron;<sub>1</sub> / <b><i>A</i></b><sup><i>i</i></sup> &Omicron;<sub>2</sub> 
+<b><i>B</i></b><sub><i>j</i></sub>.
+</td></tr></table>
+
+<p>In particular, 
+<nobr><b><i>A</i></b> <img src="APLimg/plustimes.bmp"> <b><i>B</i></b></nobr>  
+denotes the ordinary matrix product.
+Moreover, the pair 
+<nobr>(<img align=top src="APLimg/circle1circle2.bmp">)</nobr>
+behaves as a binary operator on 
+<b><i>A</i></b> and <b><i>B</i></b> 
+and hence may be treated as a binary operator.
+For example, applying the notation of part 9, 
+<nobr>(<img src="APLimg/plustimes.bmp">)<sup>&ndash;1</sup>/<b><i>A</i></b></nobr>
+denotes the ordinary inverse of <b><i>A</i></b>.</p>
+
+<p>If the post-multiplier is a vector <b><i>x</i></b> 
+(i.e., a matrix of one column), 
+the usual conventions of matrix algebra are applied:
+
+<table><tr><td width=31>&nbsp;</td><td>
+(<b><i>A</i></b> <img src="APLimg/plustimes.bmp"> <b><i>x</i></b>)<sub><i>i</i></sub> =
+<b><i>A</i></b><sup>&nbsp;<i>i</i></sup> <img src="APLimg/plustimes.bmp"> <b><i>x</i></b>
+= +/ <b><i>A</i></b><sup>&nbsp;<i>i</i></sup> &times; <b><i>x</i></b>.
+</td></tr></table>
+
+Similarly,
+<table><tr><td width=31>&nbsp;</td><td>
+(<b><i>x</i></b> <img src="APLimg/plustimes.bmp"> <b><i>B</i></b>)<sub><i>j</i></sub> =
+<b><i>x</i></b> <img src="APLimg/plustimes.bmp"> <b><i>B</i></b><sub><i>j</i></sub> ,
+and  
+<b><i>x</i></b> <img src="APLimg/plustimes.bmp"> <b><i>y</i></b> 
+= +/ <b><i>x</i></b> &times; <b><i>y</i></b>.
+</td></tr></table>
+<br>
+</td></tr>
+
+<tr><td valign=top>11.</td><td>&nbsp;</td><td>
+The <i>outer product</i> of two vectors 
+<b><i>x</i></b> and <b><i>y</i></b> is denoted by 
+<nobr><b><i>x</i></b> <img src="APLimg/joto.bmp"> <b><i>y</i></b></nobr>
+and defined 
+as the matrix <b><i>M</i></b> of dimension
+<nobr><i>&nu;</i><b><i>x</i></b> &times; 
+<i>&nu;</i><b><i>y</i></b></nobr> 
+such that 
+<nobr><b><i>M</i></b><sub><i>j</i></sub><sup><i>i</i></sup> = 
+<b><i>x</i></b><sub><i>i</i></sub>&Omicron;<b><i>y</i></b><sub><i>j</i></sub>.</nobr>
+<br>&nbsp;
+</td></tr>
+
+<tr><td valign=top>12.</td><td>&nbsp;</td><td>
+Deletion from a vector <b><i>x</i></b> 
+of those components corresponding
+to the zeros of a logical vector <b><i>u</i></b> 
+of like dimension is called <i>compression</i> and is denoted 
+by <b><i>u</i></b>/<b><i>x</i></b>. 
+Compression is extended to matrices both row-by-row 
+and column-by-column as follows:
+
+<table>
+<tr><td width=31>&nbsp;</td>
+ <td><b><i>Y</i></b> &larr; <b><i>u</i></b>/<b><i>X</i></b> <sup>&nbsp;</sup></td>
+ <td>&nbsp; &harr; <sup>&nbsp;</sup></td>
+ <td><b><i>Y</i></b><sup>&nbsp;<i>i</i></sup> = 
+  <b><i>u</i></b>/<b><i>X</i></b><sup>&nbsp;<i>i</i></sup></td></tr>.
+<tr><td>&nbsp;</td>
+ <td><b><i>Y</i></b> &larr; <b><i>u</i></b>//<b><i>X</i></b></td>
+ <td>&nbsp; &harr;</td>
+ <td><b><i>Y</i></b><sub><i>j</i></sub> = 
+  <b><i>u</i></b>/<b><i>X</i></b><sub><i>j</i></sup>.</td></tr>
+</table>
+<br>
+</td></tr>
+
+<tr><td valign=top>11.</td><td>&nbsp;</td><td>
+If <b><i>p</i></b> is any vector 
+containing only indices of <b><i>x</i></b>, 
+then <b><i>x</i></b><sub><b><i>p</i></b></sub> is defined as follows:
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>y</i></b> &larr; <b><i>x</i></b><sub><b><i>p</i></b></sub> 
+&nbsp;&harr;&nbsp; 
+<b><i>y</i></b><sub><i>i</i></sub> = 
+<b><i>x</i></b><sub><b><i>p</i></b><sub><i>i</i></sub></sub>, 
+<i>i</i> &epsilon; <tt><b>⍳</b></tt><sup>1</sup>(<i>&nu;</i><b><i>p</i></b>) .
+</td></tr></table>
+
+If <b><i>p</i></b> is a <i>permutation vector</i> 
+(containing each of its own indices once) and if 
+<nobr><i>&nu;</i><b><i>p</i></b> = <i>&nu;</i><b><i>x</i></b>,</nobr> 
+then <b><i>x</i></b><sub><b><i>p</i></b></sub> 
+is a <i>permutation</i> of <b><i>x</i></b>.<br><br>
+
+Permutation is extended to matrices by row and by
+column as follows:
+
+<table>
+<tr><td width=31>&nbsp;</td>
+ <td><b><i>Y</i></b> &larr; <b><i>X</i></b><sub><b><i>p</i></b></sub></td>
+ <td>&nbsp; &harr; <sup>&nbsp;</sup></td>
+ <td><b><i>Y</i></b><sup>&nbsp;<i>i</i></sup> = 
+  (<b><i>X</i></b><sup>&nbsp;<i>i</i></sup>)<sub><b><i>p</i></b></sub></td></tr>
+<tr><td>&nbsp;</td>
+ <td><b><i>Y</i></b> &larr; <b><i>X</i></b><sup><b>&nbsp;<i>p</i></b></sup></td>
+ <td>&nbsp; &harr; <sup>&nbsp;</sup></td>
+ <td><b><i>Y</i></b><sub><i>j</i></sub> = 
+  (<b><i>X</i></b><sub><i>j</i></sub>)<sub><b><i>p</i></b></sub>.</td></tr>
+</table>
+<br>
+</td></tr>
+
+<tr><td valign=top>12.</td><td>&nbsp;</td><td>
+<i>Left rotation</i> is a special case of permutation denoted
+by <nobr><i>k</i> &uarr; <b><i>x</i></b></nobr> and defined by
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>y</i></b> &larr; <i>k</i> &uarr; <b><i>x</i></b> 
+&nbsp; &harr; &nbsp; 
+<b><i>y</i></b><sub><i>i</i></sub> = 
+<b><i>x</i></b><sub>(<i>&nu;</i><b><i>x</i></b>)|<i>k</i>+<i>i</i></sub>.
+</td></tr></table>
+
+Right rotation is denoted by 
+<nobr><i>k</i> &darr; <b><i>x</i></b></nobr> 
+and is defined analogously.<br><br>
+
+A <i>noncyclic</i> left rotation (<i>left shift</i>) denoted 
+by <img src="APLimg/uarr0.bmp"> is defined as follows:
+
+<table><tr><td width=31>&nbsp;</td><td>
+<i>k</i> <img src="APLimg/uarr0.bmp"> <b><i>x</i></b> 
+&nbsp; &harr; &nbsp; 
+(~<tt><b>⍵</b></tt><sup>&nbsp;<i>k</i></sup>) &times;
+<i>k</i> &uarr; <b><i>x</i></b>.
+</td></tr></table>
+
+(The zero attached to the shaft of the arrow suggests that
+zeros are drawn into the &ldquo;evacuated&rdquo; positions). 
+Similarly,
+
+<table><tr><td width=31>&nbsp;</td><td>
+<i>k</i> <img src="APLimg/darr0.bmp"> <b><i>x</i></b> 
+&nbsp; &harr; &nbsp; 
+(~<tt><b>⍺</b></tt><sup>&nbsp;<i>k</i></sup>) &times;
+<i>k</i> &darr; <b><i>x</i></b>.<br>&nbsp;
+</td></tr></table>
+
+Rotations are extended to matrices in the usual way, a
+doubled symbol (e.g., <img src="APLimg/uarr.bmp">) 
+denoting rotation of <i>columns</i>.
+For example,
+
+<table><tr><td width=31>&nbsp;</td><td>
+(<b><i>k</i></b> <img src="APLimg/uarr0.bmp"> <b><i>X</i></b>)<sup>&nbsp;<i>i</i></sup>
+&nbsp; = &nbsp; 
+<b><i>k</i></b><sub><i>i</i></sub> <img src="APLimg/uarr0.bmp"> 
+<b><i>X</i></b><sup>&nbsp;<i>i</i></sup>,
+</td></tr></table>
+
+and <nobr>(<i>k</i><tt><b>∊</b></tt>) <img src="APLimg/uuarr0.bmp">
+<img src="APLimg/quadbackslash.bmp"></nobr> is a matrix with <i>ones</i> 
+on the <i>k</i>th superdiagonal.<sup><a href="FPL1.htm#noted">[d]</a></sup>
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>13.</td><td>&nbsp;</td><td>
+Any new operator defined (e.g., by some algorithm,
+usually referred to as a <i>subroutine</i>) is to be denoted in
+accordance with Definition (2) and is extended to arrays
+exactly as any of the basic operators defined in the language.
+For example, if <i>x</i>&nbsp;<i>gcd</i>&nbsp;<i>y</i>
+(or, better, <nobr><i>x</i><img src="APLimg/gcd.bmp"><i>y</i></nobr>) 
+is used to denote the greatest common divisor 
+of integers <i>x</i> and <i>y</i>,
+then <nobr><b><i>x</i></b><img src="APLimg/gcd.bmp"><b><i>y</i></b>,</nobr> 
+<nobr><img src="APLimg/gcd.bmp">/<b><i>x</i></b>,</nobr> 
+and <nobr><b><i>X</i></b><img src="APLimg/gcdtimes.bmp"><b><i>y</i></b></nobr>
+are automatically defined.
+Moreover, if <b><i>n</i></b> is a vector of integers 
+and <b><i>F</i></b><sup>&nbsp;<i>i</i></sup> represents
+the prime factorization of <b><i>n</i></b><sub><i>i</i></sub> 
+with respect to the vector of primes <b><i>p</i></b> 
+(that is, <b><i>n</i></b> = <nobr><b><i>F</i></b> <img src="APLimg/timesexp.bmp"> 
+<b><i>p</i></b>),</nobr>
+then clearly <nobr><img src="APLimg/gcd.bmp">/<b><i>n</i></b></nobr> =
+<nobr>(<tt>⌊</tt>//<b><i>F</i></b>) <img src="APLimg/timesexp.bmp"> <b><i>p</i></b>.</nobr>
+Similarly, if <nobr><i>x</i><img src="APLimg/lcm.bmp"><i>y</i></nobr>
+denotes the l.c.m. of <b><i>x</i></b> and <b><i>y</i></b>, 
+then <nobr><img src="APLimg/lcm.bmp">/<b><i>n</i></b></nobr> =
+<nobr>(<tt>⌈</tt>//<b><i>F</i></b>) <img src="APLimg/timesexp.bmp"> <b><i>p</i></b>.</nobr>
+</td></tr>
+</table>
+<br>
+
+
+
+<a name="array"></a>
+<p><b>Array Operations in a Compiler</b></p>
+
+<p>The systematic extension of the familiar vector and
+matrix operations to all operators, 
+and the introduction of the generalized matrix product, 
+greatly increase the utility and frequency of use 
+of array operations in programs,
+and therefore encourages their inclusion in the
+source language of any compiler. 
+Array operations can, of course, 
+be added to the repertoire of any source language
+by providing library or ad hoc subroutines 
+for their execution.
+However, the general array operations 
+spawn a host of useful identities, 
+and these identities cannot be mechanically employed 
+by the compiler unless the array operations 
+are denoted in such a way 
+that they are easily recognizable.</p>
+
+<p>The following example illustrates this point. Consider
+the vector operation
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>x</i></b> &larr; <b><i>x</i></b>  + <b><i>y</i></b> 
+</td></tr></table>
+
+and the equivalent subroutine 
+(expressed in <font size=-1>ALGOL</font> 
+and using <i>&nu;</i><b><i>x</i></b> as a known integer):
+
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b>for</b> <i>i</i> = 1 <b>step</b> 1 <b>until</b> <i>&nu;</i><b><i>x</i></b> <b>do</b><br>
+<i>x</i>(<i>i</i>) := <i>x</i>(<i>i</i>) + <i>y</i>(<i>i</i>)</p>
+</td></tr></table>
+
+<p>It would be difficult to make a compiler 
+recognize all legitimate variants of this program 
+(including, for example, an arbitrary order 
+of scanning the components), 
+and to make it distinguish the quite different 
+and essentially sequential program:
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b>for</b> i = 1 <b>step</b> 1 <b>until</b> <i>&nu;</i><b><i>x</i></b> &ndash; 1 <b>do</b><br>
+<i>x</i>(<i>i</i>+1) := <i>x</i>(<i>i</i>) + <i>y</i>(<i>i</i>)</p>
+</td></tr></table>
+
+<p>The foregoing programs could perhaps be analyzed 
+by a compiler, but they are merely simple examples 
+of much more complex scan procedures 
+which would occur in, say,
+a matrix product subroutine. 
+A somewhat more complex case is illustrated by the vector operation 
+<nobr><b><i>z</i></b> &larr; <i>k</i> &uarr; <b><i>x</i></b>,</nobr>
+and the equivalent <font size=-1>ALGOL</font> program:</p>
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b>for</b> i = 1 <b>step</b> 1 <b>until</b> <i>&nu;</i><b><i>x</i></b> <b>do</b><br>
+&nbsp; &nbsp;<b>if</b> <i>i</i> + <i>k</i> &le; <i>&nu;</i><b><i>x</i></b> 
+  <b>then</b> <i>j</i> := <i>i</i> + <i>k</i>;<br>
+<b>else</b> <i>j</i> := <i>i</i> + <i>k</i> &ndash; <i>&nu;</i><b><i>x</i></b>;<br>
+&nbsp; &nbsp;<i>z</i>(<i>j</i>) := <i>x</i>(<i>i</i>); <b>end</b>
+</td></tr></table>
+
+<p>Finally, there is a distinct advantage 
+in incorporating array operations 
+by providing a single general scan for each <i>type</i> 
+(e.g., vector, matrix, and matrix product) 
+and treating the operator (or operators) as a parameter. 
+It then matters not whether each operator is effected 
+by a one-line subroutine (i.e., a machine instruction) 
+or a multiline subroutine, 
+or whether it is incorporated in the array
+operation as an open or a closed subroutine. 
+If several types of representations are permitted 
+for variables (e.g., double precision, 
+floating point, chained vectors), 
+then a scan routine may have to be provided 
+for each type of representation.
+<br>&nbsp;</p>
+
+
+
+<a name="id"></a>
+<p><b>Identities</b></p>
+
+<p>The identities fall naturally into five main classes:
+duality, partitioning (selection), permutation, associativity
+and distributivity, and transposition. 
+A few examples of each class will be presented 
+together with a brief discussion of their uses.</p>
+
+<p>In discussing identities it will be convenient to employ
+the symbols &Omicron;, &Omicron;<sub>1</sub>, &Omicron;<sub>2</sub>, 
+<i>&rho;</i>, <i>&sigma;</i>, and <i>&tau;</i> 
+to denote operators,
+and to define certain functions 
+and relations on operations as follows. 
+The (unary) logical functions 
+<i>&alpha;</i>&Omicron; and <i>&gamma;</i>&Omicron;
+are equal to unity iff &Omicron; 
+is associative and &Omicron; is commutative, respectively. 
+The relation &Omicron;<sub>1</sub><i>&delta;</i>&Omicron;<sub>2</sub> 
+holds iff &Omicron;<sub>1</sub> distributes over &Omicron;<sub>2</sub>, 
+and &Omicron;<sub>1</sub><i>&alpha;</i>&Omicron;<sub>2</sub> holds iff 
+&Omicron;<sub>1</sub> <i>associates with</i> &Omicron;<sub>2</sub>, 
+that is,</p>
+
+<table><tr><td width=31>&nbsp;</td><td>
+(<i>x</i>&Omicron;<sub>1</sub><i>y</i>)&Omicron;<sub>2</sub><i>z</i> &harr;
+<i>x</i>&Omicron;<sub>1</sub>(<i>y</i>&Omicron;<sub>2</sub><i>z</i>).
+</td></tr></table>
+
+<p>This latter is clearly a generalization of associativity, 
+that is, 
+<nobr>&Omicron;<sub>1</sub><i>&alpha;</i>&Omicron;<sub>1</sub> &harr; 
+<i>&alpha;</i>&Omicron;<sub>1</sub>.</nobr>
+Finally, the unary operator <i>&delta;</i> applied
+to the operator &Omicron;<sub>1</sub> 
+(denoted by <i>&delta;</i>&Omicron;<sub>1</sub>) 
+produces the operator &Omicron;<sub>2</sub> 
+which is <i>dual to</i> &Omicron;<sub>1</sub> 
+in the sense defined in Table 4
+(which summarizes these functions) 
+and in Subsection (a) below.</p>
+
+<p>All of the identities are based upon the fundamental
+properties of the elementary operators summarized in Tables 5-8. 
+Table 5 shows the vector <b><i>a</i></b> 
+of binary arithmetic operators 
+and below it two logical matrices describing
+its properties of distributivity and associativity. 
+These matrices show, for example, 
+that <b><i>a</i></b><sub>3</sub> (that is, &times;) 
+distributes over + and &ndash;, 
+that <tt>⌈</tt> and <tt>⌊</tt> distribute over
+themselves and each other, 
+and that &times; associates with itself and <tt>÷</tt>. 
+The first four rows of the table show the
+self-associativity of <b><i>a</i></b> 
+(equal to the diagonal of the outer product matrix 
+<nobr><b><i>a</i></b> <img src="APLimg/jotalpha.bmp"> <b><i>a</i></b></nobr>), 
+the commutativity, and the dual operators, 
+wrt <tt>÷</tt> and &ndash;, respectively.</p>
+
+<p>Table 6 shows three alternative ways of denoting the
+16 binary logical functions: 
+as the vector of operators <b><i>l</i></b>,
+as the matrix <b><i>T</i></b> of characteristic vectors 
+(<b><i>T</i></b><sub><i>i</i></sub> is the
+characteristic vector of operator <b><i>l</i></b><sub><i>i</i></sub>), 
+and as the vector 
+<nobr><imb src="APLimg/decode2.bmp"><b><i>T</i></b></nobr>
+obtained as the base-two values (expressed in decimal) 
+of the columns of <b><i>T</i></b>. 
+The symbols employed in <b><i>l</i></b> include
+the familiar symbols &or; and &and; 
+for <i>or</i> and <i>and</i>, 
+<tt>∆</tt> and <tt>∇</tt> for their complements 
+(i.e., the Pierce function and the Sheffer stroke), 
+<b>0</b> and <b>1</b> for the zero and identity functions, 
+the six numerical relations &le;, &lt;, =, &ge;, &gt;, &ne;, 
+and the symbols <tt><b>⍺</b></tt>, <tt><b>⍵</b></tt>, 
+<img src="APLimg/alphaboscore.bmp">, and <img src="APLimg/omegaboscore.bmp"> 
+for the four &ldquo;unary&rdquo;
+functions, that is, 
+<nobr><i>x</i><tt><b>⍺</b></tt><i>y</i> = <i>x</i>,</nobr> 
+<nobr><i>x</i><tt><b>⍵</b></tt><i>y</i> = <i>y</i>,</nobr> 
+<nobr><i>x</i><img src="APLimg/alphaboscore.bmp"><i>y</i> = <img src="APLimg/xoscore.bmp">,</nobr> and
+<nobr><i>x</i><img src="APLimg/omegaboscore.bmp"><i>y</i> = <img align=middle src="APLimg/yoscore.bmp">.</nobr> </p>
+
+<p>The remaining portion of Table 6 is arranged like Table 5. 
+Since <nobr>((<i>&alpha;</i><b><i>l</i></b>) &and; <i>&gamma;</i><b><i>l</i></b>)/<b><i>l</i></b></nobr> 
+= <nobr>(<b>0</b>, &and;, &ne;, &or;, =, <b>1</b>),</nobr> 
+it follows that the only nontrivial associative commutative logical
+operators are <b><i>g</i></b> = <nobr>(&and;, &or;, &ne;, =).</nobr> 
+The properties of this particularly useful subset 
+(abstracted from Table 6) are summarized in Table 7.</p>
+
+<p>Certain functions of the matrices 
+<nobr><b><i>l</i></b><img src="APLimg/jotalpha.bmp"><b><i>l</i></b></nobr> and 
+<nobr><b><i>l</i></b><img src="APLimg/jotdelta.bmp"><b><i>l</i></b></nobr> 
+are also of interest&mdash;for example, the matrix 
+<nobr>(<b><i>l</i></b><img src="APLimg/jotalpha.bmp"><b><i>l</i></b>) &gt; 
+(<b><i>l</i></b><img src="APLimg/jotdelta.bmp"><b><i>l</i></b>)</nobr>
+shows that there are only six operator pairs 
+which are associative and not distributive, namely, 
+(&ne;,&nbsp;&ne;), (&ne;,&nbsp;=), (=,&nbsp;&ne;),
+(=,&nbsp;=), 
+<nobr>(<img src="APLimg/omegaboscore.bmp">, &ne;),</nobr> and 
+<nobr>(<img src="APLimg/omegaboscore.bmp">, =).</nobr></p>
+
+
+<a name="ida"></a>
+<p><b>(a) Dualities</b></p>
+
+<p>A unary operator <i>&tau;</i> 
+is said to be <i>self-inverse</i> 
+if <i>&tau;</i><i>&tau;</i><i>x</i> &harr; <i>x</i>.
+If <i>&rho;</i>, <i>&sigma;</i>, and <i>&tau;</i> 
+are unary operators, if <i>&tau;</i> is self-inverse,
+and if 
+<nobr><i>&rho;</i><i>x</i> &harr; 
+<i>&tau;</i><i>&sigma;</i><i>&tau;</i><i>x</i>,</nobr> 
+then <i>&sigma;</i><i>x</i> &harr; <i>&tau;</i><i>&rho;</i><i>&tau;</i><i>x</i>, 
+and <i>&rho;</i> and <i>&sigma;</i> are said to
+be <i>dual</i><sup><a href="FPL1.htm#notef">[e]</a></sup> 
+<i>with respect to</i> <i>&tau;</i>. 
+The floor and ceiling operators
+<tt>⌊</tt> and <tt>⌈</tt> are obviously 
+dual with respect to the minus operator. 
+Duality clearly extends to arrays, e.g.,
+
+<table><tr><td width=31>&nbsp;</td><td>
+<tt>⌈</tt> <b><i>x</i></b> &harr; &ndash; <tt>⌊</tt> &ndash; <b><i>x</i></b>
+</td></tr></table>
+
+The duals of unary operators are shown in 
+Table 8 as the vector <i>&delta;</i><b><i>c</i></b>.</p>
+
+<p>If <i>&rho;</i> and <i>&sigma;</i> are binary operators, 
+if <i>&tau;</i> is a self-inverse unary operator, and if</p>
+
+<table><tr><td width=31>&nbsp;</td><td>
+<i>x</i><i>&rho;</i><i>y</i> &harr; 
+<i>&tau;</i>(<i>&tau;</i><i>x</i>)<i>&sigma;</i>(<i>&tau;</i><i>y</i>)
+</td></tr></table>
+
+<p>then <i>&rho;</i> and <i>&sigma;</i> are said to be 
+<i>dual with respect to</i> <i>&tau;</i>. 
+The max and min operators (<tt>⌈</tt> and <tt>⌊</tt>) 
+are dual with respect to minus, 
+and <i>or</i> and <i>and</i> (&or; and &and;) 
+are dual with respect to negation (~), 
+as are the relations &ne; and =.</p>
+
+<p>Dual operators are displayed in the vectors 
+<i>&delta;</i><b><i>a</i></b> and
+<i>&delta;</i><b><i>l</i></b> of Tables 5 and 6. 
+Each of the 16 logical operators has a dual:</p>
+
+<table><tr><td width=31>&nbsp;</td><td>
+<i>&delta;</i><b><i>l</i></b><sub><i>i</i></sub> = 
+<b><i>l</i></b><sub><tt>⊥</tt><img src="APLimg/onstiny.bmp">~<b><i>T</i></b><sub><i>i</i></sub></sub>.
+</td></tr></table>
+
+<p>The duality of binary operators <i>&rho;</i> and <i>&sigma;</i> 
+also extends to vectors and matrices. 
+Moreover, when they are used in reduction, 
+the following identities hold:</p>
+
+<table>
+<tr><td width=31>&nbsp;</td>
+ <td><i>&rho;</i>/<b><i>x</i></b></td><td>&nbsp; &harr; &nbsp;</td>
+ <td><i>&tau;</i><i>&sigma;</i>/<i>&tau;</i><b><i>x</i></b>,</td></tr>
+<tr><td>&nbsp;</td>
+ <td><i>&rho;</i>/<b><i>X</i></b></td><td>&nbsp; &harr; &nbsp;</td>
+ <td><i>&tau;</i><i>&sigma;</i>/<i>&tau;</i><b><i>X</i></b>,</td></tr>
+<tr><td>&nbsp;</td>
+ <td><i>&rho;</i>//<b><i>X</i></b></td><td>&nbsp; &harr; &nbsp;</td>
+ <td><i>&tau;</i><i>&sigma;</i>//<i>&tau;</i><b><i>X</i></b>.</td></tr>
+</table>
+
+
+<p>For example,</p>
+
+<table>
+<tr><td width=31>&nbsp;</td>
+ <td><tt>⌊</tt>/<b><i>x</i></b></td><td>&nbsp; = &nbsp;</td>
+ <td>&ndash; <tt>⌈</tt>/ &ndash; <b><i>x</i></b>,</td></tr>
+<tr><td>and</td></tr>
+<tr><td>&nbsp;</td>
+ <td>&and;/<b><i>x</i></b></td><td>&nbsp; = &nbsp;</td>
+ <td>~ &or;/ ~ <b><i>x</i></b> (De Morgan&rsquo;s Law).</td></tr>
+</table>
+
+<p>The basic reduction identity
+(namely, <i>&rho;</i>/<b><i>x</i></b> &harr; <i>&tau;</i><i>&sigma;</i>/<i>&tau;</i><b><i>x</i></b>)
+leads immediately to the following family of identities
+for the matrix product:</p>
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>A</i></b><img src="APLimg/circle1circle2.bmp"><b><i>B</i></b> &harr; 
+<i>&tau;</i>(<i>&tau;</i><b><i>A</i></b>)
+<img align=top src="APLimg/dualcircle1circle2.bmp">
+<i>&tau;</i>(<i>&tau;</i><b><i>B</i></b>).
+</td></tr></table>
+
+<p>For the logical operators, 
+the family comprises 256 identities,
+of which 144 are nontrivial.</p>
+
+<p>Duality relations can be specified 
+for a compiler by a table incorporating <b><i>l</i></b> 
+and <i>&delta;</i><b><i>l</i></b>, 
+and can be employed to obviate the inclusion 
+of a subroutine for one of the dual pair 
+or to transform a source statement to an equivalent form 
+more efficient in execution. 
+For example, in a computer such as the IBM 7090 
+(which executes an <i>or</i> between registers (i.e., logical vectors) 
+much faster than a corresponding <i>and</i>, 
+and which quickly performs an <i>or</i>
+over a register (i.e., a test for non-zero)), 
+the operation 
+<nobr>~(~<b><i>x</i></b>)<img src="APLimg/andand.bmp"><b><i>y</i></b></nobr>
+is more efficiently executed as the equivalent operation 
+<nobr><b><i>x</i></b><img src="APLimg/oror.bmp">~<b><i>y</i></b>,</nobr>
+obtained by duality.</p>
+
+
+<a name="idb"></a>
+<p><b>(b) Partitioning</b></p>
+
+<p>Partitioning identities, which permit a segment of a
+vector result to be expressed in terms of segments of the
+argument vectors, are of obvious utility in the efficient
+allocation of limited capacity high-speed storage.</p>
+
+<p>If <nobr><b><i>z</i></b> &larr; <b><i>x</i></b>&Omicron;<b><i>y</i></b>,</nobr> 
+then <nobr><b><i>u</i></b>/<b><i>z</i></b> &larr; 
+(<b><i>u</i></b>/<b><i>x</i></b>) &Omicron; 
+(<b><i>u</i></b>/<b><i>y</i></b>),</nobr> 
+where <b><i>u</i></b> is an arbitrary 
+(but conformable) logical vector. 
+This simple identity applies for any binary operator &Omicron; 
+and permits any vector operation to be partitioned 
+or segmented at will. 
+A similar identity holds for unary operators.</p>
+
+<p>From the definition of the matrix product it is clear
+that for any binary operators <i>&rho;</i> and <i>&sigma;</i>,
+
+<table>
+<tr><td width=31>&nbsp;</td>
+ <td><b><i>u</i></b>/<b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>u</i></b>/<b><i>B</i></b>,</td>
+ </tr>
+<tr><td colspan=4>and</td></td>
+<tr><td>&nbsp;</td>
+ <td><b><i>u</i></b>//<b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td>(<b><i>u</i></b>//<b><i>A</i></b>)<img src="APLimg/rhosigma.bmp"><b><i>B</i></b>.</td>
+ </tr>
+</table>
+
+<p>If <i>&rho;</i> is any associative commutative operator 
+(i.e., <i>&alpha;</i><i>&rho;</i> = <i>&gamma;</i><i>&rho;</i> = 1), 
+then
+
+<table><tr><td width=31>&nbsp;</td><td>
+<i>&rho;</i>/<b><i>x</i></b> &nbsp; &harr; &nbsp;
+(<i>&rho;</i><img src="APLimg/uboscore.bmp">/<b><i>x</i></b>)<i>&rho;</i>(<i>&rho;</i><b><i>u</i></b>/<b><i>x</i></b>),
+</td></tr></table>
+
+where <img src="APLimg/uboscore.bmp"> is used 
+as an alternative notation for (~<b><i>u</i></b>).
+Consequently,
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>A</i></b> <img src="APLimg/rhosigma.bmp"> <b><i>B</i></b>
+&nbsp; &harr; &nbsp;
+((<img src="APLimg/uboscore.bmp">/<b><i>A</i></b>)<img src="APLimg/rhosigma.bmp">(<img src="APLimg/uboscore.bmp">//<b><i>B</i></b>)
+<i>&rho;</i>
+((<b><i>u</i></b>/<b><i>A</i></b>)<img src="APLimg/rhosigma.bmp">(<b><i>u</i></b>//<b><i>B</i></b>)).
+</td></tr></table>
+
+<p>Since the distributivity of <i>&sigma;</i> 
+and <i>&rho;</i> is not involved, 
+the foregoing identity (which is a simple generalization of
+the familiar identity for the product of partitioned matrices)
+applies to most of the common arithmetic 
+and logical operators.</p>
+
+<p>The identity for the two-way partitioning effected by
+<b><i>u</i></b> and <img src="APLimg/uboscore.bmp"> 
+can obviously be extended 
+to a (<i>&mu;</i><b><i>P</i></b>)-way partitioning effected 
+by a logical <i>partition</i> matrix <b><i>P</i></b> (defined
+by <tt><b>∊</b></tt> = +//<b><i>P</i></b>) as follows:
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>A</i></b> <img src="APLimg/rhosigma.bmp"> <b><i>B</i></b>
+&nbsp; &harr; &nbsp;
+<i>&rho;</i><sub><i>i</i></sub><sup><tt><b>⍳</b></tt><sup>1</sup>(<i>&mu;</i><b><i>P</i></b>)</sup> /
+(<b><i>P</i></b><sup>&nbsp;<i>i</i></sup>/<b><i>A</i></b>)<img src="APLimg/rhosigma.bmp">(<b><i>P</i></b><sup>&nbsp;<i>i</i></sup>//<b><i>B</i></b>).
+</td></tr></table>
+
+This is the form most useful in allocating storage; 
+if fast-access storage for 2<i>n</i> components 
+of <b><i>A</i></b> and <b><i>B</i></b> were available,
+<b><i>P</i></b> would normally be chosen such that 
+<nobr><b><i>P</i></b><sup>&nbsp;<i>i</i></sup> =
+(<i>n</i> &times; <i>i</i>) &darr; <tt><b>⍵</b></tt><sup><i>n</i></sup>.</nobr></p>
+
+
+<a name="idc"></a>
+<p><b>(c) Permutation</b></p>
+
+<p>In this section, <b><i>p</i></b>, <b><i>q</i></b>, 
+and <b><i>r</i></b> will denote permutation
+vectors of appropriate dimensions.</p>
+
+<p>If &Omicron; is any binary operator, then
+
+<table><tr><td width=31>&nbsp;</td><td>
+(<b><i>x</i></b>&Omicron;<b><i>y</i></b>)<sub><b><i>p</i></b></sub>
+&nbsp; &harr; &nbsp;
+<b><i>x</i></b><sub><b><i>p</i></b></sub>&Omicron;<b><i>y</i></b><sub><b><i>p</i></b></sub>,
+</td></tr></table>
+
+i.e., permutation distributes over any binary operator.
+For any unary operator &Omicron;,
+
+<table><tr><td width=31>&nbsp;</td><td>
+(&Omicron;<b><i>x</i></b>)<sub><b><i>p</i></b></sub>
+&nbsp; &harr; &nbsp;
+&Omicron;(<b><i>x</i></b><sub><b><i>p</i></b></sub>),
+</td></tr></table>
+
+and permutation therefore commutes with any unary operator. 
+Consider, for example, a vector <b><i>x</i></b> whose components
+are arranged in increasing order on some function
+<i>g</i>(<b><i>x</i></b><sub><i>i</i></sub>) 
+[e.g., lexical order so as to permit binary search]
+but is represented by (i.e., stored as) the vector <b><i>y</i></b> 
+in arbitrary order and the permutation vector <b><i>p</i></b> 
+such that <nobr><b><i>x</i></b> = <b><i>y</i></b><sub><b><i>p</i></b></sub>.</nobr> 
+Then the operation 
+<nobr><b><i>z</i></b> &larr; &Omicron;<b><i>x</i></b></nobr>
+may be executed as
+<nobr><b><i>w</i></b> &larr; &Omicron;<b><i>y</i></b></nobr>,
+where <nobr><b><i>z</i></b> &larr; 
+<b><i>w</i></b><sub><b><i>p</i></b></sub></nobr>.</p>
+
+<p>For any binary operators <i>&rho;</i> and <i>&sigma;</i>,
+
+<table><tr><td width=31>&nbsp;</td><td width=388>
+ (<b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b>)<sub><b><i>p</i></b></sub><sup><b><i>q</i></b></sup>
+ &nbsp; &harr; &nbsp;
+ <b><i>A</i></b><sup><b><i>p</i></b></sup><img src="APLimg/rhosigma.bmp"><b><i>B</i></b><sub><b><i>q</i></b></sub>.</td>
+ <td>(1)</td>
+</tr></table>
+
+Moreover, 
+if <i>&alpha;</i><i>&rho;</i> = <i>&gamma;</i><i>&rho;</i> = 1, 
+then 
+<nobr><i>&rho;</i>/<b><i>x</i></b> &harr; 
+<i>&rho;</i>/<b><i>x</i></b><sub><b><i>p</i></b></sub>,</nobr> 
+and consequently
+
+<table><tr><td width=31>&nbsp;</td><td width=388>
+ <b><i>A</i></b><sub><b><i>r</i></b></sub><img src="APLimg/rhosigma.bmp"><b><i>B</i></b><sup><b><i>r</i></b></sup>
+ &nbsp; &harr; &nbsp;
+ <b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b>.</td>
+ <td>(2)</td>
+</tr></table>
+
+Finally, then
+
+<table><tr><td width=31>&nbsp;</td><td>
+ (<b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b>)<sub><b><i>p</i></b></sub><sup><b><i>q</i></b></sup>
+ &nbsp; &harr; &nbsp;
+ <b><i>A</i></b><sub><b><i>r</i></b></sub><sup><b><i>p</i></b></sup><img src="APLimg/rhosigma.bmp"><b><i>B</i></b><sub><b><i>q</i></b></sub><sup><b><i>r</i></b></sup>.
+</td></tr></table>
+
+<p>This single identity permits considerable freedom 
+in transforming a matrix product operation 
+to a form best suited to the access limitations 
+imposed by the representation (i.e., storage allocation) 
+used for <b><i>A</i></b> and <b><i>B</i></b> 
+(e.g., row-by-row and column-by-column lists).</p>
+
+<p>For the special case 
+<nobr><b><i>q</i></b> = <tt><b>⍳</b></tt><sup>1</sup>,</nobr>
+<nobr><b><i>A</i></b> = <img src="APLimg/quadbackslash.bmp">,</nobr>
+<nobr><i>&rho;</i> = +,</nobr> and 
+<nobr><i>&sigma;</i> = &times;,</nobr>
+equation (1) reduces to the well-known method of permuting
+the columns of a matrix by ordinary premultiplication
+by a permutation matrix 
+<nobr><img src="APLimg/quadbackslash.bmp"><sup><b><i>p</i></b></sup>,</nobr> 
+that is,
+
+<table><tr><td width=31>&nbsp;</td><td>
+ <b><i>B</i></b><sup><b><i>p</i></b></sup>
+ &nbsp; &harr; &nbsp;
+ <img src="APLimg/quadbackslash.bmp"><sup><b><i>p</i></b></sup><img src="APLimg/plustimes.bmp"><b><i>B</i></b>.
+</td></tr></table>
+
+The fact that 
+<nobr><img src="APLimg/quadbackslash.bmp"><sup><b><i>p</i></b></sup></nobr> 
+and 
+<nobr><img src="APLimg/obackslash.bmp"><img src="APLimg/quadbackslash.bmp"><sup><b><i>p</i></b></sup></nobr> 
+are inverse permutations
+(i.e., 
+<nobr>(<img src="APLimg/obackslash.bmp"><img src="APLimg/quadbackslash.bmp"><sup><b><i>p</i></b></sup>)
+<img src="APLimg/plustimes.bmp"> <img src="APLimg/quadbackslash.bmp"><sup><b><i>p</i></b></sup>
+= <img src="APLimg/quadbackslash.bmp">)</nobr> 
+is obtainable directly from
+equation (2) and the fact that
+<nobr><img src="APLimg/obackslash.bmp"><img src="APLimg/quadbackslash.bmp"><sup><b><i>p</i></b></sup>
+= (<img src="APLimg/obackslash.bmp"><img src="APLimg/quadbackslash.bmp">)<sub><b><i>p</i></b></sub> 
+= <img src="APLimg/quadbackslash.bmp"><sub><b><i>p</i></b></sub>.</nobr></p>
+
+<p>The rotation operators &uarr;, &darr;, 
+<img src="APLimg/uarr.bmp">, <img src="APLimg/darr.bmp"> 
+are special cases of permutations; consequently,
+
+<table><tr><td width=31>&nbsp;</td><td>
+ <i>j</i> <img src="APLimg/uarr.bmp"> <i>k</i> &uarr; 
+ <b><i>A</i></b> <img src="APLimg/rhosigma.bmp"> <b><i>B</i></b>
+ &nbsp; &harr; &nbsp;
+ (<i>j</i> <img src="APLimg/uarr.bmp"> <b><i>A</i></b>) 
+ <img src="APLimg/rhosigma.bmp">
+ (<i>k</i> &uarr; <b><i>B</i></b>).
+</td></tr></table>
+
+<p>Moreover, this identity still holds when the cyclic rotation
+operators are replaced by the corresponding noncyclic operators 
+<img src="APLimg/uarr0.bmp">, 
+<img src="APLimg/darr0.bmp">, 
+<img src="APLimg/uuarr0.bmp">, and 
+<img src="APLimg/ddarr0.bmp">. In particular,</p>
+
+<table>
+ <tr><td width=31>&nbsp;</td>
+  <td><i>j</i> <img src="APLimg/uuarr0.bmp"> <b><i>B</i></b> &nbsp; = &nbsp; 
+   <i>j</i> <img src="APLimg/uuarr0.bmp"> (<img src="APLimg/quadbackslash.bmp"> <img src="APLimg/plustimes.bmp"> <b><i>B</i></b>) &nbsp; = &nbsp;
+   (<i>j</i> <img src="APLimg/uuarr0.bmp"> <img src="APLimg/quadbackslash.bmp">) <img src="APLimg/plustimes.bmp"> <b><i>B</i></b>,
+   </td></tr>
+ <tr><td colspan=2>and if</td></tr>
+ <tr><td>&nbsp;</td>
+  <td><b><i>B</i></b> &nbsp; = &nbsp; 
+   <i>h</i> <img src="APLimg/uuarr0.bmp"> <img src="APLimg/quadbackslash.bmp">,
+   </td></tr>
+ <tr><td colspan=2>then</td></tr>
+ <tr><td>&nbsp;</td>
+  <td>(<i>h</i>+<i>j</i>) <img src="APLimg/uuarr0.bmp"> <img src="APLimg/quadbackslash.bmp"> &nbsp; = &nbsp;
+   <i>j</i> <img src="APLimg/uuarr0.bmp"> <i>h</i> <img src="APLimg/uuarr0.bmp"> <img src="APLimg/quadbackslash.bmp"> &nbsp; = &nbsp;
+   (<i>j</i> <img src="APLimg/uuarr0.bmp"> <img src="APLimg/quadbackslash.bmp">) <img src="APLimg/plustimes.bmp"> 
+   (<i>h</i> <img src="APLimg/uuarr0.bmp"> <img src="APLimg/quadbackslash.bmp">),
+   </td></tr>
+</table>
+
+<p>a well-known identity for the superdiagonal matrices
+<nobr><i>h</i> <img src="APLimg/uuarr0.bmp"> <img src="APLimg/quadbackslash.bmp"></nobr> and
+<nobr><i>k</i> <img src="APLimg/uuarr0.bmp"> <img src="APLimg/quadbackslash.bmp"></nobr>.</p>
+
+
+<a name="idd"></a>
+<p><b>(d) Associativity and Distributivity of Double Operators</b></p>
+
+<p>If <i>&alpha;</i><i>&rho;</i> = <i>&gamma;</i><i>&rho;</i> = 
+<i>&sigma;</i><i>&delta;</i><i>&rho;</i> = 1, 
+then <nobr><i>&alpha;</i>(<img src="APLimg/rhosigma.bmp">) = 1;</nobr>
+that is,</p>
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>A</i></b><i>&sigma;</i>(<b><i>B</i></b><img src="APLimg/rhosigma.bmp"></b><b><i>C</i></b>)
+&nbsp; &harr; &nbsp; 
+(<b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b>)<img src="APLimg/rhosigma.bmp"><b><i>C</i></b>.
+</td></tr></table>
+
+<p>Moreover, <nobr><i>&alpha;</i>(<img src="APLimg/rhosigma.bmp">)<i>&delta;</i><i>&rho;</i> = 1;</nobr> 
+that is</p>
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>A</i></b><img src="APLimg/rhosigma.bmp">(<b><i>B</i></b><i>&rho;</i></b><b><i>C</i></b>)
+&nbsp; &harr; &nbsp; 
+(<b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b>)<i>&rho;</i>(<b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>C</i></b>).
+</td></tr></table>
+
+<p>For example, if <b><i>C</i></b> 
+is the connection matrix of a directed graph, then 
+<nobr><b><i>B</i></b> = <b><i>C</i></b> <img src="APLimg/orand.bmp"> 
+<b><i>C</i></b></nobr>
+is the matrix of connections of length two; 
+the operator (<img src="APLimg/orand.bmp">) 
+is associative and distributes over &or;. 
+Similarly, if <b><i>D</i></b> is a distance matrix 
+(<b><i>D</i></b><sub><i>j</i></sub><sup><i>i</i></sup> is the
+distance from point <i>i</i> to point <i>j</i>), then 
+<nobr><b><i>E</i></b> = <b><i>D</i></b> 
+<img src="APLimg/min1plus.bmp"> <b><i>D</i></b></nobr>
+is the matrix of minimum distance for trips of two legs;
+(<img src="APLimg/min1plus.bmp">) is associative 
+and distributes over <tt>⌊</tt>.</p>
+
+<p>The associativity of matrix product operators can be
+very helpful in arranging an efficient sequence of calculations
+on matrices stored row-by-row or column-by-column.
+For the logical operators, 
+the number of associative double operators is given by the expression
+
+<table><tr><td width=31>&nbsp;</td><td>
++/+/(<i>&alpha;</i><b><i>I</i></b>)/<b><i>I</i></b><img src="APLimg/jotdelta.bmp"><b><i>I</i></b>
+</td></tr></table>
+
+which (according to Table 6) has the value 66.</p>
+
+
+<a name="ide"></a>
+<p><b>(e) Transpositions</b></p>
+
+<p>Of the unary transposition operators, 
+<img src="APLimg/owe.bmp"> and <img src="APLimg/ons.bmp"> 
+are special cases of permutation, 
+but <img src="APLimg/obackslash.bmp"> and <img src="APLimg/oslash.bmp"> are not.
+Table 9 shows the multiplication table for the group
+generated by these four transpositions. The notation
+chosen for the four added operators is clear: 
+<nobr><img src="APLimg/oid.bmp"> denotes</nobr> the identity, 
+<img src="APLimg/oplus.bmp"> &harr; <img src="APLimg/ons.bmp"><img src="APLimg/owe.bmp"> 
+&harr; <img src="APLimg/owe.bmp"><img src="APLimg/ons.bmp">,
+<nobr><img src="APLimg/olt.bmp"> &harr; 
+<img src="APLimg/oslash.bmp"><img src="APLimg/owe.bmp"></nobr> (90&deg; axial left rotation), 
+and 
+<nobr><img src="APLimg/ogt.bmp"> &harr; 
+<img src="APLimg/obackslash.bmp"><img src="APLimg/owe.bmp"></nobr>
+(axial right rotation).
+Since <nobr><img src="APLimg/oplus.bmp"> &harr; 
+<img src="APLimg/oslash.bmp"><img src="APLimg/obackslash.bmp">,</nobr>
+it could as well have been denoted by
+<img src="APLimg/ox.bmp">.</p>
+
+<p>The following illustrate the many transposition identities:</p>
+
+<table>
+<tr><td width=31>&nbsp;</td>
+ <td><img src="APLimg/ons.bmp"><b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td width=300><b><i>A</i></b><img src="APLimg/rhosigma.bmp"><img src="APLimg/ons.bmp"><b><i>B</i></b></td>
+ <td>(3)</td> </tr>
+<tr><td>&nbsp;</td>
+ <td><img src="APLimg/owe.bmp"><b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td>(<img src="APLimg/owe.bmp"><b><i>A</i></b>)<img src="APLimg/rhosigma.bmp"><b><i>B</i></b></td>
+ <td align=right>(4)</td> </tr>
+<tr><td>&nbsp;</td>
+ <td><b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td>(<img src="APLimg/ons.bmp"><b><i>A</i></b>)<img src="APLimg/rhosigma.bmp">(<img src="APLimg/owe.bmp"><b><i>B</i></b>)
+  &nbsp; if &nbsp; <i>&alpha;&rho</i> = <i>&gamma;&rho;</i> = 1</td>
+ <td align=right>(5)</td> </tr>
+<tr><td>&nbsp;</td>
+ <td><img src="APLimg/obackslash.bmp">(<b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b>)</td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td>(<img src="APLimg/obackslash.bmp"><b><i>B</i></b>)<img src="APLimg/rhosigma.bmp">(<img src="APLimg/obackslash.bmp"><b><i>A</i></b>)
+  &nbsp; if &nbsp; <i>&gamma;&sigma;</i> = 1</td>
+ <td align=right>(6)</td> </tr>
+<tr><td>&nbsp;</td>
+ <td><img src="APLimg/oplus.bmp">(<b><i>A</i></b><img src="APLimg/rhosigma.bmp"><b><i>B</i></b>)</td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td>(<img src="APLimg/oslash.bmp"><b><i>B</i></b>)<img src="APLimg/rhosigma.bmp">(<img src="APLimg/oslash.bmp"><b><i>A</i></b>)
+  &nbsp; if &nbsp; <i>&alpha;&rho;</i> = <i>&gamma;&rho;</i> = <i>&gamma;&sigma;</i> = 1</td>
+ <td align=right>(7)</td> </tr>
+</table>
+
+<p>Identities (3)-(5) are special cases of the permutation
+identities and permit freedom in the order of scan, 
+which may be important if a backward-chained representation 
+is employed for the vectors involved. 
+Identity (6) is the generalization 
+of the well-known transposition identity 
+of matrix algebra. 
+Identity (7) is obtained directly from (6)
+by the application of (3), (4), and (5).
+<br>&nbsp;</p>
+
+
+
+<a name="conclude"></a>
+<p><b>Conclusion</b></p>
+
+<p>The use of a programming language 
+in which elementary operations are extended systematically 
+to arrays provides a wealth of useful identities. 
+If the array operations are incorporated directly 
+in a compiler for the language, 
+these identities can be automatically applied in compilation,
+using a small number of small tables 
+describing the fundamental properties 
+of the elementary operators. 
+Moreover, the identities can be extended 
+to any ad hoc operators
+specified by the source program, 
+provided only that the
+fundamental characteristics (associativity, etc.) 
+of the ad hoc operators are supplied.</p>
+
+<p>Exploitation of the identities within the compiler will,
+of course, increase the complexity of the compiler, 
+and one would perhaps incorporate 
+only a selected subset of them.
+However, the possibility of later extensions 
+to exploit further identities is of some value. 
+Finally, the identities are extremely useful 
+to the <i>programmer</i>
+(as opposed to the <i>analyst</i> 
+who specifies the overall procedure 
+and who may use the identities in theoretical work), 
+since the tricks used by the programmer, 
+as in allocating storage (partitioning)
+or modifying the sequence of a scan (permutation),
+are almost invariably special cases of the more
+general identities outlined here.<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>Reference</b></p>
+
+<p>1. Iverson, Kenneth E., 
+<a target=_parent href="http://www.jsoftware.com/papers/APL.htm"><i>A Programming Language</i></a>. 
+Wiley, 1962.
+<br>&nbsp;</p>
+
+
+
+<a name="notes"></a>
+<p><b>Notes</b></p>
+
+<table>
+<tr><td valign=top>a.<a name="notea"></a></td><td>&nbsp;</td><td>
+The language described here differs from
+<acronym title="Iverson, Kenneth E., A Programming Language. Wiley, 1962.">[1]</acronym> 
+in minor details designed to further systematize
+and simplify its structure.
+ </td></tr>
+<tr><td valign=top>b.<a name="noteb"></a></td><td>&nbsp;</td><td>
+Except for branching statements, which are not
+relevant to the present discussion.
+ </td></tr>
+<tr><td valign=top>c.<a name="notec"></a></td><td>&nbsp;</td><td>
+The symbol &harr; will be used to denote equivalence.
+ </td></tr>
+<tr><td valign=top>d.<a name="noted"></a></td><td>&nbsp;</td><td>
+The <tt><b>∊</b></tt> may be elided.
+ </td></tr>
+<tr><td valign=top>e.<a name="notee"></a></td><td>&nbsp;</td><td>
+Abbreviated as &ldquo;dual wrt&rdquo;.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="tables"></a>
+<p><b>Tables</b></p>
+
+<a name="tab1"></a>
+<p><b>Table 1. Symbols for Basic Operations</b></p>
+
+<table>
+<tr><td colspan=3 align=center><font size=-1>UNARY</font></td></tr>
+<tr><td>&nbsp; &nbsp; &nbsp;<i>Operation</i></td><td>&nbsp;</td>
+ <td align=center><i>Symbol</i></td></tr>
+<tr><td>Absolute value</td><td>&nbsp;</td><td align=center>|</td></tr>
+<tr><td>Minus</td><td>&nbsp;</td><td align=center>&ndash;</td></tr>
+<tr><td>Floor (largest integer contained)</td><td>&nbsp;</td>
+ <td align=center><tt>⌊</tt></td></tr>
+<tr><td>Ceiling (smallest integer containing)</td><td>&nbsp;</td>
+ <td align=center><tt>⌈</tt></td></tr>
+<tr><td>Logical negation</td><td>&nbsp;</td><td align=center>~</td></tr>
+<tr><td>Reciprocation (<tt>÷</tt> <i>x</i> &harr; 1 <tt>÷</tt> <i>x</i>)</td><td>&nbsp;</td>
+ <td align=center><tt>÷</tt></td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td colspan=3 align=center><font size=-1>BINARY</font></td></tr>
+<tr><td>&nbsp; &nbsp; &nbsp;<i>Operation</i></td><td>&nbsp;</td>
+ <td align=center><i>Symbol</i></td></tr>
+<tr><td>Arithmetic operators</td><td>&nbsp;</td><td>+ &ndash; &times; <tt>÷</tt></td></tr>
+<tr><td>Arithmetic relations</td><td>&nbsp;</td><td>&lt; &le; = &ge; &gt; &ne;</td></tr>
+<tr><td>Max, Min</td><td>&nbsp;</td><td><tt>⌈ ⌊</tt></td></tr>
+<tr><td>Exponentiation (<i>y</i><sup><i>x</i></sup>)</td><td>&nbsp;</td>
+ <td><i>x</i> <img src="APLimg/pow.bmp"> <i>y</i></td></tr>
+<tr><td>Residue mod <i>m</i></td><td>&nbsp;</td><td><i>m</i> | <i>n</i></td></tr>
+<tr><td>Logical <font size=-1>AND</font>, <font size=-1>OR</font></td><td>&nbsp;</td>
+ <td>&and; &or;</td></tr>
+</table>
+<br>
+
+
+
+<a name="tab2"></a>
+<p><b>Table 2. Unary Operations Defined on Arrays</b></p>
+
+<table>
+<tr><td><i>&nu;</i><b><i>x</i></b></td><td>&nbsp;</td>
+ <td>Dimension of vector <b><i>x</i></b></td></tr>
+<tr><td><i>&nu;</i><b><i>A</i></b></td><td>&nbsp;</td>
+ <td>Row dimension of matrix <b><i>A</i></b> (dimension of <i>row</i> vectors)</td></tr>
+<tr><td><i>&mu;</i><b><i>A</i></b></td><td>&nbsp;</td>
+ <td>Column dimension of matrix <b><i>A</i></b> (dimension of <i>column</i> vectors)</td></tr>
+<tr><td><i>&mu;</i><b><i>A</i></b></td><td>&nbsp;</td>
+ <td>Column dimension of matrix <b><i>A</i></b> (dimension of <i>column</i> vectors)</td></tr>
+<tr><td valign=top><img src="APLimg/owe.bmp"><img src="APLimg/ons.bmp"><img src="APLimg/obackslash.bmp"><img src="APLimg/oslash.bmp">&nbsp;</td><td>&nbsp;</td>
+ <td>Transposition of matrix about axis indicated by the straight line<br>
+  (<img src="APLimg/obackslash.bmp"><b><i>A</i></b> is the ordinary transposition of <b><i>A</i></b>)</td></tr>
+<tr><td valign=top><img src="APLimg/ons.bmp">&nbsp;</td><td>&nbsp;</td>
+ <td><img src="APLimg/ons.bmp"><b><i>x</i></b> denotes transposition of vector <b><i>x</i></b><br>
+  (reversal of order of components)</td></tr>
+<tr><td><tt>⊥</tt></b></td><td>&nbsp;</td>
+ <td>Base-two value of vector</td></tr>
+</table>
+<br>
+
+
+
+<a name="tab3"></a>
+<p><b>Table 3. Constant Vectors and Square Matrices of Dimension</b> <i>n</i></p>
+
+<table>
+<tr><td><i>Symbol</i></td><td>&nbsp;</td>
+ <td colspan=3>&nbsp; &nbsp;<i>Designated Constant</i></td></tr>
+<tr><td><tt><b>∊</b></tt>(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Full vector (all 1&rsquo;s)</td>
+ <td rowspan=5><img src="APLimg/matrixr5.bmp"></td>
+ <td rowspan=5>&nbsp; Logical Vectors</td>
+ </tr>
+<tr><td><tt><b>∊</b></tt><sup>&nbsp;<i>j</i></sup>(<i>n</i>)</td><td>&nbsp;</td>
+ <td><i>j</i>th unit vector (1 in position <i>j</i>)</td></tr>
+<tr><td><tt><b>⍺</b></tt><sup>&nbsp;<i>j</i></sup>(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Prefix vector of weight <i>j</i> (<i>j</i> leading  1&rsquo;s)</td></tr>
+<tr><td><tt><b>⍵</b></tt><sup>&nbsp;<i>j</i></sup>(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Suffix vector of weight <i>j</i> (<i>j</i> trailing  1&rsquo;s)</td></tr>
+<tr><td><tt><b>⍳</b></tt><sup>&nbsp;<i>j</i></sup>(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Interval vector of weight <i>j</i> (<i>j</i>, <i>j</i>+1, &#133;, <i>j</i>+<i>n</i>&ndash;1)</td></tr>
+<tr><td><img src="APLimg/quad.bmp">(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Zero matrix</td>
+ <td rowspan=7><img src="APLimg/matrixr7.bmp"></td>
+ <td rowspan=7>&nbsp; Logical Matrices</td>
+ </tr>
+<tr><td><img src="APLimg/quadbackslash.bmp">(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Identity matrix (1&rsquo;s on diagonal)</td></tr>
+<tr><td><img src="APLimg/quadne.bmp">(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Strict upper right triangle (1&rsquo;s above diagonal)</td></tr>
+<tr><td><img src="APLimg/quadneslash.bmp">(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Upper right triangle (1&rsquo;s above and on diagonal)</td></tr>
+<tr><td><img src="APLimg/quadse.bmp">(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Strict lower right triangle</td></tr>
+<tr><td>&#133;</td><td>&nbsp;</td>
+ <td>&#133;</td></tr>
+<tr><td><img src="APLimg/quadnwdiag.bmp">(<i>n</i>)</td><td>&nbsp;</td>
+ <td>Upper left triangle</td></tr>
+</table>
+<br>
+
+
+
+<a name="tab4"></a>
+<p><b>Table 4. Operations and Relations Defined on Operators</b></p>
+
+<table>
+<tr><td>Self-associativity   </td><td>&nbsp;</td>
+ <td><i>&alpha;</i>&Omicron;</td>
+ <td>&nbsp; = 1 iff <i>x</i>&Omicron;(<i>y</i>&Omicron;<i>z</i>) &harr; (<i>x</i>&Omicron;<i>y</i>)&Omicron;<i>z</i></td></tr>
+<tr><td>Commutativity        </td><td>&nbsp;</td>
+ <td><i>&gamma;</i>&Omicron; </td>
+ <td>&nbsp; = 1 iff <i>x</i>&Omicron;<i>y</i> &harr; <i>y</i>&Omicron;<i>x</i></td></tr>
+<tr><td>Distributivity       </td><td>&nbsp;</td>
+ <td>&Omicron;<sub>1</sub><i>&delta;</i>&Omicron;<sub>2</sub></td>
+ <td>&nbsp; = 1 iff <i>x</i>&Omicron;<sub>1</sub>(<i>y</i>&Omicron;<sub>2</sub><i>z</i>) &harr; 
+  (<i>x</i>&Omicron;<sub>1</sub><i>y</i>)&Omicron;<sub>2</sub>(<i>x</i>&Omicron;<sub>1</sub><i>z</i>)</td></tr>
+<tr><td>Associativity        </td><td>&nbsp;</td>
+ <td>&Omicron;<sub>1</sub><i>&alpha;</i>&Omicron;<sub>2</sub></td>
+ <td>&nbsp; = 1 iff <i>x</i>&Omicron;<sub>1</sub>(<i>y</i>&Omicron;<sub>2</sub><i>z</i>) &harr; 
+  (<i>x</i>&Omicron;<sub>1</sub><i>y</i>)&Omicron;<sub>2</sub><i>z</i></td></tr>
+<tr><td valign=top>Dual wrt <i>&tau;</i></td><td>&nbsp;</td>
+ <td colspan=2><i>&delta;</i>&Omicron; is an operator such that<br>
+  (<i>&delta;</i>&Omicron;)<i>x</i> &harr; <i>&tau;</i>&Omicron;<i>&tau;</i><i>x</i>
+    &nbsp; if &Omicron; is unary<br>
+  <i>x</i>(<i>&delta;</i>&Omicron;)<i>y</i> &harr; <i>&tau;</i>((<i>&tau;</i><i>x</i>)&Omicron;(<i>&tau;</i><i>y</i>)) 
+   &nbsp; if &Omicron; is binary.
+</td></tr>
+</table>
+<br>
+
+
+
+<a name="tab5"></a>
+<p><b>Table 5. Properties of the Binary Arithmetic Operators</b></p>
+
+<table>
+<tr>
+ <td>&nbsp;</td>
+ <td align=center><table>
+  <tr><td width=20 align=center>1</td><td width=20 align=center>0</td><td width=20 align=center>1</td>
+      <td width=20 align=center>0</td><td width=20 align=center>1</td><td width=20 align=center>1</td>
+      <td width=20 align=center>0</td><td width=20 align=center>0</td></tr>
+  <tr><td align=center>1</td><td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+      <td align=center>1</td><td align=center>0</td><td align=center>0</td></tr>
+  <tr><td>&nbsp;</td><td>&nbsp;</td><td align=center>&times;</td><td align=center><tt>÷</tt></td>
+      <td align=center><tt>⌊</tt></td><td align=center><tt>⌈</tt></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td align=center>+</td><td align=center>&ndash;</td><td>&nbsp;</td><td>&nbsp;</td>
+      <td align=center><tt>⌊</tt></td><td align=center><tt>⌈</tt></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+  <tr><td align=center>+</td><td align=center>&ndash;</td><td align=center>&times;</td><td align=center><tt>÷</tt></td>
+      <td align=center><tt>⌈</tt></td><td align=center><tt>⌊</tt></td><td align=center>|</td>
+      <td align=center><img src="APLimg/pow.bmp"></td></tr>
+ </table></td>
+ <td><table>
+  <tr><td>&nbsp;</td><td><i>&alpha;</i><b><i>a</i></b></td></tr>
+  <tr><td>&nbsp;</td><td><i>&gamma;</i><b><i>a</i></b></td></tr>
+  <tr><td>&nbsp;</td><td><i>&delta;</i><b><i>a</i></b> (wrt <tt>÷</tt>)</td></tr>
+  <tr><td>&nbsp;</td><td><i>&delta;</i><b><i>a</i></b> (wrt &ndash;)</td></tr>
+  <tr><td>&nbsp;</td><td><b><i>a</i></b></td></tr>
+ </table></td>
+</tr>
+<tr>
+ <td><table>
+  <tr><td rowspan=8><img src="APLimg/FPLdist.bmp"> &nbsp;</td>
+   <td width=13 align=center>+</td></tr>
+  <tr height=20><td align=center>&ndash;</td></tr>
+  <tr height=20><td align=center>&times;</td></tr>
+  <tr height=20><td align=center><tt>÷</tt></td></tr>
+  <tr height=20><td align=center><tt>⌈</tt></td></tr>
+  <tr height=20><td align=center><tt>⌊</tt></td></tr>
+  <tr height=20><td align=center>|</td></tr>
+  <tr height=20><td align=center><img src="APLimg/pow.bmp"></td></tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td rowspan=8><img src="APLimg/FPLassoc.bmp"> &nbsp;</td>
+   <td width=13 align=center>+</td></tr>
+  <tr height=20><td align=center>&ndash;</td></tr>
+  <tr height=20><td align=center>&times;</td></tr>
+  <tr height=20><td align=center><tt>÷</tt></td></tr>
+  <tr height=20><td align=center><tt>⌈</tt></td></tr>
+  <tr height=20><td align=center><tt>⌊</tt></td></tr>
+  <tr height=20><td align=center>|</td></tr>
+  <tr height=20><td align=center><img src="APLimg/pow.bmp"></td></tr>
+ </table></td>
+ <td><table border=1 cellspacing=0 cellpadding=5>
+  <tr><td><table>
+   <tr height=20><td width=20 align=center>0</td><td width=20 align=center>0</td>
+    <td width=20 align=center>0</td><td width=20 align=center>0</td>
+    <td width=20 align=center>1</td><td width=20 align=center>1</td>
+    <td width=20 align=center>0</td><td width=20 align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center><i>r</i></td><td align=center><i>r</i></td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>0</td></tr>
+   <tr height=20><td align=center><i>r</i></td><td align=center><i>r</i></td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center><i>r</i></td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center><i>l</i></td><td align=center><i>l</i></td>
+    <td align=center><i>l</i></td><td align=center><i>l</i></td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   </table></td></tr>
+  <tr><td><table>
+   <tr height=20><td width=20 align=center>1</td><td width=20 align=center>1</td>
+    <td width=20 align=center>0</td><td width=20 align=center>0</td>
+    <td width=20 align=center>0</td><td width=20 align=center>0</td>
+    <td width=20 align=center>0</td><td width=20 align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+   <tr height=20><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td></tr>
+  </table></td></tr>
+ </table></td>
+ <td><table>
+  <tr><td><img src="APLimg/matrixr8.bmp"></td>
+    <td valign=middle><b><i>a</i></b> <img src="APLimg/jotdelta.bmp"> <b><i>a</i></b> &dagger;</td></tr>
+  <tr><td height=20>&nbsp;</td></tr>
+  <tr><td><img src="APLimg/matrixr8.bmp"></td>
+    <td rowspan=8 valign=middle><b><i>a</i></b> <img src="APLimg/jotalpha.bmp"> <b><i>a</i></b></td></tr>
+ </table></td>
+</tr>
+</table>
+
+<p>&nbsp; &dagger; <i>l</i> and <i>r</i> denote left and right distributivity.
+<br>&nbsp;</p>
+
+
+<a name="tab6"></a>
+<p><b>Table 6. Properties of the Binary Logical Operators</b></p>
+
+<table>
+ <tr><td colspan=3>&nbsp;</td>
+    <td width=17 align=center>1</td><td width=17 align=center>1</td><td width=17 align=center>0</td><td width=17 align=center>1</td>
+    <td width=17 align=center>0</td><td width=17 align=center>1</td><td width=17 align=center>1</td><td width=17 align=center>1</td>
+    <td width=17 align=center>0</td><td width=17 align=center>1</td><td width=17 align=center>0</td><td width=17 align=center>0</td>
+    <td width=17 align=center>0</td><td width=17 align=center>0</td><td width=17 align=center>0</td><td width=17 align=center>1</td>
+    <td colspan=2>&nbsp; <i>&alpha;</i><b><i>l</i></b></td></tr>
+ <tr><td colspan=3>&nbsp;</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>1</td>
+    <td colspan=2>&nbsp; <i>&gamma;</i><b><i>l</i></b></td></tr>
+ <tr><td colspan=3>&nbsp;</td>
+    <td align=center><b>1</b></td><td align=center>&or;</td><td align=center>&ge;</td><td align=center><tt><b>⍺</b></tt></td>
+    <td align=center>&le;</td><td align=center><tt><b>⍵</b></tt></td><td align=center>=</td><td align=center>&and;</td>
+    <td align=center><tt>∆</tt></td><td align=center>&ne;</td><td align=center><img src="APLimg/omegaboscore.bmp"></td><td align=center>&gt;</td>
+    <td align=center><img src="APLimg/alphaboscore.bmp"></td><td align=center>&lt;</td><td align=center><tt>∇</tt></td><td align=center><b>0</b></td>
+    <td colspan=2>&nbsp; <i>&delta;</i><b><i>l</i></b> *</td></tr>
+ <tr><td colspan=3>&nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td rowspan=4><img src="APLimg/matrixr3.bmp"></td>
+    <td rowspan=4><b><i>T</i></b></td></tr>
+ <tr><td colspan=3>&nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td></tr>
+ <tr><td colspan=3>&nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>1</td></tr>
+ <tr><td colspan=3>&nbsp;</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td></tr>
+
+ <tr><td>&nbsp;</td></tr>
+ <tr><td colspan=3>&nbsp;</td>
+   <td align=center><b>0</b></td><td align=center>&and;</td><td align=center>&gt;</td><td align=center><tt><b>⍺</b></tt></td>
+   <td align=center>&lt;</td><td align=center><tt><b>⍵</b></tt></td><td align=center>&ne;</td><td align=center>&or;</td>
+   <td align=center><tt>∇</tt></td><td align=center>=</td><td align=center><img src="APLimg/omegaboscore.bmp"></td><td align=center>&ge;</td>
+   <td align=center><img src="APLimg/alphaboscore.bmp"></td><td align=center>&le;</td><td align=center><tt>∆</tt></td><td align=center><b>1</b></td>
+   <td colspan=2>&nbsp; <b><i>l</i></b></td></tr>
+ <tr height=37 valign=top><td colspan=3>&nbsp;</td>
+   <td align=center>0</td><td align=center>1</td><td align=center>2</td><td align=center>3</td>
+   <td align=center>4</td><td align=center>5</td><td align=center>6</td><td align=center>7</td>
+   <td align=center>8</td><td align=center>9</td><td align=center>10</td><td align=center>11</td>
+   <td align=center>12</td><td align=center>13</td><td align=center>14</td><td align=center>15</td>
+   <td colspan=2>&nbsp; <img src="APLimg/decode2.bmp"><b><i>T</i></b></td></tr>
+ <tr height=22><td rowspan=16><img src="APLimg/FPLdist.bmp"> &nbsp;</td>
+    <td align=center><b>0</b></td><td width=37>&nbsp;0</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td rowspan=16><img src="APLimg/FPLtab6.bmp"></td>
+    <td rowspan=16 nowrap>&nbsp; <b><i>l</i></b> <img src="APLimg/jotdelta.bmp"> <b><i>l</i></b></td></tr>
+ <tr height=22><td align=center>&and;</td><td>&nbsp;1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&gt;</td><td>&nbsp;2 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><tt><b>⍺</b></tt></td><td>&nbsp;3</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&lt;</td><td>&nbsp;4</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><tt><b>⍵</b></tt></td><td>&nbsp;5</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td></tr>
+ <tr height=22><td align=center>&ne;</td><td>&nbsp;6</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&or;</td><td>&nbsp;7</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td></tr>
+ <tr height=22><td align=center><tt>∇</tt></td><td>&nbsp;8</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>=</td><td>&nbsp;9 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><img src="APLimg/omegaboscore.bmp"></td><td>&nbsp;10 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&ge;</td><td>&nbsp;11 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><img src="APLimg/alphaboscore.bmp"></td><td nowrap>&nbsp;12 &nbsp;</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&le;</td><td>&nbsp;13 &nbsp;</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td></tr>
+ <tr height=22><td align=center><tt>∆</tt></td><td>&nbsp;14 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><b>1</b></td><td>&nbsp;15 &nbsp;</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>1</td></tr>
+
+ <tr><td>&nbsp;</td></tr>
+ <tr><td colspan=3>&nbsp;</td>
+   <td align=center><b>0</b></td><td align=center>&and;</td><td align=center>&gt;</td><td align=center><tt><b>⍺</b></tt></td>
+   <td align=center>&lt;</td><td align=center><tt><b>⍵</b></tt></td><td align=center>&ne;</td><td align=center>&or;</td>
+   <td align=center><tt>∇</tt></td><td align=center>=</td><td align=center><img src="APLimg/omegaboscore.bmp"></td><td align=center>&ge;</td>
+   <td align=center><img src="APLimg/alphaboscore.bmp"></td><td align=center>&le;</td><td align=center><tt>∆</tt></td><td align=center><b>1</b></td>
+   <td colspan=2>&nbsp; <b><i>l</i></b></td></tr>
+ <tr height=37 valign=top><td colspan=3>&nbsp;</td>
+   <td align=center>0</td><td align=center>1</td><td align=center>2</td><td align=center>3</td>
+   <td align=center>4</td><td align=center>5</td><td align=center>6</td><td align=center>7</td>
+   <td align=center>8</td><td align=center>9</td><td align=center>10</td><td align=center>11</td>
+   <td align=center>12</td><td align=center>13</td><td align=center>14</td><td align=center>15</td>
+   <td colspan=2>&nbsp; <img src="APLimg/decode2.bmp"><b><i>T</i></b></td></tr>
+ <tr height=22><td rowspan=16><img src="APLimg/FPLassoc.bmp"> &nbsp;</td>
+    <td align=center><b>0</b></td><td width=37>&nbsp;0</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td rowspan=16><img src="APLimg/FPLtab6.bmp"></td>
+    <td rowspan=16 nowrap>&nbsp; <b><i>l</i></b> <img src="APLimg/jotalpha.bmp"> <b><i>l</i></b></td></tr>
+ <tr height=22><td align=center>&and;</td><td>&nbsp;1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&gt;</td><td>&nbsp;2 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><tt><b>⍺</b></tt></td><td>&nbsp;3</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&lt;</td><td>&nbsp;4</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><tt><b>⍵</b></tt></td><td>&nbsp;5</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td>
+    <td align=center>1</td><td align=center>1</td><td align=center>1</td><td align=center>1</td></tr>
+ <tr height=22><td align=center>&ne;</td><td>&nbsp;6</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&or;</td><td>&nbsp;7</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td></tr>
+ <tr height=22><td align=center><tt>∇</tt></td><td>&nbsp;8</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>=</td><td>&nbsp;9 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><img src="APLimg/omegaboscore.bmp"></td><td>&nbsp;10 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>1</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>1</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>1</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&ge;</td><td>&nbsp;11 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><img src="APLimg/alphaboscore.bmp"></td><td nowrap>&nbsp;12 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center>&le;</td><td>&nbsp;13 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td></tr>
+ <tr height=22><td align=center><tt>∆</tt></td><td>&nbsp;14 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>0</td></tr>
+ <tr height=22><td align=center><b>1</b></td><td>&nbsp;15 &nbsp;</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td>
+    <td align=center>0</td><td align=center>0</td><td align=center>0</td><td align=center>1</td></tr>
+</table>
+
+<p>&nbsp; &nbsp; * Duality with respect to ~.
+<br>&nbsp;</p>
+
+
+<a name="tab7"></a>
+<p><b>Table 7. Properties of the Nontrivial
+Associative Commutative Logical Operators</b></p>
+
+<table>
+<tr><td width=23>&nbsp;</td>
+ <td><table>
+  <tr>
+   <td width=20 align=center>&and;</td><td width=20 align=center>&or;</td>
+   <td width=20 align=center>&ne;</td><td width=20 align=center>=</td></tr>
+ </table></td>
+ <td>&nbsp; <b><i>g</i></b></td>
+</tr></table>
+
+<table><tr>
+<td><table border=1 cellspacing=0 cellpadding=0>
+<tr>
+ <td><table>
+  <tr height=30><td align=center>&and;</td></tr>
+  <tr height=30><td align=center>&or;</td></tr>
+  <tr height=30><td align=center>&ne;</td></tr>
+  <tr height=30><td align=center>=</td></tr>
+ </table></td>
+ <td><table>
+  <tr height=30><td width=20 align=center>1</td><td width=20 align=center>1</td>
+   <td width=20 align=center>1</td><td width=20 align=center>0</td></tr>
+  <tr height=30><td align=center>1</td><td align=center>1</td>
+   <td align=center>0</td><td align=center>1</td></tr>
+  <tr height=30><td align=center>0</td><td align=center>0</td>
+   <td align=center>0</td><td align=center>0</td></tr>
+  <tr height=30><td align=center>0</td><td align=center>0</td>
+   <td align=center>0</td><td align=center>0</td></tr>
+ </table></td></tr>
+</table></td>
+<td valign=middle>&nbsp; <b><i>g</i></b> <img src="APLimg/jotdelta.bmp"> 
+ <b><i>g</i></b></td></tr>
+</table>
+
+<table><tr>
+<td><table border=1 cellspacing=0 cellpadding=0>
+<tr>
+ <td><table>
+  <tr height=30><td align=center>&and;</td></tr>
+  <tr height=30><td align=center>&or;</td></tr>
+  <tr height=30><td align=center>&ne;</td></tr>
+  <tr height=30><td align=center>=</td></tr>
+ </table></td>
+ <td><table>
+  <tr height=30><td width=20 align=center>1</td><td width=20 align=center>0</td>
+   <td width=20 align=center>0</td><td width=20 align=center>0</td></tr>
+  <tr height=30><td align=center>0</td><td align=center>1</td>
+   <td align=center>0</td><td align=center>0</td></tr>
+  <tr height=30><td align=center>0</td><td align=center>0</td>
+   <td align=center>1</td><td align=center>1</td></tr>
+  <tr height=30><td align=center>0</td><td align=center>0</td>
+   <td align=center>1</td><td align=center>1</td></tr>
+ </table></td></tr>
+</table></td>
+<td valign=middle>&nbsp; <b><i>g</i></b> <img src="APLimg/jotalpha.bmp"> 
+ <b><i>g</i></b></td></tr>
+</table>
+<br>
+
+
+<a name="tab8"></a>
+<p><b>Table 8. Properties of the Unary Operators</b></p>
+
+<table>
+<tr><td width=20 align=middle>|</td>
+ <td width=20 align=middle><tt>⌊</tt></td>
+ <td width=20 align=middle><tt>⌈</tt></td>
+ <td width=20 align=middle>&ndash;</td>
+ <td width=20 align=middle><tt>÷</tt></td>
+ <td width=20 align=middle>~</td>
+ <td>&nbsp; &nbsp;</td><td><b><i>c</i></b></td></tr>
+<tr><td align=middle>&nbsp;</td>
+ <td align=middle><tt>⌈</tt></td>
+ <td align=middle><tt>⌊</tt></td>
+ <td align=middle>&ndash;</td>
+ <td align=middle><tt>÷</tt></td>
+ <td align=middle>&nbsp;</td>
+ <td>&nbsp; &nbsp;</td><td><i>&delta;</i><b><i>c</i></b> (wrt &ndash;)</td></tr>
+<tr><td align=middle>&nbsp;</td>
+ <td align=middle>&nbsp;</td>
+ <td align=middle>&nbsp;</td>
+ <td align=middle>&ndash;</td>
+ <td align=middle><tt>÷</tt></td>
+ <td align=middle>&nbsp;</td>
+ <td>&nbsp; &nbsp;</td><td><i>&delta;</i><b><i>c</i></b> (wrt <tt>÷</tt>)</td></tr>
+<tr><td align=middle>&nbsp;</td>
+ <td align=middle>&nbsp;</td>
+ <td align=middle>&nbsp;</td>
+ <td align=middle>&nbsp;</td>
+ <td align=middle>&nbsp;</td>
+ <td align=middle>~</td>
+ <td>&nbsp; &nbsp;</td><td><i>&delta;</i><b><i>c</i></b> (wrt ~)</td></tr>
+</table>
+<br>
+
+<a name="tab9"></a>
+<p><b>Table 9. Group of Transpositions</b> (rotations of the square)</p>
+
+<table><tr><td>
+<table border=1 cellspacing=0 cellpadding=5>
+<tr><td>&nbsp;</td>
+ <td><table><tr>
+  <td><img src="APLimg/oid.bmp"></td><td><img src="APLimg/ons.bmp"></td>
+  <td><img src="APLimg/owe.bmp"></td><td><img src="APLimg/obackslash.bmp"></td>
+  <td><img src="APLimg/oslash.bmp"></td><td><img src="APLimg/oplus.bmp"></td>
+  <td><img src="APLimg/olt.bmp"></td><td><img src="APLimg/ogt.bmp"></td></tr>
+ </table></td></tr>
+<tr><td><table>
+ <tr><td><img src="APLimg/oid.bmp"></td></tr>
+ <tr><td><img src="APLimg/ons.bmp"></td></tr>
+ <tr><td><img src="APLimg/owe.bmp"></td></tr>
+ <tr><td><img src="APLimg/obackslash.bmp"></td></tr>
+ <tr><td><img src="APLimg/oslash.bmp"></td></tr>
+ <tr><td><img src="APLimg/oplus.bmp"></td></tr>
+ <tr><td><img src="APLimg/olt.bmp"></td></tr>
+ <tr><td><img src="APLimg/ogt.bmp"></td></tr>
+ </table></td>
+<td><table>
+ <tr>
+  <td><img src="APLimg/oid.bmp"></td><td><img src="APLimg/ons.bmp"></td>
+  <td><img src="APLimg/owe.bmp"></td><td><img src="APLimg/obackslash.bmp"></td>
+  <td><img src="APLimg/oslash.bmp"></td><td><img src="APLimg/oplus.bmp"></td>
+  <td><img src="APLimg/olt.bmp"></td><td><img src="APLimg/ogt.bmp"></td></tr>
+ <tr>
+  <td><img src="APLimg/ons.bmp"></td><td><img src="APLimg/oid.bmp"></td>
+  <td><img src="APLimg/oplus.bmp"></td><td><img src="APLimg/ogt.bmp"></td>
+  <td><img src="APLimg/olt.bmp"></td><td><img src="APLimg/owe.bmp"></td>
+  <td><img src="APLimg/oslash.bmp"></td><td><img src="APLimg/obackslash.bmp"></td></tr>
+ <tr>
+  <td><img src="APLimg/owe.bmp"></td><td><img src="APLimg/oplus.bmp"></td>
+  <td><img src="APLimg/oid.bmp"></td><td><img src="APLimg/olt.bmp"></td>
+  <td><img src="APLimg/ogt.bmp"></td><td><img src="APLimg/ons.bmp"></td>
+  <td><img src="APLimg/obackslash.bmp"></td><td><img src="APLimg/oslash.bmp"></td></tr>
+ <tr>
+  <td><img src="APLimg/obackslash.bmp"></td><td><img src="APLimg/olt.bmp"></td>
+  <td><img src="APLimg/ogt.bmp"></td><td><img src="APLimg/oid.bmp"></td>
+  <td><img src="APLimg/oplus.bmp"></td><td><img src="APLimg/oslash.bmp"></td>
+  <td><img src="APLimg/ons.bmp"></td><td><img src="APLimg/owe.bmp"></td></tr>
+ <tr>
+  <td><img src="APLimg/oslash.bmp"></td><td><img src="APLimg/ogt.bmp"></td>
+  <td><img src="APLimg/olt.bmp"></td><td><img src="APLimg/oplus.bmp"></td>
+  <td><img src="APLimg/oid.bmp"></td><td><img src="APLimg/obackslash.bmp"></td>
+  <td><img src="APLimg/owe.bmp"></td><td><img src="APLimg/ons.bmp"></td></tr>
+ <tr>
+  <td><img src="APLimg/oplus.bmp"></td><td><img src="APLimg/owe.bmp"></td>
+  <td><img src="APLimg/ons.bmp"></td><td><img src="APLimg/oslash.bmp"></td>
+  <td><img src="APLimg/obackslash.bmp"></td><td><img src="APLimg/oid.bmp"></td>
+  <td><img src="APLimg/ogt.bmp"></td><td><img src="APLimg/olt.bmp"></td></tr>
+ <tr>
+  <td><img src="APLimg/olt.bmp"></td><td><img src="APLimg/obackslash.bmp"></td>
+  <td><img src="APLimg/oslash.bmp"></td><td><img src="APLimg/owe.bmp"></td>
+  <td><img src="APLimg/ons.bmp"></td><td><img src="APLimg/ogt.bmp"></td>
+  <td><img src="APLimg/oplus.bmp"></td><td><img src="APLimg/oid.bmp"></td></tr>
+ <tr>
+  <td><img src="APLimg/ogt.bmp"></td><td><img src="APLimg/oslash.bmp"></td>
+  <td><img src="APLimg/obackslash.bmp"></td><td><img src="APLimg/ons.bmp"></td>
+  <td><img src="APLimg/owe.bmp"></td><td><img src="APLimg/olt.bmp"></td>
+  <td><img src="APLimg/oid.bmp"></td><td><img src="APLimg/oplus.bmp"></td></tr>
+</table></td></tr>
+</table></td>
+<td>&nbsp;</td>
+<td><table>
+ <tr><td><b><i>t</i></b></tr>
+ <tr height=135><td valign=middle><b><i>t</i></b> <img src="APLimg/jotjot.bmp"> <b><i>t</i></b></tr>
+</table></td></tr>
+</table>
+<br>
+
+
+
+<a name="discuss"></a>
+<p><b>Discussion</b></p>
+
+<p><i>Gorn</i>: Some almost ancient sources of generalized operators
+are: Whitehead, <i>Universal Algebra</i>, 
+and Grassman, <i>Die Ausdehnungslehre</i>.
+Some more modern sources are: Bourbaki <i>Algebra</i>,
+Forder, <i>Calculus of Extension</i>, 
+and Bodewig, <i>Matrix Calculus</i>.</p>
+
+<p><i>Backus</i>: Why this comment?</p>
+
+<p><i>Gorn</i>: The paper presents generalized relationships among
+operators. The cited references are directly concerned with such
+questions.</p>
+
+<p><i>Brooker</i>: Why do you insist on using a notation 
+which is a nightmare for typist and compositor 
+and impossible to implement
+with punching and printing equipment currently available? 
+What proposals have you got for overcoming this difficulty?</p>
+
+<p><i>Iverson</i>: Transliteration is, of course, essential, 
+but I have avoided its treatment first, 
+because a suitable scheme is highly dependent 
+on the particular equipment available, and second,
+because it is extremely simple. 
+If, for example, 
+you have the stamina of <font size=-1>ALGOL</font> 
+and <font size=-1>MAD</font> users 
+(who tirelessly write <font size=-1>PROCEDURE</font>
+and <font size=-1>WHENEVER</font>), 
+then you can use the distinct
+names that I have given (for conversational purposes) 
+to each of the operators. 
+Anyone who prefers briefer symbols can (as I have)
+easily design schemes which are brief, 
+simple and mnemonic.</p>
+
+<p><i>Gorn</i>: This question of transliteration: 
+I&rsquo;m not talking about this paper in particular. 
+In general it is a problem that is always with us. 
+There is a danger that as the transliteration rules become
+more complicated replacement productions, 
+we rapidly fall into a recognition problem, 
+a translation problem 
+and possibly an unsolvable word problem.</p>
+
+<i>Iverson</i>: Yes, one should distinguish 
+the recognition of identifiers from the syntax, 
+which is of more concern to the ultimate user.</p>
+
+<p><i>Brooker</i>: It is not obvious to me that these two symbols 
+for <font size=-1>FLOOR</font> and <font size=-1>CEILING</font> 
+have a great deal of mnemonic value.</p>
+
+<p><i>Iverson</i>: Yes, but once you have read it, 
+you can remember it.</p>
+
+<p><i>Gorn</i>: But the more redundance 
+you put in the symbolism of a language, 
+the more equivalence problems you have.</p>
+
+<p><i>Iverson</i>: Not problems, 
+I suggest that these are assets. 
+In the extreme we could go back to the Assign 
+and the Sheffer stroke, let&rsquo;s say, 
+and then we have no problems.</p>
+
+<p><i>Ross</i>: I don&rsquo;t remember 
+who asked the original question about notation, 
+but I submit that they find themselves a sugardaddy
+or someone with a few thousand bucks and get themselves
+a display console such as we&rsquo;re getting 
+with programmable characters.
+You can even publish from it by taking pictures. 
+I don&rsquo;t see why we should let mechanics 
+influence our progress at all.</p>
+
+<p><i>Iverson</i>: Someone who is interested in standardization 
+would not like that comment&mdash;a 48-character set 
+is the thing you know.
+The limitation on the available character set, 
+I think, is more of a transient phenomenon 
+than the algorithms we want to describe.</p>
+
+<p><i>Ross</i>: With our console the 48 characters are available, 
+and there is another mode where you can program 
+any bit patterns you want in a matrix; 
+we are doing this specifically for this purpose
+because we feel that the notation that goes along 
+with the set of ideas should be usable.</p>
+
+<p><i>Bauer</i>: I would say that compared 
+with some other existing proposals for matrix extensions 
+such as that of Ershov this is a
+much more closed consistent system. No one can say today how
+far we will go in using such a language in the near future.</p>
+
+<p><i>Iverson</i>: Let me comment that 
+it is useful to distinguish two reasons 
+for learning a language; 
+one is for description and analysis
+and the other is for automatic execution. 
+I submit that this kind
+of formalism is extremely helpful 
+in analyzing difficult problems
+without worrying about 
+whether one wants to execute the resulting program. 
+As a matter of fact, I would use this as a preliminary
+before going into some language that is executable.</p>
+
+<p><i>Gorn</i>: As I have it, the descriptive language 
+you have <i>does</i>
+have direct translation properties into command language.</p>
+
+<p><i>Holt</i>: I would like to translate 
+that comment of Ken&rsquo;s about description, 
+analysis, and execution in the following way: 
+Programming languages are machine-dependent&mdash;one 
+is appropriate for the human processor 
+and another for the computer.</p>
+
+<p><i>Iverson</i>: Well, I would disagree with that 
+because I would use exactly the same notation 
+for describing the computer. 
+In fact, I&rsquo;ve done it for the 7090 
+or most of the 7090, and other machines as well. 
+In fact, you can say the instruction set of the machine is
+another form of language with a slave to execute it.</p>
+
+<p><i>Holt</i>: Then, what was the meaning of your comment?</p>
+
+<p><i>Iverson</i>: At this point, for example, 
+this is not a source language
+in the sense that there is a mechanism available 
+for translating it into some other language. 
+There is no convenient way 
+for automatic execution by translation or direct execution. 
+Now I suggest that the notation is worthwhile 
+just for analysis even though later we have to do 
+a hand translation into some executable language.</p>
+
+<p><i>Green</i>: If I may interrupt for a moment, 
+I think we should limit
+the discussion on notation to the next five minutes. 
+And we should get to other questions.</p>
+
+<p><i>Tompkins</i>: There exist problems around here 
+which were coded first in essentially this language 
+and then were translated with
+great care into <font size=-1>FORTRAN</font>, for example.</p>
+
+<p><i>Perlis</i>: How should this language be used <i>on</i> computers?
+For what class of problems&mdash;<i>on</i> 
+or <i>off</i> computers? 
+Thus, it&rsquo;s not quite clear to me that a mathematical proof 
+of an algorithm written in <font size=-1>FORTRAN</font> 
+(the same algorithm if you will) is any more
+difficult than a mathematical proof of one of your algorithms.
+Algorithms are written for two reasons: 
+1) execution by computer: which means that it is pointless 
+to write it if you cannot execute it on a computer, 
+and 2) for description and analysis. 
+Now if the description is difficult to read, 
+then it fails somewhat. 
+If, in addition, analysis is as difficult, say, 
+as in <font size=-1>ALGOL</font>, 
+then the virtue of the language is questionable.</p>
+
+<p>A last question: You haven&rsquo;t discussed at all 
+the way you describe data. 
+It is not clear that you have a notation for describing data, 
+though you have a great wealth of notation 
+for manipulating data once it is described. 
+Now <font size=-1>ALGOL</font> will obviously be extended to
+include matrix and vector operations in expressions. 
+So my question is: for what classes of problems, 
+remembering you have no data description, 
+is your description better than &ldquo;Algolic&rdquo; descriptions?
+</p>
+
+<p><i>Iverson</i>: I&rsquo;m not sure if I can really separate 
+all these points.
+The question of representation (data description) is too lengthy
+to treat here. 
+To save time, let me say that I discuss it in Chapter
+3 of my book. 
+This discussion is fairly limited, but adequate.</p>
+
+<p>Concerning the virtues of the language 
+for description and analysis, 
+I can only say that I have found it very useful 
+in many diverse areas, 
+including machine description, search procedures,
+symbolic logic, sorting and linear programming. 
+Now it is a separate problem as to 
+whether you want to incorporate the
+complete generality of the language 
+in any particular compiler&mdash;but 
+I suggest that it is desirable to have a more general system
+that you retract from for any particular compiler rather than
+adding ad hoc provisions to more limited languages.</p>
+
+<p>As to the question of proofs, you can, of course, 
+translate a proof in any language to any other language, 
+but I suggest that the proofs I give are the kind 
+that are immediately obvious to any mathematician. 
+There is, of course, the question of to whom you
+want your proofs to be obvious. 
+Likewise, for difficulty of reading,
+the question is, &ldquo;for whom&rdquo;? 
+And I suggest that anybody who has ever dealt 
+with matrix operations finds this notation 
+very easy to read.</p>
+
+<p><i>Perlis</i>: But is it fair to say then 
+that if one is going to create
+or extend a language that the direction 
+of extension really isn&rsquo;t critical&mdash;that 
+the accent should not be put on operations so much,
+but on data representation or sequence rules?</p>
+
+<p><i>Iverson</i>: No, I disagree.</p>
+
+<p><i>Gorn</i>: Since you are supporting an infix notation 
+for binary operators, 
+would it not be useful to have some control operators
+in the language which would correspond to the combinatory
+logician&rsquo;s &ldquo;Application&rdquo; operation? 
+Also operators for insertion
+and deletion of parentheses, and operators 
+to adjust priorities in the scopes of other operators, 
+e.g. to construct precedence matrices 
+of the type discussed by Floyd?</p>
+
+<p><i>Iverson</i>: Let me give a sort of general answer to this sort of
+thing. You&rsquo;re probably talking about some specialized application
+for which you want special operators. I submit that no one can
+design a language that is equally useful for everybody. Instead,
+what you would like to have is a single core which you can extend
+in a straightforward manner.</p>
+
+<p>In so far as precedence and hierarchy are concerned, 
+I have not found any great need for them in my work, 
+but I can understand
+why you might want to use them in compilers. 
+In fact, I think such
+hierarchy should be included in a tabular form 
+so that it is easily changeable.</p>
+
+<p><i>Holt</i>: The presentation is a marvelous demonstration of the
+power of notation in the hands of a very clever man. Conclusions:
+(1) Let us teach this skill to clever people. 
+(2) Let us create machine mechanisms 
+to respond to notational inventions.</p>
+
+<p><i>Iverson</i>: On the contrary, the basic notions 
+are very simple and should be introduced at high school level 
+to provide a means for describing algorithms explicitly. 
+For example, the vector can be
+introduced as a convenient means 
+for naming a family of variables
+and can be used by the student 
+(together with a few very simple operators) to work out 
+explicit algorithms for well-known operations
+such as decimal addition, polynomial evaluation, etc. 
+A little notation and much care 
+in requiring explicit algorithms would, in fact, 
+clarify and simplify the presentation 
+of elementary mathematics and 
+obviate the teaching of programming as such.</p>
+
+<p><i>Gosden</i>: Many of the equivalences 
+only become useful and powerful 
+when time dependency is included. 
+For example, each operation on any array implies 
+serial or parallel execution component by component. 
+How can you cover this for serial or parallel statements? 
+Obviously, there are many tricks that are time 
+(or series) dependent in array operations. 
+How do they relate to dualities and equivalences, etc.</p>
+
+<p><i>Iverson</i>: Parallel operation is implied by any vector operation;
+serial operation can be made explicit by a program showing the
+specified sequence of operations on components. 
+Distinctions of this type (employing the present notation) 
+are made clear in Falkoff&rsquo;s 
+&ldquo;Algorithms for Parallel Search Memories&rdquo; 
+[J. ACM, Oct. 1962].</p>
+
+<p>More complex simultaneity can be expressed by a collection of
+programs operating concurrently, all mutually independent but
+for interaction through certain (interlock) variables common to
+some two or more programs. 
+Explicit dependence on real time can be introduced 
+by incorporating, as one of this collection of programs,
+a program describing a clock (i.e., oscillator) driven counter.</p>
+
+<p><i>Gorn</i>: Does your generalized operator notation for matrices
+lead to a simpler proof of the generalized Laplace expansion of
+determinants?</p>
+
+<p><i>Iverson</i>: For a given logical vector <b><i>u</i></b>, 
+the Laplace expansion of the determinant <i>&delta;</i><b><i>A</i></b> 
+can be expressed as
+
+<table><tr><td width=31>&nbsp;</td><td>
+<i>&delta;</i><b><i>A</i></b> = 
+(+<sub><i>i</i></sub>/((<i>&delta;</i><b><i>u</i></b>/<b><i>S</i></b><sup>&nbsp;<i>i</i></sup>//<b><i>A</i></b>) 
+&times; (<i>&delta;</i><img src="APLimg/uoscore.bmp">/<img src="APLimg/scapboscore.bmp"><sup>&nbsp;<i>i</i></sup>//<b><i>A</i></b>) &times; 
+<i>&rho;</i>&prime;<b><i>S</i></b><sup>&nbsp;<i>i</i></sup>)) 
+&times; <i>&rho;</i>&prime;<b><i>u</i></b>,
+</td></tr></table>
+
+where <b><i>S</i></b> is a logical matrix 
+whose rows represent all partitions of
+weight +/<b><i>u</i></b>, 
+where <nobr><i>&rho;</i>&prime;<b><i>v</i></b> 
+= <i>&rho;</i>(<b><i>v</i></b>/<tt><b>⍳</b></tt><sup>1</sup>, 
+<img src="APLimg/vboscore.bmp">/<tt><b>⍳</b></tt><sup>1</sup>)</nobr>
+is the &ldquo;parity&rdquo; of the
+logical vector <b><i>v</i></b>, 
+and <i>&rho;</i><b><i>p</i></b> is the <i>parity</i> 
+of the permutation vector <b><i>p</i></b>,
+defined as +1 or &ndash;1 according as the parity 
+of <b><i>p</i></b> is even or odd.
+Since
+
+<table><tr><td width=31>&nbsp;</td><td>
+<i>&delta;</i><b><i>A</i></b> =
++<sub><i>i</i></sub>/((&times;/ 
+<img src="APLimg/quadbackslash.bmp"><sup>&nbsp;<b><i>P</i></b><sup>&nbsp;<i>i</i></sup></sup>/<b><i>A</i></b>) 
+&times; <i>&rho;</i><b><i>P</i></b><sup>&nbsp;<i>i</i></sup>)
+</td></tr></table>
+
+(where <b><i>P</i></b> is the matrix 
+whose (<i>&nu;</i><b><i>A</i></b>)! rows 
+exhaust all permutations
+of dimension <i>&nu;</i><b><i>A</i></b>, 
+and where compression by a logical matrix <b><i>U</i></b> 
+is defined in the obvious way 
+as the catenation of the vectors 
+<b><i>U</i></b><sup>&nbsp;<i>i</i></sup>/<b><i>A</i></b><sup>&nbsp;<i>i</i></sup>),
+then the usual proof of the Laplace expansion 
+(i.e. showing that a typical term 
+of either expansion occurs in the other) 
+can be carried through directly with the aid 
+of the following fact: 
+if <b><i>u</i></b> is any logical vector 
+and <b><i>p</i></b> is a permutation of like dimension, 
+then there exists a unique triple <b><i>v</i></b>, 
+<b><i>q</i></b>, <b><i>r</i></b>, such that
+
+<table><tr><td width=31>&nbsp;</td><td>
+<img src="APLimg/quadbackslash.bmp"><sup>&nbsp;<b><i>q</i></b></sup> = 
+<b><i>u</i></b>/<b><i>v</i></b>//<img src="APLimg/quadbackslash.bmp"><sup>&nbsp;<b><i>p</i></b></sup>, 
+and <img src="APLimg/quadbackslash.bmp"><sup>&nbsp;<b><i>r</i></b></sup> =
+<img src="APLimg/uboscore.bmp">/<img src="APLimg/vboscore.bmp">//<img src="APLimg/quadbackslash.bmp"><sup>&nbsp;<b><i>p</i></b></sup>.
+</td></tr></table>
+
+[The vectors <b><i>v</i></b> and <b><i>u</i></b> 
+are clearly related by the expressions 
+<nobr><b><i>v</i></b> =
+<img src="APLimg/quadbackslash.bmp"><sup>&nbsp;<b><i>p</i></b></sup> 
+<img src="APLimg/orand.bmp"> <b><i>u</i></b>,</nobr>
+and 
+<nobr><b><i>u</i></b> = <b><i>v</i></b> <img src="APLimg/orand.bmp"> 
+<img src="APLimg/quadbackslash.bmp"><sup>&nbsp;<b><i>q</i></b></sup>,</nobr> 
+and moreover, 
+<nobr><i>&rho;</i><b><i>p</i></b> = (<i>&rho;</i>&prime;<b><i>u</i></b>) &times; 
+(<i>&rho;</i>&prime;<b><i>v</i></b>) &times; 
+(<i>&rho;</i><b><i>q</i></b>) &times; (<i>&rho;</i><b><i>r</i></b>).]</nobr></p>
+
+<p>The special matrices occurring in the foregoing can all be
+specified formally in terms of the matrix 
+<b><i>T</i></b>(<i>b</i>,&nbsp;<i>n</i>) defined as follows:
+<nobr><b><i>T</i></b><sub><i>j</i></sub><sup><i>i</i></sup> 
+&epsilon; <tt><b>⍳</b></tt><sup>0</sup>(<i>b</i>),</nobr>
+<nobr><i>&mu;</i><b><i>T</i></b> = 
+<i>b</i><sup><i>n</i></sup>,</nobr> 
+<nobr><i>&nu;</i><b><i>T</i></b> = <i>n</i>,</nobr> and 
+<nobr><i>b</i><tt>⊥</tt><b><i>T</i></b> = 
+<tt><b>⍳</b></tt><sup>0</sup>,</nobr>
+where <i>b</i><tt>⊥</tt><b><i>x</i></b>
+denotes the base-<i>b</i> value of the vector <b><i>x</i></b>. 
+Thus <nobr><b><i>S</i></b> =
+(+/<b><i>u</i></b> = +/<b><i>M</i></b>)//<b><i>M</i></b>,</nobr>
+where <nobr><b><i>M</i></b> = <b><i>T</i></b>(2, <i>&nu;</i><b><i>A</i></b>)</nobr> 
+and <nobr><b><i>P</i></b> = 
+(&and;/<i>&sigma;</i>/<b><i>M</i></b>)//<b><i>M</i></b>,</nobr>
+where <nobr><b><i>M</i></b> = 
+<b><i>T</i></b>(<i>&nu;</i><b><i>A</i></b>, <i>&nu;</i><b><i>A</i></b>),</nobr>
+and <i>&sigma;</i>/<b><i>x</i></b> 
+is the <i>set selection</i> operation
+<acronym title="Iverson, Kenneth E., 
+A Programming Language. Wiley, 1962.">[1,&nbsp;p.&nbsp;23]</acronym>.</p>
+
+<p>Moreover, the parity function <i>&rho;</i><b><i>p</i></b> 
+may be defined formally as
+<i>&rho;</i><b><i>p</i></b> = <img src="APLimg/uoscore.bmp"> &ndash; <i>u</i>, 
+where <nobr><i>u</i> = 2 | +/ <img src="APLimg/quadne.bmp">/(<b><i>p</i></b> <img src="APLimg/jotgt.bmp"> <b><i>p</i></b>).</nobr></p>
+
+<p><i>Dijkstra</i>: How would you represent a more complex operation,
+for example, the sum of all elements of a matrix <b><i>M</i></b> which are
+equal to the sum of the corresponding row and column indices?</p>
+
+<p><i>Iverson</i>: ++/(<b><i>M</i></b> = <tt><b>⍳</b></tt><sup>1</sup> <img src="APLimg/jotplus.bmp"> 
+<tt><b>⍳</b></tt><sup>1</sup>)//<b><i>M</i></b>
+<br>&nbsp;</p>
+
+
+
+<a name="conferees"></a>
+
+<p><b>List of Conferees, Working Conference on Language Structures, 
+August 14-16, 1963</b></p>
+
+<table>
+<tr><td>P. Abrahams</td><td>&nbsp;</td><td>International Electric Corp.</td></tr>
+<tr><td>R.W. Allard</td><td>&nbsp;</td><td>Control Data Corp.</td></tr>
+<tr><td>John W. Backus</td><td>&nbsp;</td><td>IBM</td></tr>
+<tr><td>F. Bauer</td><td>&nbsp;</td><td>Math. Inst. der TH M&uuml;nchen</td></tr>
+<tr><td>R. Bosak</td><td>&nbsp;</td><td>Inst. for Defense Analyses</td></tr>
+<tr><td>R.A. Brooker</td><td>&nbsp;</td><td>IBM</td></tr>
+<tr><td>L.L. Bumgarner</td><td>&nbsp;</td><td>Oak Ridge Nat. Lab.</td></tr>
+<tr><td>W.H. Barge</td><td>&nbsp;</td><td>Univac Div., Sperry Rand</td></tr>
+<tr><td>T.E. Cheatham, Jr.</td><td>&nbsp;</td><td>Computer Associates, Inc.</td></tr>
+<tr><td>H.B. Curry</td><td>&nbsp;</td><td>Pennsylvania State U.</td></tr>
+<tr><td>E.W. Dijkstra</td><td>&nbsp;</td><td>Technological U., Eindhoven</td></tr>
+<tr><td>Arthur Evans</td><td>&nbsp;</td><td>Carnegie Inst. of Technology</td></tr>
+<tr><td>R.J. Evey</td><td>&nbsp;</td><td>IBM</td></tr>
+<tr><td>J. Fennell</td><td>&nbsp;</td><td>Logistics Research Project</td></tr>
+<tr><td>Robert W. Floyd</td><td>&nbsp;</td><td>Computer Associates, Inc.</td></tr>
+<tr><td>Donald B. Gillies</td><td>&nbsp;</td><td>U. of Illinois</td></tr>
+<tr><td>Ruth Goodman</td><td>&nbsp;</td><td>Westinghouse Corp.</td></tr>
+<tr><td>S. Gorn</td><td>&nbsp;</td><td>U. of Pennsylvania</td></tr>
+<tr><td>John Gosden</td><td>&nbsp;</td><td>Auerbach Electronics Corp.</td></tr>
+<tr><td>Robert M. Graham</td><td>&nbsp;</td><td>U. of Michigan</td></tr>
+<tr><td>Julien Green</td><td>&nbsp;</td><td>IBM</td></tr>
+<tr><td>Sheila Greibach</td><td>&nbsp;</td><td>Harvard U.</td></tr>
+<tr><td>John W. Guy</td><td>&nbsp;</td><td>Nat. Security Agency</td></tr>
+<tr><td>Leonard H. Haines</td><td>&nbsp;</td><td>MIT</td></tr>
+<tr><td>A.W. Holt</td><td>&nbsp;</td><td>U. of Pennsylvania</td></tr>
+<tr><td>P.Z. Ingerman</td><td>&nbsp;</td><td>Westinghouse Electric Corp.</td></tr>
+<tr><td>R. Itturiaga</td><td>&nbsp;</td><td>Carnegie Inst. of Technology</td></tr>
+<tr><td>E.T. Irons</td><td>&nbsp;</td><td>Inst. for Defense Analyses</td></tr>
+<tr><td>K.E. Iverson</td><td>&nbsp;</td><td>IBM</td></tr>
+<tr><td>Walter W. Jacobs</td><td>&nbsp;</td><td>Inst. for Defense Analyses</td></tr>
+<tr><td>Charles Katz</td><td>&nbsp;</td><td>General Electric</td></tr>
+<tr><td>R.A. Kirseh</td><td>&nbsp;</td><td>Nat. Bur. Standards</td></tr>
+<tr><td>Rainer Kogon</td><td>&nbsp;</td><td>IBM</td></tr>
+<tr><td>B.M. Leavenworth</td><td>&nbsp;</td><td>IBM</td></tr>
+<tr><td>M. Henri Leroy</td><td>&nbsp;</td><td>Cie Bull</td></tr>
+<tr><td>L. Lombardi</td><td>&nbsp;</td><td>MIT</td></tr>
+<tr><td>William H. Marlow</td><td>&nbsp;</td><td>Logistics Research Project</td></tr>
+<tr><td>E.J. McCluskey</td><td>&nbsp;</td><td>Princeton U.</td></tr>
+<tr><td>M.A. Melkanoff</td><td>&nbsp;</td><td>U. of California</td></tr>
+<tr><td>J.N. Merner</td><td>&nbsp;</td><td>Burroughs Corp.</td></tr>
+<tr><td>G.J. Mitchell</td><td>&nbsp;</td><td>Inst. for Defense Analyses</td></tr>
+<tr><td>A. Newell</td><td>&nbsp;</td><td>Carnegie Inst. of Technology</td></tr>
+<tr><td>M. Paul</td><td>&nbsp;</td><td>Math. Inst. der TH Munchen</td></tr>
+<tr><td>A.J. Perlis</td><td>&nbsp;</td><td>Carnegie Inst. of Technology</td></tr>
+<tr><td>George Radin</td><td>&nbsp;</td><td>IBM</td></tr>
+<tr><td>Gene F. Rose</td><td>&nbsp;</td><td>System Development Corp.</td></tr>
+<tr><td>D.T. Ross</td><td>&nbsp;</td><td>MIT</td></tr>
+<tr><td>Bernard D. Rudin</td><td>&nbsp;</td><td>Lockheed Aircraft Corp.</td></tr>
+<tr><td>R.A. Sibley, Jr.</td><td>&nbsp;</td><td>IBM</td></tr>
+<tr><td>K.H. Speierman</td><td>&nbsp;</td><td>Burroughs Corp.</td></tr>
+<tr><td>T.B. Steel</td><td>&nbsp;</td><td>System Development Corp.</td></tr>
+<tr><td>C.B. Tompkins</td><td>&nbsp;</td><td>U. of California</td></tr>
+<tr><td>Hale F. Trotter</td><td>&nbsp;</td><td>Princeton U.</td></tr>
+<tr><td>R.E. Utman</td><td>&nbsp;</td><td>Business Equipment Mfrs. Assoc.</td></tr>
+<tr><td>S. Warshall</td><td>&nbsp;</td><td>Computer Associates, Inc.</td></tr>
+<tr><td>J.H. Wegstein</td><td>&nbsp;</td><td>Nat. Bur. Standards</td></tr>
+<tr><td>J. Weizenbaum</td><td>&nbsp;</td><td>General Electric</td></tr>
+<tr><td>M.V. Wilkes</td><td>&nbsp;</td><td>Univ. Math. Laboratory, Cambridge</td></tr>
+<tr><td>Kenneth A. Wolf</td><td>&nbsp;</td><td>Control Data Corp.</td></tr>
+</table>
+<br>
+
+
+<hr>
+<font size=-1>
+<p>Originally appeared in the <i>Communications of the ACM</i>,
+Volume 7, Number 2, 1964-02.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created&nbsp;</font></td><td><font size=-1>2009-09-08 10:00</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2013-07-23 21:50</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

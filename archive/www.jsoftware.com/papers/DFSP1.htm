@@ -1,0 +1,1153 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>The Description of Finite Sequential Processes</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>The Description of Finite Sequential Processes</font><br><br>
+<b>Kenneth E. Iverson<br>
+Harvard University, Massachusetts, U.S.A.</b><sup><a href="DFSP1.htm#notea">[a]</a></sup>
+<br>&nbsp;</p>
+
+<hr>
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>The economical execution of fully-specified algorithms
+provided by the automatic computer has greatly increased
+the use of complex algorithms 
+in information theory and other fields.
+This increased use has in turn generated a need
+for consistent and powerful programming languages
+for the description and analysis of complex algorithms.
+A programming language is commonly characterized
+as <i>problem-oriented</i> or <i>machine-oriented</i>,
+according as it is intended mainly for the description
+and analysis of algorithms or for their execution.
+The language outlined<sup><a href="DFSP1.htm#noteb">[b]</a></sup>
+in the present paper was developed primarily
+for description and analysis, 
+but also lends itself well to execution.
+The present emphasis is on description and analysis.</p>
+
+<p>A programming language should 
+(<i>a</i>) allow a clear 
+and simple representation of the <i>sequence</i>
+in which steps of an algorithm are performed, 
+(<i>b</i>) provide a concise and consistent notation 
+for the operations occurring in a wide range of processes, 
+(<i>c</i>) permit the description of a process 
+to be independent of the choice 
+of a particular representation for the data, 
+(<i>d</i>) allow economy in operation symbols, 
+and (<i>e</i>) provide convenient subordination 
+of detail without loss of detail.</p>
+
+<p>The sequence of execution of statements will be specified 
+by their order of listing and by arrows 
+connecting a statement to its successor. 
+<i>Branch points</i>, at which alternative successors 
+are chosen according to the outcome of a comparison 
+between a pair of quantities, 
+will be represented by a colon placed 
+between the compared quantities, 
+and by a label attached to each arrow showing 
+the relation under which it is followed. 
+Any well-defined relation may be employed, 
+e.g. equality, inequality, or set membership. 
+The conditions at each branch point must be exhaustive, 
+and the listed successor is associated 
+with all conditions not included in the labelled arrows.</p>
+
+<p>Commonly occurring operations to be defined 
+include the <i>floor</i> 
+<img src="DFSPimg/lfloor.bmp"><i>x</i><img src="DFSPimg/rfloor.bmp"> 
+(largest integer not exceeding <i>x</i>),
+the <i>ceiling</i>
+<img src="DFSPimg/lceil.bmp"><i>x</i><img src="DFSPimg/rceil.bmp">,
+and the residue of <i>x</i> modulo <i>m</i>, 
+to be denoted by |<i>x</i>,&nbsp;<i>m</i>|.   
+The common logical operations <i>and</i>, <i>or</i>, 
+and <i>not</i> will be
+denoted by <tt>^</tt>, <tt>∨</tt>, and <tt>¯</tt>, 
+and will be augmented by the <i>relational statement</i>
+(<i>x</i><font face="Script">R</font><i> y</i>) 
+defined as follows.   
+If <i>x</i> and <i>y</i> are any quantities 
+and <font face="Script">R</font> is any binary
+relation defined upon them, 
+then (<i>x</i><font face="Script">R</font><i> y</i>) 
+is a logical variable whose value is 1 or 0 according 
+as <i>x</i> does or does not stand 
+in the relation <font face="Script">R</font> to <i>y</i>. 
+For example, the absolute value of <i>y</i> 
+may be defined as follows:</p>
+
+<p>&nbsp; &nbsp; &nbsp; |<i>x</i>| = <i>x</i>(1 - 2(<i>x</i> &lt; 0))</p>
+
+<p>To illustrate the use 
+of the floor and ceiling operations, 
+consider a rectangular array of dimension 
+<nobr><i>a</i> &times; <i>b</i></nobr>
+whose cells listed in order by rows 
+(0, 1, &#133;, <i>b</i> &ndash; 1,  <i>b</i>, <i>b</i> + 1, 
+&#133;, <nobr><i>ab</i> &ndash; 1</nobr>) 
+are denoted by <i>x</i> and 
+in order by column are denoted by <i>y</i>.   
+Then</p>
+
+<p>&nbsp; &nbsp; &nbsp; 
+<i>x</i> = <i>b</i> &times; |<i>y</i>, <i>a</i>| + <img src="DFSPimg/lfloor.bmp"><i>y</i> <tt>÷</tt> <i>a</i><img src="DFSPimg/rfloor.bmp"><br>
+and<br>
+&nbsp; &nbsp; &nbsp; 
+<i>y</i> = <i>a</i> &times; |<i>x</i>, <i>b</i>| + <img src="DFSPimg/lfloor.bmp"><i>x</i> <tt>÷</tt> <i>b</i><img src="DFSPimg/rfloor.bmp"></p>
+
+<p>These are the transformations used 
+in determining accessibility in a serial-parallel memory
+of <i>a</i> bands with <i>b</i> slots per band.
+They may be derived from the identity</p>
+
+<p>&nbsp; &nbsp; &nbsp; <i>y</i> = <i>a</i> &times;
+<img src="DFSPimg/lfloor.bmp"><i>y</i> 
+<tt>÷</tt> <i>a</i><img src="DFSPimg/rfloor.bmp">
++ |<i>y</i>, <i>a</i>|
+<br>&nbsp;</p>
+
+
+
+<a name="sets"></a>
+<p><b>Ordered Sets</b></p>
+
+<p>The description of a process can be made independent
+of its representation by defining certain fundamental operations
+upon finite ordered sets.
+The element of a finite simply ordered set <i>B</i>
+of <i>dimension</i> (number of elements) <i>&nu;</i>(<i>B</i>)
+can be indexed by the integers 1, 2, &#133;, <i>&nu;</i>(<i>B</i>)
+such that <i>B</i><sub><i>i</i></sub>
+is the <i>i</i>-th element of the set. 
+The <i>k</i>-th <i>successor</i> 
+of an element <i>x</i> of <i>B</i> 
+will then be denoted 
+by <nobr><i>x</i> <img align=middle src="DFSPimg/buarr.bmp"> <i>k</i></nobr>
+and defined as the element <i>B</i><sub><i>j</i></sub>, 
+where <i>j</i> &equiv; <nobr>(<i>i</i> + <i>k</i>) (mod <i>&nu;</i>(<i>B</i>))</nobr>, 
+and <i>B</i><sub><i>i</i></sub> = <i>x</i>.  
+The <i>k</i>-th <i>predecessor</i> is defined analogously 
+and denoted by <i>x</i> <img align=middle src="DFSPimg/bdarr.bmp"> <i>k</i>.   
+If <i>B</i> is the set of integers, 
+the symbol <i>B</i> may be elided, 
+and if <i>k</i> = 1 it may be elided; 
+hence <i>i</i>&uarr;<i>k</i> denotes 
+the <i>k</i>-th successor of the integer <i>i</i>, 
+and <i>i</i>&nbsp;&uarr; denotes the integer <i>i</i> + 1.</p>
+
+<p>The successor operation defined 
+upon an element of <i>B</i> can be extended to
+any subset <i>C</i> of <i>B</i> as follows: 
+<nobr><i>C</i> <img align=middle src="DFSPimg/buarr.bmp"> <i>k</i></nobr> 
+denotes the set <i>D</i> such that 
+<nobr><i>D</i><sub><i>i</i></sub> = <i>C</i><sub><i>i</i></sub> <img align=middle src="DFSPimg/buarr.bmp"> <i>k</i></nobr>.
+If <i>C</i> and <i>B</i> are identical, 
+the operation is called <i>left rotation</i> 
+and is denoted by <i>C</i>&nbsp;&uarr;&nbsp;<i>k</i>.   
+Rotation is extended analogously to vectors.</p>
+
+<p>Two sets <i>A</i> and <i>B</i> are equal (<i>A</i> = <i>B</i>) 
+if they contain the same elements, 
+but are identical (<i>A</i> &equiv; <i>B</i>) 
+only if they also have the same order. 
+Simple modifications in the standard definitions 
+of intersection and union 
+provide a closed system for ordered sets. 
+To achieve economy of operation symbols, 
+intersection and union are denoted 
+by <tt>^</tt> and <tt>∨</tt>, 
+already used for the analogous logical operations 
+<i>and</i>, and <i>or</i>. 
+Potential ambiguity is avoided 
+by using distinctive symbols for each class of operand; 
+italics for single variables, 
+lower case boldface italics for vectors, 
+upper case boldface italics for matrices, 
+and ordinary Roman characters for literals, 
+i.e. for characters such as the numerals 
+and the letters of the alphabet 
+which have fixed accepted meanings.</p>
+
+<p>A second set of indices, 
+called <i>contracurrent indices</i>
+will be assigned to the elements of any set <i>A</i>. 
+These indices run 
+from &ndash;<i>&nu;</i>(<i>A</i>) to &ndash;1. 
+The <i>k</i>-th element may therefore be denoted 
+alternatively by <i>A</i><sub><i>&nbsp;k</i></sub> 
+or <i>A</i><sub><i>&ndash;j</i></sub>, 
+where <i>j</i> + <i>k</i> = <i>&nu;</i>(<i>A</i>) + 1.   
+In particular, the terminal elements 
+may be denoted by <i>A</i><sub>1</sub>
+and <i>A</i><sub>&ndash;1</sub>.
+Contracurrent indices will also
+be employed for vectors and 
+matrices.<sup><a href="DFSP1.htm#notec">[c]</a></sup></p>
+
+<p>A set obtained from a set <i>B</i> 
+by deleting the first 
+<i>i</i> and the last <i>j</i> elements is 
+called a <i>solid subset</i> or an <i>infix</i> of <i>B</i>. 
+An infix <i>C</i> of <i>B</i> is also called 
+a <i>prefix</i> of <i>B</i> 
+if <i>C</i><sub><i>1</i></sub> = <i>B</i><sub><i>1</i></sub>,
+or a <i>suffix</i> 
+if <i>C</i><sub><i>&ndash;1</i></sub> = 
+<i>B</i><sub><i>&ndash;1</i></sub>. 
+The statement</p>
+
+<p>&nbsp; &nbsp; &nbsp; <i>C</i> <img align=middle src="DFSPimg/blarr.bmp">
+{(<i>x</i>, <i>y</i>)}</p>
+
+<p>specifies <i>C</i> as the infix of <i>B</i> 
+having terminal elements <i>x</i> and <i>y</i>.   
+The symbol <i>B</i> may be elided 
+if <i>B</i> is the set of integers.</p>
+
+<p><i>Program 1</i> illustrates the conventions introduced so far.
+If <b>H</b><sub><i>&nbsp;j</i></sub><sup>1</sup> is the suit
+and <b>H</b><sub><i>&nbsp;j</i></sub><sup>2</sup>
+the denomination of the <i>j</i>-th card 
+in a hand of thirteen playing cards, and if</p>
+
+<p>&nbsp; &nbsp; &nbsp; <i>D</i> &equiv; {deuce, trey, &#133;, king, ace}</p>
+
+<p>is the set of denominations, 
+then the quantity <i>q</i> 
+determined by the program is the length 
+of the longest run in any one suit.</p>
+
+<table align=center>
+<tr><td align=center><img src="DFSPimg/prog1.bmp"></td></tr>
+<tr><td align=center><i>Program 1.</i>  
+Program to determine the length<br>
+of the longest run in the card hand <b>H</b></td></tr>
+</table>
+
+<p>A left-pointing arrow associates 
+the <i>specifying</i> quantity 
+on the right of each statement 
+with the <i>specified</i> quantity on the left. 
+The arrow is used instead of the sign 
+of equality because it eliminates 
+ambiguity and reserves the sign 
+of equality as a <i>relation</i> to be 
+used in relational statements only.
+<br>&nbsp;</p>
+
+
+
+<a name="structure"></a>
+<p><b>Structured Operands</b></p>
+
+<p>Significant subordination of detail 
+can be achieved by generalizing 
+each operation defined upon simple variables 
+to structured arrays such as vectors and matrices. 
+For example, if <b>p</b> and <b>q</b> are logical vectors 
+(i.e. each component is a logical variable), then</p>
+
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><b>r</b> &larr; <img align=middle src="DFSPimg/pobar.bmp"></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b>r</b><sub><i>&nbsp;i</i></sub> = <img align=middle src="DFSPimg/pobar.bmp"><sub><i>&nbsp;i</i></sub></td>
+ <td rowspan=3>&nbsp; <img src="DFSPimg/rbracket3.bmp"> &nbsp;</td>
+ <td rowspan=3><i>i</i> &epsilon; {(1, <i>&nu;</i>(<b>p</b>))}</td>
+ </tr>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><b>r</b> &larr; <b>p</b> <tt>^</tt> <b>q</b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b>r</b><sub><i>&nbsp;i</i></sub> = <b>p</b><sub><i>&nbsp;i</i></sub> <tt>^</tt> <b>q</b><sub><i>&nbsp;i</i></sub></td>
+ </tr>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><b>r</b> &larr; <b>p</b> <tt>∨</tt> <b>q</b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b>r</b><sub><i>&nbsp;i</i></sub> = <b>p</b><sub><i>&nbsp;i</i></sub> <tt>∨</tt> <b>q</b><sub><i>&nbsp;i</i></sub></td>
+ </tr>
+</table>
+
+<p>Moreover, if <b>x</b> and <b>y</b> are numerical vectors, then</p>
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><b>z</b> &larr; <b>x</b> + <b>y</b></td> 
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b>z</b><sub><i>&nbsp;i</i></sub> = <b>x</b><sub><i>&nbsp;i</i></sub> + <b>y</b><sub><i>&nbsp;i</i></sub></td> 
+ </tr>
+<tr><td>&nbsp;</td>
+ <td><b>z</b> &larr; <b>x</b> &times; <b>y</b></td> 
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b>z</b><sub><i>&nbsp;i</i></sub> = <b>x</b><sub><i>&nbsp;i</i></sub> &times; <b>y</b><sub><i>&nbsp;i</i></sub></td> 
+ </tr>
+<tr><td>&nbsp;</td>
+ <td><b>z</b> &larr; <b>x</b> <tt>÷</tt> <b>y</b></td> 
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b>z</b><sub><i>&nbsp;i</i></sub> = <b>x</b><sub><i>&nbsp;i</i></sub> <tt>÷</tt> <b>y</b><sub><i>&nbsp;i</i></sub></td> 
+ </tr>
+</table>
+
+<p>Operations such as floor, ceiling, and residue 
+are extended analogously.</p>
+
+<p>The application of any associative binary operation 
+<img src="DFSPimg/circledot.bmp"> 
+to all components of a vector <b>x</b> is denoted 
+by <img src="DFSPimg/circledot.bmp">/<b>x</b>. 
+Thus &times;/<b>x</b> is the product and +/<b>x</b> 
+is the sum of all components of <b>x</b>. 
+The latter will also be denoted by <i>&sigma;</i>(<b>x</b>) 
+and be called the <i>weight</i> of <b>x</b>. 
+The usual notations for matrix algebra are retained, 
+i.e. <b>xy</b> for a scalar product, 
+and <b>XY</b> for a product of matrices. 
+It is clear that <b>xy</b> = 
+<nobr><i>&sigma;</i>(<b>x</b> &times; <b>y</b>)</nobr> 
+and that <nobr><i>&sigma;</i>(<b>x</b> &uarr; <i>k</i>)</nobr> 
+= <i>&sigma;</i>(<b>x</b>) for all <i>k</i>.</p>
+
+<p>Greek symbols (in the appropriate type face) 
+will be used for specially defined quantities. 
+Thus, the <i>unit vectors</i> 
+<tt><b>∊</b></tt><sup><i>i</i></sup> 
+are logical vectors such that 
+(<tt><b>∊</b></tt><sup><i>i</i></sup>)<sub><i>&nbsp;j</i></sub> 
+= 1 if and only if <nobr><i>j</i> = <i>i</i></nobr>. 
+The <i>full vector</i> <tt><b>∊</b></tt> is the negation of the zero vector. 
+The <i>prefix vector</i> 
+<tt><b>⍺</b></tt><sup><i>i</i></sup> 
+is a logical vector 
+of weight <i>j</i> whose first <i>j</i> components are unity. 
+The <i>suffix vector</i> 
+<tt><b>⍵</b></tt><sup><i>i</i></sup> is defined analogously. 
+The <i>identity permutation vector</i> <tt><b>⍳</b></tt> 
+is defined by the relation 
+<nobr><tt><b>⍳</b></tt><sub><i>&nbsp;j</i></sub> = <i>j</i></nobr>. 
+The dimension of a unit, suffix, prefix, or 
+identity permutation vector is normally 
+defined implicitly by the compatibility requirements 
+of associated operators and operands. 
+The scalar zero, vector zero, and matrix zero 
+will all be denoted by 0.</p>
+
+<p>The conventional vector product of two space vectors 
+(to be denoted by 
+<nobr><b>x</b> <img src="DFSPimg/crossproduct.bmp"> <b>y</b></nobr>) 
+will illustrate the use of the foregoing notation.   
+It can be defined as</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>x</b> <img src="DFSPimg/crossproduct.bmp"> <b>y</b> =
+<b>x</b> &uarr; &times; <b>y</b> &darr; &ndash;
+<b>x</b> &darr; &times; <b>y</b> &uarr;</p>
+
+<p>A trivial formal manipulation shows that 
+<b>y</b> <img src="DFSPimg/crossproduct.bmp"> <b>x</b>
+= &ndash;(<b>x</b> <img src="DFSPimg/crossproduct.bmp"> <b>y</b>).   
+The orthogonality theorem
+<nobr><b>x</b>(<b>x</b> <img src="DFSPimg/crossproduct.bmp"> <b>y</b>) = 0</nobr> 
+can be established as follows:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><b>x</b>(<b>x</b> <img src="DFSPimg/crossproduct.bmp"> <b>y</b>)</td>
+ <td>&nbsp; = &nbsp;</td>
+ <td><b>x</b>(<b>x</b> &uarr; &times; <b>y</b> &darr; &ndash; <b>x</b> &darr; &times; <b>y</b> &uarr;)</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp; = &nbsp;</td>
+ <td><i>&sigma;</i>(<b>x</b> &times; <b>x</b> &uarr; &times; <b>y</b> &darr; &ndash; <b>x</b> &times; <b>x</b> &darr; &times; <b>y</b> &uarr;)</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp; = &nbsp;</td>
+ <td><i>&sigma;</i>((<b>x</b> &times; <b>x</b> &uarr; &times; <b>y</b> &darr;) &darr; &ndash; <b>x</b> &times; <b>x</b> &darr; &times; <b>y</b> &uarr;)</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td>&nbsp; = &nbsp;</td>
+ <td><i>&sigma;</i>(<b>x</b> &darr; &times; <b>x</b> &times; <b>y</b> &darr; 2 &ndash; <b>x</b> &times; <b>x</b> &darr; &times; <b>y</b> &uarr;)</td>
+ </tr>
+</table>
+
+<p>Since the &times; operator is commutative, 
+and since <nobr><b>y</b> &darr; 2 = <b>y</b> &uarr;</nobr>
+for a vector of dimension three, 
+the final expression is equal to zero 
+and the theorem is established. 
+Further theorems concerning the magnitude of 
+<nobr><b>x</b> <img src="DFSPimg/crossproduct.bmp"> <b>y</b></nobr>, 
+the four-vector product, and the box product 
+follow by similarly simple formal manipulation.</p>
+
+<p>Individual components of structured operands 
+can be selected by subscripts and superscripts: 
+<b>x</b><sub><i>&nbsp;i</i></sub> 
+for the <i>i</i>-th component of the vector <b>x</b>, 
+<b>A</b><sup><i>i</i></sup> 
+for the <i>i</i>-th row vector of a matrix <b>A</b>, 
+<b>A</b><sub><i>&nbsp;j</i></sub> 
+for the <i>j</i>-th column vector, and 
+<b>A</b><sub><i>&nbsp;j</i></sub><sup><i>&nbsp;i</i></sup>
+for the <i>ij</i>-th element. 
+More generally, it is necessary 
+to specify selected subsets of the components. 
+Since the selection is, for each component, 
+a binary operation, it can be specified 
+by an associated logical vector of the same dimension. 
+Thus for an arbitrary vector <b>x</b> 
+and <i>compatible</i> logical vector <b>u</b> 
+(that is, <i>&nu;</i>(<b>u</b>) = <i>&nu;</i>(<b>x</b>)), 
+the statement</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>z</b> &larr; <b>u</b>/<b>x</b></p>
+
+<p>implies that the <b>z</b> is obtained 
+by suppressing from <b>x</b> those components 
+<b>x</b><sub><i>&nbsp;i</i></sub> 
+for which <b>u</b><sub><i>&nbsp;i</i></sub> = 0. 
+The operation <b>u</b>/<b>x</b> is called <i>compression</i> 
+of <b>x</b> by <b>u</b>. 
+For example, if <b>u</b> = <nobr>(1, 0, 0,0, 1, 1)</nobr>, 
+and <b>x</b> = <nobr>(m, o, n, d, a, y)</nobr>, 
+then <b>u</b>/<b>x</b> = <nobr>(m, a, y)</nobr>. 
+Clearly, <i>&nu;</i>(<b>u</b>/<b>x</b>) = <i>&sigma;</i>(<b>u</b>).   
+Set compression is defined analogously.</p>
+
+<p>Two types of compression must be defined 
+for matrices; <i>row compression</i>, defined by</p>
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><b>Z</b> &larr; <b>u</b>/<b>X</b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b>Z</b><sup><i>&nbsp;i</i></sup> = <b>u</b>/<b>X</b><sup><i>&nbsp;i</i></sup>,</td>
+ <td>&nbsp; <i>i</i> &epsilon; {(1, <i>&mu;</i>(<b>X</b>))}</td></tr>
+<tr><td colspan=5><br>and <i>column compression</i>, defined by<br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><b>Z</b> &larr; <b>u</b>//<b>X</b></td>
+ <td>&nbsp; &harr; &nbsp;</td>
+ <td><b>Z</b><sub><i>&nbsp;j</i></sub> = <b>u</b>/<b>X</b><sub><i>&nbsp;j</i></sub>,</td>
+ <td>&nbsp; <i>j</i> &epsilon; {(1, <i>&nu;</i>(<b>X</b>))}</td></tr>
+</table>
+
+<p>For example, if the matrix <b>M</b> 
+represents a ledger of <i>&mu;</i>(<b>M</b>) bank accounts, 
+with the column vectors 
+<b>M</b><sub>1</sub>, 
+<b>M</b><sub>2</sub>, 
+<b>M</b><sub>3</sub>, and
+<b>M</b><sub>4</sub>
+denoting name, account number, address, and balance, 
+respectively, then the operation of preparing 
+a list <b>P</b> of the name, account number and balance, 
+for all accounts whose balance exceeds 1,000 
+can be completely prescribed as follows.</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>P</b> &larr; 
+(<b>M</b><sub>4</sub> &gt; 1000<tt><b>∊</b></tt>)//(<img src="https://www.jsoftware.com/papers/DFSPimg/epsobar.bmp"><sup>3</sup>/<b>M</b>)</p>
+
+<p>The <i>expansion</i> of a vector <b>x</b> 
+by a logical vector u is denoted by <b>u</b>\<b>x</b> 
+and is defined as follows.</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>z</b> &larr; <b>u</b>\<b>x</b> 
+&nbsp; &harr; &nbsp; <b>u</b>/<b>z</b> = <b>x</b> and
+<img src="DFSPimg/uobar.bmp">/<b>x</b> = 0</p>
+
+<p>It is necessary that 
+<i>&sigma;</i>(<b>u</b>) = <i>&nu;</i>(<b>x</b>). 
+Clearly <i>&nu;</i>(<b>z</b>) = <i>&nu;</i>(<b>u</b>). 
+Row expansion (denoted by <b>u</b>\<b>X</b>) 
+and column expansion (<b>u</b>\\<b>X</b>) 
+are defined analogously.</p>
+
+<p>The compress and expand operations 
+provide a powerful extension 
+of ordinary matrix algebra. 
+For example, any numerical vector 
+can be <i>decomposed</i> according to the identity</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>x</b> = 
+<img src="DFSPimg/uobar.bmp">\<img src="DFSPimg/uobar.bmp">/<b>x</b> +
+  <b>u</b>\<b>u</b>/<b>x</b></p>
+
+<p>Matrices can be decomposed similarly. 
+Moreover, the conventional operations 
+on partitioned matrices can be generalized 
+in a systematic manner. 
+A few of the more important identities are, for example:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td align=right>(<b>u</b>/<b>X</b>)<b>Y</b></td>
+ <td>&nbsp; = &nbsp;</td>
+ <td><b>X</b>(<b>u</b>\\<b>Y</b>)</td>
+ </tr>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td align=right>(<b>u</b>\<b>X</b>)<b>Y</b></td>
+ <td>&nbsp; = &nbsp;</td>
+ <td><b>X</b>(<b>u</b>//<b>Y</b>)</td>
+ </tr>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td align=right><b>XY</b></td>
+ <td>&nbsp; = &nbsp;</td>
+ <td>(<b>u</b>/<b>X</b>)(<b>u</b>//<b>Y</b>) + 
+  (<img src="DFSPimg/uobar.bmp">/<b>X</b>)(<img src="DFSPimg/uobar.bmp">//<b>Y</b>)</td>
+ </tr>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td align=right><b>u</b>/(<b>XY</b>)</td>
+ <td>&nbsp; = &nbsp;</td>
+ <td><b>X</b>(<b>u</b>/<b>Y</b>)</td>
+ </tr>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td align=right><b>u</b>//(<b>XY</b>)</td>
+ <td>&nbsp; = &nbsp;</td>
+ <td>(<b>u</b>//<b>X</b>)<b>Y</b></td>
+ </tr>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td align=right>(<b>u</b>/<b>v</b>)/(<b>u</b>/<b>X</b>)</td>
+ <td>&nbsp; = &nbsp;</td>
+ <td>(<b>u</b> <tt>^</tt> <b>v</b>)/<b>X</b></td>
+ </tr>
+</table>
+
+<p>Maximization over those components 
+of <b>x</b> for which <b>u</b><sub><i>&nbsp;j</i></sub> = 1 
+will be denoted by <b>u</b><tt>⌈</tt><b>x</b>.   
+More precisely,</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>v</b> &larr; <b>u</b><tt>⌈</tt><b>x</b></p>
+
+<p>specifies a logical vector <b>v</b> such that 
+<b>v</b>/<b>x</b> = <i>m</i><tt><b>∊</b></tt> and that</p>
+
+<p>&nbsp; &nbsp; &nbsp; (((<b>v</b> <tt>^</tt> <b>u</b>)/<b>x</b>) &lt;
+<i>m</i><tt><b>∊</b></tt>) = <tt><b>∊</b></tt></p>
+
+<p>Graphically, <b>v</b> is obtained 
+by lowering a horizontal line 
+over a plot of <b>x</b> 
+until it touches the largest component 
+of <b>u</b>/<b>x</b>, 
+and then marking with a 1 all components 
+of <b>u</b>/<b>x</b> touched by the line. 
+Thus if <b>x</b> = <nobr>(6, 3, &ndash;8, 6, 6),</nobr> 
+then <b>v</b> = <tt><b>∊</b></tt><tt>⌈</tt><b>x</b> = 
+<nobr>(1,0, 0, 1, 1),</nobr> 
+<b>v</b>/<b>x</b> = <nobr>(6, 6, 6),</nobr> 
+and (<b>v</b>/<b>x</b>)<sub>1</sub> = 6. 
+Minimization is denoted analogously 
+by <b>u</b><tt>⌊</tt><b>x</b>. 
+The minimum over all positive values of <b>x</b> 
+may be denoted, for example, 
+by <nobr>(<b>x</b> &gt; 0)<tt>⌊</tt><b>x</b></nobr>, 
+and for the present example 
+<nobr>(<b>x</b> &gt; 0)<tt>⌊</tt><b>x</b></nobr> = 
+<nobr>(0, 1, 0, 0, 0)</nobr>.</p>
+
+<i>Program 2</i> illustrates the use 
+of this notation in a complete description 
+of the simplex algorithm for linear programming.</p>
+
+<table align=center>
+<tr><td align=center><img src="DFSPimg/prog2.bmp"></td></tr>
+<tr><td align=center><i>Program 2.</i> 
+Complete program for the simplex algorithm<br>
+of linear programming</td></tr>
+</table>
+
+<p>The vector <b>y</b> determined is the
+optimal solution of the following system: 
+maximize <b>cy</b> subject to the constraints 
+<nobr>(<b>Ay</b> &le; <b>b</b>) = <tt><b>∊</b></tt>,</nobr> 
+and <nobr>(<b>y</b> &ge; 0) = <tt><b>∊</b></tt>.</nobr> 
+The logical vector <b>u</b> is assumed to be given 
+initially and specifies the current feasible basis; 
+<b>x</b> is the corresponding vector of non-zero variables. 
+A power of a matrix is denoted by a superscript 
+enclosed in square brackets.</p>
+
+<p>The operations occurring in <i>Program 2</i>
+can be used in a formal analysis of its behaviour,   
+For example,</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>u</b>/<b>P</b> = 
+<b>u</b>/((<b>u</b>/<b>A</b>)<sup>[&ndash;1]</sup> <b>A</b>) = 
+(<b>u</b>/<b>A</b>)<sup>[&ndash;1]</sup> (<b>u</b>/<b>A</b>) = <b>I</b></p>
+
+<p>and <b>P</b> therefore contains an identity matrix <b>I</b> 
+in the columns corresponding to the feasible basis <b>u</b>.   
+Moreover, since</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>g</b> = <b>c</b> &ndash; 
+(<b>u</b>/<b>c</b>)<b>P</b></p>
+
+then
+
+<p>&nbsp; &nbsp; &nbsp; <b>u</b>/<b>g</b> = <b>u</b>/<b>c</b> &ndash; 
+<b>u</b>/(<b>u</b>/<b>c</b>)<b>P</b> = <b>u</b>/<b>c</b> &ndash; 
+(<b>u</b>/<b>c</b>)(<b>u</b>/<b>P</b>) = <b>u</b>/<b>c</b> &ndash; 
+(<b>u</b>/<b>c</b>)<b>I</b> = 0
+
+<p>Hence the components of the modified cost function 
+<b>g</b> are zero for all included variables, as desired.</p>
+
+<p>The <i>base</i> <b>b</b> <i>value of the vector</i> <b>x</b> 
+is denoted by <b>b</b>&nbsp;<tt>⊥</tt>&nbsp;<b>x</b> 
+and defined as the value of <b>x</b> 
+in the mixed base number system defined 
+by the radices 
+<nobr><b>b</b><sub>1</sub>,
+<b>b</b><sub>2</sub>, &#133; 
+<b>b</b><sub>&ndash;1</sub>.</nobr>
+More precisely, <b>b</b>&nbsp;<tt>⊥</tt>&nbsp;<b>x</b> = <b>xz</b>, 
+where <b>z</b><sub>&nbsp;&ndash;1</sub> = 1 and 
+<b>z</b><sub>&nbsp;&ndash;<i>i</i></sub> = 
+&times;/(<tt><b>⍵</b></tt><sup><i>&nbsp;i</i>&ndash;1</sup>/<b>b</b>), 
+for <nobr><i>i</i> &epsilon; {(2, <i>&nu;</i>(<b>b</b>))}.</nobr> 
+If, for example, <b>b</b> = <nobr>(7, 24, 60, 60),</nobr> 
+and <b>x</b> denotes elapsed time 
+in days, hours, minutes and seconds, 
+then <b>b</b>&nbsp;<tt>⊥</tt>&nbsp;<b>x</b> 
+denotes the elapsed time in seconds. 
+In particular, 10<tt><b>∊</b></tt>&nbsp;<tt>⊥</tt>&nbsp;<b>x</b> 
+denotes the value of <b>x</b> 
+in the decimal system, 
+and <i>y</i><tt><b>∊</b></tt>&nbsp;<tt>⊥</tt>&nbsp;<b>x</b>
+denotes the polynomial in <i>y</i> 
+whose coefficients are the components of <b>x</b>.</p>
+
+<p>For example, the standard single-error-correcting 
+Hamming code for <i>n</i> binary digits can be described 
+by a logical matrix <b>U</b> such that 
+<i>&nu;</i>(<b>U</b>) = <i>n</i>, 
+<nobr><i>&mu;</i>(<b>U</b>) = 
+<img src="DFSPimg/lceil.bmp">log<sub>2</sub>(<i>n</i> + 1)<img src="DFSPimg/rceil.bmp">,</nobr>
+and 
+<nobr>2<tt><b>∊</b></tt> <tt>⊥</tt> <b>U</b><sub><i>&nbsp;j</i></sub> = <i>j</i>.</nobr> 
+The <i>i</i>-th parity check group 
+then includes the components 
+of the vector <b>U</b><sup><i>&nbsp;i</i></sup>/<b>x</b> 
+and <i>Program 3</i> describes the determination
+of the corrected value <b>y</b>
+of the code <b>x</b>.
+An even-parity code is assumed,
+i.e. legitimate code points satisfy even-parity
+for all check groups.</p>
+
+<table align=center>
+<tr><td align=center><img src="DFSPimg/prog3.bmp"></td></tr>
+<tr><td align=center><i>Program 3.</i>  
+Correction in a Hamming error-correcting code</td></tr>
+</table>
+
+<p>For non-numeric vectors, the expand and 
+compress operations do not suffice.   
+The <i>mesh of</i> <b>x</b> 
+<i>and</i> <b>y</b> <i>on</i> <b>u</b> 
+is defined as follows:</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>z</b> &larr; \<b>x</b>, <b>u</b>, <b>y</b>\
+&nbsp; &harr; &nbsp; <img src="DFSPimg/uobar.bmp">/<b>z</b> = <b>x</b>    
+&nbsp; and &nbsp; <b>u</b>/<b>z</b> = <b>y</b></p>
+
+<p>Clearly, <i>&nu;</i>(<b>z</b>) = <i>&nu;</i>(<b>u</b>),
+<i>&nu;</i>(<b>x</b>) = <i>&sigma;</i>(<img src="DFSPimg/uobar.bmp">),   and   
+<i>&nu;</i>(<b>y</b>) = <i>&sigma;</i>(<b>u</b>).    
+If, for example, 
+<nobr><b>x</b> = (m, a, y),</nobr> 
+<nobr><b>y</b> = (o, n, d),</nobr> and 
+<nobr><b>u</b> = (0, 1, 1, 1, 0, 0),</nobr> then</p>
+
+<p>&nbsp; &nbsp; &nbsp; \<b>x</b>, <b>u</b>, <b>y</b>\ 
+= (m, o, n, d, a, y)</p>
+
+<p>The <i>mask of</i> <b>x</b> and <b>y</b> <i>on</i> <b>u</b> 
+is defined as follows:</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>z</b> &larr; /<b>x</b>, <b>u</b>, <b>y</b>/
+&nbsp; &harr; &nbsp; 
+<img src="DFSPimg/uobar.bmp">/<b>z</b> = <img src="DFSPimg/uobar.bmp">/<b>x</b>    
+&nbsp; and &nbsp; <b>u</b>/<b>z</b> = <b>u</b>/<b>y</b></p>
+
+<p>Clearly,</p>
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td>\<b>x</b>, <b>u</b>, <b>y</b>\</td>
+ <td>&nbsp; = &nbsp;</td>
+ <td>/<img src="DFSPimg/uobar.bmp">\<b>x</b>, <b>u</b>, <b>u</b>\<b>y</b>/</td>
+ </tr>
+<tr><td>&nbsp;</td>
+ <td>/<b>x</b>, <b>u</b>, <b>y</b>/</td>
+ <td>&nbsp; = &nbsp;</td>
+ <td>\<img src="DFSPimg/uobar.bmp">/<b>x</b>, <b>u</b>, <b>u</b>/<b>y</b>\</td>
+ </tr>
+<tr><td>and</td></tr>
+<tr><td>&nbsp;</td>
+ <td><b>u</b>\<b>x</b></td>
+ <td>&nbsp; = &nbsp;</td>
+ <td>\0, <b>u</b>, <b>x</b>\</td>
+ </tr>
+</table>
+
+<p>Analogous <i>column mask</i>, <i>row mask</i>, <i>column mesh</i>, and 
+<i>row mesh</i> operations are defined upon matrices.
+<br>&nbsp;</p>
+
+
+
+<a name="permutations"></a>
+<p><b>Permutations</b></p>
+
+<p>If two sets <i>A</i> and <i>B</i> are equal 
+(but not necessarily identical), 
+one is said to be a <i>permutation</i> of the other, 
+and there exists a vector <b>p</b> such that</p>
+
+<p>&nbsp; &nbsp; &nbsp; <i>B</i><sub><i>&nbsp;i</i></sub> 
+= <i>A</i><sub>&nbsp;<b>p</b><sub><i>i</i></sub></sub></p> 
+
+<p>Moreover, the components of <b>p</b> are 
+some permutation of the integers 
+<nobr>1, 2, &#133;, <i>&nu;</i>(<i>B</i>)</nobr>, 
+and <b>p</b> is called a <i>permutation</i> vector.   
+If <i>B</i><sub><i>&nbsp;i</i></sub> = 
+<i>A</i><sub>&nbsp;<b>p</b><sub><i>i</i></sub></sub> 
+for some permutation vector, 
+then <i>B</i> may be denoted 
+by <i>A</i><sub>&nbsp;<b>p</b></sub>.</p>
+
+<p>Permutation will be extended analogously 
+to vectors and matrices. 
+For example, <b>X</b><sub>&nbsp;<b>p</b></sub><sup>&nbsp;<b>p</b></sup> 
+denotes an elementary similarity 
+transformation on the square matrix <b>X</b>.   
+It is easily shown that</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>p</b><sub>&nbsp;<b>q</b></sub> 
+= <tt><b>⍳</b></tt> &nbsp; &harr; &nbsp;
+<b>q</b><sub>&nbsp;<b>p</b></sub> 
+= <tt><b>⍳</b></tt></p>
+
+<p>and the permutations <b>p</b> and <b>q</b> 
+are then said to be <i>inverse</i>.   
+Clearly 
+<nobr>(<b>x</b><sub>&nbsp;<b>p</b></sub>)<sub>&nbsp;<b>q</b></sub> 
+= <b>x</b></nobr>
+for any pair of inverse vectors <b>p</b> and <b>q</b>.</p>
+
+<p>Any bi-unique mapping from an element 
+<i>b</i> of an arbitrary set <i>B</i> 
+to a correspondent <i>a</i> of an arbitrary set 
+<i>A</i> can be represented 
+by a permutation vector <b>p</b> 
+such that <i>B</i><sub><i>&nbsp;i</i></sub> maps into 
+<i>A</i><sub>&nbsp;<b>p</b><sub><i>i</i></sub></sub>.  
+If, for example,</p>
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp;</td>
+ <td>A &equiv; {apple, booty, dust, eye, night}</td></tr>
+<tr><td>&nbsp;</td>
+ <td>B &equiv; {Apfel, Auge, Beute, Nacht, Staub}</td></tr>
+</table>
+
+<p>and the mapping is from a German word 
+to its English correspondent, then 
+<nobr><b>p</b> = (1, 4, 2, 5, 3).</nobr></p>
+
+<table align=center>
+<tr><td align=center><img src="DFSPimg/prog4.bmp"></td></tr>
+<tr><td align=center><i>Program 4.</i>  A mapping specified 
+by the permutation <b>p</b></td></tr>
+</table>
+
+<p><i>Program 4</i> describes a mapping 
+from the argument <i>b</i><tt>∊</tt><i>B</i> 
+to the function <i>a</i><tt>∊</tt><i>A</i>
+prescribed by the vector <b>p</b>. 
+The process consists of three steps, 
+the ranking of <i>b</i> in <i>B</i>, 
+the permutation of the index <i>j</i> by <b>p</b>, 
+and the selection of the correspondent 
+<i>A</i><sub>&nbsp;<b>p</b><sub><i>i</i></sub></sub>. 
+Since any set can be considered as a vector, 
+the process can be expressed more concisely 
+in terms of vector operations as shown 
+in <i>Program 5</i>.</p>
+
+<table align=center>
+<tr><td align=center><img src="DFSPimg/prog5.bmp"></td></tr>
+<tr><td align=center><i>Program 5. Program 4</i> re-expressed 
+in terms of vectors</td></tr>
+</table>
+
+<p>The expression <tt><b>⍳</b></tt>(<i>B</i>) denotes 
+the <i>identification vector</i> of the set <i>B</i>, 
+defined as the set considered as a vector, i.e.</p>
+
+<p>&nbsp; &nbsp; &nbsp; <b>b</b> &larr; <tt><b>⍳</b></tt>(<i>B</i>)
+&nbsp; &harr; &nbsp; <b>b</b><sub><i>&nbsp;i</i></sub>
+= <i>B</i><sub><i>&nbsp;i</i></sub>
+</p>
+
+<p>A matrix whose rows and columns 
+are all permutation vectors will be called 
+a <i>permutation matrix</i>.<sup><a href="DFSP1.htm#noted">[d]</a></sup> 
+A permutation matrix can clearly represent 
+the operations in an abstract group. 
+The group is Abelian if and only if 
+the matrix is symmetric.
+<br>&nbsp;</p>
+
+
+
+<a name="files"></a>
+<p><b>Files</b></p>
+
+<p>A vector is frequently represented (stored)
+in a <i>serial-access file</i> in which the components
+are made available only in their natural sequence.
+To describe algorithms upon vectors so represented,
+it is convenient to introduce special notation 
+for a file as follows.  
+A <i>file &Phi; of length n</i> is a representation
+of a vector <b>x</b> of dimension <i>n</i>
+arranged as follows:</p>
+
+<p>&nbsp; &nbsp; &nbsp; 
+<i>&lambda;</i>(1), <b>x</b><sub>1</sub>, 
+<i>&lambda;</i>(2), <b>x</b><sub>2</sub>, &#133;,
+<i>&lambda;</i>(<i>n</i>), <b>x</b><sub><i>&nbsp;n</i></sub>, 
+<i>&lambda;</i>(<i>n</i> + 1)</p>
+
+<p>The operation of transferring a component 
+from a file to specify a quantity <i>y</i> is called 
+<i>reading</i> the file and is denoted by 
+<nobr><i>y</i> &larr; <i>&Phi;</i></nobr>. 
+The transfer is terminated by the occurrence 
+of a partition symbol, and if this symbol is 
+<i>&lambda;</i>(<i>j</i>)
+the file is then said to be in position <i>j</i>. 
+A file may either be read <i>forward</i> 
+(denoted by <sub>0</sub><i>&Phi;</i>) 
+or <i>backward</i> (denoted by <sub>1</sub><i>&Phi;</i>). 
+If a file originally in position <i>j</i> is read forward 
+it transfers the component <b>x</b><sub><i>&nbsp;j</i></sub> 
+and stops in position <nobr>(<i>j</i> + 1),<nobr>&nbsp; 
+<i>j</i> &epsilon; {(1, <i>n</i>)}. 
+A file read backward from position <nobr><i>j</i> + 1</nobr> 
+transfers the component <b>x</b><sub><i>&nbsp;j</i></sub> 
+and stops in position <i>j</i>,&nbsp;
+<i>j</i> &epsilon; {(1, <i>n</i>)}.</p>
+
+<p>The position of a file <i>&Phi;</i> will be denoted 
+by <i>&pi;</i>(<i>&Phi;</i>). 
+Thus the statement 
+<nobr><i>y</i> &larr; <i>&pi;</i>(<i>&Phi;</i>)</nobr>
+specifies <i>y</i> as the position of <i>&Phi;</i>, whereas 
+<nobr><i>&pi;</i>(<i>&Phi;</i>) &larr; <i>z</i></nobr>
+<i>positions</i> the file to <i>z</i>. 
+In particular, <nobr><i>&pi;</i>(<i>&Phi;</i>) &larr; 1</nobr> 
+denotes the <i>rewinding</i> of the file, and either 
+<nobr><i>&pi;</i>(<i>&Phi;</i>) &larr; (<i>n</i> + 1)</nobr> or 
+(using contracurrent indexing on 
+the <nobr>(<i>n</i> + 1)</nobr> positions) 
+<nobr><i>&pi;</i>(<i>&Phi;</i>) &larr; &ndash;1</nobr>  
+denote positioning to the end of the file. 
+Any file for which the general positioning operation 
+<nobr><i>&pi;</i>(<i>&Phi;</i>) &larr; <i>z</i></nobr>
+is to be avoided as impossible or inefficient 
+is called a <i>serial</i> 
+or <i>serial-access</i> file.</p>
+
+<p>A file may be produced by a sequence 
+of <i>recording</i> statements, either forward:</p>
+
+<p>&nbsp; &nbsp; &nbsp; <sub>0</sub><i>&Phi;</i> &larr; 
+<b>x</b><sub><i>&nbsp;i</i></sub>, &nbsp; &nbsp; 
+<i>i</i> = 1, 2, &#133;, <i>n</i></p>
+
+or backward
+
+<p>&nbsp; &nbsp; &nbsp; <sub>1</sub><i>&Phi;</i> &larr; 
+<b>x</b><sub><i>&nbsp;i</i></sub>, &nbsp; &nbsp; 
+<i>i</i> = <i>n</i>, <i>n</i> &ndash; 1, &#133;, 1</p>
+
+<p>As in reading, each forward (backward) record operation 
+increments (decrements) the position of the file by one. 
+A file which is only recorded during a process 
+is called an <i>output file</i> of the process; 
+a file which is only read is called an <i>input file</i>.</p>
+
+<p>Each partition symbol may assume one of several values, 
+<i>&lambda;</i><sub>0</sub>,
+<i>&lambda;</i><sub>1</sub>, &#133;,
+<i>&lambda;</i><sub><i>&nbsp;p</i></sub>,
+the partitions with larger indices demarking 
+larger subgroups within the file. 
+Thus if each component <b>x</b><sub><i>&nbsp;j</i></sub> 
+were itself a vector <b>y</b><sup><i>&nbsp;j</i></sup> 
+(i.e. <b>x</b> is a matrix), 
+then the last component of each <b>y</b><sup><i>&nbsp;j</i></sup> 
+might be followed by the partition <i>&lambda;</i><sub>1</sub>,
+while the remaining components would 
+each be followed by <i>&lambda;</i><sub>0</sub>. 
+The last component of the entire array 
+might be followed by a partition <i>&lambda;</i><sub>2</sub>. 
+In recording an item, the associated partition 
+is indicated by listing it after the item 
+(e.g. <nobr><i>&Phi;</i> &larr; <i>y</i>, <i>&lambda;</i><sub>2</sub></nobr>), 
+except that the partition <i>&lambda;</i><sub>0</sub> 
+is usually elided. 
+The indicated partition then follows or precedes 
+the associated item in the file according 
+as the recording is forward or backward.</p>
+
+<p>The indication provided 
+by the distinct partition symbols 
+is used to control an immediate 
+(<i>p</i>&nbsp;+&nbsp;1)-way branch 
+in the program following each read operation. 
+The branch is determined by the partition symbol 
+which terminates the read.</p>
+
+<p>Different files occurring in a process 
+will be distinguished by righthand 
+subscripts and superscripts, 
+the latter being generally reserved 
+to denote major classes of files 
+(e.g. input and output). 
+An array of files is therefore indexed 
+like a matrix and the notation 
+for compression may be applied 
+to specify subsets of the array.</p>
+
+<p>File notation is particularly useful 
+in the description of sorting algorithms 
+and of algorithms employing 
+so-called &ldquo;pushdown stores&rdquo;.
+<br>&nbsp;</p>
+
+<p><i>The author is indebted to Dr. F.P. Brooks, Jr.
+for many important suggestions.</i>
+<br>&nbsp;</p>
+
+
+
+<a name="notes"></a>
+<p><b>Notes</b></p>
+
+<table>
+<tr><td valign=top>a.<a name="notea"></a></td><td>&nbsp;</td><td>
+Now with IBM Research Center, Yorktown Heights, New York.
+</td></tr>
+<tr><td valign=top>b.<a name="noteb"></a></td><td>&nbsp;</td><td>
+For a complete presentation, see Chapter 6
+of Iverson, K.E., and Brooks, F.P.,
+<i>Automatic Data Processing</i>, Wiley (in preparation).
+</td></tr>
+<tr><td valign=top>c.<a name="notec"></a></td><td>&nbsp;</td><td>
+In certain work, notably in switching theory 
+and in the use of positional representations 
+(e.g. column sorting) there is some advantage 
+in using 0-origin indexing, 
+i.e. in using an index set beginning at zero. 
+Although the present exposition is limited 
+to 1-origin indexing, 
+0-origin indexing can be used as well.
+</td></tr>
+<tr><td valign=top>d.<a name="noted"></a></td><td>&nbsp;</td><td>
+This is a departure from conventional usage 
+in which a permutation matrix is a logical matrix 
+whose application corresponds to the application 
+of a permutation vector.
+</td></tr>
+</table>
+<br>
+
+
+<a name="discussion"></a>
+<p><b>Discussion</b></p>
+
+<p>R.A. F<font size=-1>AIRTHORNE</font>: 
+There can be no very profitable discussion 
+of new notations until they have been applied 
+for some time by different people to different jobs. 
+Always the inventor and his critics overlook 
+some essential considerations.</p>
+
+<p>On another aspect, I suggest that 
+the author and others try to find better names 
+for some of the operations, 
+whatever the notations may be. 
+In particular, &ldquo;row (column) compression&rdquo; 
+implies that all elements remain in altered form, 
+whereas in fact some are abstracted. 
+Instead I would suggest &ldquo;removal&rdquo;, 
+&ldquo;omission&rdquo;, &ldquo;abbreviation&rdquo;, 
+&ldquo;curtailment&rdquo;, or &ldquo;retention&rdquo;, 
+and for the inverse operation 
+&ldquo;insertion&rdquo;, &ldquo;augmentation&rdquo;, &ldquo;inflation&rdquo;, 
+according to whether the original part is referred to, 
+or the parts that are added or removed. 
+The final choice, whatever the term, 
+must depend both on intrinsic descriptive merit 
+and on harmony with other terms.</p>
+
+<p>J. S<font size=-1>HEKEL</font>: 
+In cases where vectors and matrices 
+are distinguished from scalars 
+by colour <sup><a href="DFSP1.htm#ednote">*</a></sup> or font, 
+I suggest that special 
+&ldquo;zero&rdquo; and &rdquo;equality&rdquo; 
+symbols should be used. 
+This will enable some kind of &ldquo;dimensional&rdquo; 
+check on the formulas and equations.</p>
+
+<p>Incidentally, the line</p>
+
+<p>&nbsp; &nbsp; &nbsp; (<i>x</i> &ne; <i>y</i>) 
+= <i>x</i>&Delta;<i>y</i></p>
+
+<p>that was on the blackboard at the meeting 
+illustrates the use of the same &ldquo;equals&rdquo; 
+sign for two different meanings. 
+Since you are constructing a new symbolism anyway, 
+it would be better to avoid such ambiguities 
+from the start.</p>
+
+<p>I would propose the word &ldquo;sifting&rdquo; 
+for the compress operation <b>u</b>/<b>x</b>. 
+The operator <b>u</b> could then 
+be called a &ldquo;sieve&rdquo;.</p>
+
+<p>Concerning floors and ceilings, 
+a general word of caution may be given 
+against too much reliance on mnemonic techniques.   
+Take the well known rhyme:</p>
+
+<p>&nbsp; &nbsp; &nbsp; Thirty days hath September, etc.</p>
+
+<p>It seems that the words that rhyme 
+are not the words that count, and vice versa &#133;</p>
+
+<p>K.E. I<font size=-1>VERSON</font> in reply: 
+The notation has 
+(as remarked in the oral presentation) 
+been applied to a variety of jobs 
+by a number of different people. 
+These include language translation (A.G. Oettinger), 
+machine organization (F.P. Brooks, Jr.), 
+switching theory (P. Calingaert), 
+and sorting theory and operations research 
+(K.E. Iverson).</p>
+ 
+<p>Concerning the nomenclature, 
+I agree that the connotations 
+of the word &ldquo;compression&rdquo; 
+do not fit the case exactly. 
+However, I find it preferable to the words 
+suggested by Mr. Fairthorne 
+(and to other alternatives which I have considered).  
+For example, the terms 
+&ldquo;row removal&rdquo; and &ldquo;row omission&rdquo; 
+would imply deletion of an entire row 
+of a matrix and would therefore not conform 
+to the usage whereby the qualifier &ldquo;row&rdquo; 
+indicates an operation upon a row of a matrix. 
+The word &ldquo;abbreviation&rdquo; connotes 
+no loss of information, 
+and the word &ldquo;curtail&rdquo; connotes deletion 
+of a tail or suffix only, both contrary 
+to the intended meaning 
+of the general compress operation <b>u</b>/<b>x</b>.</p>
+
+<p>Answering Dr. Shekel, I must stress that 
+none of the special vectors 
+(such as <tt><b>∊</b></tt><sup><i>&nbsp;j</i></sup>, 
+<tt><b>⍺</b></tt><sup><i>&nbsp;j</i></sup>,
+<tt><b>⍵</b></tt><sup><i>&nbsp;j</i></sup>,
+<tt><b>∊</b></tt>) 
+contain a specification of dimension. 
+As remarked in the oral presentation, 
+this is a decided convenience, 
+since in most cases the required dimension 
+is implied by compatibility with associated operands. 
+Where necessary, dimension can be specified 
+by compression by a suitable prefix vector. 
+For example, the factorial may be defined 
+by the expression</p>
+
+<p>&nbsp; &nbsp; &nbsp; <i>n</i>! = 
+&times;/(<tt>⍺</tt><sup><i>n</i></sup>/<tt><b>⍳</b></tt>) + (<i>n</i> = 0).</p>
+
+<p>The zero symbol used for vectors 
+as well as scalars can, if desired, 
+be replaced by the zero vector <img src="DFSPimg/epsobar.bmp">, 
+although I see no resulting gain in clarity.</p>
+
+<p>The sign of equality is indeed used 
+in two distinct senses, 
+but the second occurs only in exposition, 
+never in an algorithm.</p>
+
+<p>On your second point the word &ldquo;sifting&rdquo; 
+suggested for &ldquo;compression&rdquo; 
+seems to possess no companion suitable 
+for the converse operation of expansion.</p>
+
+<p>As regards your third question &mdash; 
+yes, moderation in all things. 
+The caution seems somewhat gratuitous, 
+however, since none of the mnemonic devices 
+used appeal to anything so indirect and cumbersome 
+as a rhyme.</p>
+
+<a name="ednote"></a>
+<blockquote>*<font size=-1>
+Used in the original typescripts; 
+to indicate bold face &mdash;Ed.
+</font><br>&nbsp;</blockquote>
+
+
+
+<br><hr>
+<p><font size=-1>
+Originally appeared in the Proceedings of a Conference on Information Theory, 
+C. Cherry and W. Jackson, Editors, Imperial College, London, 1960-08-29.
+Images of the pages of the paper are available from
+<a target=_parent href="http://keiapl.org/eemcd/keisimplexpages">
+here</a> and 
+<a target=_parent href="http://www.softwarepreservation.org/projects/apl/paper/Iverson-DescFiniteSeqProcesses-color.pdf">
+here</a>.</font></p>
+
+<p><font size=-1>
+<script src="apldisplay.js" type="text/javascript"></script>
+</font></p>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2009-11-09 17:05</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2013-09-24 13:00</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

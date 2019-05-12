@@ -1,0 +1,1203 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Some Exercises in APL Language Design</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Some Exercises in APL Language Design</font><br><br>
+<b>Roger K.W. Hui</b>
+<br>&nbsp;</p>
+
+<hr><br>
+
+
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>0-origin throughout.</p>
+
+<p>Some of the ideas can not be implemented in a given APL because
+they are not backward compatible.
+In such cases treat them as thought experiments.
+There are often no right or wrong answers, 
+or there is more than one right answer.
+Some of the questions were considered and decisions made years ago,
+but the original discussions were not recorded anywhere 
+and I was not privy to them.</p>
+
+<p>Some sections do not have an explicitly stated exercise.
+Treat them as ideas for meditation.  Make up your own exercises.
+<br>&nbsp;</p>
+
+<hr width=50%><br>
+
+
+
+<a name="0"></a>
+<p><b>0. Function Syntax</b></p>
+
+<p>In APL, a monadic function has the function symbol or name
+preceding its argument and a dyadic function has it between its arguments.
+Write each APL primitive scalar function in conventional mathematical notation.
+For example,<tt> n!m </tt>in conventional mathematical notation is
+&nbsp;<img src="img/Cmn.bmp">.
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>1. Elision of Times Sign</b></p>
+
+<p>In conventional mathematical notation,
+the function symbol for multiplication is often elided:<i> xy</i> means
+<i>x</i> times <i>y</i>.
+APL eliminates this elision and thereby makes possible
+the use of multi-character names &mdash;<tt> qty×price</tt>&nbsp;.<tt> </tt>
+What is another beneficial effect of this rule?
+Compare your answer to that given
+<a target=_new href="APLDesign.htm">here</a> (&sect;4).
+<br>&nbsp;</p>
+
+
+
+<a name="2"></a>
+<p><b>2. Order of Evaluation</b></p>
+
+<p>Why doesn&rsquo;t APL have an order of evaluation (operator precedence),
+for example<tt> × </tt>and<tt> ÷ </tt>before<tt> + </tt>and<tt> -</tt>&nbsp;?<tt> </tt>
+Why is it &ldquo;right to left&rdquo;?
+Compare your answer to that given 
+<a target=_new href="EvalOrder.htm">here</a>.
+<br>&nbsp;</p>
+
+
+
+<a name="3"></a>
+<p><b>3. Polynomials</b></p>
+
+<p>In conventional mathematical notation
+multiplication is done before addition and power is done before multiplication.
+Falkoff and Iverson speculated in 
+<a target=_new href="APLDesign.html"><i>The 
+Design of APL</i></a> 1973 
+that the rules are to obviate the use of parentheses in writing a polynomial.</p>
+
+<p>If vectors<tt> c </tt>and<tt> e </tt>are the coefficients
+and corresponding exponents of a polynomial,
+write a parenthesis-free APL expression for
+evaluating the polynomial at<tt> x</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="4"></a>
+<p><b>4. Nouns, Verbs, Adverbs</b></p>
+
+<p>J uses terms from natural languages instead of 
+from mathematics or computer science 
+(the practice started with 
+<a target=_new href="APLDictionary.htm"><i>A Dictionary of APL</i></a>):</p>
+
+<table>
+<tr><td>&nbsp; &nbsp;</td> <td>noun</td><td nowrap width=28>&nbsp;</td><td>array</td></tr>
+<tr><td></td> <td>verb</td>           <td></td> <td>function</td></tr>
+<tr><td></td> <td>adverb</td>         <td></td> <td>operator</td></tr>
+<tr><td></td> <td>alphabet</td>       <td></td> <td>character set</td></tr>
+<tr><td></td> <td>word formation</td> <td></td> <td>lexing</td></tr>
+<tr><td></td> <td>sentence</td>       <td></td> <td>expression</td></tr>
+<tr><td></td> <td>dictionary</td>     <td></td> <td>reference manual</td></tr>
+<tr><td></td> <td>epigram</td>        <td></td> <td>one-liner</td></tr>
+<tr><td></td> <td></td> <td>&#133;</td> <td></td></tr>
+</table>
+
+<p>The natural language terms are an extended and useful metaphor.
+They are more approachable for a wider audience and more suggestive.
+For example, there is usually a hiccup when explaining <i>operator</i>
+to a non-APL programmer or mathematician 
+(in APL, an operator is different from a function;
+it&rsquo;s an operator in the sense of Heaviside;
+it&rsquo;s a higher-order function; etc.)  
+An <i>adverb</i>, however, can be be more readily grokked:
+think quickly, run quickly, eat quickly;
+think quickly, think slowly, think sensibly, think originally.
+See the <a href="APLDesignExercises1.htm#40">Reflexive section</a> below for another example.
+<br>&nbsp;</p>
+
+
+
+<a name="5"></a>
+<p><b>5. Valence</b></p>
+
+<p>The <i>APL\360</i> development group had a deep and abiding 
+interest in words, in their correct use and in their etymology.
+For example:</p>
+
+<p>The number of arguments that a function takes is its <i>valence</i>.
+The use of &ldquo;adicity&rdquo; or &ldquo;arity&rdquo; to denote the same 
+should be avoided because those words, like supercalifragilisticexpialidocious, 
+are all affixes and rootless.</p>
+
+<p>An <i>ambivalent</i> function is one which can take one or two arguments.
+<br>&nbsp;</p>
+
+
+
+<a name="6"></a>
+<p><b>6. Order of Arguments</b></p>
+
+<p>The order of the arguments in many primitive dyadic functions, 
+when not constrained by firmly-established custom,
+is such that<tt> ⍺∘f </tt>is a sensible monadic function.
+List the functions which follow this principle.
+<br>&nbsp;</p>
+
+
+
+<a name="7"></a>
+<p><b>7. Negate/Minus</b></p>
+
+<p>Why should<tt> - </tt>be a primitive when it can be defined succinctly
+as<nobr><tt> {⍺←0 ⋄ ⍺+¯1×⍵} </tt></nobr>
+(or, at worst,<nobr><tt> {⍺←0 ⋄ ⍺+¯1×⍵}¨</tt>)&nbsp;?</nobr>
+<br>&nbsp;</p>
+
+
+
+<a name="8"></a>
+<p><b>8. Imaginary/Complex</b></p>
+
+<p>J has the scalar function<tt> j. </tt>defined 
+by<nobr><tt> {⍺←0 ⋄ ⍺+0j1×⍵}</tt>&nbsp;.</nobr><tt> </tt>
+If complex numbers are in the language and symbol proliferation is not a problem, 
+would you specify<tt> j. </tt>as a primitive?</p>
+
+<p>Compare your answer to the one given <a href="APLDesignExercises1.htm#sample">below</a>.
+<br>&nbsp;</p>
+
+
+
+<a name="9"></a>
+<p><b>9. Floor and Ceiling</b></p>
+
+<p><tt>⌈x</tt>&nbsp;,<tt> </tt>the <i>ceiling</i> of<tt> x</tt>&nbsp;,<tt> </tt>
+can be readily defined in terms of the <i>floor</i> 
+of<tt> x</tt>&nbsp;:<tt> ⌈x ←→ -⌊-x</tt>&nbsp;.<tt> </tt>
+(Moreover,<tt> x⌈y ←→ -(-x)⌊(-y)</tt>&nbsp;;<tt> </tt>
+with the 
+<a href="APLDesignExercises1.htm#39"><i>under</i> operator</a>,<tt> ⌈ ←→ ⌊⍢- </tt>
+for both the monadic and the dyadic cases.)
+So why are both included as primitives?</p>
+
+<p>Compare your answer to the one given 
+<a target=_new href="APLDesign.html">here</a> (&sect;4).</p>
+
+<p><i>Floor</i> and <i>ceiling</i> figure in two anecdotes
+from the early days of APL:</p>
+
+<blockquote><p><i>Brooker</i>: It is not obvious to me that these two symbols 
+for FLOOR and CEILING have a great deal of mnemonic value.</p>
+
+<p><i>Iverson</i>: Yes, but once you have read it, you can remember it.</p>
+
+<p align=right>Iverson, 
+<a target=_new href="FPL.htm"><i>Formalism 
+in Programming Languages</i></a>, 1964</p>
+</blockquote>
+
+<blockquote><p>Another notational step that was taken at that time, 
+and this has to do with cleaning up the syntax, was the dropping 
+of the closing symbol for absolute value, floor, and ceiling. 
+I have observed that in certain ivory towers of pure mathematics 
+they have adopted the floor and ceiling symbols still with the pair about them, and I estimate 
+that in roughly another decade they will get around to dropping the second.</p>
+
+<p align=right>Falkoff, 
+<a target=_new href="apl360history.htm"><i>APL\360 History</i></a>, 1969</p>
+</blockquote>
+<br>
+
+
+
+<a name="10"></a>
+<p><b>10. What is an Array?</b></p>
+
+<p>What is an array?  Compare your answer to the one given 
+<a target=_new href="APLQA.htm#array_mapping">here</a>.
+<br>&nbsp;</p>
+
+
+
+<a name="11"></a>
+<p><b>11. Is a Scalar an Array?</b></p>
+
+<p>Is a scalar an array?  Compare your answer to the one given 
+<a target=_new href="https://code.jsoftware.com/wiki/Essays/Scalars">here</a>.
+<br>&nbsp;</p>
+
+
+
+<a name="12"></a>
+<p><b>12. Infinite Arrays</b></p>
+
+<p><a target=_new href="eem/infinity.htm">McDonnell and Shallit</a>
+1981 proposed to add to APL<tt> &infin; </tt>
+and infinite arrays, arrays having<tt> &infin; </tt>as the length of a dimension.</p>
+
+<p>How can you have an infinite array in a finite computer?
+One way is to consider an array as a function on the natural numbers 
+such that (for example)<tt> v←⍳&infin; </tt>has an associated function<tt> vf </tt>such that<tt> v[i] </tt>
+is<tt> vf i</tt> .<tt> </tt>(<tt>vf </tt>is the identity function<tt> ⊢ </tt>in this case.)
+If<tt> u </tt>and<tt> v </tt>are infinite vectors,<tt> g1 </tt>a scalar monadic function,
+and<tt> g2 </tt>a scalar dyadic function, then<tt> g1 v </tt>
+is also an infinite vector and its associated function
+is the composition<tt> g1∘vf</tt>&nbsp;;<tt> </tt>
+and<nobr><tt> u g2 v </tt></nobr>is an infinite vector and <i>its</i> associated function
+is the fork<nobr><tt> (uf g2 vf)</tt>&nbsp;.</nobr><tt> </tt>
+Moreover,<nobr><tt> 1.5 = +/3*-⍳&infin; </tt></nobr>
+and<nobr><tt> (*⍵) = (⍵*⍳&infin;)+.÷!⍳&infin;</tt>&nbsp;.</nobr><tt> </tt></p>
+
+<p>J has a few infinite arrays in disguise:<tt> p: i </tt>is the<tt> i</tt>-th prime
+and<tt> f t. i </tt>is the<tt> i</tt>-th coefficient in the Taylor series expansion 
+of<tt> f</tt>&nbsp;.</p>
+
+<p>Infinite vectors can be used to 
+<a target=_new href="tour_Bangalore/F.htm">prove Euler&rsquo;s Identity</a>.
+<br>&nbsp;</p>
+
+
+
+<a name="13"></a>
+<p><b>13. Scalar Encoding</b></p>
+
+<p>In the fuss and fury of floating <i>vs.</i> grounded arrays
+it is easy to forget that the enclose of an array is just a 
+scalar encoding (<font size=-1>AKA</font> 
+<a target=_new href="opfns.htm">scalar representation</a>) 
+of it.  
+For some purposes there are much more efficient scalar encodings 
+than <i>enclose</i>,
+such as<tt> x⍳x </tt>instead of<tt> ↓x </tt>or<tt> (⊂⍤¯1)x</tt>&nbsp;.</p>
+
+<p>Devise an invertible encoding for a vector of integers as a single integer.
+Such an encoding is used in the proof of G&ouml;del&rsquo;s incompleteness theorems.
+<br>&nbsp;</p>
+
+
+
+<a name="14"></a>
+<p><b>14. Is<tt> 1 </tt>a Prime?</b></p>
+
+<p>A prime number is sometimes defined as a number divisible only by<tt> 1 </tt>and itself.
+With this definition<tt> 1 </tt>qualifies as a prime.
+What are the disadvantages if<tt> 1 </tt><i>is</i> a prime?
+(Some older math texts did consider<tt> 1 </tt>to be a prime.)
+Compare your answer to the one given 
+<a target=_new href="https://code.jsoftware.com/wiki/Essays/Scalars#Discussion">here</a>.
+</p>
+
+<p>I have an argument supporting<tt> ⎕io←0 </tt>based on this.
+<br>&nbsp;</p>
+
+
+
+<a name="15"></a>
+<p><b>15.<tt> 0÷0</tt></b></p>
+
+<p>In <i>APL\360</i><tt> 0÷0 </tt>is<tt> 1</tt>&nbsp;,<tt> </tt>
+justified as being the limit of<tt> x÷x </tt>
+when<tt> x </tt>approaches<tt> 0</tt>&nbsp;.<tt> </tt>
+Some have argued that it should be<tt> 0</tt>&nbsp;.<tt> </tt>
+Should<tt> 0÷0 </tt>be<tt> 0</tt>&nbsp;,<tt> 1</tt>&nbsp;,<tt> </tt>or an error?
+Compare your answer to the one given 
+<a target=_new href="eem/0div0.htm">here</a>.
+<br>&nbsp;</p>
+
+
+
+<a name="16"></a>
+<p><b>16.<tt> 0*0</tt></b></p>
+
+<p>Why is<tt> 0*0 </tt>equal to<tt> 1</tt>&nbsp;?<tt> </tt>
+Some mathematicians consider<tt> 0*0 </tt>to be indeterminate.</p>
+ 
+<p>Compare your answer to 
+<a target=_new href="https://arxiv.org/PS_cache/math/pdf/9205/9205211v1.pdf">Knuth 1992</a>, 
+page 6.
+<br>&nbsp;</p>
+
+
+
+<a name="17"></a>
+<p><b>17. Scalar and Single Extension</b></p>
+
+<p>Let<tt> f </tt>be a scalar dyadic function.
+In <i>scalar extension</i>, the conformability rules are<tt> (⍴⍺)≡⍴⍵ </tt>
+or<tt> 0=⍴⍴⍺ </tt>or<tt> 0=⍴⍴⍵</tt>&nbsp;;<tt> </tt>
+in <i>single extension</i>, the conformability rules 
+are<tt> (⍴⍺)≡⍴⍵ </tt>or<tt> 1=×/⍴⍺ </tt>or<tt> 1=×/⍴⍵</tt>&nbsp;.</p>
+
+<table>
+<tr><td valign=top nowrap>a. &nbsp;</td><td>Is scalar extension a good idea?
+ </td></tr>
+<tr><td valign=top>b.</td><td>Is single extension a good idea?  
+ Is it compliant with ISO/IEC 13751:2001(E)?
+ </td></tr>
+<tr><td valign=top>c.</td><td>Under what circumstances is<tt> f </tt>
+different from<tt> f⍤0 </tt>(Dyalog APL)?
+ </td></tr>
+<tr><td valign=top>d.</td><td>Speculate on why <i>APL\360</i> has single extension.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="18"></a>
+<p><b>18. Agreement</b></p>
+
+<p>Scalar extension 
+<a target=_new href="rank.htm">can be extended</a>
+in at least two different ways:</p>
+
+<p>In <i>suffix agreement</i>, the conformability rules are<tt> (⍴⍺)≡(⍴⍵) </tt>or one is a suffix of the other.
+In <i>prefix agreement</i>, the conformability rules are<tt> (⍴⍺)≡(⍴⍵) </tt>or one is a prefix of the other.
+By back formation, scalar extension can also be called <i>scalar agreement</i>, where<tt> (⍴⍺)≡(⍴⍵) </tt>
+or one is the empty vector.</p>
+
+<pre>
+⍝ suffix agreement
+
+   x          y             x + y
+1  2  4     0  1  2       1  3  6
+8 16 32     3  4  5      11 20 37
+
+            6  7  8       7  9 12
+            9 10 11      17 26 43
+ 
+           12 13 14      13 15 18
+           15 16 17      23 32 49
+
+           18 19 20      19 21 24
+           21 22 23      29 38 55
+
+⍝ prefix agreement
+
+   x                   y            x × y
+ 0  1  2  3  4      1 2 4 8        0   1   2   3   4
+ 5  6  7  8  9                    10  12  14  16  18
+10 11 12 13 14                    40  44  48  52  56
+15 16 17 18 19                   120 128 136 144 152
+</pre>
+
+<p>In its early days J had suffix agreement, but in 1992 changed 
+to prefix agreement and has prefix agreement to this day.
+The rank operator in Dyalog APL uses scalar agreement.  
+The possibility remains to extend it to use suffix or prefix agreement.
+<br>&nbsp;</p>
+
+
+
+<a name="19"></a>
+<p><b>19. Not Found</b></p>
+
+<p>The answer for<tt> ⍺⍳⍵ </tt>is<tt> ⎕io+≢⍺ </tt>if<tt> ⍵ </tt>
+is not found in<tt> ⍺</tt>&nbsp;.<tt> </tt>
+What are some other plausible choices?  
+Why is the current choice advantageous?
+<br>&nbsp;</p>
+
+
+
+<a name="20"></a>
+<p><b>20. Major Cell</b></p>
+
+<p>A <i>major cell</i> of an array<tt> ⍵ </tt>is a subarray of rank<tt> ¯1+⍴⍴⍵ </tt>
+on the leading dimension of<tt> ⍵</tt>&nbsp;.<tt> </tt>
+What primitives in Dyalog APL were defined in terms of major cells
+before the introduction of<tt> ⍤ </tt>and<tt> ⌸ </tt>and the extension to<tt> ⍳</tt>&nbsp;?
+<br>&nbsp;</p>
+
+
+
+<a name="21"></a>
+<p><b>21. Dyadic Grade</b></p>
+
+<p>When dyadic<tt> ⍋ </tt>was 
+<a target=_new href="https://dl.acm.org/citation.cfm?id=804449">introduced in the late 1970s</a> 
+the left argument specified a collating sequence for the grade.  
+Dyalog APL follows this definition.
+In J, dyadic<tt> ⍋ </tt>is defined instead 
+as the equivalent of<tt> (⊂⍋⍵)⌷⍺</tt>&nbsp;.<tt> </tt>
+What is the major advantage of the J definition?
+<br>&nbsp;</p>
+
+
+
+<a name="22"></a>
+<p><b>22. Sorting Complex Numbers</b></p>
+
+<p>In college calculus and analysis classes we are taught that the complex numbers
+can not be ordered.  (The proof hinges on  
+that<tt> 0j1 </tt>can neither be positive nor negative, but is not<tt> 0</tt>&nbsp;.)
+So does that rule out complex numbers being in the domain of<tt> ⍋</tt>&nbsp;?</tt> </tt>
+<br>&nbsp;</p>
+
+
+
+<a name="23"></a>
+<p><b>23. Total Array Ordering</b></p>
+
+<p>Define an ordering on arrays, denoted here by &#x227C;, such
+that for arrays<tt> x</tt>&nbsp;,<tt> y</tt>&nbsp;,<tt> </tt>
+and<tt> z</tt>&nbsp;,</p>
+
+<table>
+<tr><td valign=top>&nbsp; &#149;</td><td><tt>x </tt>&#x227C;<tt> y </tt>
+ or<tt> y </tt>&#x227C;<tt> x </tt></td> 
+ <td></td> <td>total</td></tr>
+<tr><td valign=top nowrap>&nbsp; &#149; &nbsp;</td><td>If<tt> x </tt>&#x227C;<tt> y </tt>
+ and<tt> y </tt>&#x227C;<tt> x</tt>&nbsp;,<tt> </tt>then<tt> x ≡ y</tt>&nbsp;.
+ <td nowrap width=38>&nbsp;</td> <td>anti-symmetric</td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>If<tt> x </tt>&#x227C;<tt> y </tt>
+ and<tt> y </tt>&#x227C;<tt> z</tt>&nbsp;,<tt> </tt>then<tt> x </tt>&#x227C;<tt> z</tt>&nbsp;.
+ <td></td> <td>transitive</td></tr>
+</table>
+
+<p>Compare your answer to those given
+<a target=_new href="../help/dictionary/d422.htm">here</a>
+and
+<a target=_new href="https://dfns.dyalog.com/n_le.htm">here</a>.
+Can the existing function<tt> ≤</tt>&nbsp;,<tt> </tt>suitably extended, 
+play the role of &#x227C;?</p>
+
+<p>Dyalog APL can not really have a <i>total</i> array ordering
+because it permits arrays of namespaces,
+which can have circular references.
+<br>&nbsp;</p>
+
+
+
+<a name="24"></a>
+<p><b>24. A Design Mistake?</b></p>
+
+<p><a target=_new href="RationalizedAPL.htm"><i>Rationalized APL</i></a>
+1983 and 
+<a target=_new href="APLDictionary.htm"><i>A Dictionary of APL</i></a>
+1987 defined the <i>from</i><tt> </tt>(<tt>{</tt>)<tt> </tt>primitive
+which is roughly<tt> (⊂⍵)⌷⍺ </tt>and is implemented in J.
+<i>From</i> has a serious design mistake, or at least missed a golden opportunity.</p> 
+
+<p><i>From</i> has as a main design goal of completely replacing bracket 
+indexing,<tt> a[i<sub>0</sub>;i<sub>1</sub>;&#133;;i<sub>n</sub>]</tt>, 
+and in such attempt used &ldquo;triple enclosure&rdquo; 
+to indicate &ldquo;complementary indexing&rdquo;. 
+From J:</p>
+
+<pre>
+   A
+abcde
+fghij
+klmno
+pqrst
+   $ A
+4 5
+
+   (<1;4 3){A
+ji
+   (<(<1);4 3){A
+ed
+on
+ts
+</pre>
+
+<p>The first example is equivalent to<nobr><tt> A[1;4 3] </tt></nobr>and the second 
+to<nobr><tt> A[(⍳4)~1;4 3]</tt>&nbsp;.</nobr><tt> </tt> 
+The<tt> (⍳4)~1 </tt>is complementary indexing: 
+the indices you specify indicate the positions that you <i>don&rsquo;t</i> want.  
+The crucial point of complementary indexing is this:</p>
+
+<pre>
+   (<(<'');4 3){A
+ed
+ji
+on
+ts
+   (&lt;a:;4 3){A
+ed
+ji
+on
+ts
+   a:
+┌┐
+││
+└┘
+</pre>
+
+<p>In bracket indexing, you can elide the index for a dimension and it 
+would select every position in that dimension.  
+So the above examples are equivalent to<nobr><tt> A[;4 3]</tt>&nbsp;.</nobr><tt> </tt> 
+It is not apparent in the J examples, but in the APL dictionary<tt> ∘ </tt>
+is defined to be the enclose of<tt> ⍳0 </tt>(spelled<tt> a: </tt>in J), 
+so that the above examples would read, if you had the APL Dictionary 
+and the APL character set and you have<tt> ; </tt>
+as the <i>link</i> primitive (<tt>; </tt>is in J but is spelled<tt> ⊃ </tt>in Dictionary APL), 
+you&rsquo;d have<tt> <nobr>A[;4 3]</nobr> ←→ <nobr>(<∘;4 3){A</tt>&nbsp;,</nobr><tt> </tt>
+and more generally<tt> A[;i;;j;;k] ←→ <nobr>(<∘;i;∘;∘;j;∘;k){A</tt>&nbsp;.</nobr></p>
+
+<p>What is the design mistake <font size=-1>AKA</font> missed golden opportunity?  
+<i>From</i> could have, should have, used enclosure to indicate reach indexing 
+(and abandon elided indices or at least do something else to get it).  
+APL2 people would probably phrase it (&ldquo;used enclosure&rdquo;) differently, 
+but I think you get the point about reach indexing.
+<br>&nbsp;</p>
+
+
+
+<a name="25"></a>
+<p><b>25. Squad Indexing</b></p>
+
+<p>As indicated in the previous section, <i>from</i> is roughly<tt> (⊂⍵)⌷⍺</tt> .<tt> </tt>
+Why wasn&rsquo;t it defined as<tt> ⍵⌷⍺</tt> ?<tt> </tt>
+There was a debate about this in 1986/1987 within IPSA.
+<br>&nbsp;</p>
+
+
+
+<a name="26"></a>
+<p><b>26. Array Indices</b></p>
+
+<p>In<tt> x[y] </tt>the indices<tt> y </tt>can be an entire array.
+Of course.
+I remember that this was a revelation to me when I was learning APL.</p>
+
+<p>It is instructive to read in 
+<a target=_new href="apl360history.htm"><i>APL\360 
+History</i></a> about the evolution of
+the notation for indexing from subscripts and superscripts 
+<img src="img/ix4.jpg" align=top width=19 height=16></img>
+to the<tt> A[i;j;k;l] </tt>notation.
+<br>&nbsp;</p>
+
+
+
+<a name="27"></a>
+<p><b>27. Array Index Bounds</b></p>
+
+<p>Early editions of
+<a target=_new href="APLDictionary.htm"><i>A Dictionary of APL</i></a>
+extended the domain of permissible array indices
+by using<tt> n|i </tt>as the actual indices, where<tt> n </tt>
+is the length of the axis.
+The final edition restricted the indices from<tt> <nobr>-n</nobr> </tt>to<tt> n-1</tt>&nbsp;.<tt> </tt>
+Is the final restriction a good idea?
+<br>&nbsp;</p>
+
+
+
+<a name="28"></a>
+<p><b>28. Array Logic</b></p>
+
+<pre>
+   x← 5 ¯2.7 0 6
+
+   (x>0)-(x<0)
+1 ¯1 0 1
+
+   x × (x>0)-(x<0)
+5 2.7 0 6
+</pre>
+
+<p>The expression<tt> (x>0)-(x<0) </tt>is probably
+the first APL one-liner ever written
+(<a target=_new href="APL.htm"><i>A Programming Language</i></a>, 
+1962, &sect;1.4). 
+What make it work are that propositions
+have result<tt> 0 </tt>or<tt> 1 </tt>rather than
+<i>true</i> or <i>false</i>
+and that functions work on entire arrays rather than just on scalars.</i>
+
+<p>Falkoff and Iverson explained the 0-1 definition in 
+<a target=_new href="APLDesign.htm"><i>The 
+Design of APL</i></a> 
+in characteristically plain but telling language:</p>
+
+<blockquote><p>A very general and useful set of functions 
+was introduced by adopting the relation 
+symbols<tt> &lt; ≤ = ≥ &gt; ≠ </tt>
+to represent functions (i.e., propositions) 
+rather than assertions. 
+The result of any proposition was 
+defined to be<tt> 0 </tt>or<tt> 1 </tt>
+(rather than, say, <i>true</i> or <i>false</i>) 
+so that it would lie 
+in the domain of other arithmetic functions. &#133;</p>
+
+<p>The adoption of the relation symbols as functions 
+does not preclude their use 
+as <i>assertions</i> in informal sentences. 
+For example, although one might feel 
+compelled to substitute &ldquo;<tt>x≤y </tt>is true&rdquo; 
+for &ldquo;<tt>x≤y</tt>&rdquo; in the sentence 
+&ldquo;If<tt> x≤y </tt>then<tt> (x&lt;y)∨(x=y)</tt>&rdquo;, 
+there is no more reason to do so than to substitute 
+&ldquo;Bob is there is true&rdquo; 
+for &ldquo;Bob is there&rdquo; 
+in the sentence which begins 
+&ldquo;If Bob is there then &#133;&rdquo;.</p>
+</blockquote>
+
+<p>Knuth wrote enthusiastically
+about this (the 0-1 thing, not the array thing)
+in <a target=_new href="https://arxiv.org/PS_cache/math/pdf/9205/9205211v1.pdf">TNN</a> 1992,
+calling it Iverson&rsquo;s convention or
+<a target=_new href="https://en.wikipedia.org/wiki/Iverson_bracket">Iverson brackets</a>
+and
+saying that it led to
+&ldquo;substantial improvements in exposition and technique&rdquo;.
+If the worked examples in TNN look familiar it&rsquo;s because
+the simplification steps resemble APL golfing.
+<br>&nbsp;</p>
+
+
+
+<a name="29"></a>
+<p><b>29. Design Mistake II</b></p>
+
+<p>In <i>APL\360</i><tt> ⍺∊⍵ </tt>is equivalent to<tt> ⍺∊,⍵</tt>&nbsp;.<tt> </tt>
+Why is this a mistake?
+<br>&nbsp;</p>
+
+
+
+<a name="30"></a>
+<p><b>30. Forks</b></p>
+
+<p><a target=_new href="../help/dictionary/dictf.htm">J 
+defines fork</a>,<nobr><tt> (f g h)</tt>&nbsp;,</nobr><tt> </tt>
+a train of 3 functions in isolation, as follows:</p>
+
+<pre>
+     g          g
+    / \        / \ 
+   f   h      f   h
+   |   |     / \ / \
+   y   y     x y x y 
+</pre>
+
+<p>Why is this not equivalent to the following?</p>
+
+<pre>
+     (f g h) y  ←→  (f y) g (h y) 
+   x (f g h) y  ←→  (x f y) g (x h y)
+
+</pre>
+
+
+
+<a name="31"></a>
+<p><b>31. Scalar Operators</b></p>
+
+<p>In <a target=_new href="opfns.htm"><i>Operators
+and Functions</i></a> 1978 Iverson proposed,
+for each primitive scalar dyadic function (such as<tt> +</tt>),<tt> </tt>
+a <i>scalar operator</i> whose symbol is formed by
+&ldquo;overstriking&rdquo; the function symbol with an overbar<tt> (&#x2213;)</tt>&nbsp;.<tt> </tt>
+The definition is illustrated 
+by that for<tt> &#x2213;</tt>&nbsp;:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp;(monadic)</td><td>&nbsp;</td>
+ <td><tt>&nbsp; f&#x2213;g y ←→ (f y) + (g y)</tt></td></tr>
+<tr><td>&nbsp; &nbsp;(dyadic)</td><td>&nbsp;</td>
+ <td><tt>x f&#x2213;g y ←→ (x f y) + (x g y)</tt></td></tr>
+</table>
+
+<p>Discuss the pros and cons of scalar operators
+<i>vs.</i> forks.
+<br>&nbsp;</p>
+
+
+
+
+<a name="32"></a>
+<p><b>32. Strand Notation</b></p>
+
+<p>Do you still have APL2 (APL2, Dyalog APL, NARS2000, &#133;) if you take away strand notation?</p>
+
+<p>&ldquo;Have APL2&rdquo; in the sense of, you still have APL2 
+if you added <a target=_new href="https://dfns.dyalog.com/n_refcard.htm">dfns</a> to it.
+(Or do you?)
+<br>&nbsp;</p>
+
+
+
+<a name="33"></a>
+<p><b>33. Dfns and Explicit Definition</b></p>
+
+<p>Compare <a target=_new href="https://dfns.dyalog.com/n_refcard.htm">dfns (Dyalog APL)</a>
+ and <a target=_new href="../help/dictionary/d310n.htm">explicit definition (J)</a>,
+two ways of defining functions and operators.
+<br>&nbsp;</p>
+
+
+
+<a name="34"></a>
+<p><b>34. Sigma, Pi, etc.</b></p>
+
+<p>Suppose symbol proliferation is not an issue.
+What are the pros and cons of 
+defining<nobr><tt> &Sigma; ←→ +⌿</tt>&nbsp;,</nobr> <nobr><tt> &Pi; ←→ ×⌿</tt>&nbsp;,</nobr><tt> </tt>etc.?
+<br>&nbsp;</p>
+
+
+
+<a name="35"></a>
+<p><b>35. Operators in APL in 1978</b></p>
+
+<p>In his 1978
+<a target=_new href="https://dl.acm.org/citation.cfm?id=1283933&CFID">Turing lecture</a> 
+(&sect;8) Backus wrote 
+&ldquo;APL has exactly three functional forms, called
+inner product, outer product, and reduction.&rdquo;  
+At the time APL had two other 
+functional forms <font size=-1>AKA</font> operators.  What were they?
+<br>&nbsp;</p>
+
+
+
+<a name="36"></a>
+<p><b>36. Operators in J</b></p>
+
+<p>J has 
+<a target=_new href="../help/dictionary/partsofspeech.htm">11 monadic  
+and 27 dyadic operators</a>.
+Which of them would you include in your APL?
+<br>&nbsp;</p>
+
+
+
+<a name="37"></a>
+<p><b>37. Operator Encoding Efficiency</b></p>
+
+<p>Among other things, operators economize on the number of symbols needed to encode functionality.
+Suppose you have 10 symbols.</p>
+
+<p>If you use all of them to denote functions, then you have 10 functions.</p>
+
+<p>If you use 5 of them to denote functions and 5 to denote monadic operators,
+then you have 5 primitive functions and 25 derived functions.</p>
+
+<p>If you use 5 of them to denote functions and 5 to denote dyadic operators,
+then you have 5 primitive functions and 125 derived functions.</p>
+
+<p>These are in addition to the possibilities afforded by array operands.
+<br>&nbsp;</p>
+
+
+
+<a name="38"></a>
+<p><b>38. Key</b></p>
+
+<p>The <i>key</i> operator was introduced in J no later than November 1991;
+it was introduced in Dyalog APL in 2013 (version 14.0).</p>
+
+<p>In J, the key operator<tt> x u/. y </tt>is defined as: items of<tt> x </tt>specify keys 
+for corresponding items of<tt> y </tt>and<tt> u </tt>is applied to each collection 
+of<tt> y </tt>having identical keys.
+(In J, <i>item</i> means major cell.)</p>
+
+<p>In Dyalog APL, the key operator<tt> x u⌸ y </tt>is defined as: 
+major cells of<tt> x </tt>specify keys 
+for corresponding major cells of<tt> y </tt>and<tt> u </tt>
+is applied to each unique key and each collection of<tt> y </tt>having that key.</p>
+
+<p>Discuss the pros and cons of each definition.
+<br>&nbsp;</p>
+
+
+
+<a name="39"></a>
+<p><b>39. Under</b></p>
+
+<p><i>Under</i> is a dyadic operator<tt> ⍢ </tt>defined as follows:</p>
+
+<pre>
+   f⍢g x   ←→ g⍣¯1 f g x
+   x f⍢g y ←→ g⍣¯1 (g x) f (g y)
+</pre>
+
+<p>(<tt>g⍣¯1 </tt>is the inverse of<tt> g</tt>&nbsp;.)<tt> </tt>
+For examples,<tt> x×y ←→ x+⍢⍟y</tt>&nbsp;.<tt> </tt>
+Find other examples of using<i> under</i>.
+Compare your answers to the ones given 
+<a target=_new href="https://code.jsoftware.com/wiki/Essays/Under">here</a>.
+<br>&nbsp;</p>
+
+
+
+<a name="40"></a>
+<p><b>40. Reflexive</b></p>
+
+<p>The monadic case of the function<tt> f⍨ x </tt>derived from
+the <i>commute</i> operator is defined as<tt> x f x</tt>&nbsp;.<tt> </tt>
+Find examples of useful functions that can be defined as<tt> f⍨</tt>&nbsp;<tt> </tt>
+(for example <i>double</i> is<tt> +⍨</tt>).<tt> </tt>
+Compare your answers to the ones given 
+<a target=_new href="https://code.jsoftware.com/wiki/Essays/Reflexive">here</a>.</p>
+
+<p>The <i>commute</i> operator is called <i>reflexive/passive</i> in J,
+underscoring the correspondence to the reflexive and passive cases in natural languages
+and its usefulness for deft expression in contexts wider than
+programming and mathematics.
+<br>&nbsp;</p>
+
+
+
+<a name="41"></a>
+<p><b>41. Scan</b></p>
+
+<p><i>Scan</i> in APL has reduction built in;
+the use of reduction ensures that computations such as partial sums can be 
+effected by primitive function arguments to the operator, 
+and that the overall result can be properly assembled in <i>APL\360</i>.
+<a target=_new href="https://keiapl.org/rhui/remember.htm#scan">Once this is realized</a>,
+the alternative <i>prefix</i> and <i>suffix</i> operators suggest themselves.
+These apply the monadic case of the operand to the arguments.
+In J:</p>
+
+<pre>
+   <\  3 1 4 1 5 9 26     NB. enclose prefixes
+┌─┬───┬─────┬───────┬─────────┬───────────┬──────────────┐
+│3│3 1│3 1 4│3 1 4 1│3 1 4 1 5│3 1 4 1 5 9│3 1 4 1 5 9 26│
+└─┴───┴─────┴───────┴─────────┴───────────┴──────────────┘
+   <\. 3 1 4 1 5 9 26     NB. enclose suffixes
+┌──────────────┬────────────┬──────────┬────────┬──────┬────┬──┐
+│3 1 4 1 5 9 26│1 4 1 5 9 26│4 1 5 9 26│1 5 9 26│5 9 26│9 26│26│
+└──────────────┴────────────┴──────────┴────────┴──────┴────┴──┘
+
+   +/\  3 1 4 1 5 9 26    NB. sum prefix
+3 4 8 9 14 23 49
+   +/\. 3 1 4 1 5 9 26    NB. sum suffix
+49 46 45 41 40 35 26
+
+</pre>
+
+
+
+<a name="42"></a>
+<p><b>42. Reduction Style</b></p>
+
+<p>ISO/IEC 13751:2001(E) speaks of two &ldquo;reduction styles&rdquo;: 
+<i>enclose reduction style</i> (Dyalog APL, APL2, etc.)
+and <i>insert reduction style</i> (SHARP APL, J, etc.)
+Discuss the pros and cons of the two reduction styles.
+<br>&nbsp;</p>
+
+
+
+<a name="43"></a>
+<p><b>43. A Combinatorial Operator</b></p>
+
+<p>Bob Smith proposed in 2016 
+<a target=_new href="https://www.sudleyplace.com/APL/Another%20Combinatorial%20Operator%20in%20APL.pdf">a 
+combinatorial operator</a>
+for computations on combinations, permutations, partitions, etc.
+Would you include it as a primitive operator in your APL?
+<br>&nbsp;</p>
+
+
+
+<a name="44"></a>
+<p><b>44. Cut, Tessellate, Tile, Stencil</b></p>
+
+<p>A monadic operator is proposed for Dyalog APL in 2016, 
+in which a rectangular window is moved over the data and
+the operand is applied to the data so framed.
+The window size and the movement are independent in each dimension.
+One of the things to be decided is a <b>name</b> for the operator.</p>
+
+<table>
+<tr><td valign=top nowrap>&nbsp; &#149; &nbsp;</td><td>
+The idea originated as a case of of the dyadic operator <i>cut</i> 
+in <a target=_new href="RationalizedAPL.htm"><i>Rationalized APL</i></a>,
+indicated by an integer scalar code.
+The other cases are similar to (although more general than)
+the existing <i>partitioned enclose</i>.
+ </td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td><i>Tessellate</i> and <i>tile</i>
+have the unwanted connotation of &ldquo;non-overlapping&rdquo;.
+ </td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>The non-APL world calls it
+<a target=_new href="https://en.wikipedia.org/wiki/Stencil_code">stencil code</a>.
+ </td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>&ldquo;Stencil&rdquo; is a more common word
+than &ldquo;tessellate&rdquo;</a>.
+ </td></tr>
+</table>
+
+<p>Another question to be settled is a symbol for the operator.
+The current proposal is<tt> ⌺</tt>&nbsp;,<tt> </tt>quad diamond, Unicode U233A. 
+<br>&nbsp;</p>
+
+
+
+<a name="45"></a>
+<p><b>45. Small-Range, 1-, and 2-Byte Integers</b></p>
+
+<p>An integer array<tt> x </tt>is <i>small-range</i> 
+if its range,<tt> r←(⌈/,x)-(⌊/,x)</tt>&nbsp;,<tt> </tt>
+is small.
+How small is &ldquo;small&rdquo;? 
+It depends on the particular primitive,
+but usually<tt> r<2×≢,x </tt>and sometimes
+even<tt> r<4×≢,x </tt>would be small-range.
+Having special code for small-range data makes 
+a significant difference in efficiency.  Define:</p>
+
+<pre>
+x1←2e9+?1e6⍴120
+x2←2e9+?1e6⍴2e4
+x4←    ?1e6⍴2e9
+</pre>
+
+<p>and compare the times in takes to do<tt> ⍋</tt>&nbsp;,<tt> {⍵[⍋⍵]}</tt>&nbsp;,<tt> </tt>
+and<tt> ⍳⍨ </tt>
+on each of the three vectors.</p>
+
+<p>Dyalog APL has 1- and 2-byte integers with automatic promotion and demotion
+between them and other numeric datatypes and, of course,
+it is immediate whether they are small-range.
+Having these datatypes makes a significant difference in efficiency.
+Define:</p>
+
+<pre>
+x1←?1e6⍴120
+x2←?1e6⍴2e4
+x4←?1e6⍴2e9
+</pre>
+
+<p>and compare the times in takes to do<tt> ⍋</tt>&nbsp;,<tt> {⍵[⍋⍵]}</tt>&nbsp;,<tt> </tt>
+and<tt> ⍳⍨ </tt>
+on each of the three vectors.</p>
+
+<p>The functions<tt> ⍋</tt>&nbsp;,<tt> {⍵[⍋⍵]}</tt>&nbsp;,<tt> </tt>
+and<tt> ⍳⍨ </tt>are implemented to best of current knowledge
+for small-range, 1-, and 2-byte integers.  
+Each of them <i>should</i> be faster on such arguments;
+if not, a possible speed-up has been left on the table.
+<br>&nbsp;</p>
+
+
+
+<a name="46"></a>
+<p><b>46. Tolerant Comparison</b></p>
+
+<p>Tolerant comparison ameliorates the ugly realities of 
+finite-precision representation and arithmetic. 
+For example,<tt> 7 </tt>is not exactly equal to<tt> 100×0.07 </tt>
+nor to the square of the square root of<tt> 7</tt>&nbsp;:</p>
+
+<pre>
+   7 - 100 × 0.07
+¯8.88178E¯16
+   7 - (7*0.5)*2
+¯8.88178E¯16
+</pre>
+
+<p>Equality with a tolerance<tt> t </tt>is defined as follows: 
+for finite<tt> x </tt>and<tt> y</tt>&nbsp;,<tt> x=y </tt>is<tt> 1 </tt>
+if the magnitude of<tt> x-y </tt>does not exceed<tt> t </tt>
+times the larger of the magnitudes of<tt> x </tt>and<tt> y</tt>&nbsp;.<tt> </tt>
+In Dyalog APL, the tolerance is specified in<tt> ⎕ct </tt>whose value
+in a clear workspace is<tt> 1e¯14</tt>&nbsp;.<tt> </tt>
+An upper bound is imposed on acceptable values of the tolerance;
+historically, the upper bound was chosen to be small enough 
+that tolerance has no effect on comparisons 
+involving 32-bit integers.</p>
+
+<table>
+<tr><td valign=top nowrap>a. &nbsp;</td><td>Describe the region of tolerant equality
+for a real number.
+ </td></tr>
+<tr><td valign=top>b.</td><td>Describe the region of tolerant equality
+for a complex number.
+ </td></tr>
+<tr><td valign=top>c.</td><td>Why is equality to 0 exact according to the definition
+even when the tolerance is nonzero?
+ </td></tr>
+<tr><td valign=top>d.</td><td>What are the consequences for tolerant equality
+if the tolerance is 1 or more?
+ </td></tr>
+<tr><td valign=top>e.</td><td>Write models of tolerant versions
+of the following functions:<tt> = ≠ < ≤ ≥ > ⌊ ⌈ </tt>
+ </td></tr>
+</table>
+
+<p>Compare your answers to those given 
+<a target=_new href="https://code.jsoftware.com/wiki/Essays/Tolerant_Comparison">here</a>
+and
+<a target=_new href="satn23.htm">here</a>.
+<br>&nbsp;</p>
+
+
+
+<a name="47"></a>
+<p><b>47.<tt> assert</tt></b></p>
+
+<pre>
+assert←{⍺←'assertion failure' ⋄ 0∊⍵:⍺ ⎕signal 8 ⋄ shy←0}
+</pre>
+
+<p><tt>assert </tt>is an APL utility function I use extensively
+in the Dyalog APL QA suite.  
+The definition is subtle and chock-full of technical arcana;
+the main thing is that propositions to be evaluated 
+are stated in the positive sense:<tt> assert 0=1+*○0j1</tt>&nbsp;.</p>
+
+<p>The utility has counterparts in APL interpreters
+where it is defined as a C macro and used 700 times in Dyalog APL
+and 1000 times in J.  
+Again, the main thing is that the required condition
+is stated in the positive sense:</p>
+
+<pre>
+  #define ASSERT(p,stmt)  {if(!(p)){stmt;}}
+
+  ASSERT(2>=r, EVRANK);
+  ASSERT(xn==yn, EVLENGTH);
+  ASSERT(t==APLSINT||t==APLINTG||t==APLLONG, EVDOMAIN);
+</pre>
+
+
+<p>Absent<tt> ASSERT</tt>&nbsp;,<tt> </tt>the above C code would be
+coded in variations of the following, repeated hundreds of times:</p>
+
+<pre>
+  if(!(2>=r))EVRANK;
+  if(xn!=yn)EVLENGTH;
+  if(!(t==APLSINT||t==APLINTG||t==APLLONG))EVDOMAIN;
+
+  if(2&lt;r)EVRANK;
+  if(!(xn==yn))EVLENGTH;
+  if(t!=APLSINT&&t!=APLINTG&&t!=APLLONG)EVDOMAIN;
+
+</pre>
+
+
+
+<a name="48"></a>
+<p><b>48. <i>Why Functional Programming Matters</i></b></p>
+
+<p>In <a target=_new href="https://www.youtube.com/embed/FGQAP0GxlW8?feature=oembed"><i>Why 
+Functional Programming Matters</i></a>
+John Hughes and Mary Sheeran list four salient characteristics
+of functional programming.</p>
+
+<table>
+<tr><td valign=top nowrap>&nbsp; &#149; &nbsp;</td><td>Whole value</td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>Combining forms</td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>Algebra as a litmus test</td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>Functions as representations</td></tr>
+</table>
+<br>
+
+<table>
+<tr><td valign=top nowrap>a. &nbsp;</td><td>Discuss the extent to which APL exhibits these characteristics.</td></tr>
+<tr><td valign=top>b.</td><td>Discuss the extent to which Haskell exhibits these characteristics.</td></tr>
+</table>
+<br>
+
+
+
+<a name="49"></a>
+<p><b>49. <i>Notation as a Tool of Thought</i></b></p>
+
+<p>In <a target=_new href="tot.htm"><i>Notation as a Tool of Thought</i></a>
+Iverson listed five important characteristics of notation.</p>
+
+<table>
+<tr><td nowrap valign=top>&nbsp; &#149; &nbsp;</td><td>Ease of expressing constructs arising in problems</td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>Suggestivity</td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>Subordination of detail</td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>Economy</td></tr>
+<tr><td valign=top>&nbsp; &#149;</td><td>Amenability to formal proofs</td></tr>
+<table>
+<br>
+
+<table>
+<tr><td valign=top nowrap>a. &nbsp;</td><td>Discuss the extent to which APL exhibits these characteristics.
+ </td></tr>
+<tr><td valign=top>b.</td><td>A <i>magic function</i> is an APL-coded (dfn) 
+computation in the C source of the interpreter.
+Discuss the extent to which magic functions exhibit these characteristics.
+Compare your answer to what&rsquo;s written 
+<a target=_new href="https://www.dyalog.com/blog/2015/06/in-praise-of-magic-functions-part-two/">here</a>.
+ </td></tr>
+<tr><td valign=top>c.</td><td>Discuss the extent to which Haskell exhibits these characteristics.
+ </td></tr>
+</table>
+<br>
+
+
+
+<br><hr width=50%><br>
+
+<a name="sample"></a>
+<p><b>Sample Answer</b></p>
+
+<p>The <a href="APLDesignExercises1.htm#8">Imaginary/Complex</a> section above says:</p>
+
+<blockquote>J has the scalar function<tt> j. </tt>
+defined by<tt> {⍺←0 ⋄ ⍺+0j1×⍵}</tt>&nbsp;.<tt> </tt>
+If complex numbers are in the language and symbol proliferation is not a problem, 
+would you specify<tt> j. </tt>as a primitive?</blockquote>
+
+<p>My answer:</p>
+
+<p>Complex numbers can be constructed as ordered pairs of real numbers, similar 
+to how integers can be constructed as ordered pairs of natural numbers
+and rational numbers as ordered pairs of integers.
+For complex numbers,<tt> j. </tt>plays the same role as<tt> - </tt>
+for integers and<tt> ÷ </tt>for rational numbers.
+<br>&nbsp;</p>
+
+
+
+<a name="reading"></a>
+<p><b>Further Reading</b></p>
+
+<table>
+<tr><td>&#149; &nbsp;</td><td>Iverson, <a target=_new href="EvalOrder.htm"><i>Conventions Governing Order of Evaluation</i></a>, 1966</td></tr>
+<tr><td>&#149; &nbsp;</td><td>Falkoff, <a target=_new href="apl360history.htm"><i>APL\360 History</i></a>, 1969</td></tr>
+<tr><td>&#149; &nbsp;</td><td>Iverson, <a target=_new href="algebra.htm"><i>Algebra as a Language</i></a>, 1972</td></tr>
+<tr><td>&#149; &nbsp;</td><td>Falkoff and Iverson, <a target=_new href="APLDesign.htm"><i>The Design of APL</i></a>, 1973</td></tr>
+<tr><td>&#149; &nbsp;</td><td>Iverson, <a target=_new href="opfns.htm"><i>Operators and Functions</i></a>, 1978</td></tr>
+<tr><td>&#149; &nbsp;</td><td>Iverson, <a target=_new href="tot.htm"><i>Notation as a Tool of Thought</i></a>, 1980</td></tr>
+<tr><td>&#149; &nbsp;</td><td>Iverson, <a target=_new href="RationalizedAPL.htm"><i>Rationalized APL</i></a>, 1983</td></tr>
+<tr><td>&#149; &nbsp;</td><td>Iverson, <a target=_new href="APLDictionary.htm"><i>A Dictionary of APL</i></a>, 1987</td></tr>
+</table>
+<br>
+
+<br><hr>
+<font size=-1>
+<p>Written in honor and in celebration of the 50-th anniversary of APL.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<br><br><br><br><br> <br><br><br><br><br>
+<br><br><br><br><br> <br><br><br><br><br>
+<br><br><br><br><br> <br><br><br><br><br>
+<br><br><br><br><br> <br><br><br><br><br>
+<br><br><br><br><br> <br><br><br><br><br>
+</td></tr></table>
+<br>
+</body>
+</html>

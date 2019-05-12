@@ -1,0 +1,2228 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Formal Function Definition</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Formal Function Definition</font><br><br>
+<b>Kenneth E. Iverson</b>
+<br>&nbsp;</p>
+
+
+<p>This chapter concerns the scheme of formal function
+definition introduced in Section 1.3.
+In includes exercise which apply the basic scheme 
+to a number of topics familiar in elementary mathematics.
+It also extends the basic schemes to include <i>recursive</i>
+definition, a form of definition which makes it easy
+to handle the formal definitions such as the quotient
+of polynomials.
+Section 10.3 defines a comprehensive set of functions
+for handling polynomials.</p>
+
+<p>[The point at which each group of exercises can be attempted
+is indicated by a marginal note consisting of 
+a domino<tt> </tt>(<tt>⌹</tt>)<tt> </tt>followed
+by the number of the first exercise in the group.
+The groups are separated by horizontal lines.]
+<br>&nbsp;</p>
+
+
+
+
+<a name="10.1"></a>
+<p><b>10.1 Variables in a Function Definition</b></p>
+
+<p>The expression defining a function may include
+one or more variables;
+these variables must, of course,
+be assigned values before the function is executed.
+For example:</p>
+
+<pre>
+      h:⍺×⍵*n
+      n←2                         n←3
+      3 h 4                       3 h 4
+48                          192
+                                                              ⌹1
+</pre>
+
+<a name="10.1a"></a>
+<p><b>Local variables</b>. Consider the following function definition:</p>
+
+<pre>
+      m:1+(⍺-⍵)×2+(⍺-⍵)×3+(⍺-⍵)×4
+      3 m 1
+49
+</pre>
+
+<p>Since the expression<tt> ⍺-⍵ </tt>occurs repeatedly,
+it would be convenient to assign a variable name to the
+result<tt> ⍺-⍵ </tt>and use it in all positions,
+as follows:</p>
+
+<pre>
+      p:1+x×2+x×3+(x←⍺-⍵)×4
+      3 p 1
+49
+</pre> 
+
+<p>The assignment of a value to the variable must be
+executed <i>before</i> (and therefore occur to the right of)
+any <i>use</i> of the variable.
+Thus, the following definition would not work,
+and attempted use of the function on a computer
+would invoke a<tt> value error </tt> message:</p>
+
+<pre>
+      q:1+(x←⍺-⍵)×2+x×3+x×4
+</pre>
+
+<p>A variable which is assigned a value within a function
+definition is <i>local</i> to the function
+in the sense that it has meaning only within
+the execution of the function
+and has no effect on assignments made outside the function.
+For example:</p>
+
+<pre>
+      x←7
+      3 p 1
+49
+      x
+7
+                                                             ⌹13
+</pre>
+
+
+
+<a name="10.2"></a>
+<p><b>10.2 Recursive definition</b></p>
+
+<p>A function definition is said to be <i>recursive</i>
+if the function being defined recurs in the expression defining it.
+This notion may be familiar from informal definitions.
+For example, the power function<tt> x*n </tt>may be said
+to equal<tt> x </tt>times<tt> x*n-1</tt>&nbsp;,<tt> </tt>
+and the factorial function<tt> !n </tt>may be said
+to equal<tt> n×!n-1</tt>&nbsp;.</p>
+
+<p>Let us attempt to define the factorial function<tt> fac </tt>
+in this manner:</p>
+
+<pre>
+      fac:⍵×fac ⍵-1
+</pre>
+
+<p>To interpret the expression<tt> fac&nbsp;4 </tt>we would
+proceed by substitution as usual:</p>
+
+<pre>
+      fac 4
+      4×fac 3
+      4×3×fac 2
+      4×3×2×fac 1
+</pre>
+
+<p>It is clear that this procedure can be terminated
+meaningfully only if we know the value of<tt> fac&nbsp;x </tt>
+for some value of the argument<tt> x</tt>&nbsp;.<tt> </tt>
+In this case,<tt> fac&nbsp;1 </tt>is equal to<tt> 1</tt>&nbsp;,<tt> </tt>
+and with this knowledge we can terminate the interpretation
+as follows:</p>
+
+<pre>
+      4×3×2×1
+      24
+</pre>
+
+<p>In general, it is necessary to know a second expression
+for the definition
+(in this case the simple expression<tt> 1</tt>)<tt> </tt>
+and the condition under which it is to be applied
+(in this case when<tt> ⍵=1</tt>).
+The recursive definition of factorial therefore requires
+the following three pieces of information:</p>
+
+<table>
+<tr><td>The primary expression</td><td>:</td><td>&nbsp;</td><td><tt>⍵×f ⍵-1</tt></td></tr>
+<tr><td>A proposition</td><td>:</td><td>&nbsp;</td><td><tt>⍵=1</tt></td></tr>
+<tr><td>A secondary expression</td><td>:</td><td>&nbsp;</td><td><tt>1</tt></td></tr>
+</table>
+
+<p>In a formal definition these three data are presented
+in the foregoing order with colons separating them.  Thus:</p>
+
+<pre>
+      fac:⍵×fac ⍵-1:⍵=1:1
+
+      fac 4
+24
+</pre>
+
+<p>A proposition is a function which yields one 
+of two values,<tt> 0 </tt>(representing <i>false</i>)
+or 1 (representing <i>true</i>).
+In a recursive definition the proposition is executed first;
+its result determines which defining expression is to be used,
+the primary if the result is<tt> 0</tt>&nbsp;,<tt> </tt>
+and the secondary if the result is<tt> 1</tt>&nbsp;.<tt> </tt>
+The secondary expression must <i>not</i> include
+within it the function being defined.</p>
+
+<p>A more suitable definition of the factorial function would,
+in fact, include the argument<tt> 0 </tt>as follows:</p>
+
+<pre>
+      fac:⍵×fac ⍵-1:⍵=0:1
+</pre>
+
+<p>A recursive definition of the power function 
+which is equivalent (for non-negative integer arguments)
+to<tt> ⍺*⍵ </tt>could be made as follows:</p>
+
+<pre>
+      pow:⍺×⍺ pow fac ⍵-1:⍵=0:1
+</pre>
+
+<p>The interpretation of<tt> 2&nbsp;pow&nbsp;3 </tt>
+would proceed as follows:</p>
+
+<pre>
+      2 pow 3
+      2×2 pow 2
+      2×2×2 pow 1
+      2×2×2×2 pow 0
+      2×2×2×1
+      8
+</pre>
+
+<p>Many functions which are difficult to define in other ways
+are easy to define recursively.  Moreover, many functions
+easily defined in other ways may profitably be
+defined recursively, 
+since the recursive definition may provide better understanding
+of certain properties of the function.</p>
+
+<p align=right><tt>⌹16</tt></p>
+
+
+
+<a name="10.3"></a>
+<p><b>10.3 Functions for Handling Polynomials</b></p>
+
+<p>This section is intended to provide
+further examples of both recursive and non-recursive
+function definitions,
+and to illustrate the development of a coherent set
+of functions for the treatment of a single topic.
+The topic chosen is that of polynomials expressed
+in the form introduced in Section 1.5.</p>
+
+<p>The basic notion is to represent a polynomial
+in terms of its vector of coefficients.
+For example, if the coefficients are<tt> <nobr>3 1 4 2</nobr> </tt>
+and<tt> x←2</tt>&nbsp;,<tt> </tt>then the value
+of the polynomial is given by:</p>
+
+<pre>
+      +/3 1 4 2×x*0 1 2 3
+37
+</pre>
+
+<p>The definition of the polynomial function
+(given in a slightly different form in Equation 1.5.1)
+is therefore:</p>
+
+<pre>
+      p:+/⍺×⍵*⍳n ⍺
+</pre>
+
+<p>where<tt> n </tt>yields the number of elements
+in its argument, and is defined as follows:</p>
+
+<pre>
+      n:+/⍵=⍵
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      x←2
+      c←3 1 4 2
+      n c
+4
+      ⍳n c
+0 1 2 3
+      c p x
+37
+      1 3 3 1 p 2
+27
+</pre>
+
+<p>If<tt> <nobr>d←1 3 3 1</nobr> </tt>then the sum
+of the polynomials with coefficients<tt> c </tt>and<tt> d </tt>
+is given by:
+
+<pre>
+      (c p x)+d p x
+64
+</pre>
+
+<p>Moreover, the polynomial with coefficients<tt> c+d </tt>
+has the same value:</p>
+
+<pre>
+      c+d
+4 4 7 3
+      (c+d) p x
+64
+</pre>
+
+<p>If the vectors<tt> c </tt>and<tt> d </tt>
+do not have the same number of elements,
+the expression<tt> c+d </tt>will not yield the sum;
+it is necessary to extend one of them by final zeros
+(which do not change the value of the polynomial represented).
+Addition of the vectors of coefficients of two polynomials
+can be performed by the following function:</p>
+
+<pre>
+      plus:(ml↑⍺)+(ml←(n⍺)⌈n⍵)↑⍵
+
+      c←3 1 4
+      d←1 2 3 4 5
+      c plus d
+4 3 7 4 5
+      d plus c
+4 3 7 4 5
+      (c plus d) p 2
+150
+      (c p 2)+d p 2
+150
+</pre>
+
+<p>A function for the subtraction of polynomials could
+be defined similarly, but it is clearer and simpler
+to use the function<tt> plus </tt>in its definition:</p>
+
+<pre>
+      minus:⍺ plus -⍵
+
+      c minus d
+2 ¯1 1 ¯4 ¯5
+</pre>
+
+<p>An informal scheme for multiplying polynomials
+is developed in Section 1.7, and is formalized
+in Ex 1.74.
+An equivalent function is provided by the following
+recursive definition
+(whose details can be made clear by working through
+the detailed substitutions of a simpler example):</p>
+
+<pre>
+      times:(⍺×1↑⍵) plus 0,⍺ times 1↓⍵:0=n⍵:0
+      1 2 1 times 1 3 3 1
+1 5 10 10 5 1
+      (1 2 1 times 1 3 3 1) p 3
+1024
+      (1 2 1 p 3)×1 3 3 1 p 3
+1024
+                                                             ⌹24
+</pre>
+
+<p><i>Division</i> of one polynomial by another
+is effected by the following function:</p>
+
+<pre>
+      into:z,⍺ into 1↓⍵ minus ⍺×z←(1↑⍵)÷1↑⍺:(n⍺)>n⍵:⍳0
+
+      a←1 2 1
+      b←1 5 10 10 5 1
+      c←0 0 0 0 2 8
+      d←b plus c
+      d
+1 5 10 10 7 9
+      a into b
+1 3 3 1
+      a into d
+1 3 3 1
+      rem←d minus a times a into d
+      rem
+0 0 0 0 2 8
+</pre>
+
+<p>From the foregoing example, 
+it appears that the division performed by<tt> into </tt>
+yields a <i>high-order</i> remainder,
+as defined in Section 1.7.
+A similar definition could be
+made for a lower-order division function,
+but it is easier to define it in terms of<tt> into </tt>
+as follows:</p>
+
+<pre>
+      linto:⌽(⌽⍺) into ⌽⍵
+      a linto b
+1 3 3 1
+      a linto d
+¯25 23 ¯11 9
+      rm←d minus a times a linto d
+      rm
+26 32 0 0 0 0
+</pre>
+
+<p>Considered as a coefficient vector,
+the last result above is equivalent to the 
+vector<tt> <nobr>26 32</nobr></tt>&nbsp;.<tt> </tt>
+It may be convenient to define a function
+which will curtail any vector by dropping all final zeros:</p>
+
+<pre>
+      curt:(-+/⌊\0=⌽⍵)↓⍵
+      curt rm
+26 32
+</pre>
+
+<p>A polynomial with coefficients<tt> 1</tt>&nbsp;,<tt> </tt>
+or<tt> 1&nbsp;0</tt>&nbsp;,<tt> </tt>or<tt> <nobr>1 0 0</nobr></tt>&nbsp;,<tt> </tt>
+etc., has the value<tt> 1 </tt>for all values of its argument.
+Hence a polynomial which is (for small values of its argument)
+an approximate reciprocal of a given polynomial,
+can therefore be obtained by dividing the given polynomial
+into a polynomial of the form<tt> 1 </tt>followed by zeros.
+For example:</p>
+
+<pre>
+      v←20↑1
+      v
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+      a←1 1
+      ar←a into v
+      ar
+1 ¯1 1 ¯1 1 ¯1 1 ¯1 1 ¯1 1 ¯1 1 ¯1 1 ¯1 1 ¯1 1
+      ar p .5
+0.6666679382
+      ÷a p .5
+0.6666666667
+      b←1 2 1
+      br←b into v
+      br
+1 ¯2 3 ¯4 5 ¯6 7 ¯8 9 ¯10 11 ¯12 13 ¯14 15 ¯16 17 ¯18
+      br p .5
+0.4443969727
+      ÷b p .5
+0.4444444444
+</pre>
+
+<p>The function<tt> p:+/⍺×⍵*⍳n⍺ </tt>applies only
+to a scalar right argument and fails to work properly
+on a vector right argument, 
+for reasons that may be seen in attempting 
+to evaluate<tt> <nobr>1 3 3 1 p 2 5</nobr> </tt>
+or<tt> <nobr>1 3 3 1 p 2 5 7 9</nobr></tt>&nbsp;.<tt> </tt></p>
+
+<p>A corresponding function which applies to a vector
+right argument may be defined recursively as follows:</p>
+
+<pre>
+      pvra:(⍺ p 1↑⍵),⍺ pvra 1↓⍵:0=n⍵:⍳0
+      1 3 3 1 pvra 2 5
+27 216
+      1 3 3 1 pvra 2 5 7 9
+27 216 512 1000
+</pre>
+
+<p>The entire set of functions developed for handling
+polynomials is collected below:</p>
+
+<pre>
+      p:+/⍺×⍵*⍳n⍺
+      n:+/⍵=⍵
+      plus:(ml↑⍺)+(ml←(n⍺)⌈n⍵)↑⍵
+      minus:⍺ plus -⍵
+      times:(⍺×1↑⍵) plus 0,⍺ times 1↓⍵:0=n⍵:0
+      into:z,⍺ into 1↓⍵ minus ⍺×z←(1↑⍵)÷1↑⍺:(n⍺)>n⍵:⍳0
+      linto:⌽(⌽⍺) into ⌽⍵
+      curt:(-+/⌊\0=⌽⍵)↓⍵
+      pvra:(⍺ p 1↑⍵),⍺ pvra 1↓⍵:0=n⍵:⍳0
+                                                             ⌹25
+</pre>
+
+
+
+<a name="10.4"></a>
+<p><b>10.4 The Function<tt> def </tt></b></p>
+
+<p>Throughout this text, function definitions have been
+presented in the<tt>  ⍺⍵ </tt>form introduced in Section 1.3
+and elaborated in Section 10.1.
+In order to make any function so defined available for
+use on an APL computer it is necessary to <i>fix</i>
+the definition.
+The function<tt> def </tt>has been assumed to perform
+this function:
+if it is already available in the computer it may be
+used as shown in Section 1.4; 
+if not, its definition must itself be fixed
+before it can be used.</p>
+
+<p>This section discusses the steps necessary to develop
+and fix the function<tt> def</tt>&nbsp;.<tt> </tt>
+If it is simply desired to fix the definition<tt> def </tt>
+as quickly as possible, 
+the reader may follow the summary steps 
+at the end of this section.
+On the other hand, the section may be studied
+as a whole for its own interest since it clarifies
+the important notion of <i>representation</i>,
+and uses and exemplifies the important technique 
+of &ldquo;bootstrapping&rdquo;.
+This term arises from the paradoxical notion
+of &ldquo;pulling yourself up by your own bootstraps&rdquo;,
+and is used here to refer to the scheme of using
+a function already fixed as a tool 
+in developing and fixing the next one.</p>
+
+<p>In the course of this process,
+several functions are produced which can be used
+to fix the definitions of certain functions,
+but all except the function<tt> def </tt>
+defined at the end are deficient in some respect,
+and will fail to work in certain cases.
+For example, the function<tt> is9 </tt>will work only
+on simple (non-recursive) definitions.</p>
+
+<p>The essential service performed by the function<tt> def </tt>
+is to transform the<tt> ⍺⍵ </tt>representation of a function
+into a form directly usable by the APL computer.
+Since we will be concerned with different representations
+of a function, we shall first attempt to clarify
+the notion of <i>representation</i>,
+beginning with the more familiar notion of different
+representations of numbers.</p>
+
+
+<a name="10.4a"></a>
+<p><b>The representation of numbers</b>.
+Numbers are commonly represented by strings of
+<i>numeric characters</i>, 
+just as words are represented by strings of <i>alphabetic</i> characters.
+Thus the numeric characters<tt> 1 </tt>and<tt> 4 </tt>and<tt> 4 </tt>
+strung together represent the number of items in a gross,
+just as the letters<tt> M </tt>and<tt> a </tt>and<tt> r </tt>and<tt> y </tt>
+together represent a name.</p>
+
+<p>Confusion can sometimes arise if we fail 
+to distinguish a representation from the thing represented.
+For example, the sentence<tt> Mary has four letters </tt>
+could refer either to the volume of a girl&rsquo;s correspondence
+or to the length of her name.
+The necessary distinction is normally made
+by enclosing the alphabetic characters in quotes
+when referring to the representation itself.
+Thus the sentence<tt> 'Mary' has four letters </tt>
+is unambiguous, and refers to the length
+of a girl&rsquo;s name.</p>
+
+<p>In the case of numbers,
+the need to distinguish between a number and its representation
+does not arise very often, 
+and it therefore tends to be particularly confusing
+when it does.
+We will also use quotes to enclose numeric characters;
+thus<tt> '144' </tt>and<tt> '10010000' </tt>and<tt> 'CXLIV' </tt>
+are each a <i>character string</i> representing
+the number of items in a gross,
+the first representation being in decimal,
+the second in binary (base two), 
+and the last in Roman numerals.</p>
+
+<p>Just as we cannot truthfully say<tt> 'Mary' can walk</tt>&nbsp;,<tt> </tt>
+neither can we add<tt> '144' </tt>to<tt> '1024'</tt>&nbsp;,<tt> </tt>
+although we can say<tt> Mary can walk</tt>&nbsp;,<tt> </tt>
+and we can add<tt> 144 </tt>to<tt> 1024</tt>&nbsp;.<tt> </tt>
+This distinction can be clarified by considering the <i>execute</i>
+function (denoted by<tt> ⍎</tt>);
+applied to a numeric character string it yields
+the number represented by the string.  For example:</p>
+
+<pre>
+      (⍎'144')+⍎'1024'
+1168
+      '144'+'1024'
+DOMAIN ERROR
+</pre>
+
+<p>More generally, the execute function applied
+to any character string treats it as an APL expression
+and executes (that is, evaluates) it.
+For example:</p>
+
+<pre>
+      ⍎'144+1024'
+1168
+      ⍎'Mary←144+1024'            b←⍎'144+1024'
+      Mary                        b
+1168                        1168  
+</pre>
+
+<p>Just as names can be assigned to numeric quantities,
+so can they be assigned to character strings.
+For example:</p>
+
+<pre>
+      a←'144'
+      b←'1024'
+      (⍎a)+⍎b
+1168
+</pre>
+
+<p>A character string of<tt> n </tt>characters
+can be treated much like a numeric vector of<tt> n </tt>
+elements (or as a scalar if<tt> n </tt>is<tt> 1</tt>).
+For example, the vectors<tt> a </tt>and<tt> b </tt>
+specified above can be catenated:</p>
+
+<pre>
+      a,b
+1441024
+      ⍎'c←',a,'+',b
+      c
+1168
+</pre>
+
+<p>Other functions which select from or reshape an array
+can also be applied to character vectors.
+For example:</p>
+
+<pre>
+      m←'Mary'
+      n←'2157'
+      ⌽n                          m,n
+7512                        Mary2157
+      m[0 3]                      2 4⍴m,n
+My                          Mary
+                            2157
+</pre>
+
+<p>It should be noted that a character string
+does not include the quote marks used in entering it.
+Moreover, a quote mark to be included in a character string
+must be denoted by a pair of quotes together.
+Thus if<tt> c←'can''t' </tt>then<tt> c </tt>
+is the contraction of the word <i>cannot</i>, and:</p>
+
+<pre>
+      c                           +/c=c
+can't                       5
+                                                             ⌹29
+</pre>
+
+
+<a name="10.4b"></a>
+<p><b>Representation of functions</b>. 
+We may now say that a function in the form<tt> ⍺⍵ </tt>
+is represented by a character string.
+For example, the function for the square root
+called<tt> sqrt </tt>is represented by the nine-character
+string<tt> 'sqrt:⍵*.5'</tt>&nbsp;.</p>
+
+<p>Just as representations other than the decimal
+may be used for numbers, 
+so other representations may be used for functions.
+For example, the function represented 
+by<tt> f:⍵+⍺×⍵*2 </tt>could also be represented 
+by the expression:</p>
+
+<pre>
+      c+p×c*2
+</pre>
+
+<p>together with something which indicates
+the name of the function and which name
+in the expression represents the first argument
+and which the last.
+This information could be indicated by the
+string<tt> p&nbsp;f&nbsp;c</tt>&nbsp;,<tt> </tt>
+and the whole could be represented by a matrix:</p>
+
+<pre>
+      m←2 7⍴'p f c  c+p×c*2'
+      m
+p f c  
+c+p×c*2
+</pre>
+
+<p>Every function defined in this text 
+(and most functions of interest in mathematics)
+produce a result.
+In order to permit the definition of functions
+which do not produce explicit results
+(a matter which need not otherwise concern us here),
+the form of function representation used in an APL computer
+includes explicit mention of the result.
+The actual representation for the 
+function<tt> f:⍵+⍺×⍵*2 </tt>therefore takes the form:</p>
+
+<pre>
+      m←2 9⍴'z←p f c  z←c+p×c*2'
+      m
+z←p f c  
+z←c+p×c*2
+</pre>
+
+<p>This form of representation is called a
+<i>canonical representation</i>.</p>
+
+<p>A function represented in canonical form can be
+established or <i>fixed</i>
+(and thus made available for use)
+by applying the <i>system function</i><tt> ⎕fx </tt>
+to the matrix<tt> m </tt>which represents the function.
+Thus:</p>
+
+<pre>
+      ⎕fx m
+f
+      2 f 3
+21
+</pre>
+
+<p>The foregoing example shows that in addition
+to fixing the function represented by its 
+argument<tt> m</tt>&nbsp;,<tt> </tt>
+the function<tt> ⎕fx </tt>produces
+as an explicit result the character string
+which represents the name of the function.</p>
+
+<p>The canonical representation of a <i>monadic</i>
+function is similar;
+the left argument is omitted from the first row.
+For example, the function<tt> sub9:⍵ </tt>
+can be established as follows:</p>
+
+<pre>
+      n←2 8⍴'z←sub9 yz←y     '
+      n
+z←sub9 y
+z←y     
+      ⎕fx n
+sub9
+      sub9 7
+7
+                                                             ⌹33
+</pre>
+
+
+<a name="10.4c"></a>
+<p><b>Name conflicts</a></b>. In what follows we will
+be establishing certain functions for use as tools
+in defining other functions;
+the names for these tools must not conflict with
+the names of functions which we may wish to establish.
+For example, if one of our tools is called<tt> on</tt>&nbsp;,<tt> </tt>
+and we use it to establish a new function called<tt> on</tt>&nbsp;,<tt> </tt>
+the tool function itself may be destroyed.</p>
+
+<p>For each tool function we will therefore use
+a name with the digit<tt> 9 </tt>as the last character
+and assume that the user of the tool will not
+try to establish any functions with such a name.
+The names chosen will otherwise be as mnemonic as possible,
+such as<tt> is9</tt>&nbsp;,<tt> </tt>and<tt> on9</tt>&nbsp;.</p>
+
+
+<a name="10.4d"></a>
+<p><b>The<tt> xy </tt>form of function definition</b>.
+We will now consider a third form of function definition
+which is easy to produce mentally from an<tt> ⍺⍵ </tt>
+definition (by simple substitutions) and which is rather easy
+to translate mechanically 
+(by simple functions which will now be developed)
+to canonical form and to then fix.
+This<tt> xy </tt>form will then be used as a convenient
+way to define the further functions needed
+to translate directly from the<tt> ⍺⍵ </tt>form.</p>
+
+<p>The<tt> xy </tt>representation of a function
+called<tt> plus </tt>which sums its arguments is simply:</p>
+
+<pre>
+      'plus' is9 'x+y'
+</pre>
+
+<p>The translation from<tt> ⍺⍵ </tt>form to the<tt> xy </tt>form
+is obvious:replace each<tt> ⍺ </tt>by<tt> x </tt>and
+each<tt> ⍵ </tt>by<tt> y</tt>&nbsp;,<tt> </tt>
+enclose the <i>prefix</i> (which precedes the colon) and
+the <i>suffix</i> (which follows the colon) each in quotes,
+and replaced the colon by<tt> is9</tt>&nbsp;.</p>
+
+<p>We will now develop and fix a function<tt> is9 </tt>
+which will perform as required.
+This function can achieve its purpose
+in the following steps:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Form the arguments into a two-rowed matrix by placing
+the first on top of the second.
+ </td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+Append the symbols<tt> z </tt>and<tt> ← </tt>and<tt> y </tt>
+and (if the function is dyadic)<tt> x </tt>so as to
+form the canonical representation of the specified function.
+ </td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+Apply the function<tt> ⎕fx </tt>to the resulting
+matrix so as to fix the desired function.
+ </td></tr>
+</table>
+
+<p>Step 1 can be performed by the function</p>
+
+<pre>
+      on9:(2,m9)⍴(m9↑⍺),(m9←(+/⍺=⍺)⌈+/⍵=⍵)↑⍵
+</pre>
+
+<p>In<tt> xy </tt>form this becomes:</p>
+
+<pre>
+      'on9' is9 '(2,m9)⍴(m9↑x),(m9←(+/x=x)⌈+/y=y)↑y'
+</pre>
+
+<p>The matrix<tt> m </tt>obtained by step 1 would be:</p>
+
+<pre>
+      m
+on9
+(2,m9)⍴(m9↑x),(m9←(+/x=x)⌈+/y=y)↑y
+</pre>
+
+<p>However, we do not yet have the function<tt> is9 </tt>
+established, and we must somehow produce the matrix<tt> m </tt>
+using neither<tt> is9 </tt>nor<tt> on9</tt>&nbsp;.<tt> </tt>
+This can be done by entering the following expression:</p>
+
+<pre>
+      m←2 34⍴(34↑'on9'),'(2,m9)⍴(m9↑x),(m9←(+/x=x)⌈+/y=y)↑y'
+</pre>
+
+<p>Step 2 in the establishment of the function<tt> on9 </tt>
+must also be performed using neither<tt> is9 </tt>nor<tt> on9</tt>&nbsp;.<tt> </tt>
+This can be done by first specifying a matrix<tt> q </tt>
+as follows:</p>
+
+<pre>
+      q←2 6⍴' yz←x   z←  '
+      q
+ yz←x 
+  z←  
+</pre>
+
+<p>The expression<tt> n←2⌽q,m </tt>will now make<tt> n </tt>
+the canonical representation of the function<tt> on9</tt>&nbsp;:</p>
+
+<pre>
+      n
+z←x on9                                y
+z←  (2,m9)⍴(m9↑x),(m9←(+/x=x)⌈+/y=y)↑y  
+</pre>
+
+<p>The function<tt> on9 </tt>can now be established:</p>
+
+<pre>
+      ⎕fx n
+on9
+</pre>
+
+<p>Since the function<tt> on9 </tt>is now established it can,
+and will, be used in what follows.</p>
+
+<p align=right><tt>⌹36</tt></p>
+
+<p>The function<tt> on9 </tt>performed step 1,
+and it remains to treat steps 2 and 3.
+The treatment of step 2 is suggested by the matrix<tt> q </tt>
+used in defining<tt> on9</tt>&nbsp;,<tt> </tt>
+but this matrix contains the character<tt> x </tt>
+and is suited only for dyadic functions.
+We begin, therefore, by defining a matrix<tt> ar9 </tt>
+(for <u>a</u>rgument and <u>r</u>esult names)
+as follows:</p>
+
+<pre>
+      ar9←3 7⍴'   z←   y z←   y z←x '
+      ar9
+   z←  
+ y z←  
+ y z←x 
+</pre>
+
+<p>If<tt> g9←'xy'</tt>&nbsp;,<tt> </tt>
+then the expression<tt> ⌈/g9∘.=y </tt>yields a two element vector;
+the first element is<tt> 1 </tt>if the character<tt> x </tt>
+occurs in<tt> y </tt>and zero otherwise,
+the second is<tt> 1 </tt>if the character<tt> y </tt>
+occurs in<tt> y</tt>&nbsp;.<tt> </tt>
+Therefore the expression<tt> +/⌈/g9∘.=y </tt>
+determines the number of arguments in the
+expression represented by the vector<tt> y</tt>&nbsp;.<tt> </tt>
+Consequently, the expression<tt> <nobr>ar9[1 0×+/⌈/g9∘.=y;]</nobr> </tt>
+selects from<tt> ar9 </tt>the matrix appropriate
+to the number of arguments.
+For example,<tt> <nobr>ar9[1 0×2;]</nobr> </tt>
+yields a matrix similar to the matrix<tt> q </tt>
+used in the definition of<tt> on9</tt>&nbsp;.</p>
+
+<p>Step 2 (producing the canonical form)
+can now be achieved by the 
+expression<tt> <nobr>3⌽ar9[1 0×+/⌈/g9∘.=y;],m </nobr> </tt>
+where<tt> m </tt>is the result of step 1.
+The representation of the necessary 
+function<tt> </tt>(<tt>can9</tt>)<tt> </tt>
+itself is therefore given by:</p>
+
+<pre>
+      g9←'xy'
+      m←'can9' on9 '3⌽ar9[1 0×+/⌈/g9∘.=y;],x on9 sub9 y'
+</pre>
+
+<p>The function<tt> can9 </tt>may now be fixed and used as follows:</p>
+
+<pre>
+      ⎕fx 3⌽ar9[2 0;],m
+can9
+      'pol' can9 '+/x×y*⍳+/x=x'
+z←x pol          y 
+z←  +/x×y*⍳+/x=x   
+</pre>
+
+<p>It should be recalled that the function<tt> sub9 </tt>
+used in the definition of<tt> can9 </tt>above
+(and defined earlier) yields its argument unchanged.
+The point of including it in<tt> can9 </tt>
+is that<tt> sub9 </tt>will later be redefined
+to substitute<tt> x </tt>for<tt> ⍺ </tt>
+and<tt> y </tt>for<tt> ⍵</tt>&nbsp;,<tt> </tt>
+and the other functions to be defined
+(which use<tt> can9</tt>) will then work on 
+definitions in the<tt> ⍺⍵ </tt>form.</p>
+</p>
+
+<p align=right><tt>⌹38</tt></p>
+
+<p>We now complete the process by defining,
+and illustrating the use of,
+a dyadic function<tt> is9 </tt>which takes
+two arguments, a function name and the defining expression,
+and fixes the appropriate definition:</p>
+
+<pre>
+      c←'is9' can9 '⎕fx x can9 y'
+      ⎕fx c
+is9
+      'pol' is9 '+/x×y*⍳+/x=x'
+pol
+      1 3 3 1 pol 4
+125
+                                                             ⌹40
+</pre>
+
+<p>The function<tt> is9 </tt>takes two arguments,
+the name and the defining expression.
+We will now define a function<tt> sdef9 </tt>
+(for <u>s</u>imple as opposed to recursive definitions)
+that applies to an argument which is in the<tt> ⍺⍵ </tt>form
+except that the characters<tt> ⍺ </tt>and<tt> ⍵ </tt>
+are replaced by<tt> x </tt>and<tt> y</tt>&nbsp;.<tt> </tt>
+We begin by defining (and illustrating) a <i>prefix</i>
+function<tt> p9 </tt>and a <i>suffix</i> function<tt> s9 </tt>
+which select the parts of an expression preceding
+and following the first colon.
+We will use the variable<tt> h9 </tt>to denote a colon:</p>
+
+<pre>
+      h9←':'
+      'p9' is9 '(+/⌊\y≠h9)↑y'
+p9
+      's9' is9 '(1++/⌊\y≠h9)↓y'
+s9
+      y←'hyp:((x*2)+y*2)*.5'
+      p9 y
+hyp
+      s9 y
+((x*2)+y*2)*.5
+      (p9 y) is9 s9 y
+hyp
+      3 hyp 4
+5
+</pre>
+
+<p>The scheme used for defining the function<tt> hyp </tt>
+above suggests the following definition for<tt> sdef9</tt>&nbsp;:</p>
+
+<pre>
+      'sdef9' is9 '(p9 y) is9 s9 y'
+sdef9
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      sdef9 'plus:x+y'
+plus
+      3 plus 4
+7
+                                                             ⌹41
+</pre>
+
+
+<a name="10.4e"></a>
+<p><b>Recursive definitions</b>.
+The expression<tt> y←'f:y×f y-1:y=0:1' </tt>represents
+a recursive definition of the factorial function 
+in<tt> xy </tt>form. The three components can be selected
+by using the prefix and suffix 
+functions<tt> p9 </tt>and<tt> s9</tt>&nbsp;:</p>
+
+<pre>
+      p9 y                        p9 s9 y
+f                           y×f y-1
+      p9 s9 s9 y                  s9 s9 s9 y
+y=0                         1
+</pre>
+
+<p>The following expression will execute the third 
+component<tt> </tt>(<tt>y=0</tt>)<tt> </tt>
+and use the result to select the 
+second<tt> </tt>(<tt>y×f y-1</tt>)<tt> </tt>
+or the last<tt> </tt>(<tt>1</tt>)<tt> </tt>
+for execution:</p>
+
+<pre>
+      ⍎((0=y=0)/'y×f y-1'),(0≠y=0)/'1'
+</pre>
+
+<p>If we underscore the parts taken from the original
+expression, this appears as:
+
+<pre>
+      ⍎((0=<u>y=0</u>)/'<u>y×f y-1</u>'),(0≠<u>y=0</u>)/'<u>1</u>'
+</pre>
+
+<p>and makes clear that the five unadorned portions
+are symbols added to the original expression.
+These five additions may be entered as variables
+as follows:</p>
+
+<pre>
+      a9←'⍎((0='                  d9←')/'''
+      b9←')/'''                   e9←''''
+      c9←'''),(0≠'
+</pre>
+
+<p>These variables may now be used to define a function<tt> form9 </tt>
+which forms the required expression:</p>
+
+<pre>
+      c←'form9:a9,(p9 s9 s9 y),b9,(p9 s9 y),c9'
+      c←c,',(p9 s9 s9 y),d9,(s9 s9 s9 y),e9'
+      sdef9 c
+form9
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      y←'f:y×f y-1:y=0:1'
+      form9 y
+⍎((0=y=0)/'y×f y-1'),(0≠y=0)/'1'
+</pre>
+
+<p>The function<tt> rdef9 </tt>(for <u>r</u>ecursive definition)
+can now be defined rather simply:</p>
+
+<pre>
+      sdef9 'rdef9:(p9 y) is9 form9 y'
+rdef9
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      rdef9 y
+f
+      f 5
+120
+                                                             ⌹43
+</pre>
+
+
+<a name="10.4f"></a>
+<p><b>All definitions</b>. We now have a function<tt> sdef9 </tt>
+which treats simple definitions and a function<tt> rdef9 </tt>
+which treats recursive definitions.
+The can now be used to define a function<tt> adef9 </tt>
+which treats all definitions:</p>
+
+<pre>
+      rdef9 'adef9: sdef9 y:3=+/h9=y:rdef9 y'
+adef9
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      adef9 'div:x÷y'
+div
+      3 div 6
+0.5
+      adef9 'g:y×g y-1:y=0:1'
+g
+      g 6
+720
+</pre>
+
+<p>Recall that the variable<tt> h9 </tt>was specified
+by<tt> h9←':'</tt>&nbsp;.</p>
+
+<p align=right><tt>⌹44</tt></p>
+
+
+<a name="10.4g"></a>
+<p><b>The<tt> ⍺⍵ </tt>form</b>. In order to make the function<tt> adef9 </tt>
+apply to definitions in the<tt> ⍺⍵ </tt>form it is necessary
+to substitute<tt> x </tt>for<tt> ⍺ </tt>and<tt> y </tt>for<tt> ⍵</tt>&nbsp;.<tt> </tt>
+A function<tt> in9 </tt>will first be defined as:</p>
+
+<pre>
+      c←'in9:x in9(q9↑y),(1↓x),(1+q9)↓y:(+/y=y)=q9←+/⌊\y≠1↑x:y'
+      adef9 c
+in9
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      '+ plus ' in9 '3+4×5+6'
+3 plus 4×5 plus 6
+</pre>
+
+<p>For each occurrence in the right argument
+of the first element of the left argument,
+this function substitutes the remainder
+of the left argument.</p>
+
+<p>The obvious substitutions can be carried out
+by the expression<tt> <nobr>'⍺X' in9 '⍵y' in9 y</nobr></tt>&nbsp;.<tt> </tt>
+However, in the case where<tt> y </tt>defines a monadic
+function but contains only<tt> ⍺ </tt>but not<tt> ⍵</tt>&nbsp;,<tt> </tt>
+it is first necessary to swap<tt> ⍵ </tt>for<tt> ⍺</tt>&nbsp;.<tt> </tt>
+The whole can be done as follows:</p>
+
+<pre>
+      i9←'⍺x'
+      j9←'⍵y'
+      k9←'⍺⍵'
+      
+      adef9 'sw9:k9 in9 y:1≠+/⌈/k9∘.=y:y'
+sw9
+      adef9 'sub9:i9 in9 j9 in9 sw9 y'
+sub9
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      sw9 'f:⍺×⍺'
+f:⍵×⍵
+      sw9 'f:⍺×⍵'
+f:⍺×⍵
+      sub9 'f:⍺+⍵'
+f:x+y
+      sub9 'f:⍺×⍺'
+f:y×y
+      adef9 'f:⍺+⍵'
+f
+      2 f 5
+7
+                                                             ⌹45
+</pre>
+
+
+<a name="10.4h"></a>
+<p><b>Argument conflicts and spaces</b>.
+Names ending in<tt> 9 </tt>have been chosen for 
+all of the functions and variables developed as tools.
+This avoids conflict with names used for the functions 
+to be defined by them.
+There remains a potential conflict with the 
+names<tt> x</tt>&nbsp;,<tt> y</tt>&nbsp;,<tt> </tt>and<tt> z </tt>
+used for arguments and results 
+in the canonical forms of the functions defined.</p>
+
+<p>Respecifying the values of<tt> i9 </tt>and<tt> j9 </tt>as:</p>
+
+<pre>
+      i9←'⍺ x9 '
+      j9←'⍵ y9 '
+</pre>
+
+<p>causes the names<tt> x9 </tt>and<tt> y9 </tt>
+to be substituted for<tt> ⍺ </tt>and<tt> ⍵ </tt>
+rather than<tt> x </tt>and<tt> y</tt>&nbsp;.<tt> </tt>
+Moreover, the spaces before and after these names
+ensure that a space will separate them from
+other names even though such separation does not occur
+in the given expression, as in<tt> f:⍵×f⍵-1:⍵=0:1</tt>&nbsp;.</p>
+
+<p>The variable<tt> ar9 </tt>must also be
+respecified to provide the appropriate names
+for the canonical form:</p>
+
+<pre>
+      ar9←3 9⍴'   z9←    y9z9←    y9z9←x9 ' 
+      ar9
+   z9←   
+ y9z9←   
+ y9z9←x9 
+</pre>
+
+<p>With these changes the function<tt> adef9 </tt>
+will perform properly.</p>
+
+
+<a name="10.4i"></a>
+<p><b>Character input</b>. The function<tt> def </tt>
+was assumed to perform as follows:</p>
+
+<pre>
+      def
+f:⍺+⍵
+
+      3 f 4
+7
+</pre>
+
+<p>The function<tt> adef9 </tt>differs in two respects:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+It products and prints the name of the function defined.
+This can be avoided by using the expression<tt> 0⍴adef&nbsp;y</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+<p>It requires that the expression be enclosed in quotes
+and accompany it on the same line.
+This can be avoided by using the expression<tt> adef9&nbsp;⍞</tt>&nbsp;.</p>
+
+<p>For example:</p>
+
+<pre>
+      0⍴adef ⍞
+d:⍺-⍵
+
+      6 d 4
+2
+</pre>
+ </td></tr>
+</table>
+
+<p>The symbol<tt> ⍞ </tt>(pronounced quote-quad) is simply
+replaced by the following entry considered as a character string.
+For example:</p>
+
+<pre>
+      x←⍞
+abcd
+      x,⌽x
+abcddcba
+</pre>
+
+<p>The function<tt> def </tt>may therefore be defined as follows:</p>
+
+<pre>
+      adef9 'def:0⍴adef9 ⍞'
+def
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      def
+fib:z,+/¯2↑z←fib⍵-1:⍵=1:1
+
+      fib 7
+1 1 2 3 5 8 13
+                                                             ⌹47
+</pre>
+
+<p>The function<tt> def </tt>developed in this section
+will handle all of the functions discussed in Chapters 1 to 9.
+However, it does not localize variables as discussed 
+in Section 10.1, and it fails to properly treat
+recursive definitions which include explicit quote marks.</p>
+
+<p>Schemes for modifying the function<tt> def </tt>
+to handle local variables are discussed in exercises.
+However, problems due to the failure to localize
+variables can be largely avoided by choosing distinctive
+names for variables that should be localized,
+as was done with the choice of<tt> m9 </tt>in the 
+definition of the function<tt> on9</tt>&nbsp;.<tt> </tt>
+Problems due to quotes can be avoided by first 
+assigning names to quoted strings so that
+the quotes do not appear explicitly in the function
+definition, as was done for<tt> h9</tt>&nbsp;,<tt> </tt>
+and<tt> a9</tt>&nbsp;,<tt> </tt>and others.</p>
+
+<p align=right><tt>⌹48</tt></p>
+
+
+<a name="10.4j"></a>
+<p><b>Summary</b>.
+The steps required in the definition of the function<tt> def </tt>
+are collected together on the following page,
+where they are shown together with the expected responses.
+If the expected response is not received,
+steps should be taken to obtain the correct response
+before proceeding further.
+Remember that if any error messages are printed
+it may be necessary to enter the symbol<tt> → </tt>alone
+on a line one or more times before proceeding.</p>
+
+<pre>
+      )clear
+clear ws
+      ⎕io←0
+      ⎕fx 2 8⍴'z←sub9 yz←y     '
+sub9
+      m←2 34⍴(34↑'on9'),'(2,m9)⍴(m9↑x),(m9←(+/x=x)⌈+/y=y)↑y'
+      ar9←3 7⍴'   z←   y z←   y z←x '
+      ⎕fx 3⌽ar9[2 0;],m
+on9
+      g9←'xy'
+      m←'can9' on9 '3⌽ar9[1 0×+/⌈/g9∘.=y;],x on9 sub9 y'
+      ⎕fx 3⌽ar9[2 0;],m
+can9
+      ⎕fx 'is9' can9 '⎕fx x can9 y'
+is9
+      h9←':'
+      'p9' is9 '(+/⌊\y≠h9)↑y'
+p9
+      's9' is9 '(1++/⌊\y≠h9)↓y'
+s9
+      'sdef9' is9 '(p9 y) is9 s9 y'
+sdef9
+      a9←'⍎((0='
+      b9←')/'''
+      c9←'''),(0≠'
+      d9←')/'''
+      e9←''''
+      m←'form9:a9,(p9 s9 s9 y),b9,(p9 s9 y),c9'
+      m←m,',(p9 s9 s9 y),d9,(s9 s9 s9 y),e9'
+      sdef9 m
+form9
+      sdef9 'rdef9:(p9 y) is9 form9 y'
+rdef9
+      rdef9 'adef9:sdef9 y:3=+/h9=y:rdef9 y'
+adef9
+      c←'in9:x in9 (q9↑y),(1↓x),(1+q9)↓y'
+      c←c,':(+/y=y)=q9←+/⌊\y≠1↑x:y'
+      adef9 c
+in9
+      i9←'⍺ x9 '
+      j9←'⍵ y9 '
+      k9←'⍺⍵'
+      adef9 'sw9:k9 in9 y:1≠+/⌈/k9∘.=y:y'
+sw9
+      adef9 'sub9:i9 in9 j9 in9 sw9 y'
+sub9
+      ar9←3 9⍴'   z9←    y9z9←    y9z9←x9 '
+      g9←'⍺⍵'
+      adef9 'def:0⍴adef9 ⍞'
+def
+
+</pre>
+
+
+
+<a name="ex"></a>
+<p><b>Exercises</b></p>
+
+<table>
+<tr><td valign=top>10.1</td><td>&nbsp;<td>
+Consider the following set of functions:
+<table>
+<tr><td align=right>i)</td><td>&nbsp;</td><td><tt>fti:12×⍵</tt></td></tr>
+<tr><td align=right>ii)</td><td>&nbsp;</td><td><tt>itf:(÷12)×⍵</tt></td></tr>
+<tr><td align=right>iii)</td><td>&nbsp;</td><td><tt>ytf:3×⍵</tt></td></tr>
+<tr><td align=right>iv)</td><td>&nbsp;</td><td><tt>yti:fti ytf ⍵</tt></td></tr>
+<tr><td align=right>v)</td><td>&nbsp;</td><td><tt>f:12×3×⍵</tt></td></tr>
+<tr><td align=right>vi)</td><td>&nbsp;</td><td><tt>g:⍵</tt></td></tr>
+<tr><td align=right>vii)</td><td>&nbsp;</td><td><tt>h:fti itf ⍵</tt></td></tr>
+<tr><td align=right>viii)</td><td>&nbsp;</td><td><tt>k:itf fti ⍵</tt></td></tr>
+<tr><td align=right>ix)</td><td>&nbsp;</td><td><tt>l:(fti itf ⍵)÷⍵</tt></td></tr>
+<tr><td align=right>x)</td><td>&nbsp;</td><td><tt>m:36+0×⍵</tt></td></tr>
+</table>
+
+&nbsp;
+
+<table>
+<tr><td valign=top>a)</td><td>&nbsp;</td><td>
+For each function above, show its interpretation in detail
+by applying it to some argument.  For example:
+<pre>
+      fti 7
+      12×7
+      84
+</pre>
+(This part need not be done for functions whose meaning is clear.)
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>b)</td><td>&nbsp;</td><td>
+State clear but informally what each function does.
+For example,<tt> fti </tt>converts from measurements
+expressed in feet to measurements expressed in inches.
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>c)</td><td>&nbsp;</td><td>
+Determine which among the functions are equivalent.
+For example,<tt> g </tt>and<tt> h </tt>are equivalent.
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>d)</td><td>&nbsp;</td><td>
+State clearly any other relations you observe
+among the functions; for example,<tt> fti </tt>
+is the inverse of<tt> itf</tt>&nbsp;,<tt> </tt>
+and<tt> (f&nbsp;⍵)÷g&nbsp;⍵ </tt>equals the constant
+function<tt> m&nbsp;⍵</tt>&nbsp;.
+<br>&nbsp;</td></tr>
+</table>
+</td></tr>
+
+<tr><td valign=top>10.2</td><td>&nbsp;</td><td>
+Repeat Ex 10.1 for the following functions
+(all of which concern conversions
+between units of measurements).
+<table>
+<tr><td align=right>i)</td><td>&nbsp;</td><td><tt>itc:2.54×⍵</tt></td></tr>
+<tr><td align=right>ii)</td><td>&nbsp;</td><td><tt>cti:(÷2.54)×⍵</tt></td></tr>
+<tr><td align=right>iii)</td><td>&nbsp;</td><td><tt>ctf:32+1.8×⍵</tt></td></tr>
+<tr><td align=right>iv)</td><td>&nbsp;</td><td><tt>ftc:(÷1.8)×(-32)+⍵</tt></td></tr>
+<tr><td align=right>v)</td><td>&nbsp;</td><td><tt>f:ctf ftc ⍵</tt></td></tr>
+<tr><td align=right>vi)</td><td>&nbsp;</td><td><tt>g:⍵</tt></td></tr>
+</table>
+&nbsp;
+</td></tr>
+
+<tr><td valign=top>10.3</td><td>&nbsp;</td><td>
+Define functions for each of the following conversions of units:
+<table>
+<tr><td>a)</td><td>&nbsp;</td><td>Hours to minutes</td></tr>
+<tr><td>b)</td><td>&nbsp;</td><td>Minutes to hours</td></tr>
+<tr><td>c)</td><td>&nbsp;</td><td>Days to hours</td></tr>
+<tr><td>d)</td><td>&nbsp;</td><td>Days to minutes</td></tr>
+<tr><td>e)</td><td>&nbsp;</td><td>Minutes to seconds</td></tr>
+</table>
+&nbsp;
+</td></tr>
+
+<tr><td valign=top>10.4</td><td>&nbsp;</td><td>
+<p>a) Which of the functions in Ex 10.3 are equivalent?</p>
+<p>b) Do an interpretation of the function<tt> f </tt>
+of Ex 10.2 to show that it is equivalent to<tt> g</tt>&nbsp;.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>10.5</td><td>&nbsp;</td><td>
+Repeat Ex 10.1 for the following functions
+(which concern measures of simple geometric figures).
+<table>
+<tr><td align=right>i)</td><td>&nbsp;</td><td><tt>as:⍵*2</tt></td></tr>
+<tr><td align=right>ii)</td><td>&nbsp;</td><td><tt>ar:⍺×⍵</tt></td></tr>
+<tr><td align=right>iii)</td><td>&nbsp;</td><td><tt>at:.5×⍺×⍵</tt></td></tr>
+<tr><td align=right>iv)</td><td>&nbsp;</td><td><tt>vc:⍵*3</tt></td></tr>
+<tr><td align=right>v)</td><td>&nbsp;</td><td><tt>vsqpy:(÷3)×⍺×⍵*2</tt></td></tr>
+<tr><td align=right>vi)</td><td>&nbsp;</td><td><tt>ps:4×⍵</tt></td></tr>
+<tr><td align=right>vii)</td><td>&nbsp;</td><td><tt>pr:2×⍺+⍵</tt></td></tr>
+<tr><td align=right>viii)</td><td>&nbsp;</td><td><tt>sac:6×⍵*2</tt></td></tr>
+</table>
+&nbsp;
+</td></tr>
+
+<tr><td valign=top>10.6</td><td>&nbsp;</td><td>
+Repeat Ex 10.1 for the following functions
+(which concern measures of circles and spheres):
+<table>
+<tr><td align=right>i)</td><td>&nbsp;</td><td><tt>pitimes:3.14159×⍵</tt></td></tr>
+<tr><td align=right>ii)</td><td>&nbsp;</td><td><tt>ac:pitimes ⍵*2</tt></td></tr>
+<tr><td align=right>iii)</td><td>&nbsp;</td><td><tt>pc:2×pitimes ⍵</tt></td></tr>
+<tr><td align=right>iv)</td><td>&nbsp;</td><td><tt>dc:2×⍵</tt></td></tr>
+<tr><td align=right>v)</td><td>&nbsp;</td><td><tt>f:ptimes dc ⍵</tt></td></tr>
+<tr><td align=right>vi)</td><td>&nbsp;</td><td><tt>g:(÷4)×ac ⍵</tt></td></tr>
+</table>
+&nbsp;</td></tr>
+
+<tr><td valign=top>10.7</td><td>&nbsp;</td><td>
+<p>The monadic function<tt> ○ </tt>is defined
+(in Sec 4.10) as pi times its argument,
+that is,<tt> ○⍵ </tt>is (approximately) equivalent
+to<tt> pitimes&nbsp;⍵ </tt>as defined
+in Ex 10.6.</p>
+
+<p>a) Redefine each of the functions in Ex 10.6
+replacing the function<tt> pitimes </tt>by<tt> ○</tt>&nbsp;.</p>
+
+<p>b) Use the function<tt> ○ </tt>to define
+the following functions:</p>
+
+<table>
+<tr><td valign=top align=right>i)</td><td>&nbsp;</td><td>Volume of a sphere</td></tr>
+<tr><td valign=top align=right>ii)</td><td>&nbsp;</td><td>Surface of a sphere</td></tr>
+<tr><td valign=top align=right>iii)</td><td>&nbsp;</td><td>Volume of a circular
+cylinder (with first argument for  height and second for radius).</td></tr>
+<tr><td valign=top align=right>iv)</td><td>&nbsp;</td><td>Function of
+part iii with arguments reversed.</td></tr>
+<tr><td valign=top align=right>v)</td><td>&nbsp;</td><td>Volume of a sphere
+using the function of part ii in its definition.</td></tr>
+</table>
+&nbsp;</td></tr>
+
+<tr><td valign=top>10.8</td><td>&nbsp;</td><td>
+<p>Repeat Ex 10.1 for the following functions,
+all of which concern geometric figures:</p>
+
+<table>
+<tr><td valign=top align=right>i)</td><td>&nbsp;</td><td><tt>v:×/⍵</tt></td></tr>
+<tr><td valign=top align=right>ii)</td><td>&nbsp;</td><td><tt>p:+/⍵</tt></td></tr>
+<tr><td valign=top align=right>iii)</td><td>&nbsp;</td><td><tt>sp:.5×p ⍵</tt></td></tr>
+<tr><td valign=top align=right>iv)</td><td>&nbsp;</td><td><tt>ttest:⌊/⍵≤ sp ⍵</tt></td></tr>
+</table>
+&nbsp;</td></tr>
+
+<tr><td valign=top>10.9</td><td>&nbsp;</td><td>
+<p>a) Apply the function<tt> ttest </tt>of Ex 10.8
+to vectors<tt> <nobr>l←2 5 4</nobr> </tt>
+and<tt> <nobr>r←2 5 2</nobr></tt>&nbsp;,<tt> </tt>
+and then try to construct triangles with lengths
+specified by<tt> l </tt>and by<tt> m</tt>&nbsp;.</p>
+
+<p>b) Will<tt> ttest </tt>serve to check
+the suitability of a set of lengths for the sides
+of a polygon, i.e., for an argument
+of any number of elements?</p>
+
+<p>c) Modify<tt> ttest </tt>to exclude <i>degenerate</i>
+polygons which enclose no area;
+for example,<tt> <nobr>ttest 2 5 7</nobr> </tt>
+yields<tt> 1</tt>&nbsp;,<tt> </tt>
+although these dimensions do not yield a proper triangle.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>10.10</td><td>&nbsp;</td><td>
+<p>a) Define a monadic function<tt> asc </tt>which
+applied to a scalar argument yields the surface
+area of a cube of dimension given by the argument.</p>
+
+<p>b) Define a monadic function<tt> as </tt>which,
+when applied to a 3-element vector yields
+the surface area of the box represented by the vector.</p>
+
+<p>c) Compare the results of<tt> asc&nbsp;n </tt>
+and<tt> as&nbsp;n,n,n </tt>for various values
+of the scalar<tt> n</tt>&nbsp;.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>10.11</td><td>&nbsp;</td><td>
+<p>a) Compare the function<tt> as </tt>defined in Ex 10.10
+with the function<tt> <nobr>a:2×+/⍵×⍵[1 2 0]</nobr></tt>&nbsp;.</p>
+
+<p>b) Rewrite the expression for<tt> a </tt>in part a
+using the rotation function defined in Sec 5.8
+instead of indexing.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>10.12</td><td>&nbsp;</td><td>
+Evaluate the function<tt> scale:r×⍵ </tt>for several
+arguments first with the ratio<tt> r←2.54</tt>&nbsp;,<tt> </tt>
+and then with<tt> r←12</tt>&nbsp;.
+<br>&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.13</td><td>&nbsp;</td><td>
+<p>a) Identify the class of triangles whose sides
+are given by applying the following function
+to non-negative integer arguments:</p>
+<pre>
+alrt:(|-/z*2)(+/z*2),2××/z←⍺,⍵
+</pre>
+
+<p>b) State the purpose of the following function:</p>
+<pre>
+testrt:(+/⍵*2)=2×(⌈/⍵)*2
+</pre>
+
+<p>c) The <i>semi-perimeter</i> function<tt> sp </tt>
+of Ex 10.8 can be used in <i>Hero&rsquo;s</i> formula
+for the area of a triangle in terms of the lengths
+of its sides:</p>
+<pre>
+Hero:(×/(s-⍵),s←sp ⍵)*.5
+</pre>
+<p>Evaluate<tt> <nobr>Hero 3 4 5</nobr> </tt>
+and<tt> <nobr>Hero 1 1 1</nobr> </tt>
+and check that the results do represent the <i>areas</i>.</p>
+
+<p>d) Show that the following function
+is equivalent to the function<tt> testrt </tt>
+of Ex 10.13:</p>
+<pre>
+q:(Hero ⍵)=.5×(×/⍵)÷⌈/⍵
+
+</pre>
+</td></tr>
+
+<tr><td valign=top>10.14</td><td>&nbsp;</td><td>
+<p>Repeat Ex 10.1 for the following functions:</p>
+
+<pre>
+si:+/z←1+⍳⍵
+sis:+/z×z←1+⍳⍵
+sic:+/z×z×z←1+⍳⍵
+a:(⍵×⍵+1)÷2
+b:(⍵×(1+⍵)×1+2×⍵)÷6
+c:(a⍵)*2
+
+</pre>
+</td></tr>
+
+<tr><td valign=top>10.15</td><td>&nbsp;</td><td>
+<p>Use the following expressions to demonstrate
+why functions<tt> si </tt>and<tt> a </tt>of
+Ex 10.14 are equivalent:</p>
+
+<pre>
+   x←1+⍳5
+   x                  ⌽x
+   +/x                +/⌽x
+
+   (+/x) + +/⌽x
+   x+⌽x
+   +/x+⌽x
+</pre>
+
+<p>(See Ex 1.68 for the definition of the 
+reversal function<tt> ⌽</tt>).
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.16</td><td>&nbsp;</td><td>
+<p>Show that the functions<tt> tn:⍵+tn ⍵-1:⍵=0:0 </tt>
+and<tt> sn:+/1+⍳⍵ </tt>are equivalent.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>10.17</td><td>&nbsp;</td><td>
+<p>Repeat Ex 10.1 for the following functions
+applied to positive scalar integers:</p>
+<table>
+<tr><td align=right>  i)</td><td>&nbsp;</td><td><tt>gcd:(⍺|⍵) gcd ⍺:⍺=0:⍵</tt></td></tr>
+<tr><td align=right> ii)</td><td>&nbsp;</td><td><tt>red:(⍺,⍵)÷⍺ gcd ⍵</tt></td></tr>
+<tr><td align=right>iii)</td><td>&nbsp;</td><td><tt>test:(⍺÷z)gcd ⍵÷z←⍺gcd⍵</tt></td></tr>
+<tr><td align=right> iv)</td><td>&nbsp;</td><td><tt>lcm:(⍺×⍵)÷⍺ gcd ⍵</tt></td></tr>
+</table>
+&nbsp;</td></tr>
+
+<tr><td valign=top>10.18</td><td>&nbsp;</td><td>
+<p>Repeat Ex 10.1 for the following functions
+applied to non-negative scalar integers:</p>
+<table>
+<tr><td align=right>  i)</td><td>&nbsp;</td><td><tt>bin:(z,0)+0,z←bin⍵-1:⍵=0:1</tt></td></tr>
+<tr><td align=right> ii)</td><td>&nbsp;</td><td><tt>sum:+/bin ⍵</tt></td></tr>
+<tr><td align=right>iii)</td><td>&nbsp;</td><td><tt>p:+/(bin⍺)×⍵*⍳⍺+1</tt></td></tr>
+<tr><td align=right> iv)</td><td>&nbsp;</td><td><tt>q:2*⍵</tt></td></tr>
+<tr><td align=right>  v)</td><td>&nbsp;</td><td><tt>r:(⍵+1)*⍺</tt></td></tr>
+</table>
+&nbsp;</td></tr>
+
+<tr><td valign=top>10.19</td><td>&nbsp;</td><td>
+<p>a) For each function<tt> f </tt>of Ex 10.17,
+define a monadic function<tt> fv </tt>which,
+when applied to a two-element vector argument,
+is equivalent to<tt> f</tt>&nbsp;.<tt> </tt>
+For example,<tt> redv&nbsp;v </tt>must
+equal<tt> <nobr>v[0] red v[1]</nobr></tt>&nbsp;</p>
+
+<p>b) For various values of a two-element argument<tt> a </tt>
+evaluate<tt> redv&nbsp;a </tt>and compare the
+values of<tt> ÷/a </tt>and<tt> ÷/redv&nbsp;a</tt>&nbsp;.</p>
+
+<p>c) Discuss the statement: The function<tt> redv </tt>
+reduces a fraction to lowest form.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>10.20</td><td>&nbsp;</td><td>
+<p>The expression<tt> fib&nbsp;n </tt>yields
+a vector of the first<tt> n </tt><i>Fibonacci numbers</i>
+if<tt> fib </tt>is defined as follows:</p>
+<pre>
+fib:z,+/¯2↑z←fib⍵-1:⍵=1:1
+</pre>
+
+<p>a) Show that<tt> fib 10 </tt>yields the 
+vector:<tt> <nobr>1 1 2 3 5 8 13 21 34 55</nobr></tt></p>
+
+<p>b) Give an informal statement of the rule
+for generating Fibonacci numbers.</p>
+
+<p>c) The function<tt> pr:(1↓⍵)÷¯1↓⍵ </tt>yields
+the <i>pairwise ratio</i> of successive elements
+of its vector argument.  
+Evaluate<tt> <nobr>pr fib 10</nobr></tt>&nbsp;.</p>
+
+<p>d) The ratio determined in part c appear to be
+approaching a limiting value;
+this value is called the <i>golden mean</i>,
+and is given by the expression<tt> .5×1+5*.5</tt>&nbsp;.<tt> </tt>
+Compare the golden mean with the ratio of a 
+few Fibonacci numbers.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>10.21</td><td>&nbsp;</td><td>
+<p>The <i>signum</i> function defined
+by<tt> sg:(⍵&gt;0)-⍵&lt;0 </tt>is a monadic
+function also denoted by<tt> ×</tt>&nbsp;;<tt> </tt>
+it yields<tt> ¯1 </tt>or<tt> 0 </tt>or<tt> 1 </tt>
+according to whether the argument is negative, zero,
+or positive.
+Discuss the following statements and illustrate
+them for the case where<tt> f:⍵*2 </tt>and<tt> n←5</tt>&nbsp;:</p>
+
+<p>a) The equation<tt> n=f&nbsp;⍵ </tt>has a root
+in the interval<tt> a[0] </tt>to<tt> a[1] </tt>
+if<tt> a&nbsp;s&nbsp;n </tt>has the value<tt> 1</tt>&nbsp;,<tt> </tt>
+where<tt> s:1≠×/×⍵-f&nbsp;⍺</tt>&nbsp;.</p>
+
+<p>b) The function<tt> m:.5×+/⍺ </tt>yields the midpoint
+of any interval to which it is applied.</p>
+
+<p>c) If<tt> a&nbsp;s&nbsp;n </tt>has the value<tt> 1</tt>&nbsp;,<tt> </tt>
+then either<tt> <nobr>(a[0],m a)s n</nobr> </tt>is<tt> 1</tt>&nbsp;,<tt> </tt>
+and therefore<tt> n=f&nbsp;⍵ </tt>has a root in one
+of the narrower intervals<tt> a[0],m&nbsp;a </tt>
+or<tt> a[1],m&nbsp;a</tt>&nbsp;.</p>
+
+<p>d) If<tt> a&nbsp;s&nbsp;n </tt>equals<tt> 1</tt>&nbsp;,<tt> </tt>
+then the equation<tt> n=f&nbsp;⍵ </tt>has a root in one
+of the narrower intervals<tt> a&nbsp;ni&nbsp;n</tt>&nbsp;,<tt> </tt>
+where:</p>
+
+<pre>
+      ni:⍺[(⍺[1],m⍺)s ⍵],m⍺
+
+</pre>
+</td></tr>
+
+<tr><td valign=top>10.22</td><td>&nbsp;</td><td>
+<p>The <i>root-finder</i> function<tt> rf </tt>
+is based on the results of Ex 10.21 and is designed
+to yield a root of the equation<tt> n=f&nbsp;x </tt>
+in the interval from<tt> a[0] </tt>to<tt> a[1]</tt>&nbsp;,<tt> </tt>
+that is, if<tt> <nobr>x←a rf n</nobr></tt>&nbsp;,<tt> </tt>
+then<tt> f&nbsp;x </tt>is (approximately) equal to<tt> n</tt>&nbsp;,<tt> </tt>
+the <i>tolerance</i> in the approximation being determined
+by the tolerance function<tt> t</tt>&nbsp;:</p>
+
+<pre>
+rf:(⍺ni⍵)rf⍵:t⍵-f m⍺:m⍺
+t:1e¯8≥|⍵
+</pre>
+
+<p>a) If<tt> f:⍵*2</tt>&nbsp;,<tt> </tt>
+show that<tt> <nobr>1≠×/×12.25-f 2 4</nobr> </tt></p>
+
+<p>b) Show that<tt> <nobr>2 4 rf 12.25</nobr> </tt>
+yields<tt> 3.5</tt>&nbsp;,<tt> </tt>
+and verify that<tt> <nobr>f 2 4 rf 12.25</nobr> </tt>
+equals<tt> 12.25</tt>&nbsp;.</p>
+
+<p>c) Evaluate<tt> <nobr>1 2 rf 2</nobr> </tt>and check
+the result by applying<tt> f </tt>to it.</p>
+
+<p>d) Redefining the function<tt> f </tt>
+as<tt> <nobr>f:+/3.75+(¯4.25×⍵)+⍵*2</nobr></tt>&nbsp;,<tt> </tt>
+evaluate<tt> <nobr>1 2 rf 0</nobr></tt>&nbsp;.</p>
+
+<p>e) Show that<tt> <nobr>f 1 2 rf 0</nobr> </tt>is<tt> 0</tt>&nbsp;.</p>
+
+<p>f) Evaluate<tt> <nobr>2 4 rf 0</nobr></tt>&nbsp;.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>10.23</td><td>&nbsp;</td><td>
+<p>All possible divisors of an integer<tt> k </tt>are
+included in the vector<tt> 1+⍳k</tt>&nbsp;.<p>
+
+<p>a) For<tt> d:0=(1+⍳⍵)|⍵</tt>&nbsp;,<tt> </tt>
+evaluate the expression<tt> d&nbsp;k </tt>
+for various values of<tt> k</tt>&nbsp;,<tt> </tt>
+and state clearly how the result identifies the
+actual divisors of<tt> k </tt>amongst
+the elements of<tt> 1+⍳k</tt>&nbsp;.<p>
+
+<p>b) The function<tt> f </tt>selects from
+its right argument those elements identified by<tt> 1</tt>&rsquo;s
+in its left argument, in the manner suggested by part a:</p>
+
+<pre>
+f:((1↑⍺)↑⍵),(1↓⍺)f 1↓⍵:0=n⍵:⍳0
+n:+/⍵=⍵
+</pre>
+
+<p>Show that<tt> <nobr>0 1 1 0 1 1 f 1+⍳6</nobr> </tt>
+yields<tt> <nobr>2 3 5 6</nobr></tt>&nbsp;.</p>
+
+<p>c) State the effect of the 
+function<tt> <nobr>divs:(d⍵)f 1+⍳⍵</nobr></tt>&nbsp;.</p>
+
+<p>d) Show that<tt> <nobr>k÷divs k</nobr> </tt>
+is equivalent to<tt> <nobr>⌽ divs k</nobr></tt>&nbsp;.</p>
+
+<p>e)<tt> k </tt>is called a <i>perfect number</i>
+if<tt> <nobr>k=+/¯1↓divs k</nobr></tt>&nbsp;.<tt> </tt>
+Show that<tt> 6 </tt>and<tt> 28 </tt>are perfect numbers,
+and state in words the definition of a perfect number.
+<br>&nbsp;</p>
+
+
+</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.24</td><td>&nbsp;</td><td>
+<p>Use the function<tt> plus</tt>&nbsp;,<tt> minus</tt>&nbsp;,<tt> </tt>
+and<tt> times </tt>of Section 10.3 to evaluate
+the expression<tt> <nobr>c plus d</nobr> </tt>
+and<tt> <nobr>c minus d</nobr> </tt>
+and<tt> <nobr>c times d</nobr> </tt>
+for the following pairs of<tt> c </tt>and<tt> d</tt>&nbsp;:</p>
+
+<table>
+<tr><td align=right><tt>c &nbsp;</tt></td><td>&nbsp; &nbsp; &nbsp; &nbsp;</td><td><tt>&nbsp; &nbsp; d</tt></td></tr>
+<tr><td align=right><tt>1 2 1</tt></td><td>&nbsp;</td><td><tt>1 3 3 1</tt></td></tr>
+<tr><td align=right><tt>1 1</tt></td><td>&nbsp;</td><td><tt>1 2 1</tt></td></tr>
+<tr><td align=right><tt>1 1</tt></td><td>&nbsp;</td><td><tt>1 ¯1 1 ¯1 1</tt></td></tr>
+</table>
+&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.25</td><td>&nbsp;</td><td>
+<p>Use the function<tt> into </tt>
+and<tt> linto </tt>of Section 10.3 to evaluate
+the expression<tt> <nobr>a into b</nobr> </tt>
+and<tt> <nobr>a linto b</nobr></tt>&nbsp;.<tt> </tt>
+Check the results by computing the corresponding remainder:</p>
+
+<table>
+<tr><td><tt>&nbsp; a</tt></td><td>&nbsp; &nbsp; &nbsp; &nbsp;</td><td><tt>&nbsp; &nbsp; b</tt></td></tr>
+<tr><td><tt>1 3 3 1</tt></td><td>&nbsp;</td><td><tt>1 5 10 10 5 1</tt></td></tr>
+<tr><td><tt>1 3 2</tt></td><td>&nbsp;</td><td><tt>2 4 1 5 7</tt></td></tr>
+<tr><td><tt>2 1 3</tt></td><td>&nbsp;</td><td><tt>2 4 1 5 7</tt></td></tr>
+</table>
+&nbsp;</td></tr>
+
+<tr><td valign=top>10.26</td><td>&nbsp;</td><td>
+<p>Let<tt> v←20↑1</tt>&nbsp;.<tt> </tt>Then evaluate
+and compare the two expressions in each part:</p>
+
+<pre>
+a) 1 ¯1 into v
+   +\v
+
+b) 1 ¯2 1 into v
+   +\+\v
+
+c) 1 ¯3 3 ¯1 into v
+   +\+\+\v
+</pre>
+</td></tr>
+
+<tr><td valign=top>10.27</td><td>&nbsp;</td><td>
+Use the functions<tt> pvra </tt>and<tt> p </tt>
+of Section 10.3 to show complete interpretations of the
+expressions<tt> <nobr>1 3 3 1 pvra 2 5</nobr> </tt>
+and<tt> <nobr>1 3 3 1 p 2 5</nobr></tt>&nbsp;,<tt> </tt>
+making clear why the evaluation of the latter 
+cannot be completed.
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>10.28</td><td>&nbsp;</td><td>
+Redo part d of Ex 10.22 with<tt> <nobr>f:3.75 ¯4.25 1 pvra ⍵</nobr></tt>&nbsp;.
+<br>&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.29</td><td>&nbsp;</td><td>
+Evaluate the following:
+
+<pre>
+   a←'abcdefghijklmnopqrstuvwxyz '
+   b←'coffee'
+   d←'0123456789'
+   n←'1776'
+   a[2 0 1]
+   a[8 26 18 8 13 6 26 14 5]
+   j←2 14 5 5 4 4
+   a[j]
+   b=a[j]
+   ⌊/b=a[j]
+   d[1 7 7 6]
+   ⍎n
+   ⍎d[1 9 7 6]
+
+</pre>
+</td></tr>
+
+<tr><td valign=top>10.30</td><td>&nbsp;</td><td>
+Using the variables specified in Ex 10.29, evaluate:
+
+<pre>
+a) d∘.=n
+b) +/d∘.=n
+c) a∘.=b
+d) +/a∘.=b
+e) an←a,d
+f) +/an∘.='224 East 25th St'
+
+</pre>
+</td></tr>
+
+<tr><td valign=top>10.31</td><td>&nbsp;</td><td>
+<p>Using the results of Ex 10.30, comment on
+the following statements:</p>
+
+<p>a) The function<tt> cl:+/a∘.=⍵ </tt>
+gives counts of the letters and spaces in its argument.</p>
+
+<p>b) The function<tt> cd:+/d∘.=⍵ </tt>gives
+counts of the digits in its argument.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>10.32</td><td>&nbsp;</td><td>
+<p>Using the results of Exercise 10.29
+it is clear that the function<tt> f:a[⍵] </tt>
+yields<tt> b </tt>when applied to<tt> j</tt>&nbsp;.</p>
+
+<p>a) Show that the function<tt> if:+/⌊\⍵∘.≠a </tt>
+is inverse to<tt> f</tt>&nbsp;;<tt> </tt>
+in particular, show that<tt> if&nbsp;b </tt>
+yields<tt> j</tt>&nbsp;.</p>
+
+<p>b) Show that the function<tt> ig:+/⌊\⍵∘.≠d </tt>
+is inverse to the function<tt> g:d[⍵]</tt>&nbsp;;<tt> </tt>
+in particular, show that<tt> ig&nbsp;'1776' </tt>
+yields the vector<tt> <nobr>1 7 7 6</nobr></tt>&nbsp;.</p>
+
+<p>c) Compare the function<tt> v:+/(ig⍵)×10*⌽⍳+/⍵=⍵ </tt>
+with the execute function<tt> ⍎</tt>&nbsp;;<tt> </tt>
+in particular, show that<tt> v&nbsp;'1776' </tt>
+equals<tt> ⍎'1776'</tt>&nbsp;.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.33</td><td>&nbsp;</td><td>
+a) Show that the following:
+
+<pre>
+   h←'z←x q y  '
+   i←'z←x×y+x-2'
+   m←2 9⍴h,i
+   ⎕fx m
+</pre>
+
+<p>fix the function<tt> q:⍺×⍵+⍺-2</tt>&nbsp;.</p>
+
+b) Show that<tt> 3 q 4 </tt>yields<tt> 15</tt>&nbsp;.
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>10.34</td><td>&nbsp;</td><td>
+Recalling that the quote character itself is represented
+by a pair of adjacent quotes,
+show that the expressions:
+
+<pre>
+   h←'z←cd y              '
+   i←'z←+/''0123456789''∘.=y'
+   m←2 20⍴h,i
+   ⎕fx m
+</pre>
+
+fixes the function<tt> cd </tt>of Ex 10.31b.
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>10.35</td><td>&nbsp;</td><td>
+Write expressions 
+to establish each of the 
+functions<tt> cl</tt>&nbsp;,<tt> f</tt>&nbsp;,<tt> if</tt>&nbsp;,<tt> g</tt>&nbsp;,<tt> ig</tt>&nbsp;,<tt> </tt>
+and<tt> v </tt>of Exs 10.31-32.
+<br>&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.36</td><td>&nbsp;</td><td>
+Show that the expression:
+<pre>
+⎕fx 'z←x q y' on9 'z←x×y+x-2'
+</pre>
+fixes the function<tt> q </tt>of Ex 10.33.
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>10.37</td><td>&nbsp;</td><td>
+Write expressions using the function<tt> on9 </tt>
+to establish each of the 
+functions<tt> cl</tt>&nbsp;,<tt> cd</tt>&nbsp;,<tt> f</tt>&nbsp;,<tt> if</tt>&nbsp;,<tt> g</tt>&nbsp;,<tt> ig</tt>&nbsp;,<tt> </tt>
+and<tt> v </tt>of Exs 10.31-32.
+<br>&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.38</td><td>&nbsp;</td><td>
+a) Evaluate:
+<pre>
+'q' can9 'x×y+x-2'
+</pre>
+<p>and show that it yields a representation
+of the function<tt> q </tt>of Ex 10.33.</p>
+
+b) Show that the expression:
+<pre>
+⎕fx 'q' can9 'x×y+x-2'
+</pre>
+<p>fixes the definition 
+of the function<tt> q </tt>of Ex 10.33.
+<br>&nbsp;</p>
+</td></tr>
+
+<tr><td valign=top>10.39</td><td>&nbsp;</td><td>
+Repeat Ex 10.37 using the function<tt> can9 </tt>
+instead of<tt> on9</tt>&nbsp;.
+<br>&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.40</td><td>&nbsp;</td><td>
+Repeat Ex 10.37 using the function<tt> is9 </tt>
+instead of<tt> on9</tt>&nbsp;.
+<br>&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.41</td><td>&nbsp;</td><td>
+Assuming that:
+<pre>
+a←'minus:x-y'
+b←'ab:cde:fghi'
+</pre>
+evaluate the following:
+
+<pre>
+a) p9 a
+b) s9 a
+c) p9 b
+d) s9 b
+e) p9 s9 b
+f) s9 s9 b
+
+</pre>
+</td></tr>
+
+<tr><td valign=top>10.42</td><td>&nbsp;</td><td>
+Repeat Ex 10.37 using the function<tt> sdef9 </tt>instead of<tt> on9</tt>&nbsp;.
+<br>&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.43</td><td>&nbsp;</td><td>
+Carry out the detailed steps in the execution
+of the expression:
+<pre>
+  rdef9 'f:y×f y-1:y=0:1'
+</pre>
+to show that it establishes the definition of<tt> f </tt>
+as the factorial function.
+<br>&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.44</td><td>&nbsp;</td><td>
+Carry out the detailed steps in the establishment
+of the functions<tt> g </tt>and<tt> f </tt>
+by the following expressions:
+
+<pre>
+a) adef9 'g:x÷y'
+b) adef9 'f:y×f y-1:y=0:1'
+</pre>
+(Use the results of Ex 10.43.)
+<br>&nbsp;</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.45</td><td>&nbsp;</td><td>
+Evaluate the following:
+
+<pre>
+'+ and ' in9 'May+June+July'
+'Mmay ' in9 '+ and ' in9 'M3+M14'
+
+</pre>
+</td></tr>
+
+<tr><td valign=top>10.46</td><td>&nbsp;</td><td>
+Using the definition:
+
+<pre>
+adef9 'sub9:i9 in9 j9 in9 sw9 y'
+</pre>
+
+for the function<tt> sub9</tt>&nbsp;<tt> </tt>
+state the result or effect of each of the following
+expressions:
+
+<pre>
+a) sub9 'p:+/⍺×⍵*⍳+/⍺=⍺'
+b) adef9 'p:+/⍺×⍵*⍳+/⍺=⍺'
+c) adef9 'f:⍵×f ⍵-1:⍵=0:1'
+
+</pre>
+
+</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.47</td><td>&nbsp;</td><td>
+Show examples of the use of the function
+established by:
+<pre>
+      def
+sqrt:⍵*.5
+      def
+hyp:sqrt(⍺*2)+⍵*2
+</pre>
+</td></tr>
+
+<tr><td colspan=3><hr width=80%><br></td></tr>
+
+<tr><td valign=top>10.48</td><td>&nbsp;</td><td>
+<p>The remaining exercises develop modifications
+to the function<tt> def </tt>which localize names
+which precede a specification arrow as specified
+in Sec. 10.1.
+In the canonical representation,
+names are localized by adding them to the first row,
+each preceded by a semicolon.
+For example, if<tt> f </tt>is defined by:</p>
+
+<pre>
+      def
+f:⍺+z×z←ab+ab←⍵*2
+</pre>
+
+<p>then its canonical representation is:</p>
+
+<pre>
+z9←x9 f y9;z;ab
+z9←x9+z×z←ab+ab←y9*2
+</pre>
+
+<p>In what follows assume that the semicolon<tt> sc</tt>&nbsp;,<tt> </tt>
+the empty vector<tt> ev</tt>&nbsp;,<tt> </tt>
+and the alphabet<tt> a </tt>are specified as follows.</p>
+
+<pre>
+    sc←';'
+    ev←''
+    a←'abcdefghijklmnopqrstuvwxyz'
+</pre>
+
+<p>Consider the functions fixed by each
+of the following individual responses
+to the function<tt> def</tt>&nbsp;:</p>
+
+<pre>
+bsa:(+/⌊\⍵≠'←')↑⍵
+asa:(1++/⌊\⍵≠'←')↓⍵
+fn:(+/⌊\⌈/⍵∘.=A)↑⍵
+ln:⌽fn⌽⍵
+n:sc,z:0=+/z=z←ln bsa ⍵:ev
+nl:(n⍵),nl z:0=+/z=z←asa⍵:ev
+</pre>
+
+<p>Examine the behaviour of these functions
+by applying them to one or more arguments,
+including<tt> arg </tt>specified as:</p>
+
+<pre>
+arg←'f:⍺+z×z←ab+ab←⍵*2'
+</pre>
+
+<p>For each function state its behaviour in words,
+and choose an appropriate name for it.
+For example:<tt> bsa </tt>might be called
+&ldquo;before the specification arrow&rdquo;.
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>10.49</td><td>&nbsp;</td><td>
+Modify the function<tt> can9 </tt>so as to append
+the first row of the matrix it produces
+the list of local names produced by the 
+function<tt> nl </tt>of Ex 10.48.
+Verify that this modification causes the function<tt> def </tt>
+to localize the names as desired.
+<br>&nbsp;</td></tr>
+
+</table>
+
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared in the <i>Elementary Functions</i>,
+IBM Corp., 1974, Chapter 10,
+then in <i>Elementary Analysis</i>, APL Press, 1976, Chapter 10.</p>
+
+<p>
+<script src="apldisplay.js" type="text/javascript"></script>
+</p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2010-07-31 16:15</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2012-08-27 23:10</font></td></tr>
+</table>
+
+</td></tr></table>
+<br>
+</body>
+</html>

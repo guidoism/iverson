@@ -1,0 +1,660 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Empty Frames in SHARP APL</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Empty Frames in SHARP APL</font><br><br>
+<b>Roland H. Pesch</b><br><br>
+APL Development Group<br>
+I.P. Sharp Associates<br>
+Palo Alto, California &nbsp;94306 <br>
+USA
+<br>&nbsp;</p>
+
+
+<p><b>Introduction</b></p>
+
+<p>APL functions apply to arrays of data. Recent
+systematization of the rules for their application has
+extended (at least in principle) to many more
+functions some of the properties previously enjoyed
+only by the &ldquo;scalar&rdquo; (rank 0) functions. 
+Explicit use of the rank operator, 
+or implicit use of rank by
+primitives or derived functions, allows much more
+flexibility than heretofore for combining parts of
+different arrays in a simple fashion. However,
+these facilities have given rise to a new class of
+problem in the design of the language.</p>
+
+<p>The functions traditionally called &ldquo;scalar&rdquo; not only
+applied to scalar arguments, but also produced
+scalar results. This allowed language designers to
+solve the question of result shape trivially: the
+shape of the result of a scalar function is the shape
+of one or both of its arguments. In particular, this
+rule applies equally well to empty arrays, even
+though there are actually no scalars in them. The
+generalization provided by rank requires more
+thought on this question, and in general the result
+shape is quite satisfactorily specified by a rule
+such as that given in 
+<acronym title="K.E. Iverson, A Dictionary of the APL Language, I.P. Sharp Associates, DRAFT - 5, September 85.">[1]</acronym>:
+</p>
+
+<table><tr><td width=18 nowrap>&nbsp;</td><td>
+the shape of a result is the frame of the
+argument (relative to the cells to which the
+verb applies) catenated with the shape
+produced by applying the verb to the
+individual cells.
+</td></tr></table>
+
+<p>Unfortunately, such rules fail in some cases, known
+as the &ldquo;empty frame&rdquo; cases: whenever the frame
+contains at least one zero, there are no cells. For
+example, the expression<tt> ,⍤2&nbsp;(n,4&nbsp;5)⍴⎕av </tt>
+ravels each of<tt> n </tt>(the frame) cells, 
+having a cell shape of<tt> 4&nbsp;5</tt>.<tt> </tt> 
+This produces a result of shape<tt> n,20 </tt>&mdash; 
+unless<tt> n </tt>is<tt> 0</tt>,<tt> </tt> 
+the &ldquo;empty frame&rdquo; case. Since the frame 
+is<tt> 0</tt>,<tt> </tt>
+there are no cells. Yet any APL programmer
+expects the general rule &mdash; results of shape<tt> n,20 </tt>&mdash;
+to hold for this case too, giving an array of 
+shape<tt> 0&nbsp;20</tt>.</p>
+
+<p>The initial &mdash; and still in effect (release 17) &mdash;
+definition of rank on SHARP APL took a
+straightforward approach to this problem: if there
+were no cells, there was no contribution to the
+result shape from the cells. This is the simplest
+extrapolation from the traditional treatment of
+scalar functions; but for scalar functions, not only
+is the <i>result</i> cell shape empty, 
+so was the <i>argument</i>
+cell shape, and so are expected results in the
+corresponding non-empty cases. Therefore this
+method works well for the scalar functions, but
+anomalies quickly became apparent for other
+functions. For example, for the case cited above,
+the result of<tt> ,⍤2&nbsp;(n,4&nbsp;5)⍴⎕av </tt>
+in SHARP APL
+through the release 17 level has shape<tt> 0 </tt>rather
+than the expected<tt> 0 20</tt>.<tt> </tt>
+Anomalies of this sort
+have repeatedly been reported as bugs by APL
+programmers in the field, both at IPSA and at
+customer sites.</p>
+
+<p>Some method is clearly required of calculating a cell
+shape for the &ldquo;empty frame&rdquo; cases, to produce a
+result which fits the pattern of result shapes for
+each function applied to otherwise similar arrays
+with non-empty frames.
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>Recapitulation: earlier attempts at solutions</b></p>
+
+<a name="1.1"></a>
+<p><b>Prototypes.</b> Because &ldquo;prototypes&rdquo;, as defined by
+Trenchard More 
+<acronym title="T. More, “The Nested Rectangular Array as a Model of Data”, APL79 Conference Proceedings (APL Quote Quad Vol. 9 No. 4, June 1979), part 1, p. 55">[2]</acronym> 
+or as implemented in IBM&rsquo;s APL2 
+<acronym title="J.A. Brown, The Principles of APL2 (IBM Santa Teresa Technical Report TR 03.247, March 1984)">[3]</acronym>, 
+were intended to smooth over perceived
+anomalies involving emptiness, it is often expected
+that they would provide a solution to this problem.
+They do not, for several reasons. First, the
+usefulness of prototypes is greatest in systems of
+APL extensions that depend heavily on enclosure
+for definition of other facilities, since prototypes
+reduce to the familiar<tt> 0 </tt>or blank fill where
+enclosure is not involved. SHARP APL extensions
+are largely not defined in terms of enclosure.
+Second, prototypes do not solve this particular
+problem in any case. For example, in the APL2 IUP,
+while there wasn&rsquo;t a rank operator, similar effects
+could be obtained with other facilities &mdash;
+for example, the expression<tt> 2↑⍤0&nbsp;⍳n </tt>
+in (which should
+give results of shape<tt> n,2</tt>,<tt> </tt>
+and runs into the empty
+frame case for<tt> n=0</tt>) 
+cannot be written with APL2
+primitive facilities, but the same effect can be
+obtained from their expression<tt> ⊃2↑¨⍳n</tt>.<tt> </tt>
+In the IUP, no special thought had been given to empty frames,
+and this expression &mdash; like ours &mdash; gave the wrong
+result for<tt> n=0</tt>,<tt> </tt>
+regardless of the presence of prototypes 
+(though prototype use <i>did</i> mean that the
+APL2 IUP got a <i>different</i> wrong answer from SHARP
+APL in that case). In the APL2 program product,
+this has been corrected through the use of a
+technique involving &ldquo;fill functions&rdquo; 
+<acronym title="J.A. Brown, The Principles of APL2 (IBM Santa Teresa Technical Report TR 03.247, March 1984)">[3]</acronym>, 
+two for each primitive, for this purpose &mdash;
+a technique almost identical to that proposed in 
+<acronym title="K.E. Iverson, R.H. Pesch, and J.H. Schueler, “An Operator Calculus”, Conference Proceedings APL84 (APL Quote Quad Vol. 14 No. 4, June 1984). p. 213">[4]</acronym>, 
+which is discussed below.</p>
+
+
+<a name="1.2"></a>
+<p><b>Shape Expressions.</b> An early method discussed
+internally in IPSA for addressing this problem was
+called &ldquo;shape expressions&rdquo;. A &ldquo;shape expression&rdquo;
+would be associated with each function, as one of
+its independent parts such as the rank or the
+inverse. This executable expression would
+describe, on the basis of argument-cell shape, the
+shape of a result of the function; since in
+empty-frame cases the cell shape is known, even
+though there are no cells, this method seemed
+promising. Indeed, it would work for a class of
+functions that can be called &ldquo;uniform&rdquo; functions &mdash;
+those whose result shapes depend exclusively on
+the argument shapes. For example, the result of<tt> ,⍵ </tt>
+is known to be of shape<tt> ×/⍴⍵ </tt>regardless of the
+value of<tt> ⍵</tt>,<tt> </tt>so this approach would be able to
+produce the proper<tt> 0 20 </tt>shape for the first
+example in this note. However, shape expressions
+fail in general: for example, in the 
+expression<tt> 2↑⍤0&nbsp;⍳n </tt>
+mentioned above, the result shape
+depends not only on the shape of the right
+argument, but also on the value (<tt>2</tt>) of the left
+argument.
+<br>&nbsp;</p>
+
+
+
+<a name="2"></a>
+<p><b>Surrogate arguments</b></p>
+
+<p>This led to a search for alternative solutions. All
+other proposals to date can be characterized as
+&ldquo;surrogate argument&rdquo; proposals, and they all have
+one feature in common: for the empty-frame cases,
+when there is no data (no argument cells) to apply
+a function to, a <i>surrogate</i> cell is invented and
+passed to the appropriate function. Note in
+particular that all surrogate-argument proposals
+share the characteristic that, in the 
+expression<tt> f⍤n&nbsp;⍵</tt>,<tt> </tt>
+the function<tt> f </tt>
+executes at least once,
+regardless of whether<tt> ⍵ </tt>has any cells to apply to.
+The differences between &ldquo;surrogate argument&rdquo;
+proposals lie in the method used to invent the
+surrogate argument cell.</p>
+
+<a name="2.1"></a>
+<p><b>An Operator Calculus.</b> The proposal in 
+<acronym title="K.E. Iverson, R.H. Pesch, and J.H. Schueler, “An Operator Calculus”, Conference Proceedings APL84 (APL Quote Quad Vol. 14 No. 4, June 1984). p. 213">[4]</acronym>
+to address this issue is similar to the earlier 
+&ldquo;shape expressions&rdquo; approach in that it depends on a
+function part. In this case, the new function part,
+rather than describing the shape of the result
+directly, specifies separately for each case
+(monadic argument, left argument, right argument)
+of each function an algorithm to create the
+surrogate argument, on the basis of cell shape and
+argument value. A general rule is given to describe
+how the surrogate part was chosen for each
+primitive (to give the smallest possible result shape)
+but this rule cannot be applied automatically.
+The particular strength of this
+proposal is that it applies to all primitive functions.
+The weakness of this proposal is that it does not
+apply in any obvious way to derived functions,
+save those derived from the rank operator with
+primitive arguments. The paper does not discuss
+the general derived-function case with regard to
+this issue, but its approach suggests that there
+might be two alternatives: either derived functions
+&ldquo;inherit&rdquo; this function part from one of the
+arguments of an operator, or else derived functions
+lack this part, and therefore do not include
+empty-frame cases in their domains. The latter is
+clearly unacceptable, as it creates an even stronger
+discontinuity than the problem we wish to address.
+The former does not work with the primitive parts
+suggested in the paper; for example, a surrogate
+part for monadic<tt> f⍤g </tt>
+cannot be derived from<tt> g</tt>,<tt> </tt>
+because then<tt> ÷⍤+ </tt>would fail (on <i>domain error</i>)
+for empty frames; conversely, it cannot be derived
+from<tt> f </tt>for the parallel reason. Specific surrogate
+parts could certainly be invented for specific
+derived functions, but this procedure has obvious
+limits.</p>
+
+<a name="2.2"></a>
+<p><b>Overtake.</b> An alternative approach was implemented in 
+<acronym title="Arthur T. Whitney, Robert D. Hodgkinson, and Laurie J. Gellatly, SAPL/HP interpreter (Sidney, Australia, 1985)">[5]</acronym>, 
+and consists in using an existing part of
+data (the type or fill) rather than a new part of
+functions, to define the surrogates: surrogate cells
+are, here, created via overtake of the empty-frame
+array. This approach has the advantages of
+providing a simple alternative rule, of applying to
+derived (or defined) functions equally well as to
+primitive functions, and of achieving all this
+without a need for a new part of functions (or data,
+for that matter). Unfortunately, it has one serious
+drawback: it doesn&rsquo;t apply to all primitives (or to
+all derived functions), since the fill of an arbitrary
+array is not necessarily in the domain of an
+arbitrary function. For example, if applied
+rigorously, this method requires that<tt> ÷⍳0 </tt>fail with
+a domain error rather than returning the empty
+result we are accustomed to.</p>
+
+<a name="2.3"></a>
+<p><b>Comparison, evaluation, extension.</b> The second
+approach to surrogate arguments is superior in
+terms of consistency and simplicity. It is therefore
+preferable. Unfortunately, its limitations also make
+it unacceptable. However, extensions on the basis
+of the notion of <i>nil</i> 
+(the term and its description as
+used here are from 
+<acronym title="K.E. Iverson, A Dictionary of the APL Language, I.P. Sharp Associates, DRAFT - 5, September 85.">[1]</acronym>;
+similar ideas may also be
+found in sources listed as 
+<acronym title="">[6]</acronym>) 
+can make it apply in
+general. This set of extensions is the subject of the
+remainder of this note.
+<br>&nbsp;</p>
+
+
+
+<a name="3"></a>
+<p><b>Nil use with surrogate arguments</b></p>
+
+<a name="3.1"></a>
+<p><b>Nil.</b> A nil is a scalar value, whose type is different
+from that of all other APL data. It is used to extend
+the domains of APL primitives in the following way:
+whenever a primitive encounters an argument cell
+outside of its normal domain, the corresponding
+result cell is made up of nils. Since the drawback of
+the overtake approach to generating surrogates was
+a greater incidence of domain errors, the
+application of nils to the problem is
+straightforward.</p>
+
+<a name="3.2"></a>
+<p><b>No nils in results.</b> An interesting characteristic of
+the empty-frames problem with regard to nil is that
+these extensions need only be based on nil in their
+specification and design. Since all acceptable
+results in empty-frame situations are empty, no nils
+ever actually appear in a result, even if those
+results are defined in terms of nils. Thus <i>the
+implementation of these extensions does not require
+an APL with a representation for nil</i>.</p>
+
+<a name="3.3"></a>
+<p><b>How nils are used.</b> There are two conceivable ways
+of using nil to derive cell-shape information with
+surrogate arguments. First, the overtake solution
+could be applied, but where the resulting surrogate
+fell outside the domain of a function, nils could
+then be produced, preserving the required shape
+information. Second, the surrogate-argument cell
+could itself be made up of nils in the first place.</p>
+
+<p>The second may seem less straightforward, 
+but it preferable for the following reasons:</p>
+
+<table>
+<tr><td valign=top nowrap>a. &nbsp;</td><td>
+Most importantly, more information is available
+when nils are used in the first place. An array
+of 0&rsquo;s or blanks, which would be the surrogate
+for most cases under the first alternative,
+provides a function with no clue as to its
+origins; on the other hand an array of nils
+clearly indicates an exceptional situation. For
+most primitive functions, this information should
+be unnecessary; but for some, such as<tt> ⌹ </tt>
+(discussed further under <b>Required domain
+extensions</b>) it is the only way to preserve
+uniform behavior short of very far-reaching
+extensions.
+ </td></tr>
+<tr><td valign=top>b. &nbsp;</td><td>
+In addition, in a sense the second approach
+&mdash; though less familiar &mdash; is even more
+straightforward than the first: all surrogate
+arguments are made up of the same item.
+</td></tr>
+</table>
+
+<p><i>The rule for generating surrogate argument cells</i>
+is therefore to use, in all circumstances, an array of
+the required shape, made up completely of nils.</p>
+
+
+<a name="3.4"></a>
+<p><b>Required domain extensions.</b> For many cases, such
+as functions derived completely from the old familiar
+scalar functions, or monadic structural functions,
+or right arguments of structural functions, the
+foregoing is sufficient to produce the desired
+uniformity of result shapes. The scalar functions
+return scalar nils for any argument (including nil
+itself) outside their domains. Inclusion of the
+structural functions in this category is extension in
+a sense, since they did not previously apply to
+nils; but they are to apply to nils in the same way
+that they apply to all other arrays, and in that
+sense are not considered explicit extensions. The
+functions covered by this sort of systematic
+extension are monadic<tt> , ⊃ ⊢ ⍴ ⍉ ⌽ ⊖ &lt; &gt; </tt>
+and dyadic<tt> ⍳ ⍒ ⍋ , ⊃ ⊢ ⊣ ∊ ≡</tt>.<tt> </tt> 
+The right arguments
+of dyadic<tt> ⍴ ↑ ↓ ⍉ ⌽ ⊖ </tt>are also covered by this
+sort of systematic extension, though the left
+arguments will require explicit treatment of nil
+cells. The right argument of an indexing function<tt> { </tt>
+would also fall in this class if we had an indexing
+function.</p>
+
+<p>Some more difficult cases, however, require explicit
+extension of some primitive function kernels to nil
+arrays, in order to produce nil results of the right
+shapes. Since nil arrays are always used for
+surrogates, and since the extensions are to the
+function kernel, we can be assured that no further
+extensions will be required for derived functions:
+the primitive kernels in derived functions will have
+the information they require to handle these cases.</p>
+
+<p>The primitive functions requiring special extension
+of their domains to nil arrays are system 
+functions,<tt> ⌶</tt>,<tt> </tt>and the following:</p>
+
+<table>
+<tr><td width=18 nowrap>&nbsp;</td><td valign=top nowrap>Monadics: &nbsp;</td>
+<td><tt>⍳ ⍋ ⍒ ⌹ ⍎ ⍕</tt>.
+ </td></tr>
+<tr><td>&nbsp;</td><td valign=top nowrap>Dyadics: &nbsp;</td><td>
+<tt>? ⌹ ⍕ ⊥ ⊤ </tt>for both arguments; 
+for left argument only,<tt> ⍴ ↑ ↓ ⍉ ⌽ ⊖</tt>,<tt> </tt>
+and<tt> { </tt>(indexing) if we had it.
+ </td></tr>
+</table>
+
+<p>Cases that treat nil as<tt> 0</tt>:<tt> </tt>
+Many of these can simply
+treat nil identically with their treatment 
+of<tt> 0</tt>,<tt> </tt>in
+particular all the left-argument cases 
+(for<tt> ⍉</tt>,<tt> </tt>origin<tt> 0 </tt>
+is assumed in this definition).
+Monadic<tt> ⍳ </tt>and dyadic<tt> ⍕ </tt>
+are also covered in this treatment.</p>
+
+<p>The remainder require special definitions:</p>
+
+<table><tr><td width=18 nowrap>&nbsp;</td><td>
+
+<p><tt>⌹ </tt>monadic case: to be consistent with the
+current treatment of primitive<tt> ⌹</tt>,<tt> </tt>
+and to extend
+this treatment consistently to<tt> ⌹ </tt>with rank
+specified explicitly,<tt> ⌹⍵ </tt>
+of a matrix<tt> ⍵ </tt>of nils
+must give a matrix (of nils) 
+having shape<tt> ⌽⍴⍵</tt>,<tt> </tt>
+if<tt> ⍵ </tt>has no more columns than rows, 
+or an error otherwise. 
+This error should, for consistency,
+only be removed in an environment in which nils
+replace all domain errors, in which case the
+result shape specified here can apply in
+general.</p>
+
+<p><tt>⍎ </tt>and<tt> ⌶ </tt>
+should treat nil like<tt> ''</tt>,<tt> </tt>
+producing no result, or an error, for empty frames. As the
+results of<tt> ⍎ </tt>and<tt> ⌶ </tt>can be radically different
+from case to case, this does not represent a
+discontinuity.</p>
+
+<p><tt>⍕ </tt>should treat a nil as it does blank. That is,
+nil has no graphic representation but occupies
+one print position.</p>
+
+<p>Monadic<tt> ⍒ </tt>and<tt> ⍋ </tt>cannot be considered
+independently of the comparatives<tt> &lt; ≤ ≥ &gt;</tt>.<tt> </tt>
+The comparative functions report on the
+ordering of numbers; monadic grade gives a
+permutation on the basis of that ordering. Since
+the comparatives avoid defining an ordering
+that includes nil (by giving nil results for
+either argument nil, like other scalar functions)
+it would be inconsistent to allow grade to imply
+such an ordering. Therefore any nil in the
+argument to monadic grade must give an all-nil
+result. For consistency with the shapes of other
+results of grade, the shape of this all-nil result
+must match the length of the leading axis of the
+argument.</p>
+
+<p>Dyadic<tt> ⍺?⍵ </tt>should produce a vector 
+of length<tt> ⍺</tt>.<tt> </tt>
+Where<tt> ⍵ </tt>contains nils, the result should 
+be<tt> ⍺⍴nil</tt>, and where<tt> ⍺ </tt>is nil, 
+it should be treated as<tt> 0</tt>.</p>
+
+<p>Dyadic<tt> ⌹ </tt>and<tt> ⊥ </tt>are defined in terms of other
+primitives, and their results when nils are
+involved should be whatever falls out of
+applying those other functions&rsquo; definitions.</p>
+
+<p>Dyadic<tt> ⍕ </tt>can be defined to treat nils in the
+right argument as if they were numbers, save
+that all digit positions corresponding to nils are
+always blank. In the left argument, the
+treatment depends on whether picture format or
+numeric format is required. For an all-nil left
+argument &mdash; the only one that arises directly due
+to empty frames &mdash; the numeric case is chosen,
+In the numeric case, nils in the left argument
+are treated as<tt> 0</tt>.<tt> </tt>
+For left arguments containing
+some nils and some characters, picture format is
+clearly indicated; here, nil is regarded as a
+decorator (since it is clearly not a digit). It
+always displays as blank but does not delimit
+fields.</p>
+
+<p><tt>⊤ </tt>must return a result cell made up entirely of
+nils for any case where either of the
+corresponding argument cells contains a nil.
+Other cells in the same result, however, can be
+computed as usual.</p>
+
+<p>System functions and<tt> ⌶ </tt>can in general be
+allowed to fail for empty-frame cases, since,
+like<tt> ⍎</tt>,<tt> </tt>
+their result shapes often fail to follow
+regular patterns. The system functions,
+however, must be studied further with an eye
+to giving useful empty-frame treatments to
+those with regular definitions, notably the
+shared-variable functions. It is clear that
+whatever definitions are desirable will be
+possible, since the use of nil for surrogate
+argument cells will allow the function definitions
+to recognize the exceptional case and include
+whatever definition is chosen, whether it follows
+naturally from the general case or not.</p>
+</td></tr></table>
+
+
+<a name="3.5"></a>
+<p><b>Fill or type</b>. Due to the traditional APL provision of
+fill for empty arrays, to guarantee that no nils will
+become visible due to the use of nil for surrogate
+arguments requires that the fill &mdash; or type, if that
+formulation should be preferable &mdash; for results be
+defined in such a way that nil is never produced by
+a subsequent overtake or expansion. This can be
+achieved bv any definition of the APL primitives
+that specifies result fill (or result type) 
+as one of the properties of the kernel of a function. 
+It is important that fill be an effect of the kernel, not an
+independent part of functions, to guarantee that
+the question does not immediately recur at some
+derived-function level. A set of definitions for
+primitive result fill is given in 
+<acronym title="R. Pesch, “On the Question of Fill”, APL Quote Quad Vol. 15 No. 1, September 1984, p. 9">[7]</acronym>, 
+and is compatible with this note provided that treatment of
+rank is defined so that splitting an array into cells
+gives each cell the fill of the original array. In
+particular, fill in surrogates is defined (using the
+notation of that note) so that a surrogate argument
+cell<tt> w </tt>is generated 
+from an empty-frame argument<tt> ⍵</tt>)<tt> </tt>
+as<tt> w←(∪⍵)∪(f↓⍴⍵)⍴nil</tt>,<tt> </tt>
+where<tt> f </tt>covers the frame of<tt> ⍵</tt>.<tt> </tt>
+(In words, this means that the fill of the
+surrogate cell, like that of any other cell, 
+is the fill of the original argument). The equivalent
+formulation in terms of type is probably more
+complicated, and may require three nils; one of
+each type, numeric, character, or boxed.
+<br>&nbsp;</p>
+
+
+
+<a name="4"></a>
+<p><b>Conclusion</b></p>
+
+<p>Using cells made up entirely of nils for surrogate
+arguments combines the advantages of the two
+earlier surrogate argument proposals; like that of
+<acronym title="K.E. Iverson, R.H. Pesch, and J.H. Schueler, “An Operator Calculus”, Conference Proceedings APL84 (APL Quote Quad Vol. 14 No. 4, June 1984). p. 213">[4]</acronym>, 
+it applies equally well to all primitive
+functions, but because, like that of 
+<acronym title="Arthur T. Whitney, Robert D. Hodgkinson, and Laurie J. Gellatly, SAPL/HP interpreter (Sidney, Australia, 1985)">[5]</acronym>, 
+it requires
+no separate function part to support it, it also
+applies equally well to all derived functions. This
+simplifies the operator calculus. Moreover, the
+solution is in principle also extensible to the
+application of rank to user-defined functions,
+without requiring (as &ldquo;fill functions&rdquo; or
+independent function parts would) special
+provisions in function representation. In practice,
+this extension does depend on several other
+extensions, but these extensions can at least be
+argued for on their own merits: heterogeneous
+arrays, application of operators to defined
+functions, and creation of an environment in which
+nil can be a result accessible to users, are
+immediately apparent.</p>
+
+<p>However, this solution is also immediately useful,
+since for the primitive and derived-function cases
+these extensions are only necessary for the
+definition, being required neither for user-visible
+results nor, therefore, for implementation.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top nowrap>[1] &nbsp;</td><td>
+K.E. Iverson, 
+<a target=_parent href="http://www.jsoftware.com/papers/APLDictionary.htm"><i>A 
+Dictionary of the APL Language</i></a>, 
+I.P. Sharp Associates, DRAFT - 5,
+September 85.
+ </td></tr>
+<tr><td valign=top>[2]</td><td>
+A starting point for the interested reader to
+explore T. More&rsquo;s prolific work on 
+&ldquo;array theory&rdquo; might be his paper &ldquo;The Nested
+Rectangular Array as a Model of Data&rdquo;,
+APL79 Conference Proceedings (APL Quote
+Quad Vol. 9 No. 4, June 1979), part 1, p. 55, 
+and its rich set of references to earlier
+papers by the same author.
+ </td></tr>
+<tr><td valign=top>[3]</td><td>
+J.A. Brown, <i>The Principles of APL2</i> 
+(IBM Santa Teresa Technical Report TR 03.247,
+March 1984)
+ </td></tr>
+<tr><td valign=top>[4]</td><td>
+K.E. Iverson, R.H. Pesch, and J.H.
+Schueler, &ldquo;An Operator Calculus&rdquo;,
+<i>Conference Proceedings APL84</i> 
+(APL Quote Quad Vol. 14 No. 4, June 1984). p. 213
+ </td></tr>
+<tr><td valign=top>[5]</td><td>
+Arthur T. Whitney, Robert D. Hodgkinson,
+and Laurie J. Gellatly, SAPL/HP interpreter
+(Sidney, Australia, 1985)
+ </td></tr>
+<tr><td valign=top>[6]</td><td>
+T. More&rsquo;s work (see 
+<acronym title="T. More, “The Nested Rectangular Array as a Model of Data”, APL79 Conference Proceedings (APL Quote Quad Vol. 9 No. 4, June 1979), part 1, p. 55">[2]</acronym>)
+includes a similar
+concept called &ldquo;fault&rdquo;.<br>
+
+The notion of &ldquo;bottom&rdquo; in Backus&rsquo; work on
+functional programming is also similar. See J.
+Backus, &ldquo;Can Programming Be Liberated from
+the von Neumann Style? A Functional Style
+and its Algebra of Programs&rdquo;,
+<i>Communication of the ACM</i> Vol. 21, no. 8,
+August 1978, p. 613
+ </td></tr>
+<tr><td valign=top>[7]</td><td>
+R. Pesch, &ldquo;On the Question of Fill&rdquo;, 
+<i>APL Quote Quad</i> Vol. 15 No. 1, September 1984,
+p. 9
+ </td></tr>
+</table>
+
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared in the APL86 Conference Proceedings,
+APL Quote Quad, Volume 16, Number 4, 1986-07. </p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2013-02-28 22:05</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2013-03-02 21:05</font></td></tr>
+</table>
+
+</td></tr></table>
+<br>
+</body>
+</html>

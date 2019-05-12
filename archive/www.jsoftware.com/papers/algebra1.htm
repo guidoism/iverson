@@ -1,0 +1,917 @@
+﻿<html>
+<head>
+<title>Algebra as a Language</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+
+<br>
+<p align=center><font size=+2>Algebra as a Language</font><br><br>
+<b>Kenneth E. Iverson</b>
+<br>&nbsp;</p>
+
+<table align=center width=520><tr><td>
+
+
+
+<br><a name="A.1"></a>
+<p><font size=+1>A.1 &nbsp;Introduction</font></p>
+
+<p>Although few mathematicians would quarrel with the
+proposition that the algebraic notation taught 
+in high school is a language
+(and indeed the primary language of mathematics),
+yet little attention has been paid to the possible
+implications of such a view of algebra.
+This paper adopts this point of view to illuminate
+the inconsistencies and deficiencies of conventional
+notation and to explore the implications of analogies
+between the teaching of natural languages 
+and the teaching of algebra.
+Based on this analysis it presents a simple 
+and consistent algebraic notation, illustrates its power
+in the exposition of some familiar topics in algebra,
+and proposes a basis for an introductory course in algebra.
+Moreover, it shows how a computer can, if desired,
+be used in the teaching process, since the language
+proposed is directly usable on a computer terminal.</p>
+
+
+
+<br><a name="A.2"></a>
+<p><font size=+1>A.2 &nbsp;Arithmetic Notation</font></p>
+
+<p>We will first discuss the notation of arithmetic,
+i.e., that part of algebraic notation which does not involve
+the use of variables.  For example, the expression<tt> 3-4 </tt>
+and<tt> (3+4)-(5+6) </tt>are arithmetic expressions,
+but the expressions<tt> 3-X </tt>and<tt> (X+4)-(Y+6) </tt>are not.
+We will now explore the anomalies of arithmetic notation
+and the modifications needed to remove them.</p>
+
+<p><u>Functions and symbols for functions</u>.
+The importance of introducing the concept of &ldquo;function&rdquo;
+rather early in the mathematical curriculum is now widely recognized.
+Nevertheless, those functions which the student encounters first
+are usually referred to not as &ldquo;functions&rdquo; but as &ldquo;operators&rdquo;.
+For example, absolute value (<tt>|-3|</tt>) 
+and arithmetic negation (<tt>-3</tt>) are usually referred to as operators.
+In fact, most of the functions which are so fundamental
+and so widely used that they have been assigned some graphic symbol
+are commonly called operators 
+(particularly those functions such as plus and times 
+which apply to two arguments), 
+whereas the less common functions which are usually referred to by
+writing out their names (e.g. Sin, Cos, Factorial) are called functions.</p>
+
+<p>This practice of referring to the most common 
+and most elementary functions as operators is surely an unnecessary
+obstacle to the understanding of functions 
+when that term is first applied to the more complex functions encountered.
+For this reason the term &ldquo;function&rdquo; will be used here
+for all functions regardless of the choice of symbols used to represent them.</p>
+
+<p>The functions of elementary algebra are of two types,
+taking either one argument or two.
+Thus addition is a function of two arguments (denoted by<tt> X+Y</tt>)
+and negation is a function of one argument (denoted by<tt> -Y</tt>).
+It would seem both easy and reasonable to adopt one form
+for each type of function as suggested by the foregoing examples,
+that is, the symbol for a function of two arguments occurs 
+between its arguments, and the symbol for a function of one argument
+occurs before its argument.
+Conventional notation displays considerable anarchy on this point:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td><td valign=top>1.</td><td>&nbsp;</td><td valign=top>
+Certain functions are denoted by any one of several symbols
+which are supposed to be synonymous but which are, however,
+used in subtly different ways.
+For example, in conventional algebra<tt> X×Y </tt>and<tt> XY </tt>
+both denote the product of<tt> X </tt>and<tt> Y</tt>&nbsp;.<tt> </tt>However,
+one would write either<tt> 3×Y </tt>or<tt> 3X </tt>or<tt> X×3 </tt>or<tt> 3×4</tt>&nbsp;,<tt> </tt>but
+would not likely accept<tt> X3 </tt>as 
+an expression for<tt> X×3</tt>&nbsp;,<tt> </tt>nor<tt> 3 4 </tt>
+as an expression for<tt> 3×4</tt>&nbsp;.<tt> </tt>
+Similarly,<tt> X÷Y </tt>and<tt> X/Y </tt>are supposed to be synonymous,
+but in the sentence &ldquo;Reduce<tt> 8/6 </tt>to lowest terms&rdquo;,
+the symbol<tt> / </tt>does not stand for division.<br>&nbsp;</td></tr>
+
+<tr><td>&nbsp;</td><td valign=top>2.</td><td>&nbsp;</td><td valign=top>
+The power function has no symbol, and is denoted by position only,
+as in<tt> X<sup>N</sup></tt>&nbsp;.<tt> </tt>The
+same notation is often used to denote the<tt> N</tt>th element
+of a family or array<tt> X</tt>&nbsp;.<br>&nbsp;</td></tr>
+
+<tr><td>&nbsp;</td><td valign=top>3.</td><td>&nbsp;</td><td valign=top>
+The remainder function (that is, the integer remainder of
+dividing<tt> X </tt>into<tt> Y</tt>) is used very early in arithmetic
+(e.g., in factoring) but is commonly not recognized as a function on par 
+with addition, division, etc., nor assigned a symbol.
+Because the remainder function has no symbol and is commonly
+evaluated by the method of long division, 
+there is a tendency to confuse it with division.
+This confusion is compounded by the fact that the term
+&ldquo;quotient&rdquo; itself is ambiguous,
+sometimes meaning the quotient and sometimes the integer part
+of the quotient.<br>&nbsp;</td></tr>
+
+<tr><td>&nbsp;</td><td valign=top>4.</td><td>&nbsp;</td><td valign=top>
+The symbol for a function of one argument sometimes occurs 
+before the argument (as in<tt> -4</tt>) but may also occur
+after it (as in<tt> 4! </tt>for factorial<tt> 4</tt>) 
+or on both sides (as in<tt> |X| </tt>for absolute value of<tt> X</tt>).<br>&nbsp;</td></tr>
+</table>
+
+<p>Table A.1 shows a set of symbols which can be used 
+in a simple consistent manner to denote the functions 
+mentioned thus far,
+as well as a few other very useful basic functions 
+such as maximum, minimum, integer part, reciprocal, and exponential.
+The table shows two uses for each symbol, one to denote
+a <u>monadic</u> function (i.e. a function of one argument),
+and one to denote a <u>dyadic</u> function
+(i.e. a function of two arguments).
+This is simply a systematic exploitation of the example set 
+by the familiar use of the minus sign,
+either as a dyadic function (i.e., subtraction as in<tt> 4-3</tt>)
+or as a monadic function (i.e., negation as in<tt> -3</tt>).
+No function symbol is permitted to be elided;
+for example,<tt> X×Y </tt>may not be written as<tt> XY</tt>&nbsp;.</p>
+
+</td></tr></table>
+<br>
+
+
+<table border=1 cellspacing=0 cellpadding=5 align=center>
+<tr><td align=center colspan=2>Monadic form<tt> f b</tt></td><td align=center><tt>f</tt></td><td align=center colspan=2>Dyadic form<tt> a f b</tt></td></tr>
+<tr>
+<td><table>
+<tr><td>Definition or example</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>+3 </tt>&harr;<tt> 0+3</tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>-3 </tt>&harr;<tt> 0-3</tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>×3 </tt>&harr;<tt> (3>0)-(3<0)</tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>÷3 </tt>&harr;<tt> 1÷3</tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>⌈ 3.14 </tt>&harr;<tt> &nbsp;4 </tt></td></tr>
+<tr><td><tt>⌈¯3.14 </tt>&harr;<tt> ¯3 </tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>⌊ 3.14 </tt>&harr;<tt> &nbsp;3 </tt></td></tr>
+<tr><td><tt>⌊¯3.14 </tt>&harr;<tt> ¯4 </tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td nowrap><tt>*3 </tt>&harr;<tt> (2.71828...)*3 </tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>⍟*5 </tt>&harr;<tt> 5 </tt>&harr;<tt>*⍟5 </tt></td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>|¯3.14 </tt>&harr;<tt> 3.14</tt></td></tr>
+</table></td>
+
+<td><table>
+<tr><td>Name</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Plus</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Negative</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Signum</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Reciprocal</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Ceiling</td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Floor  </td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Exponential</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Natural</td></tr><tr><td>logarithm</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Magnitude</td></tr>
+</table></td>
+
+<td><table>
+<tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;<tt>+</tt>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;<tt>-</tt>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;<tt>×</tt>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;<tt>÷</tt>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;<tt>⌈</tt>&nbsp;</td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;<tt>⌊</tt>&nbsp;</td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;<tt>*</tt>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;<tt>⍟</tt>&nbsp;</td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;<tt>|</tt>&nbsp;</td></tr>
+</table></td>
+
+<td><table>
+<tr><td>Name</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Plus</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Minus</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Times</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Divide</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Maximum</td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Minimum</td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Power</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Logarithm</td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td>Remainder</td></tr>
+</table></td>
+
+<td><table>
+<tr><td>Definition or example</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>2+3.2 </tt>&harr;<tt> 5.2</tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>2-3.2 </tt>&harr;<tt> ¯1.2</tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>2×3.2 </tt>&harr;<tt> 6.4</tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>2÷3.2 </tt>&harr;<tt> 0.625</tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>3⌈7</tt>&harr;<tt> 7</tt></td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>3⌊7</tt>&harr;<tt> 3</tt></td></tr><tr><td>&nbsp;</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>2*3</tt>&harr;<tt> 8</tt></td></tr><tr><td>&nbsp;</td></tr>
+<tr><td nowrap><tt>10⍟3 </tt>&harr; Log 3 base 10</td></tr>
+ <tr><td><tt>10⍟3 </tt>&harr;<tt> (⍟3)÷⍟10</td></tr><tr><td>&nbsp;</td></tr>
+<tr><td><tt>3|8 </tt>&harr;<tt> 2</tt></td></tr>
+</table></td>
+</tr></table>
+
+<p align=center>Table A.1</p>
+
+
+
+<table align=center width=520><tr><td>
+
+<p>A little experimentation with the notation of Table A.1 will show
+that it can be used to express clearly a number of matters
+which are awkward of impossible to express in conventional notation.
+For example,<tt> X÷Y </tt>is the quotient of<tt> X </tt>divided 
+by<tt> Y</tt>&nbsp;;<tt> </tt>either<tt> ⌊(X÷Y) </tt>or<tt> ((X-(Y|X))÷Y </tt>
+yield the integer part of the quotient of<tt> X </tt>
+divided by<tt> Y</tt>&nbsp;;<tt> </tt>
+and<tt> X⌈(-X) </tt>is equivalent to<tt> |X</tt>&nbsp;.</p>
+
+<p>In conventional notation the 
+symbols<tt> &lt;</tt>&nbsp;,<tt> ≤</tt>&nbsp;,<tt> =</tt>&nbsp;,<tt> ≥</tt>&nbsp;,<tt> &gt;</tt>&nbsp;,<tt> </tt>
+and<tt> ≠ </tt>are used to state relations among quantities;
+for example, the expression<tt> 3&lt;4 </tt>asserts 
+that<tt> 3 </tt><u>is</u> less than<tt> 4</tt>&nbsp;.<tt> </tt>
+It is more useful to employ them as symbols for dyadic functions defined
+to yield the value<tt> 1 </tt>if the indicated relation actually holds,
+and the value zero if it does not.
+Thus<tt> 3≤4 </tt>yields the value<tt> 1</tt>&nbsp;,<tt> </tt>
+and<tt> 5+(3≤4) </tt>yields the value<tt> 6</tt>&nbsp;.</p>
+
+<p><u>Arrays</u>.
+The ability to refer to collections or arrays of items 
+is an important element in any natural language 
+and is equally important in mathematics.
+The notation of vector algebra embodies the use of arrays
+(vectors, matrices, 3-dimensional arrays; etc.)
+but in a manner which is difficult to learn 
+and limited primarily to the treatment of linear functions.
+Arrays are not normally included in elementary algebra,
+probably because they are thought to be difficult 
+to learn and not relevant to elementary topics.</p>
+
+<p>A vector (that is, a 1-dimensional array) can be represented
+by a list of its elements (e.g.,<tt> 1&nbsp;3&nbsp;5&nbsp;7</tt>)
+and all functions can be assumed to be applied element-by-element.
+For example:</p>
+
+<p><tt>&nbsp; &nbsp; &nbsp; 1 2 3 4 &nbsp;×&nbsp;  4 3 2 1 &nbsp; &nbsp;</tt>     produces<br>
+<tt>4 6 6 4</tt></p>
+
+<p>Similarly:</p>
+<pre>
+      1 2 3 4 + 4 3 2 1
+5 5 5 5
+      ! 1 2 3 4
+1 2 6 24
+      1 2 3 4 * 2
+1 4 9 16
+      2 * 1 2 3 4
+2 4 8 16
+</pre>
+
+<p>In addition to applying a function to each element of an array,
+it is also necessary to be able to apply some specified function
+to the collection itself.
+For example, &ldquo;Take the sum of all elements&rdquo;,
+or &ldquo;Take the product of all elements&rdquo;, or
+&ldquo;Take the maximum of all elements&rdquo;.
+This can be denoted as follows:</p>
+
+<pre>
+      +/2 5 3 2
+12
+      ×/2 5 3 2
+60
+      ⌈/2 5 3 2
+5
+</pre>
+
+<p>The rules for using such vectors are simple and obvious
+from the foregoing examples.
+Vectors are relevant to elementary mathematics in a variety of ways.
+For example:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td valign=top>They can be used
+(as in the foregoing examples) to display the patterns produced
+by various functions when applied to certain patterns of arguments.<br>&nbsp;</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td valign=top>They can be used
+to represent points in coordinate geometry.
+Thus<tt> 5&nbsp;7&nbsp;19 </tt>and<tt> 2&nbsp;3&nbsp;7 </tt>represent two 
+points,<tt> 5&nbsp;7&nbsp;19 - 2&nbsp;3&nbsp;7 </tt>yields<tt> 3&nbsp;4&nbsp;12</tt>&nbsp;,<tt> </tt>the
+displacement between them, 
+and<tt> (+/(5&nbsp;7&nbsp;19 - 2&nbsp;3&nbsp;7)*2)*.5 </tt>yields<tt> 13</tt>&nbsp;,<tt> </tt>the
+distance between them.<br>&nbsp;</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td valign=top>They can be used
+to represent rational numbers. Thus if<tt> 3&nbsp;4 </tt>represents the fraction three-fourths,
+then<tt> 3&nbsp;4×5&nbsp;6 </tt>yields<tt> 15&nbsp;24</tt>&nbsp;, <tt> </tt>the product
+of the fractions represented 
+by<tt> 3&nbsp;4 </tt>and<tt> 5&nbsp;6</tt>&nbsp;.<tt> </tt>Moreover,<tt> ÷/3&nbsp;4 </tt>and<tt> ÷/5&nbsp;6 </tt>and<tt> ÷/15&nbsp;24 </tt>yield
+the actual numbers represented.<br>&nbsp;</td></tr>  
+<tr><td valign=top>4.</td><td>&nbsp;</td><td valign=top>A polynomial can be represented by its vector
+of coefficients and vector of exponents.
+For example, the polynomial with coefficients<tt> 3 1 2 4 </tt>and exponents<tt> 0 1 2 3 </tt>can
+be evaluated for the argument<tt> 5 </tt>by the following expression:
+<pre>
+      +/3 1 2 4 × 5 * 0 1 2 3
+558
+</pre>
+</td></tr>  
+</table>
+
+
+<p><u>Constants</u>.
+Conventional notation provides means for writing any positive constant
+(e.g.,<tt> 17 </tt>or<tt> 3.14</tt>) but there is no distinct notation
+for negative constants, since the symbol<tt> - </tt>occurring in a number
+like<tt> -35 </tt>is indistinguishable from the symbol for the negation function.
+Thus negative thirty-five is written as an <u>expression</u>,
+which is much as if we neglected to have symbols for five and zero
+because expressions for them could be written in a variety of ways
+such as<tt> 8-3 </tt>and<tt> 8-8</tt>&nbsp;.</p>
+
+<p>It seems advisable to follow Beberman 
+<acronym title="Beberman, M., and H.E. Vaughan, 
+High School Mathematics Course 1, Heath, 1964.">[1]</acronym>
+in using a raised minus sign to denote negative numbers.  
+For example:</p>
+
+<pre>
+      3 - 5 4 3 2 1
+¯2 ¯1 0 1 2
+</pre>
+
+<p>Conventional notation also provides no convenient way to represent numbers
+which are easily expressed in expressions of the 
+form<tt> 2.14×10<sup>8</sup> </tt>or<tt> 3.265×10<sup>¯9</sup></tt>&nbsp;.<tt> </tt>A
+useful practice widely used in computer languages is 
+to replace the symbols<tt> ×10 </tt>by the symbol<tt> E </tt>(for <u>exponent</u>)
+as follows:<tt> 2.14E8 </tt>and<tt> 3.265E¯9</tt>&nbsp;.</p>
+
+<p><u>Order of execution</u>. 
+The order of execution in an algebraic expression is commonly specified by parentheses.
+The rules for parentheses are very simple,
+but the rules which apply in the absence of parentheses are complex and chaotic.
+They are based primarily on a hierarchy of functions
+(e.g., the power function is executed before multiplication, 
+which is executed before addition) which has apparently arisen
+because of its convenience in writing polynomials.</p>
+
+<p>Viewed as a matter of language,
+the only purpose of such rules is the potential economy 
+in the use of parentheses and the consequent gain 
+in readability of complex expressions.
+Economy and simplicity can be achieved by the following rule:
+parentheses are obeyed as usual 
+and otherwise expressions are evaluated from right to left
+with all functions being treated equally.
+The advantages of this rule and the complex and ambiguity
+of conventional rules are discussed in Berry 
+<acronym title="Berry, P.C., APL\360 Primer, IBM Corp., 1969.">[2]</acronym>, 
+page 27 and in Iverson 
+<acronym title="Iverson, K.E., Elementary Functions: An Algorithmic Treatment, 
+Science Research Associates, 1966.">[3]</acronym>, 
+Appendix A.
+Even polynomials can be conveniently written without parentheses
+if use is made of vectors.
+For example, the polynomial in<tt> X </tt>with 
+coefficients<tt> 3&nbsp;1&nbsp;2&nbsp;4 </tt>can be written
+without parentheses 
+as<tt> +/3&nbsp;1&nbsp;2&nbsp;4 × X * 0&nbsp;1&nbsp;2&nbsp;3</tt>&nbsp;.<tt> </tt>Moreover,
+Horner&rsquo;s expression for the efficient evaluation of this same
+polynomial can also be written without parentheses as follows:</p>
+<pre>
+      3+X×1+X×2+X×4
+</pre>
+
+
+<p><u>Analogies with natural language</u>.
+The arithmetic expression<tt> 3×4 </tt>can be viewed as an order
+to <u>do</u> something, that is, 
+multiply the arguments<tt> 3 </tt>and<tt> 4</tt>&nbsp;.<tt> </tt>Similarly,
+a more complex expression can be viewed as an order to perform
+a number of operations in a specified order.
+In this sense, an arithmetic expression is an imperative sentence,
+and a function corresponds to an imperative verb in natural language.
+Indeed, the word &ldquo;function&rdquo; derives from the Latin verb
+&ldquo;fungi&rdquo; meaning &ldquo;to perform&rdquo;.</p>
+
+<p>This view of a function does not conflict with the usual
+mathematical definition as a specified correspondence
+between the elements of domain and range,
+but rather supplements this static view with a dynamic view
+of a function as that which <u>produces</u> the corresponding value
+for any specified element of the domain.</p>
+
+<p>If functions correspond to imperative verbs,
+then their arguments (the things upon which they act)
+correspond to nouns.
+In fact, the word &ldquo;argument&rdquo; has (or at least had)
+the meaning topic, theme, or subject.
+Moreover, the positive integers, being the most concrete of arithmetical objects,
+may be said to correspond to proper nouns.</p>
+
+<p>What are the roles of negative numbers, rational numbers,
+irrational numbers, and complex numbers?
+The subtraction function, introduced as an inverse to addition,
+yields positive integers in some cases but not in others,
+and negative numbers are introduced 
+to refer to the results in these cases.
+In other words, a negative number refers to a process
+or the result of a process, and is therefore analogous to an abstract noun.
+For example, the abstract noun &ldquo;justice&rdquo;
+refers not to some concrete object
+(examples of which one may point to) but to a process or result of a process.
+Similarly, rational and complex numbers refer to the results of processes;
+division, and finding the zeros of polynomials, respectively.</p>
+
+
+
+<br><a name="A.3"></a>
+<p><font size=+1>A.3 &nbsp;Algebraic Notation</font></p>
+
+<p><u>Names</u>.
+An expression such as<tt> 3×X </tt>can be evaluated only
+if the variable<tt> X </tt>has been assigned an actual value.
+In one sense, therefore, a variable corresponds to a <u>pronoun</u>
+whose referent must be made clear before any sentence including it
+can be fully understood.
+In English the referent may be made clear by an explicit statement,
+but is more often made clear by indirection
+(e.g., &ldquo;See the door.  Close it.&rdquo;), 
+or by context.</p>
+
+<p>In conventional algebra, the value assigned to a variable name
+is usually made clear informally by some statement such as
+&ldquo;Let<tt> X </tt>have the value<tt> 6</tt> &rdquo;
+or &ldquo;Let<tt> X=6</tt> &rdquo;.
+Since the equal symbol (that is,<tt> '='</tt>) is also used in other ways,
+it is better to avoid its use for this purpose 
+and to use a distinct symbol as follows:</p>
+
+<pre>
+      X←6
+      Y←3×4
+      X+Y
+18
+      (X-3)×(X-5)
+3
+</pre>
+
+<p><u>Assigning names to expressions</u>.
+In the foregoing example, the expression<tt> (X-3)×(X-5) </tt>was written
+as an instruction to evaluate the expression 
+for a particular value already assigned to<tt> X</tt>&nbsp;.<tt> </tt>
+One also writes the same expression for the quite different notation
+&ldquo;Consider the expression<tt> (X-3)×(X-5) </tt>for any value
+which might later be assigned to the argument<tt> X</tt>&nbsp;.&rdquo;
+This is a distinct notion which should be represented by distinct notation.
+The idea is to be able to refer to the expression
+and this can be done by assigning a name to it.
+The following notation serves:</p>
+
+<pre>
+      ∇ Z ← G X
+      Z←(X-3)×(X-5)∇
+</pre>
+
+<p>The<tt> ∇</tt>&rsquo;s indicate that the symbols between them
+define a function;
+the first line shows that the name of the function is<tt> G</tt>&nbsp;.<tt> </tt>The
+names<tt> X </tt>and<tt> Z </tt>are dummy names standing 
+for the argument and result, and the second line shows how they are related.</p>
+
+<p>Following this definition, the name<tt> G </tt>may be used as a function.
+For example:</p>
+
+<pre>
+      G 6
+3
+      G 1 2 3 4 5 6 7
+8 3 0 ¯1 0 3 8
+</pre>
+
+<p>Iterative functions can be defined with equal ease 
+as shown in Chapter 12.</p>
+
+<p><u>Form of names</u>.
+If the variables occurring in algebraic sentences
+are viewed simply as names, it seems reasonable to employ names
+with some mnemonic significance as illustrated by the following sequence:</p>
+
+<pre>
+      LENGTH←6
+      WIDTH←5
+      AREA←LENGTH×WIDTH
+      HEIGHT←4
+      VOLUME←AREA×HEIGHT
+</pre>
+
+<p>This is not done in conventional notation,
+apparently because it is ruled out by the convention that
+the multiplication sign may be elided; that is,<tt> AREA </tt>
+cannot be used as a name because it would be interpreted
+as<tt> A×R×E×A</tt>&nbsp;.</p>
+
+<p>This same convention leads to other anomalies as well,
+some of which were discussed in the section on arithmetic notation.
+The proposal made there (i.e., that the multiplication sign
+cannot be elided) will permit variable names of any length.</p>
+
+
+
+<br><a name="A.4"></a>
+<p><font size=+1>A.4 &nbsp;Analogies with the Teaching of Natural Language</font></p>
+
+<p>If one views the teaching of algebra as the teaching of a language,
+it appears remarkable how little attention is given 
+to the reading and writing of algebraic sentences,
+and how much attention is given to identities, that is,
+to the analysis of sentences with a view to determining
+other equivalent sentences;
+e.g., &ldquo;Simplify the expression<tt> (X-4) × (X+4)</tt>&nbsp;.&rdquo;
+It is possible that this emphasis accounts 
+for much of the difficulty in teaching algebra,
+and that the teaching and learning processes in natural languages
+may suggest a more effective approach.</p>
+
+<p>In the learning of a native language one can distinguish 
+the following major phases:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+An informal phase, in which the child learns to communicate in a combination
+of gestures, single words, etc., but with no attempt to form grammatical sentences.
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+A formal phase, in which the child learns to communicate in formal sentences.
+This phase is essential because it is difficult or impossible to communicate
+complex matters with precision 
+without imposing some formal structure on the language.
+<br>&nbsp;</td></tr>
+
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+An analytics phase, in which one learns to analyze sentences
+with a view to determining equivalent
+(and perhaps &ldquo;simpler&rdquo; or &ldquo;more effective&rdquo;) sentences.
+The extreme case of such analysis is Aristotelian Logic,
+which attempts a formal analysis of certain classes of sentences.
+More practical everyday cases occur 
+every time one carefully reads a composition
+and suggests alternative sentences which convey the same meaning
+in a briefer or simpler form.
+</td></tr>
+</table>
+
+<p>The same phases can be distinguished in the teaching of algebraic notation:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>An informal phase
+in which one issues an instruction to add<tt> 2 </tt>and<tt> 3 </tt>
+in any way which will be understood.  For example:
+<pre>
+      2 + 3               Add 2 and 3
+
+          2                   2
+          3                  +3
+        ---                 ---
+
+      Add two and three
+
+      Add // and ///
+</pre>
+<p>The form of the expression is unimportant, 
+provided that the instruction is understood.<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>A formal phase
+in which one emphasizes proper sentence structure and would not
+accept expressions such as
+<pre>
+                 2
+           6 ×   3          or    6 × (add two and three)
+               ---
+</pre>
+
+<p>in lieu of<tt> 6×(2+3)</tt>&nbsp;.<tt> </tt>Again, adherence
+to certain structural rules is necessary to permit the
+precise communication of complex matters.<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>An
+analytic phrase in which one learns to analyze sentences
+with a view to establishing certain relations (usually identity)
+among them.
+Thus one learns not only that<tt> 3+4 </tt> is equal to<tt> 4+3 </tt>
+but that the sentences<tt> X+Y </tt>and<tt> Y+X </tt>are equivalent,
+that is, yield the same result whatever the meanings are assigned
+to the pronouns<tt> X </tt>and<tt> Y</tt>&nbsp;.</td></tr>
+</table>
+
+<p>In learning a native language, a child spends many years
+in the informal and formal phrases (both in and out of school)
+before facing the analytic phrase.
+By this time she has easy familiarity with the purpose of a language
+and the meanings of sentences which might be analyzed and transformed.
+The situation is quite different in most conventional courses in algebra
+&mdash; very little time is spent in the formal phase
+(reading, writing and &ldquo;understanding&rdquo; formal algebraic sentences) 
+before attacking identities such as commutativity, associativity,
+distributivity, etc.).
+Indeed, students often do not realize that they might quickly
+check their work in &ldquo;simplification&rdquo; by substituting
+certain values for the variables occurring in the original
+and derived expressions and comparing the evaluated results
+to see if the expressions have the same &ldquo;meaning&rdquo;,
+at least for the chosen values of the variables.</p>
+
+<p>It is interesting to speculate on what would happen
+if a native language were taught in an analogous way,
+that is, if children were forced to analyze sentences at a stage
+in their development when their grasp of the purpose and meaning
+of sentences were as shaky as the algebra student&rsquo;s
+grasp of the purpose and meaning of algebraic sentences.
+Perhaps they would fail to learn the converse,
+just as many students fail to learn the much simpler task of reading.</p>
+
+<p>Another interesting aspect of learning the non-analytic aspects
+of a native language is that much (if not most) of the motivation
+comes not from an interest in language,
+but from the intrinsic interest of the material 
+(in children&rsquo;s stories, everyday dialogue, etc.)
+for which it is used.
+it is doubtful that the same is true in algebra &mdash;
+ruling out statements of an analytic nature (identities, etc.),
+how many &ldquo;interesting&rdquo; algebraic sentences
+does a student encounter?</p>
+
+<p>The use of arrays can open up the possibility 
+of much more interesting algebraic sentences.
+This can apply both to sentences to be read
+(that is, evaluated) and written by students.
+For example, the statements:</p>
+
+<pre>
+      2*1 2 3 4 5
+      2×1 2 3 4 5
+      2÷1 2 3 4 5
+      1 2 3 4 5÷2
+      1 2 3 4 5*2
+      1 2 3 4 5×5 4 3 2 1
+</pre>
+
+<p>produce interesting patterns
+and therefore have more intrinsic interest than similar expressions
+involving only single quantities.
+For example, the last expression can be construed as yielding
+a set of possible areas for a rectangle 
+having a fixed perimeter of<tt> 12</tt>&nbsp;.</p>
+
+<p>More interesting possibilities are opened up 
+by certain simple extensions of the use of arrays.
+One example of such extensions will be treated here.
+This extension allows one to apply any dyadic function 
+to two vectors<tt> A </tt>and<tt> B </tt>so as to obtain
+not simply the element-by-element product produced by the
+expression<tt> A×B </tt>but a table of all products
+produced by pairing each element of<tt> A </tt>
+with each element of<tt> B</tt>&nbsp;.<tt> </tt>For example:</p>
+
+<pre>
+      A←1 2 3
+      B←2 3 5 7
+
+      A&ordm;.×B                A&ordm;.+B              A&ordm;.*B 
+   2 3  5  7            3 4 6  8           1  1   1    1 
+   4 6 10 14            4 5 7  9           4  8  32  128 
+   6 9 15 21            5 6 8 10           9 27 243 2187 
+</pre>
+
+<p>If<tt> S←1 2 3 4 5 6 7</tt>&nbsp;,<tt> </tt>then the
+following expressions yield an addition table, a multiplication table,
+a subtraction table, a maximum table, and &ldquo;equal&rdquo; table,
+and a &ldquo;greater than or equal&rdquo; table:
+
+<pre>
+      S&ordm;.+S                         S&ordm;.⌈S
+   2 3  4  5  6  7  8            1 2 3 4 5 6 7 
+   3 4  5  6  7  8  9            2 2 3 4 5 6 7 
+   4 5  6  7  8  9 10            3 3 3 4 5 6 7 
+   5 6  7  8  9 10 11            4 4 4 4 5 6 7 
+   6 7  8  9 10 11 12            5 5 5 5 5 6 7 
+   7 8  9 10 11 12 13            6 6 6 6 6 6 7 
+   8 9 10 11 12 13 14            7 7 7 7 7 7 7 
+
+      S&ordm;.×S                         S&ordm;.=S
+   1  2  3  4  5  6  7           1 0 0 0 0 0 0 
+   2  4  6  8 10 12 14           0 1 0 0 0 0 0 
+   3  6  9 12 15 18 21           0 0 1 0 0 0 0 
+   4  8 12 16 20 24 28           0 0 0 1 0 0 0 
+   5 10 15 20 25 30 35           0 0 0 0 1 0 0 
+   6 12 18 24 30 36 42           0 0 0 0 0 1 0 
+   7 14 21 28 35 42 49           0 0 0 0 0 0 1 
+
+      S&ordm;.-S                         S&ordm;.≥S
+   0 ¯1 ¯2 ¯3 ¯4 ¯5 ¯6           1 0 0 0 0 0 0 
+   1  0 ¯1 ¯2 ¯3 ¯4 ¯5           1 1 0 0 0 0 0 
+   2  1  0 ¯1 ¯2 ¯3 ¯4           1 1 1 0 0 0 0 
+   3  2  1  0 ¯1 ¯2 ¯3           1 1 1 1 0 0 0 
+   4  3  2  1  0 ¯1 ¯2           1 1 1 1 1 0 0 
+   5  4  3  2  1  0 ¯1           1 1 1 1 1 1 0 
+   6  5  4  3  2  1  0           1 1 1 1 1 1 1 
+</pre>
+
+<p>Moreover, the graph of a function can be produced as
+an &ldquo;equal&rdquo; table as follows.  
+First recall the function<tt> G </tt>defined earlier:</p>
+
+<pre>
+      ∇Z←G X
+      Z←(X-3)×(X-5)∇
+
+      G S
+8 3 0 ¯1 0 3 8
+</pre>
+
+<p>The range of the function for this set of arguments is
+from<tt> 8 </tt>down to<tt> ¯1</tt>&nbsp;,<tt> </tt>and the elements
+of this range are all contained in the following vector:</p>
+
+<pre>
+      R←8 7 6 5 4 3 2 1 0 ¯1
+</pre>
+
+<p>Consequently, the &ldquo;equal&rdquo; table<tt> R&ordm;.=G S </tt>
+produces a rough graph of the function (represented by <tt>1</tt>&rsquo;s) as follows:</p>
+
+<pre>
+      R&ordm;.=G S
+1 0 0 0 0 0 1
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 1 0 0 0 1 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 1 0 1 0 0
+0 0 0 1 0 0 0
+</pre>
+
+
+<br><a name="A.5"></a>
+<p><font size=+1>A.5 &nbsp;A Program for Elementary Algebra</font></p>
+
+<p>The following analysis suggests the development 
+of an algebra curriculum with the following characteristics:</p>
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td><td valign=top>1.</td><td>&nbsp;</td><td valign=top>
+The notation used is unambiguous, with simple and consistent rules of syntax,
+and with provision for the simple and direct use of arrays.
+Moreover, the notation is not taught as a separate matter,
+but is introduced as needed in conjunction with the concepts represented.
+</td></tr>
+
+<tr><td>&nbsp;</td><td valign=top>2.</td><td>&nbsp;</td><td valign=top>
+Heavy use is made of arrays to display mathematical properties
+of functions in terms of patterns observed in vectors and matrices (tables),
+and the make possible the reading, writing, and evaluation
+of a host of interesting algebraic sentences before approaching
+the analysis of sentences and the concomitant development of identities.</p>
+</td></tr>
+</table>
+
+<p>Such an approach has been adopted in the present text,
+where it has been carried through as far as the treatment
+of polynomials and of linear functions and linear equations.
+The extension to further work in polynomials, 
+to slopes and derivatives, and to the circular and hyperbolic functions
+is carried forward in Chapters 4-8 of Iverson 
+<acronym title="Iverson, K.E., Elementary Functions: An Algorithmic Treatment, 
+Science Research Associates, 1966.">[3]</acronym>.</p>
+
+<p>It must be emphasized that the proposed notation,
+though simple, is not limited in application to elementary algebra.
+A glance at the bibliography of Rault and Demars 
+<acronym title="Rault., J.C., and G. Demars, “Is APL Epidemic? 
+Or a study of its growth through an extended bibliography”, 
+Fourth International APL User’s Conference, 
+Board of Education of the City of Atlanta, Georgia, 1972.">[4]</acronym> 
+will give some idea of the wide range of applicability.</p>
+
+<p><u>The role of the computer</u>.
+Because the proposed notation is simple and systematic
+it can be executed by automatic computers 
+and has been made available on a number of time-shared
+computer terminal systems.
+The most widely used of these 
+is described in Falkoff and Iverson
+<acronym title="Falkoff, A.D., and K.E. Iverson, APL Language, 
+Form Number GC26-3847, IBM Corp.">[5]</acronym>.
+It is important to note that the notation is executed directly,
+and the user need learn nothing about the computer itself.
+In fact, each of the examples in this appendix are shown
+exactly as they would be typed on a computer terminal keyboard.</p>
+
+<p>The computer can obviously be useful in cases 
+where a good deal of tedious computation is required,
+but it can be useful in other ways as well.
+For example, it can be used by a student to explore
+the behaviour of functions and discover their properties.
+To do this a student will simply enter expressions 
+which apply the functions to various arguments.
+If the terminal is equipped with a display device,
+then such exploration can even be done collectively
+by an entire class.
+This and other ways of using the computer 
+are discussed by Berry et al 
+<acronym title="Berry, P.C., A.D. Falkoff, and K.E. Iverson, 
+“Using the Computer to Compute: A Direct but Neglected Approach 
+to Teaching Mathematics”, IFIP World Conference on Computer Education, 
+Amsterdam, August 24-28, 1970.">[6]</acronym> 
+and in Appendix C. </p>
+
+
+
+<br><a name="Ref"></a>
+<p><font size=+1>References</font></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Beberman, M., and H. E. Vaughan, <u>High School Mathematics Course 1</u>, 
+Heath,  1964.
+ </td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+Berry, P. C.,
+<a target=_parent href="http://keiapl.org/archive/C20-1702-0_apl360primer1969.pdf"><u>APL\360 Primer</u></a>, 
+IBM Corp., 1969.
+ </td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+Iverson, K. E., 
+<a target=_parent href="http://www.jsoftware.com/jwiki/Doc/Elementary_Functions_An_Algorithmic_Treatment"><u>Elementary
+Functions: An Algorithmic Treatment</u></a>, 
+Science Research Associates, 1966.
+ </td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+Rault., J. C., and G. Demars, &ldquo;Is APL Epidemic? Or a study of its growth
+through an extended bibliography&rdquo;,
+<u>Fourth International APL User&rsquo;s Conference</u>,
+Board of Education of the City of Atlanta, Georgia, 1972.
+ </td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+Falkoff, A. D., and K. E. Iverson, 
+<u>APL Language</u>, Form Number GC26-3847, IBM Corp.
+ </td></tr>
+<tr><td valign=top>6.</td><td>&nbsp;</td><td>
+Berry, P. C., A. D. Falkoff, and K. E. Iverson, 
+&ldquo;Using the Computer to Compute:
+A Direct but Neglected Approach to Teaching Mathematics&rdquo;,
+<u>IFIP World Conference on Computer Education</u>,
+Amsterdam, August 24-28, 1970.
+ </td></tr>
+<tr><td valign=top>7.</td><td>&nbsp;</td><td>
+Iverson, K.E., <u>Introducing APL to Teachers</u>,
+IBM Philadelphia Scientific Center Technical Report No. 320-3014,
+IBM Corp., 1972
+ </td></tr>
+<tr><td valign=top>8.</td><td>&nbsp;</td><td>
+Berry, P.C., G. Bartoli, C. Dell&rsquo;Aquila and V. Spadavecchia,
+<u>APL and Insight: Using Functions to Represent Concepts in Teaching</u>,
+IBM Philadelphia Scientific Center Technical Report No. 320-3009,
+IBM Corp., December 1971.
+ </td></tr>
+<tr><td valign=top>9.</td><td>&nbsp;</td><td>
+Iverson, K. E., <u>The Use of APL in Teaching</u>,
+IBM Publication No. G320-0996, IBM Corp., 1969.
+ </td></tr>
+</table>
+<br>
+
+
+
+<br><hr>
+
+<font size=-1>
+<p>First published as Appendix A, 
+<a href="http://www.jsoftware.com/jwiki/Doc/Algebra_An_Algorithmic_Treatment"><i>Algebra: 
+An Algorithmic Treatment</i></a>, Addison-Wesley, 1972;
+preliminary edition entitled <i>Elementary Algebra</i>, IBM, 1971.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2009-05-27 10:05</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2014-05-28 14:15</font></td></tr>
+</table>
+
+</td></tr></table>
+<br><br><br><br><br><br>
+</body>
+</html>

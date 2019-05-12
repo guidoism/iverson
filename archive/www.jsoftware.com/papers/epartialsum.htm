@@ -1,0 +1,196 @@
+﻿<html>
+<head><head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>The Zeros of the Partial Sums of e^z</title>
+<link href="jdoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>The Zeros of the Partial Sums of <i>e<sup>z</sup></i></font><br><br>
+<b>Roger Hui</b>
+<br>&nbsp;</p>
+
+
+<p>Reference 26 of Ken Iverson&rsquo;s 
+<a href="http://www.jsoftware.com/papers/MSLDE.htm">Ph.D. thesis</a> 
+<acronym title=
+"Iverson, K.E., Machine Solutions of Linear Differential Equations — Applications to a Dynamic Economic Model, Doctoral Thesis, Harvard University, 1954-01.">[0]</a>
+was:</p>
+
+<table><tr><td width=28>&nbsp;</td><td>
+Iverson, K.E., &ldquo;The Zeros of the Partial Sums of <i>e<sup>z</sup></i> &rdquo;, 
+<i>Mathematical Tables and Other Aids to Computation</i> 7 (1953).
+</td></tr></table>
+
+<p>I quickly found a 
+<a href="http://ftp.math.utah.edu/pub//tex/bib/mathcomp1950.html#Iverson:1953:ZPS">citation</a> 
+<acronym title=
+"http://ftp.math.utah.edu/pub//tex/bib/mathcomp1950.html#Iverson:1953:ZPS">[1]</acronym>
+on the internet:</p>
+
+<pre>
+@Article{Iverson:1953:ZPS,
+  author =    "K. E. Iverson",
+  title =     "The Zeros of the Partial Sums of $e^z$",
+  journal =   j-MATH-TABLES-OTHER-AIDS-COMPUT,
+  volume =    "7",
+  number =    "43",
+  pages =     "165--168",
+  month =     jul,
+  year =      "1953",
+  CODEN =     "MTTCAS",
+  ISSN =      "0891-6837",
+  bibdate =   "Tue Oct 13 08:06:19 MDT 1998",
+  bibsource = "http://www.math.utah.edu/pub/tex/bib/
+                  mathcomp1950.bib; JSTOR database",
+  acknowledgement = ack-nhfb,
+  fjournal =  "Mathematical Tables and Other Aids 
+                  to Computation",
+}
+</pre>
+
+<p>From thence a helpful J Forum member provided a  
+<a href="http://www.ams.org/journals/mcom/1953-07-043/S0025-5718-1953-0057013-0/S0025-5718-1953-0057013-0.pdf">link 
+</a> to the actual text 
+<acronym title=
+"http://www.ams.org/journals/mcom/1953-07-043/ S0025-5718-1953-0057013-0/S0025-5718-1953-0057013-0.pdf">[2]</acronym>.
+This is the earliest Ken Iverson publication 
+I have found so far.
+The paper began thus:</p>
+
+<table><tr><td width=28 nowrap>&nbsp;</td><td>
+<p>The location of the zeros of certain entire functions
+has received considerable attention in the literature,
+and it was suggested by R.S. Varga that a table of
+the zeros of certain truncated power series might
+be of interest.
+Accordingly, the zeros of the truncated exponential series
+<nobr><i>S<sub>n</sub></i>(<i>z</i>) = 
+<img src="https://www.jsoftware.com/papers/img/sigma0n.bmp" align=middle>
+<i>z<sup>k</sup></i>/<i>k</i>!
+</nobr>
+have been computed for values of <i>n</i> up to 23.
+They appear in the accompanying table 
+with the complex zeros ordered as to modulus
+and with the real zero printed last.</p>
+</td></tr></table>
+
+<p>The table entry for <i>n</i> = 23 stated:</p>
+
+<table><tr><td width=28 nowrap>&nbsp;</td><td><table>
+<tr><td align=right>&ndash; 7.1926 8590 7451</td><td>&nbsp;&plusmn;</td><td align=right> 1.4750 5919 5082<i> i</i></td></tr>
+<tr><td align=right>&ndash; 6.8443 1411 8665</td><td>&nbsp;&plusmn;</td><td align=right> 2.9355 2075 2798<i> i</i></td></tr>
+<tr><td align=right>&ndash; 6.2551 3130 4907</td><td>&nbsp;&plusmn;</td><td align=right> 4.3657 9349 6476<i> i</i></td></tr>
+<tr><td align=right>&ndash; 5.4112 0644 7035</td><td>&nbsp;&plusmn;</td><td align=right> 5.7481 1045 3530<i> i</i></td></tr>
+<tr><td align=right>&ndash; 4.2905 2911 0822</td><td>&nbsp;&plusmn;</td><td align=right> 7.0608 9517 9930<i> i</i></td></tr>
+<tr><td align=right>&ndash; 2.8595 2302 8914</td><td>&nbsp;&plusmn;</td><td align=right> 8.2762 1397 0162<i> i</i></td></tr>
+<tr><td align=right>&ndash; 1.0664 4595 7935</td><td>&nbsp;&plusmn;</td><td align=right> 9.3553 6015 8909<i> i</i></td></tr>
+<tr><td align=right>        1.1720 9815 7227</td><td>&nbsp;&plusmn;</td><td align=right>10.2403 1777 0398<i> i</i></td></tr>
+<tr><td align=right>        4.0025 2534 8326</td><td>&nbsp;&plusmn;</td><td align=right>10.8348 6485 1671<i> i</i></td></tr>
+<tr><td align=right>        7.7243 3865 4741</td><td>&nbsp;&plusmn;</td><td align=right>10.9536 0414 4523<i> i</i></td></tr>
+<tr><td align=right>       13.1748 6483 8907</td><td>&nbsp;&plusmn;</td><td align=right>10.1262 6417 8727<i> i</i></td></tr>
+<tr><td align=right>&ndash; 7.3079 8221 4646</td></tr>
+</table></td></tr></table>
+
+<p>The verb<tt> p. </tt> 
+<a href="http://www.jsoftware.com/help/dictionary/dpdot.htm">in J</a> 
+<acronym title=
+"Hui, R.K.W., and Iverson, K.E., J Introduction and Dictionary, Jsoftware Inc., 2012.">[3]</acronym> 
+works with polynomials.
+The dyad<tt> x p. y </tt>evaluates
+the polynomial<tt> x </tt>at<tt> y</tt>&nbsp;;<tt> </tt>
+the monad<tt> p.&nbsp;x </tt>converts<tt> x </tt>
+between coefficients<tt> c </tt>
+and multiplier and roots<tt> (m;r)</tt>&nbsp;.<tt> </tt>
+The coefficients of the partial sum of 
+<i>e<sup>z</sup></i> for <i>n</i>=23 are:</p>
+
+<pre>
+   c=: % ! i.24
+   c
+1 1 0.5 0.166667 0.0416667 0.00833333 0.00138889 ...
+</pre>
+
+<p>Converting from coefficients to muliplier and roots:</p>
+
+<pre>
+   mr=: p. c
+   mr
+┌───────────┬──────────────────────────────────────────────── 
+│3.86817e_23│13.1749j10.1263 13.1749j_10.1263 7.72434j10.9536 ...
+└───────────┴────────────────────────────────────────────────
+   r=: > {: mr
+   r
+13.1749j10.1263 13.1749j_10.1263 7.72434j10.9536 ...
+</pre>
+
+<p>The roots from 1953 are ordered in increasing modulus, 
+with the real root last; 
+the roots computed by J are ordered in decreasing modulus. 
+We compare the evaluation of the roots from 1953 and of
+the reordered roots computed by J:</p>
+
+<pre>
+   r1953=: _7.192685907451j1.475059195082 ...
+   _5 ]\ | c p. r1953
+7.36698e_14 7.36698e_14 1.37043e_13 1.37043e_13 1.20857e_13
+1.20857e_13 6.67108e_14 6.67108e_14 8.19945e_14 8.19945e_14
+1.53714e_13 1.53714e_13 2.75251e_13 2.75251e_13 6.80251e_12
+6.80251e_12 1.12317e_10 1.12317e_10   3.0922e_9   3.0922e_9
+ 5.55512e_8  5.55512e_8 9.19177e_11           0           0
+
+   _5 ]\ | c p. 1 |. r /: | r
+3.76597e_14 3.76597e_14  4.7101e_14  4.7101e_14  2.6361e_14
+ 2.6361e_14 5.01272e_14 5.01272e_14 9.52945e_14 9.52945e_14
+ 3.9363e_14  3.9363e_14 2.26531e_13 2.26531e_13 3.41104e_13
+3.41104e_13 3.58005e_12 3.58005e_12 3.33604e_11 3.33604e_11
+ 3.7143e_10  3.7143e_10 1.73195e_14           0           0
+</pre>
+
+<p>I survey the last results with considerable relief.
+It would have been shameful to produce a worse result
+59 years later.
+<br>&nbsp;</p>
+
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top nowrap>[0] &nbsp;</td><td>
+Iverson, K.E., <i>Machine Solutions of Linear Differential Equations &mdash;
+Applications to a Dynamic Economic Model</i>, 
+Doctoral Thesis, Harvard University, 1954-01. 
+<a href="http://www.jsoftware.com/papers/MSLDE.htm">http://www.jsoftware.com/papers/MSLDE.htm</a>
+ </td></tr>
+<tr><td valign=top>[1]</td><td>
+<a href="http://ftp.math.utah.edu/pub//tex/bib/mathcomp1950.html#Iverson:1953:ZPS">http://ftp.math.utah.edu/pub//tex/bib/mathcomp1950.html#Iverson:1953:ZPS</a>
+ </td></tr>
+<tr><td valign=top>[2]</td><td>
+<a href="http://www.ams.org/journals/mcom/1953-07-043/S0025-5718-1953-0057013-0/S0025-5718-1953-0057013-0.pdf">
+http://www.ams.org/journals/mcom/1953-07-043/
+S0025-5718-1953-0057013-0/S0025-5718-1953-0057013-0.pdf</a>
+ </td></tr>
+<tr><td valign=top>[3]</td><td>
+Hui, R.K.W., and Iverson, K.E., <i>J Introduction and Dictionary</i>,
+Jsoftware Inc., 2012.
+<a href="http://www.jsoftware.com/help/dictionary/dpdot.htm">http://www.jsoftware.com/help/dictionary/dpdot.htm</a>
+ </td></tr>
+</table>
+
+
+<br><hr>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2012-08-14 07:25</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2014-01-08 14:30</font></td></tr>
+</table>
+
+</td></tr></table>
+
+<br><br>
+
+</body>
+</html>

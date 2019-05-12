@@ -1,0 +1,379 @@
+<html>
+<head>
+<title>J Papers</title>
+<link rel="stylesheet" href="https://www.jsoftware.com/papers/jweb.css" type="text/css">
+</head>
+<body>
+
+<div align="center"><h2><i>J4 and OOP</i></h2>
+<h3>Chris Burke<br>
+<a href="mailto:cburke@jsoftware.com">cburke@jsoftware.com</a>
+</h3></div>
+
+<P>
+J release 4.01 has extensions to locales that not only enhance their utility in general, but in particular make OOP easy in J.</P>
+
+<P>
+A prime motivation for the new extensions was the development of the new Grid Control. The underlying primitives in J4 allow you to follow the OOP model exactly, as has been done for the Grid Control. However the new facilities are of general applicability, and so powerful and easy to use that we expect them to dramatically change the way we build systems in J.</P>
+
+<P>
+For a good introduction to the ideas behind the new locale extensions and OOP, see the labs <I>Locales</I> and <I>Object Oriented Programming</I> included in the J4 system.</P>
+
+<P>The design of the new locales, and the development of the Grid Control, was largely the work of Eric Iverson.</P>
+
+<P>In this article, I will illustrate with a simple example, then discuss the new language facilities, and finally show how they are used in the Grid Control. </P>
+
+<B><P>Example: Plot Package</P></B>
+
+<P>Let's begin with a problem: how to create multiple plot windows with the plot package. </P>
+
+<P>Suppose you draw a plot, as follows:</P>
+
+<pre>
+   load 'plot'
+   plot i.10
+</pre>
+
+<P>Even a simple plot like this generates a host of globals describing the plot - the labels, the axis placements and so on - in fact, about 140 of them. In J3, in order to avoid name conflicts, the code is run in a single locale, which has about 500 definitions in total for the plot system. </P>
+
+<P>If you now try a different plot, with:</P>
+
+<pre>
+   plot sin i.10
+</pre>
+
+<P>
+this redraws the plot in the same window. The code is run in the same locale and simply overwrites the plot globals.</P>
+
+<P>
+What if, instead of redrawing the plot, you wanted to create another plot window? In J3, you would have to load the entire plot system into another locale and run it from there; and similarly if you wanted to attached a plot to your own form.</P>
+
+<P>
+Clearly, the use of locales helps - without them you would have to draw both plots in the same namespace - but there is unnecessary duplication of code in the two locales.</P>
+
+<P>
+J4 permits an easy solution to this. You can still draw plots in exactly the same way as in J3, but if you want to draw two plots, you can now do so by creating two plot objects, as follows:</P>
+
+<table>
+<tr>
+<TD VALIGN="TOP" WIDTH=177>
+<pre>load 'jzplot'</pre>
+<TD VALIGN="TOP" WIDTH=250>
+load the plot class<br>
+<code>load 'plot'</code> works just as well<br>
+since it also loads the plot class
+</tr>
+</table>
+
+<p>
+(Read jzplot as &quote j &quote meaning a J system facility, followed by &quote z &quote meaning a basic class, followed by the name &quote plot &quote.)
+<p>
+<table>
+<tr>
+<TD VALIGN="TOP" WIDTH=177>
+<pre>a=. conew 'jzplot'</pre>
+<TD VALIGN="TOP" WIDTH=250>
+create plot object <code>a</code>
+</td>
+</tr>
+<tr>
+<TD VALIGN="TOP" WIDTH=177>
+<pre>b=. conew 'jzplot'</pre>
+<TD VALIGN="TOP" WIDTH=250>
+create plot object <code>b</code>
+</td>
+</tr>
+</table>
+
+(The <code>co</code> prefix stands for class/object. In J, you can use the OOP term <I>class</I> to refer to the script defining the class, or to the definitions once the script has been loaded in; and use the OOP term <I>object</I> to refer to the locales created by <code>conew</code>, i.e. <I>numbered locales</I> as described below.)
+<p>
+<table>
+<tr>
+<TD VALIGN="TOP" WIDTH=177>
+<pre>plot__a i.10</pre>
+<TD VALIGN="TOP" WIDTH=250>
+draw plot in <code>a</code>
+</td>
+</tr>
+<tr>
+<TD VALIGN="TOP" WIDTH=177>
+<pre>plot__b sin i.10</pre>
+<TD VALIGN="TOP" WIDTH=250>
+draw plot in <code>b</code>
+</td>
+</tr>
+</table>
+
+The objects <code>a</code> and <code>b</code> contain only the globals specific to each plot; while the main plot code is stored elsewhere, in <code>jzplot</code>. Thus J4 trivially permits more than one plot to be created, while not duplicating the main plot code.
+
+<P>
+Now, the problem solved relates only to the separate sets of globals defining the plots. But exactly the same mechanism permits customization of the code for one plot, leaving the other unchanged. </P>
+
+<P>
+For example, the verb <code>drawlines</code> specifies the lines to be drawn; if you wanted to create a customized version for the plot in <code>a</code>, you could define, for example:</P>
+
+<table>
+<tr>
+<TD VALIGN="TOP" WIDTH=177>
+<pre>drawlines__a=:</pre>
+<TD VALIGN="TOP" WIDTH=250>
+new definition...
+</td>
+</tr>
+</table>
+
+and this definition would be used when you next called <code>plot__a</code>.
+
+<P>
+Of course a problem of this type (creating multiple plot windows) can be solved in other ways. But the point is that in J4, it is completely trivial, whereas before, a fair amount of work would be involved in setting up a suitable mechanism.</P>
+
+<B><P>New Locale Facilities</P></B>
+
+<P>
+There are essentially three new facilities, which are upward compatible with J3:</P>
+<p>
+<li>the ability to create a locale, returning a reference to the locale as a result
+<li>the ability to specify locale paths
+<li>the ability to switch the current locale under program control
+</li></li></li>
+
+<P>
+In contrast, in J3:</P>
+
+<li>locales were created automatically by defining a name in one. There was no concept of returning a result from creating a locale
+<li>the only locale structure was that there was a single parent locale (the z locale), and a path from any other locale to the parent
+<li>you could only switch the locale under program control, by making a name reference to that locale.
+</li></li></li>
+
+<P>
+Locales in J3 had a simple definition that worked surprisingly well; and the new facilities are in turn, pretty simple, and fit nicely on top of the old structure.</P>
+
+<P>
+I was amused to see that in my previous Vector article on Locales in J (Vol 11 No. 4), I specifically mentioned two of the new facilities (locale paths and switching locale under program control); and said they could be provided as an extension to the current system, but seemed more trouble than they were worth! But it is just as well that we did not add them then - likely without a compelling reason such as the OOP definition of the new Grid Control, we would have got it wrong!</P>
+
+<P>
+Now lets see how these new facilities are used in the plot example above:</P>
+
+<pre>
+   load 'jzplot'</pre>
+
+<P>
+This loads the plot definitions from a script file. At the beginning of the script is a command to switch the locale to jzplot, and the plot definitions are then loaded into that locale. In J3, you could load a script into a specific locale (giving the locale name as the left argument to <code>load</code>), but in this case, it only makes sense to load jzplot into a locale of that name, hence it is better to specify the locale in the script itself.</P>
+
+<P>
+In common with all new locales, the jzplot locale has a path that points to the <code>z</code> locale only.</P>
+
+<pre>
+   a=. conew 'jzplot</pre>
+
+<P>
+This creates a new locale (object), sets its path to point to <code>jzplot</code> and then to <code>z</code>, and returns the locale reference in variable <code>a</code>. Locales created by <code>conew</code> have a single definition <code>COCREATOR</code>, which identifies the creator locale, but otherwise they are empty.</P>
+
+<pre>
+   plot__a i.10</pre>
+
+<P>
+The name <code>plot__a</code> (with 2 underscores) can be read &quote plot in a &quote, or &quote plot in <I>indirect</I> a&quote. Informally, we can talk of locale <code>a</code>, with the understanding that this is the locale referenced by <code>a</code>.</P>
+
+<P>
+In evaluating the expression <code>plot__a i.10</code>, the system searches the locale path, finds the plot definitions in <code>jzplot</code>, and executes them in locale <code>a</code>. All global definitions created will then be defined in <code>a</code>.</P>
+
+<P>Note that the name of the locale created by <code>conew</code> has not been used, only its reference. To make this clear, compare this with what you have to do in J3, where the name itself had to be used. First, you would have to create a suitable name for the temporary locale. Then to use it, you would need an execute statement, for example:</P>
+<p>
+<table>
+<tr>
+<TD VALIGN="TOP" WIDTH=230>
+<pre>a=. 'temp0'</pre>
+<TD VALIGN="TOP" WIDTH=250>
+temporary locale name
+</td>
+</tr>
+<tr>
+<TD VALIGN="TOP" WIDTH=230>
+<pre>&quote. 'plot_',a,'_ i.10'</pre>
+<TD VALIGN="TOP" WIDTH=250>
+execute to use the locale name
+</td>
+</tr>
+</table>
+
+Clearly, the indirect reference is better!
+
+<P>
+Since, in general, the names generated by <code>conew</code> are not used directly, they are chosen to avoid any likely name conflict, and in fact are simply character representations of the integers. Thus in a new session, <code>a</code> would be <code>'0'</code> and <code>b</code> would be <code>'1'</code>. We call these <I>numbered locales</I>. The numbers are never reused in a session.</P>
+
+<B><P>Grid Control</P></B>
+
+<P>
+The new Grid Control in J4 is for the most part written in J. The display is an isigraph control, and there are some extra <code>wd</code> (Window Driver) facilities to enable drawing a grid in the control.</P>
+
+<P>
+There is a great deal of J code, and it needs to be organized. As with other facilities, it should be defined in a locale to avoid name conflicts. But it also must be easy to extend and customize; and easy to run multiple grids. The new language extensions are a natural for this, and the definition exactly follows the OOP model.</P>
+
+<P>
+The Grid Control is more complex than Plot, in that there is much greater use of event handlers (e.g. for scrolling and keyboard entry), and we would expect a much greater customization of the basic facilities. To that end, the control is implemented in several classes.</P>
+
+<P>
+The basic grid class is jzgrid, and this provides facilities that should be required for any grid, including:</P>
+
+<P>
+scrolling<br>
+mouse events<br>
+keyboard events<br>
+setting attributes, e.g. font, color, border, cell size</P>
+
+<P>
+While the jzgrid class could in theory be used directly (for a very simple grid), there would typically be another class on top of the basic grid class that provides a specific type of grid, for example class jwgrid. This would include data-related definitions such as providing formatted data for the grid and support for copying and editing. Also, yet another class is needed for the Windows form definition.</P>
+<P>
+For example, provided with J4 are three specific grids:</P>
+
+<li>a Watch Control (class jwatch), to display and edit a matrix in a global variable.
+<li>a Table Control (class jtable), that displays a function table. This grid is unlimited in size - as the grid is scrolled, new values for the grid are calculated as required.
+<li>a Report Control (class jfreport) is a demo form that displays a report, with multi-row headers, and automatic totalling.
+</li></li></li>
+
+<P>
+The following is a typical session:</P>
+<p>
+<table>
+<tr>
+<TD VALIGN="TOP" WIDTH=230>
+<pre>dat=. ?30 30$100</pre>
+<TD VALIGN="TOP" WIDTH=250>
+data to be watched
+</td>
+</tr>
+<tr>
+<TD VALIGN="TOP" WIDTH=230>
+<pre>load 'jwatch'</pre>
+<TD VALIGN="TOP" WIDTH=250>
+load the jwatch class
+</td>
+</tr>
+<tr>
+<TD VALIGN="TOP" WIDTH=230>
+<pre>a=. conew 'jwatch'</pre>
+<TD VALIGN="TOP" WIDTH=250>
+creates a watch object
+</td>
+</tr>
+<tr>
+<TD VALIGN="TOP" WIDTH=230>
+<pre>create__a 'dat'</pre>
+<TD VALIGN="TOP" WIDTH=250>
+displays <code>dat</code> in the watch
+</td>
+</tr>
+</table>
+<p align=center>
+<img src="https://www.jsoftware.com/papers/joop1.gif" width=385 height=265 border=0 alt="">
+
+<P>
+Let's examine what happens in detail.</p>
+
+<pre>
+   load 'jwatch'
+</pre>
+
+<p>
+This loads the script (class) jwatch into the jwatch locale, which in turn loads the scripts jwgrid and jinput, each into their own locale. jwgrid in turn loads the basic grid script, jzgrid. At this stage, all that has happened is that these scripts have been loaded, and the locale namelist looks like: </P>
+
+<pre>
+   conl''
++----+-+------+------+------+------+-+
+|base|j|jinput|jwatch|jwgrid|jzgrid|z|
++----+-+------+------+------+------+-+
+</pre>
+
+<P>
+No locale path settings have been made, so each locale has a path of z, as is the case with all new locales.</P>
+
+<pre>
+   a=. conew 'jwatch'
+</pre>
+
+
+<P>
+This now creates a new locale, referenced by <code>a</code> and named <code>'0'</code>:</P>
+
+<pre>
+   conl''
++-+----+-+------+------+------+------+-+
+|0|base|j|jinput|jwatch|jwgrid|jzgrid|z|
++-+----+-+------+------+------+------+-+
+</pre>
+
+<P>
+The new locale is empty, but has a locale path that includes jwatch and z.</P>
+
+<pre>
+   create__a 'dat'
+</pre>
+
+<p>
+<code>create__a</code> is called in the new locale, and gets its definition from jwatch. This verb creates a new form to display the grid, and then itself calls <code>conew</code> to create a jwgrid object and sets its path to include jwgrid and jzgrid:</P>
+</p>
+
+<pre>
+   grid=: ''conew'jwgrid'
+</pre>
+
+<P>
+Therefore the locale list now includes two numbered locales:</P>
+
+<pre>
+   conl''
++-+-+----+-+------+------+------+------+-+
+|0|1|base|j|jinput|jwatch|jwgrid|jzgrid|z|
++-+-+----+-+------+------+------+------+-+
+</pre>
+
+<P>The paths in these two numbered locales are:</P>
+
+<pre>
+   copath a              locale '0'
++------+-+
+|jwatch|z|
++------+-+
+
+   copath grid__a        locale '1'
++------+------+-+
+|jwgrid|jzgrid|z|
++------+------+-+
+</pre>
+
+<P>
+The structure of numbered locales is returned by <code>costate</code>:</P>
+
+<pre>
+   costate''
++----+--+-------+---------------+
+|refs|id|creator|path           |
++----+--+-------+---------------+
+|a |0 |base |jwatch z           |
++----+--+-------+---------------+
+| |1 |0 |jwgrid jzgrid z        |
++----+--+-------+---------------+
+</pre>
+
+<P>
+Now suppose the mouse is clicked on one of the grid cells. The form is defined in locale <code>a</code>, so the mouse event handler <code>watch_grid_mbldown</code> will be called there. Since this locale has no event handlers of its own, the definition in the <code>jwatch</code> locale is used. This is defined as:</P>
+
+<pre>
+   watch_grid_mbldown=: 3 : 'mbldown__grid sysdata'
+</pre>
+
+<P>
+Therefore the actual handler called is <code>mbldown</code> in the <code>grid</code> locale, which will pick its definition up from either <code>jwgrid</code> or <code>jzgrid</code>, whichever it sees first.</P>
+
+<P>
+At first sight, these may seem like a lot of mechanism to set up a form with its event handlers. But the point is that each of the classes loaded can be customized independently (except perhaps for jzgrid which should work for all grids). Therefore, this provides a simple and effective way of utilizing code modules in a variety of applications, and avoiding name conflicts between two instances of an application.</P>
+
+<P>OOP is easy in J!</P>
+
+<P ALIGN="CENTER">
+<img src="https://www.jsoftware.com/papers/joop2.gif" width=593 height=341 border=0 alt="">
+</P>
+<I><P ALIGN="CENTER">Example Report grid</P></I>
+</body>
+</html>

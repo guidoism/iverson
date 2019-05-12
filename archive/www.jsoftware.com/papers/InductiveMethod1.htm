@@ -1,0 +1,820 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>The Inductive Method of Introducing APL</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>The Inductive Method of Introducing APL</font>
+<br><br>
+<b>Kenneth E. Iverson<br>I.P. Sharp Associates<br>Toronto, Ontario</b>
+<br>&nbsp;</p>
+
+
+
+<p>Because APL is a language, 
+there are, in the teaching of it, 
+many analogies with the teaching of natural languages. 
+Because APL is a <i>formal</i> language, 
+there are also many differences, 
+yet the analogies prove useful 
+in suggesting appropriate objectives 
+and techniques in teaching APL.</p>
+
+<p>For example, adults learning a language 
+already know a native language, 
+and the initial objective is to learn 
+to translate a narrow range of thoughts 
+(concerning immediate needs such as the ordering of food) 
+from the native language in which they are conceived, 
+into the <i>target</i> language being learned. 
+Attention is therefore directed 
+to imparting effective use of a small number 
+of words and constructs, 
+and not to the memorization 
+of a large vocabulary. 
+Similarly, a student of APL normally 
+knows the terminology and procedures 
+of some area of potential application of computers, 
+and the inital objective should be 
+to learn enough to translate 
+these procedures into APL. 
+Obvious as this may seem, 
+introductory courses in APL 
+(and in other programming languages as well) 
+often lack such a focus, 
+and concentrate instead on exposing the student 
+to as much of the vocabulary 
+(i.e., the primitive functions) of APL as possible.</p>
+
+<p>This paper treats some of the lessons 
+to be drawn from analogies 
+with the teaching of natural languages 
+(with emphasis on the inductive method of teaching), 
+examines details of their application in the development 
+of a three-day introductory course in APL, 
+and reports some results of use of the course. 
+Implications for more advanced courses 
+are also discussed briefly.
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>1. The Inductive Method</b></p>
+
+<p>Grammars present general rules, 
+such as for the conjugation of verbs, 
+which the student learns to apply 
+(by <i>deduction</i>) 
+to particular cases as the need arises. 
+This form of presentation contrasts sharply 
+with the way the mother tongue is learned 
+from repeated use of particular instances, 
+and from the more or less conscious formulation 
+(by <i>induction</i>) 
+of rules which summarize the particular cases.</p>
+
+<p>The inductive method is now widely used 
+in the teaching of natural languages. 
+One of the better-known methods 
+is that pioneered by Berlitz 
+<acronym title="Berlitz, M.D., Methode Berlitz, Berlitz and Co., New York, 1887.">[1]</acronym> 
+and now known as the &ldquo;direct&rdquo; method. 
+A concise and readable presentation 
+and analysis of the direct method 
+may be found in Diller 
+<acronym title="Diller, Karl Conrad, The Language Teaching Controversy, 
+Newbury House Publishers, Inc., Rowley, Massachusetts, 1978. ">[2]</acronym>.</p>
+
+<p>A class in the purely inductive mode 
+is conducted entirely in the target language, 
+with no use of the student&rsquo;s mother tongue. 
+Expressions are first learned by imitation, 
+and concepts are imparted by such devices
+as pointing, pictures, and pantomime;
+students answer questions, learn to ask questions,
+and experiment with their own statements,
+all with constant and immediate reaction
+from the teacher in the form of correction,
+drill, and praise, expressed, of course,
+in the target language.</p>
+
+<p>In the analogous conduct of an APL course,
+each student (or, preferably, each student pair)
+is provided with an APL terminal, 
+and with a series of printed sessions
+which give explicit expressions to be &ldquo;imitated&rdquo;
+by entering them on the terminal,
+which suggest ideas for experimentation,
+and which pose problems for which the student
+must formulate and enter appropriate expressions.
+Part of such a session is show as an example
+in <a href="InductiveMethod1.htm#fig1">Figure 1</a>.</p>
+
+
+<a name="fig1"></a>
+<table border=1 cellpadding=10 cellspacing=0 width=505 align=center><tr><td>
+<p align=center>Session 1: Names and Expressions</p>
+
+<p>The left side of each page provides examples to be
+entered on the keyboard,
+and the right side provides comments on them.
+Each expression entered must be followed
+by striking the RETURN key to signal 
+to the APL system to execute the expression.</p>
+
+<table>
+<tr><td><tt>&nbsp; &nbsp;area←8×2</tt></td><td>The name<tt> area </tt>is assigned to the </td></tr>
+<tr><td><tt>&nbsp; &nbsp;height←3</tt></td><td>result of the multiplication, that is 16</td></tr>
+<tr><td><tt>&nbsp; &nbsp;volume←height×area</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;height×area</tt></td><td>If no name is assigned to the result, </td></tr>
+<tr><td><tt>48</tt></td><td>it is printed</td></tr>
+<tr><td><tt>&nbsp; &nbsp;volume</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>48</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;3×8×2</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>48</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;length←8 7 6 5</tt></td><td>Names may be assigned to lists</td></tr>
+<tr><td><tt>&nbsp; &nbsp;width←2 3 4 5</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;length×width</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>16 21 24 25</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;perimeter←2×(length+width)&nbsp;</tt></td><td>Parentheses specify the order in which</td></tr>
+<tr><td><tt>&nbsp; &nbsp;perimeter</tt></td><td>parts of an expression are to be</td></tr>
+<tr><td><tt>20 20 20 20</tt></td><td>executed</td></tr>
+<tr><td><tt>&nbsp; &nbsp;1.12×1.12×1.12</tt></td><td>Decimal numbers may be used</td></tr>
+<tr><td><tt>1.404928</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;1.12*3</tt></td><td>Yield of 12 percent for 3 years</td></tr>
+<tr><td><tt>1.404928</tt></td><td>&nbsp;</td></tr>
+</table>
+
+<p align=center><b>Sample Portion of Session<br>Figure 1</b></p>
+</td></tr></table>
+
+
+<p>Because APL is an &ldquo;imperative&rdquo; language,
+the APL system can execute any expression 
+entered on the terminal,
+and therefore provides most of the reaction
+required from a teacher.
+The role of the instructor is therefore
+reduced to that of tutor,
+providing explicit help in the event
+of severe difficulties
+(such as failure of the terminal),
+and general discussion as required.
+As compared to the case of a natural language,
+the student is expected, and is better able,
+to assess his own performance.</p>
+
+<p>Applied to natural languages, 
+the inductive method offers 
+a number of important advantages:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Many dull but essential details (such as pronunciation) 
+required at the outset are acquired in the course 
+of doing more interesting things, 
+and without explicit drill in them.
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+The fun of constantly looking 
+for the patterns or rules into 
+which examples can be fitted 
+provides a stimulation lacking 
+in the explicit memorization of rules, 
+and the repeated examples provide, 
+as always, the best mnemonic basis for remembering general rules.
+</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+The experience of committing error after error, 
+seeing that they produce no lasting harm, 
+and seeing them corrected through conversation, 
+gives the student a confidence and a willingness 
+to try that is difficult to impart by more formal methods.
+</td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+The teacher need not be expert in two languages, 
+but only in the target language. 
+</td></tr>
+</table>
+
+<p>Analogous advantages are found in the teaching of APL:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Details of the terminal keyboard are absorbed gradually 
+while doing interesting things from the very outset.
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+Most of the syntactic rules, 
+and the extension of functions to arrays, 
+can be quickly gleaned from examples 
+such as those presented in <a href="InductiveMethod1.htm#fig1">Figure 1</a>.
+</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+The student soon sees that most errors are harmless, 
+that the nature of most are obvious 
+from the simple error messages, 
+and that any adverse effects (such as an open quote) 
+are easily rectified by consulting a manual or a tutor.
+</td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+The tutor need only know APL, 
+and does not need to be expert in areas 
+such as financial management or engineering 
+to which students wish to apply APL, 
+and need not be experienced in lecturing.
+<br>&nbsp;
+</td></tr>
+</table>
+
+
+
+<a name="2"></a>
+<p><b>2. The Use Of Reference Material</b></p>
+
+<p>In the pure use of the inductive method, 
+the use of reference material 
+such as grammars and dictionaries 
+would be forbidden. 
+Indeed, their use is sometimes discouraged 
+because the conscious application 
+of grammatical rules 
+and the conscious pronunciation of words 
+from visualization of their spellings 
+promotes uneven delivery. 
+However, if a student is to become 
+independent and capable 
+of further study on his own, 
+he must be introduced 
+to appropriate reference material.</p>
+
+<p>Effective use of reference material 
+requires some practice, 
+and the student should 
+therefore be introduced to it early. 
+Moreover, he should not be confined 
+to a single reference; 
+at the outset, a comprehensive dictionary 
+is too awkward and confusing, 
+but a concise dictionary 
+will soon be found to be too limited.</p>
+
+<p>In the analogous case of APL, the role of both grammar 
+and dictionary is played by the reference manual. 
+A concise manual limited to the core language 
+<acronym title="APL Language, IBM Form #GC26-3847, IBM Corporation.">[3]</acronym> 
+should be supplemented by a more comprehensive manual 
+(such as Berry 
+<acronym title="Berry, P.C., SHARP APL Referrence Manual, I.P. Sharp Associates.">[4]</acronym>) 
+which covers all aspects of the particular system in use. 
+Moreover, the student should be led immediately
+to locate the two or three main summary tables 
+in the manual, 
+and should be prodded into constant use 
+of the manual by explicit questions 
+(such as &ldquo;what is the name 
+of the function denoted by the comma&rdquo;), 
+and by glimpses of interesting functions.
+<br>&nbsp;</p>
+
+
+
+<a name="3"></a>
+<p><b>3. Order Of Presentation</b></p>
+
+<p>Because the student is constantly striving 
+to impose a structure 
+upon the examples presented to him, 
+the order of presentation of concepts is crucial, 
+and must be carefully planned. 
+For example, use of the present tense 
+should be well established 
+before other tenses and moods are introduced. 
+The care taken with the order of presentation should, 
+however, be unobtrusive, 
+and the student may become aware of it 
+only after gaining experience beyond the course, 
+if at all.</p>
+
+<p>We will address two particular difficulties 
+with the order of presentation, 
+and exemplify their solutions in the context of APL. 
+The first is that certain expressions are too complex 
+to be treated properly in detail 
+at the point where they are first useful. 
+These can be handled as &ldquo;useful expressions&rdquo; 
+and will be discussed in a separate section.</p>
+
+<p>The second difficulty is that 
+certain important notions are rendered complex 
+by the many guises in which they appear. 
+The general approach to such problems 
+is to present the essential notion early, 
+and return to it again and again 
+at intervals to reinforce it 
+and to add the treatment of further aspects.</p>
+
+<p>For example, because students often find difficulty 
+with the notion of literals 
+(i.e., character arrays), 
+its treatment in APL is often deferred, 
+even though this deferral also makes it necessary 
+to defer important practical notions such 
+as the production of reports. 
+In the present approach, the essential notion 
+is introduced early, in the manner shown in 
+<a href="InductiveMethod1.htm#fig2">Figure 2</a>. 
+Literals are then returned to in several contexts: 
+in the representation of function definitions; 
+in discussion of literal digits and the functions 
+(<tt>⍕ </tt>and<tt> ⍎</tt>) 
+which are used to transform 
+between them and numbers in the production of reports; 
+and in their use with indexing to produce barcharts.</p>
+
+
+<a name="fig2"></a>
+<table border=2 cellpadding=10 cellspacing=0 width=505 align=center><tr><td>
+
+<p align=center>Session 4: Literals</p>
+
+<table>
+<tr><td width=160><tt>&nbsp; &nbsp;Janet←5</tt></td><td>Janet received 5 letters today</td></tr>
+<tr><td><tt>&nbsp; &nbsp;Mary←8</tt></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;Mary⌈Janet</tt></td><td>The maximum received by one of them</td></tr>
+<tr><td><tt>8</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;Mary⌊Janet &nbsp; &nbsp;</tt></td><td>The minimum</td></tr>
+<tr><td><tt>5</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;Mary&gt;Janet &nbsp; &nbsp;</tt></td><td>Mary received more than Janet</td></tr>
+<tr><td><tt>1</tt></td><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;Mary=Janet &nbsp; &nbsp;</tt></td><td>They did not receive an equal number</td></tr>
+<tr><td><tt>0</tt></td><td>&nbsp;</td></tr>
+</table>
+
+<p>What sense can you make of the following sentences:</p>
+
+<p><tt>&nbsp; &nbsp;Janet </tt>has 5 letters and<tt> Mary </tt>has 8</p>
+<p><tt>&nbsp; &nbsp;Janet </tt>has 5 letters and<tt> Mary </tt>has 4</p>
+<p><tt>&nbsp; &nbsp;'Janet' </tt>has 5 letters and<tt> 'Mary' </tt>has 4</p>
+
+<p>The last sentence above uses quotation marks 
+in the usual way to make a <i>literal reference</i>
+to the (letters in the) name itself as opposed 
+to what it denotes.
+The second points up the potential ambiguity 
+which is resolved by quote marks.</p>
+
+<table>
+<tr><td><tt>&nbsp; &nbsp;list←24.6 3 17</tt></td></tr>
+<tr><td><tt>&nbsp; &nbsp;⍴list</tt></td></tr>
+<tr><td><tt>3</tt></td></tr>
+<tr><td><tt>&nbsp; &nbsp;word←'list'</tt></td></tr>
+<tr><td><tt>&nbsp; &nbsp;⍴word</tt></td></tr>
+<tr><td><tt>4</tt></td></tr>
+<tr><td><tt>&nbsp; &nbsp;sentence←'list the net gains'</tt></td></tr>
+</table>
+
+<p align=center><b>Introduction of Literals<br>Figure 2</b></p>
+</td></tr></table>
+
+
+<p>Function definition is another important idea 
+whose treatment is often deferred 
+because of its seeming complexity. 
+However, this complexity inheres not in the notion itself, 
+but in the mechanics of the general del form 
+of definition usually employed. 
+This complexity includes a new mode of keyboard entry 
+with its own set of error messages, 
+a set of rules for function headers, 
+confusion due to side-effects resulting 
+from failure to localize names used 
+or to definitions which print results 
+but have no explicit results, 
+and the matter of suspended functions.</p>
+
+<p>All of this is avoided by representing 
+each function definition by a character vector 
+in the direct form of definition 
+[<acronym title="Iverson, K.E., Elementary Analysis, APL Press, 1976. ">5</acronym>
+<acronym title="Iverson, K.E., Programming Style in APL, 
+An APL Users Meeting, I.P. Sharp Associates, 1978. ">6</acronym>]. 
+For example, a student first uses the 
+function<tt> round </tt>
+provided in a workspace, 
+then shows its definition, 
+and then defines an equivalent 
+function called<tt> r </tt>as follows:</p>
+
+<pre>
+   round 24.78 31.15 28.59 
+25 31 29
+
+   show 'round'
+round:⌊.5+⍵
+
+   define 'r:⌊.5+⍵'
+
+   r 24.78 31.15
+25 31
+</pre>
+
+<p>The function<tt> define </tt>compiles the definition
+provided by its argument
+into an appropriate del form,
+localizes any names which appear 
+to the left of assignment arrows
+in the definition,
+provides a &ldquo;trap&rdquo; or &ldquo;lock&rdquo;
+appropriate to the particular APL system
+so that the function behaves like a primitive
+and cannot be suspended,
+and appends the original argument in a comment line
+for use by the function<tt> show</tt>&nbsp;.</p>
+
+<p>This approach makes it possible 
+to introduce simple function definition 
+very early and to use it in a variety 
+of interesting contexts 
+before introducing conditional 
+and recursive definitions (also in the direct form), 
+and the more difficult del form.
+<br>&nbsp;</p>
+
+
+
+<a name="4"></a>
+<p><b>4. Teaching Reading</b></p>
+
+<p>It is usually much easier to read 
+and comprehend a sentence than 
+it is to write a sentence 
+expressing the same thought. 
+Inductive teaching makes 
+much use of such reading, 
+and the student is encouraged 
+to scan an entire passage, using pictures, 
+context, and other clues, 
+to grasp the overall theme 
+before invoking the use 
+of a dictionary to clarify details.</p>
+
+<p>Because the entry of an APL expression 
+on a terminal immediately yields the overall result 
+for examination by the student, 
+this approach is particularly effective in teaching APL. 
+For example, if the student&rsquo;s workspace 
+has a table of names of countries, 
+and a table of oil imports by year by country by month, 
+then the sequence:</p>
+
+<pre>
+   n←25
+   b←+/[l]+/[3] oil
+
+   countries,'.⎕'[1+b∘.≥(⌈/b)×(⍳n)÷n]
+</pre>
+
+<p>produces the following result, 
+which has the obvious interpretation 
+as a barchart of oil imports:</p>
+
+<pre>
+Arabia   ⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕.....
+Nigeria  ⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕......
+Canada   ⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕.........
+Indonesia⎕⎕⎕⎕⎕⎕⎕⎕⎕................
+Iran     ⎕⎕⎕⎕⎕⎕⎕⎕.................
+Libya    ⎕⎕⎕⎕⎕⎕⎕⎕.................
+Algeria  ⎕⎕⎕⎕⎕⎕⎕⎕.................
+Other    ⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕⎕
+</pre>
+
+<p>Moreover, because the simple syntax 
+makes it easy to determine the exact sequence 
+in which the parts of the sentence are executed, 
+a detailed understanding of the expression 
+can be gained by executing it piece-by-piece, 
+as illustrated in <a href="https://www.jsoftware.com/papers/fig3">Figure 3</a>. 
+Finally, such critical reading of an expression 
+can lead the student to formulate 
+his own definition 
+of a useful related function as follows:</p>
+
+<pre>
+   define ⍞
+barchart:'.⎕'[1+⍵∘.≥((⍳⍺)÷⍺)×⌈/⍵]
+
+</pre>
+
+<a name="fig3"></a>
+<table border=1 cellpadding=10 cellspacing=0 width=505 align=center><tr><td>
+
+<table>
+<tr><td width=160><tt>&nbsp; &nbsp;n</tt></td><td>The width of the barchart</td></tr>
+<tr><td><tt>25</tt></td></tr>
+<tr><td><tt>&nbsp; &nbsp;q←(⍳n)÷n</tt></td><td>Numbers from 0 to 1 in 25 equal steps</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp; &nbsp; (display if desired)</td></tr>
+<tr><td><tt>&nbsp; &nbsp;⌈/b</tt></td><td>The largest value to be charted</td></tr>
+<tr><td><tt>&nbsp; &nbsp;c←(⌈/b)×q</tt></td><td>Numbers from 0 to the largest value to be charted</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td><tt>&nbsp; &nbsp;s←b∘.≥c</tt></td><td>Comparison of each value of<tt> b </tt>with each value</td></tr>
+<tr><td><tt>&nbsp; &nbsp;s</tt></td><td>in the range to be charted</td></tr>
+<tr><td colspan=2><pre>
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+</pre></td></tr>
+<tr><td><tt>&nbsp; &nbsp;3 21↑1+s</tt></td><td>Examine a piece of<tt> 1+s</tt></td></tr>
+<tr><td colspan=2><pre>
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1
+</pre></td></tr>
+</table>
+
+<p align=center><b>Detailed Execution of an Expression<br>Figure 3</b></p>
+</td></tr></table>
+<br>
+
+
+<a name="5"></a>
+<p><b>5.  Useful Expressions</b></p>
+
+<p>As remarked in <a href="InductiveMethod1.htm#3">Section 3</a>, 
+some expressions are too useful 
+and important to be deferred 
+to the point that would be dictated 
+by the complexity of their structure. 
+In APL such expressions can be handled 
+by introducing them as defined functions 
+whose use may be grasped immediately, 
+but whose internal definition 
+may be left for later study.</p>
+
+<p>For example, files can be introduced 
+in terms of the 
+functions<tt> get</tt>&nbsp;,<tt> to</tt>&nbsp;,<tt> range</tt>&nbsp;,<tt> </tt>
+and<tt> remove</tt>&nbsp;,<tt> </tt>
+illustrated in <a href="InductiveMethod1.htm#fig4">Figure 4</a>. 
+These can be grasped and used effectively by the
+student at an earlier stage and 
+with much greater ease than 
+can the underlying language elements 
+from which they must be constructed 
+in most APL systems.</p>
+
+<p>A further example is provided 
+by the function needed to compile, 
+display, and edit the character vectors 
+used in direct definition of functions. 
+For example, an editing function 
+which deletes each position indicated by a slash, 
+and inserts ahead of the position 
+of the first comma any text which follows it 
+(in the manner provided for del 
+editing in many APL systems) 
+is illustrated in <a href="InductiveMethod1.htm#fig5">Figure 5</a>.</p>
+
+<p>Deferral of the internal details 
+of the definition of these essential functions can, 
+in fact, be turned to advantage, 
+because they provide interesting exercises 
+in reading (using the techniques 
+of <a href="InductiveMethod1.htm#4">Section 4</a>) 
+the definitions of functions
+ whose purposes are already clear from repeated use. 
+For example, critical reading of 
+the following definition 
+of the function<tt> edit </tt>
+is very helpful in grasping 
+the important idea of recursive definition:</p>
+
+<pre>
+edit:edit(a delete k↑⍵),(1↓k↓a),(k←+/∧\a≠',')↓⍵:0=⍴a←⍞,0⍴⎕←⍵:⍵
+
+delete:(~(⍴⍵)↑'/'=⍺)/⍵
+</pre>
+
+
+<p>Analysis of the complete set of functions 
+provided for the compilation 
+from direct definition form 
+also provides an interesting exercise in reading, 
+but one which would not be completed, 
+or perhaps even attempted, 
+until after completion 
+of an introductory course. 
+Extensive leads to other interesting reading, 
+of both workspaces and published material, 
+should be given the student to encourage 
+further growth after the conclusion 
+of formal course work.
+<br>&nbsp;</p>
+
+
+<a name="fig4"></a>
+<table border=1 cellpadding=10 cellspacing=0 width=505 align=center><tr><td>
+<p>If the first dimension of an array 
+(list, table, or list of tables)
+has the value<tt> n</tt>&nbsp;,<tt> </tt>
+(for example,<tt> 1↑⍴oil </tt>is 7),
+then it may be distributed to<tt> n </tt>
+items of a file by a single operation.
+For example:</p>
+
+<pre>
+   oil to 'imports 72 73 74 75 76 77 78'
+</pre>
+
+<p>Use the function<tt> get </tt>to retrieve 
+individual items from the<tt> imports </tt>file
+to verify the effect of the preceding expression.</p>
+
+<p><tt>&nbsp; &nbsp;counries to 'imports 1' &nbsp; &nbsp;</tt>Non-numeric data may be entered</p>
+
+<p>The functions<tt> range </tt>and<tt> remove </tt>
+are useful in managing files:</p>
+
+<p><tt>&nbsp; &nbsp;range 'imports' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt>Gives range of indices<br>
+<tt>1 72 73 74 75 76 77 78</tt></p>
+
+<p><tt>&nbsp; &nbsp;remove 'imports 73 75 77' &nbsp;</tt>Remove odd years</p>
+
+<p><tt>&nbsp; &nbsp;range 'imports'<br>
+1 72 74 76 78</tt></p>
+
+<p align=center><b>Functions for Using Files<br>Figure 4</b></p>
+</td></tr></table>
+
+<br>
+
+<a name="fig5"></a>
+<table border=1 cellpadding=10 cellspacing=0 width=505 align=center><tr><td>
+
+<p>
+<tt>&nbsp; &nbsp;text←'ddellletn and insrtion'</tt><br>
+<tt>&nbsp; &nbsp;z←edit text &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt>Apply<tt> edit </tt>to erroneous text<br>
+<tt>ddellletn and insrtion &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt>Line printed by the function<br>
+<tt>/ &nbsp; // &nbsp;,io &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </tt>Line entered on the keyboard <br>
+<tt>deletion and insrtion &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</tt>Line printed by the function<br>
+<tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ,e &nbsp; &nbsp; &nbsp;</tt>Line entered on the keyboard <br>
+<tt>deletion and insertion &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt>Line printed by the function<br>
+<tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</tt>Empty line entered on the keyboard<br>
+<tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</tt>(carriage return alone) ends execution of<tt> edit</tt>
+</p>
+
+<p><tt>&nbsp; &nbsp;define 'revise:define edit show ⍵'</tt><br>
+<tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</tt>Define a function for revision</p>
+
+<pre>
+   revise 'sum'
+sum:+/[⍺]⍵
+///,max
+max:+/[⍺]⍵
+    /,⌈
+max:⌈/[⍺]⍵
+</pre>
+<p align=center><b>Functions for Editing and Revision<br>Figure 5</b></p>
+</td></tr></table>
+<br>
+
+
+
+<a name="adv"></a>
+<p><b>Advanced Courses</b></p>
+
+<p>Advanced language courses can also employ the inductive method,
+but the greater the student&rsquo;s mastery of a language,
+the greater the potential benefits of the deductive approach
+and of explicit analysis of the structure of the language.
+A point sometimes made in the advanced treatment
+of natural languages is that grammar and related matters
+can now be discussed <i>in the target language</i>,
+avoiding distractions and distortions
+which might be introduced by use of the mother tongue.</p>
+
+<p>Similar remarks apply to advanced APL courses.
+In particular, the use of APL in its own discussion
+and in the introduction of the more complex functions
+is quite productive.
+For example, reduction is very useful in discussing
+the inner product, and inner product and grade
+are helpful in analyzing dyadic transpose.
+<br>&nbsp;</p>
+
+
+
+<a name="conduct"></a>
+<p><b>Conduct Of The Course</b></p>
+
+<p>The introductory course on which these remarks are based
+evolved through four versions offered 
+over a period of several months.
+The resulting course covers three contiguous days,
+and has been offered a number of times in the final form.</p>
+
+<p>Most students appear to work better in pairs
+than when assigned individually to terminals.
+Because there are no lectures,
+each pair can work their own pace.
+Observations and student comments show that
+they find it more stimulating than a lecture course,
+and tend to come early and work late.
+Moreover, they learn to consult manuals
+much more than in a lecture course,
+and exhibit a good deal of independence
+by the end of the three days.
+<br>&nbsp;</p>
+
+
+
+<a name="ack"></a>
+<p><b>Acknowledgements</b></p>
+
+<p>I am indebted to a number of my colleagues
+at I.P. Sharp Associates, to Mr. Roland Pesch
+for his development of the file functions used,
+to Mr. Pesch and Mr. Michael Berry for assistance
+and advice in the early version of the course,
+and the Ms. Nancy Neilson and Dr. Paul Berry
+for comments arising from their use of the course.
+I am also indebted to several members of the staff
+of the Berlitz School of Languages in Toronto,
+to Ms. Grace Palumbo and Ms. G. Dunn 
+for discussions of the direct method,
+and to Ms. N. Eracleous 
+for patient demonstrations of it.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>[1]</td><td>&nbsp;</td><td>
+Berlitz, M.D., <i>Methode Berlitz</i>,
+Berlitz and Co., New York, 1887.
+</td></tr>
+<tr><td valign=top>[2]</td><td>&nbsp;</td><td>
+Diller, Karl Conrad, <i>The Language Teaching Controversy</i>,
+Newbury House Publishers, Inc., Rowley, Massachusetts, 1978.
+</td></tr>
+<tr><td valign=top>[3]</td><td>&nbsp;</td><td>
+<i>APL Language</i>, IBM Form #GC26-3847, IBM Corporation.
+</td></tr>
+<tr><td valign=top>[4]</td><td>&nbsp;</td><td>
+Berry, P.C., <i>SHARP APL Referrence Manual</i>,
+I.P. Sharp Associates.
+</td></tr>
+<tr><td valign=top>[5]</td><td>&nbsp;</td><td>
+Iverson, K.E., <a target=_parent href="http://www.jsoftware.com/papers/DirectDef.htm"><i>Elementary Analysis</i></a>,
+APL Press, 1976.
+</td></tr>
+<tr><td valign=top>[6]</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/APLStyle.htm">Programming Style in APL</a>, 
+<i>An APL Users Meeting</i>,
+I.P. Sharp Associates, 1978.
+</td></tr>
+</table>
+<br>
+
+
+
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared in the proceedings of the 
+APL Users Meeting, 
+I.P. Sharp Associates Limited, Toronto, 1980-10-06 to 08.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2009-07-21 09:15</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2013-07-23 22:10</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

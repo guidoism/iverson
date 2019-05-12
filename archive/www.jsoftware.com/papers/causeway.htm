@@ -1,0 +1,160 @@
+<html>
+<head>
+<title>J Papers</title>
+<link rel="stylesheet" href="https://www.jsoftware.com/papers/jweb.css" type="text/css">
+</head>
+<body>
+
+<h3><center>Using J with OLE2 to Build Configuration Software for SAP AG<br>
+
+<br>
+Duncan Pearson & Adrian Smith<br>
+Causeway Graphical Systems<br>
+J96 User Conference
+</center></h3>
+
+
+<p>As has become a tradition with us, we ran the session as a two-man show, with Pearson on keyboards 
+and Smith on vocals. In the hour which we had available we tried to do three things:
+<ul><li>to introduce the Causeway design ideas, and illustrate them with some simple fragments of C++ and 
+J. Needless to say, Duncan was still busily compiling the last of these examples during Eric Iverson's 
+opening talk!
+<li>to give some background to the project work we have with SAP AG, in particular to the complexity 
+of the configuration task which we set out to solve last year. It was particularly relevant to this 
+audience to know why we switched platform from Dyalog APL (in which the software is currently 
+shipping) to C++ and J.
+<li>to show the current state of the SAP configuration tool, and then to take it apart a little to show how 
+the OLE2 server concept has been used in practice to build a very complex 'industrial strength' 
+application.
+</ul>
+<h3>Introducing Causeway</h3>
+The fundamental design idea behind the Causeway software is that what you see on the screen is simply 
+the visualisation of some J expression. If the data behind that expression gets changed for any reason, 
+then the visualisation gets redrawn automatically. If the user can interact with the screen to change what 
+he/she sees (for example by typing over the text in an edit field) then the underlying data is updated to 
+match. Of course at this point several other controls might also get redrawn, as they might also depend 
+on that same data in some quite subtle way.
+
+<p>The power of this idea becomes more and more apparent as the complexity of the system grows. The 
+programmer's responsibility is limited to the task of listing, for each control, the expression it shows and 
+the variables it depends on. In between the C++ Windows code and the J 'workspace' lies cw.dll which 
+logs all these dependencies and ensures that any dependent controls are updated for you. We were 
+fortunate that it was possible for Roger Hui to build into J a new debugging verb 4!:5 which can list all 
+the nouns which have been assigned since the last invocation. This makes it the interpreter's job to track 
+changes to data, which is a significant improvement over Dyalog Causeway where the application must 
+'notify' such changes manually. 
+
+<p>Duncan illustrated the basic ideas with a simple Windows form containing an edit field and a bunch of 
+radio buttons. The edit field showed a line of text selected from a matrix by an index; the index was 
+changed by the radio buttons. The dependencies of the edit field were listed as the text variable and the 
+index. As the radios were selected (at keyboard repeat speed using the down arrow) the text changed to 
+match.
+
+<p>This particular example was set up using global data - all the variables were listed with trailing__ to 
+point to the base locale. This gave the interesting possibility of starting more than one form and changing 
+the text or index on any of them! As you would hope, a change to any was instantly reflected in all, and 
+the speed (on a 486 DX2/50 machine) was such that there was no visible delay in updating.
+
+<p>In response to a question from the audience, Duncan removed the __ from the index and recompiled the 
+C code. This had the effect of making the assignment of the index take place in a locale created 
+specifically for that form so that the index could be different on each form and the edit fields were 
+editting different rows of the same global matrix.
+
+<h3>The Organisational Architect Project</h3>
+The second part of the talk was a short introduction to the German SAP company, and some background 
+on why they had a hard problem to solve - and hence why there was an opportunity for APL!
+
+<p>The SAP software suite is a complete integrated set of business applications which a large company can 
+use to handle all its commercial transactions. It does all those things - like accounts, inventory, order 
+processing - which APLers traditionally avoid! Some years ago, the top management at Nestle noticed 
+that they were employing more programmers than Microsoft; they bought the SAP software to replace 
+them.
+
+<p>Unfortunately, all large companies are complex, and multinationals particularly so as they must work in 
+many currencies and under many different tax systems. Setting up an SAP system has always kept 
+highly-paid consultants well employed, but at least until recently there was only a single database to 
+worry about. The original SAP suite was designed for IBM mainframes and even the newer R/3 product 
+is still very centralised. However with customers getting more and more determined to distribute data to 
+the point of use, SAP needed to build in some logic to allow several physically separate databases to 
+behave as if there was still one logically consistent application. Their term for this was Application Link 
+Enabling (ALE), and it adds another highly complex task to the installation schedule!
+
+<p>The idea would be that if a warehouseman in Manchester booked in some coffee beans, the inventory 
+change would be (naturally) posted to his local database, but that an ALE message should be sent to 
+whatever company is responsible for that store, as the book value of the company has changed as a 
+result. With a complex organisation where many plants can manufacture for several 'companies' the rules 
+for who needs to see what get rapidly out of hand. Setting up the ALE configuration is mostly about 
+checking along various axes of large boolean tables and doing partitioned or-reductions to see what 
+messages are necessary. Of course this was not how a C-programmer would perceive the problem, which 
+probably explains why SAP were unable to build a good tool to handle this job themselves! 
+
+<p>We came on the scene late in 1994 when the ALE team were already committed to a demonstration of a 
+graphical configuration tool by the following March. Fortunately they were willing to gamble on us as a 
+long-shot who might just be able to do the job. We attacked the problem in Dyalog APL/W and were 
+able to show a working prototype by the end of January which they had on the stand at the March 
+exhibition. This prototype has since been extended to include a good part of the normal setting-up task 
+(such as defining plants and companies) and is shipped to around 2000 SAP customers on CD ROM.
+
+<p>An interesting question is why we have decided at this point to switch platform from a single APL base 
+to a mixed environment with C++ for the user-interface and APL for the logic engine. On the face of it 
+we are adding a layer of complexity which one might reasonably expect to slow things down as well as 
+giving us all sorts of new reliability and maintenance headaches.
+
+<h3>Why are we Switching to J?</h3>
+Firstly we can see a number of technical walls ahead, and no sure means of overcoming them within a 
+Dyalog platform. We will need double-byte character support, and we already need to get away from the 
+need to set up a national keyboard table for every country where SAP software is shipped. The lack of a 
+stable NT platform has been an increasing embarrassment to us, and in several places we have had to 
+make ugly workarounds to mimic facilities that are simply extra object properties in VB or C++.
+
+<p>Secondly, we are concerned to ensure that someone other than ourselves can support and maintain the 
+code. We are a 2-man company and it is not fair to expect SAP to entrust a critical part of their 
+configuration software entirely to such a small concern. The logic code is not a problem - it is the kind of 
+APL that a VS APL programmer from 20 years ago could quickly pick up and fix. The GUI code is 
+highly Dyalog-specific and in many places we may be doing stuff which no-one else in the world has 
+tried - it will keep working only as long as we are around to patch it, assuming that Dyalog don't 
+accidentally change the interpreter behaviour to make some particular trick impossible!
+
+<p>Finally, we need speed. The redraw times on several of the main forms are unacceptable, and the build 
+time for new forms is not as fast as it should be. Part of this is down to the overhead of Causeway - every 
+time you build a form it must register objects and dependencies - every time a changed variable is 
+'notified' it must look up the table and 'refresh' dependent objects. With namespaces we can improve the 
+redraw times, but no amount of optimisation will get the build time down.
+
+<p>By moving the causeway logic out to a DLL, and by compiling the forms from C++, we can address the 
+speed issue. However we were determined not to throw away all the advantages given to us by APL in 
+solving the complex logical problems in a clean array-based way. At the moment there is only one APL 
+interpreter available on the market which offers the possibility of an in-process OLE server which we 
+could use as our logic engine with minimal call overhead. I am sure that we don't have to tell this 
+audience that the interpreter in question is J!
+
+<h3>The Conversion Project</h3>
+Of course we moved slowly and carefully, and tried a lot of this stuff out before committing ourselves. 
+We first saw what was possible in late February when I visited the Toronto APL SIG and had time to call 
+on Eric Iverson for a quick look at J working with VB. Duncan was over in the States at the time, and we 
+managed to rearrange some flights so that he could call here for a solid evening's evaluation. We were 
+convinced enough to ask Eric to work with us in the UK for 5 weeks to get an initial prototype moving. 
+We took this to SAP in early May, and on the afternoon of May 8th we got the go-ahead to begin 
+conversion. Duncan flew out to Toronto on 27th of May, and since then he, Eric and Roger Hui have 
+worked hard to migrate a large part of the current application. The conversion of the APL logic code to J 
+is complete and the GUI front-end is more than half done.
+
+<h3>The SAP Configuration Tool</h3>
+We closed the talk with a quick demo of the 'finished' parts of the system. It was possible to set up an 
+SAP system (basically a computer) represented on the screen by an edged box. Functions such as 
+'Inventory Management' or 'General Ledger' were dragged from a function palette and dropped onto the 
+box, triggering a dialogue to request details such as the company code(s) the GL system was managing. 
+When a message was required it was drawn as an arrowed line between the two functions on their 
+respective computers. By running under the 'execution server' variant of J, Duncan showed how you 
+could run the whole system from the J session window, and how the set of arrowed lines was represented 
+as a simple four column array of co-ordinates.
+
+<h3>Summary</h3>
+In moving the SAP application to a mixed platform of C++ and J we have clearly solved all our speed 
+problems - things really snap in a way they never could in APL. We have also ensured a complete and 
+clean separation between the GUI code and the logic engine; any competent C programmer could fix the 
+GUI, and any competent J programmer could fix the logic - this leaves SAP with a much reduced long-
+term support worry. Yes, it works with NT, yes it works with Kanji, yes it fits on a single diskette and is 
+a dream to install. End of story.
+</body>
+</html>

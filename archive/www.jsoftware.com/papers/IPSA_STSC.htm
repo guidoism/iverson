@@ -1,0 +1,1287 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>IPSA/STSC Operators and General Arrays</title>
+<link href="https://www.jsoftware.com/papers/adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+1>A Comparison of the IPSA and STSC<br>
+Implementations of Operators and General Arrays<br><br>
+D.L. Orth</font>
+</p>
+
+<br><hr>
+
+<p>This paper contains the details of a comparison of
+the I.P. Sharp Associates (IPSA) and STSC, Inc. 
+operators and general array systems presented
+by the author at the APL81 conference.
+The presentation consists of three phrases:
+first, three elementary applications 
+will be presented, together with the ways
+in which a programmer might expect to use
+general arrays in these applications;
+second, the general features of the systems will be
+presented in terms of these applications;
+and third, the details of the systems will be
+presented in a series of tables at the end
+of the paper.</p>
+
+<p>The IPSA and STSC operators and general arrays
+systems have general features in common,
+but almost always differ in details;
+consequently APL names will usually be used
+here for new primitive functions and operators.
+Moreover, the systems differ in fundamental 
+concepts that underly detailed design choices.
+By viewing the extensions in terms of
+applications we are able to illustrate 
+these concepts in practical ways;
+however, not all extensions receive
+equal attention because not all extensions
+are equally relevant to the applications
+presented here.</p>
+
+<p>The STSC operators and general arrays
+extensions reside on an experimental system
+known as the NARS system
+(for Nested ARrays System)
+which also contains many APL extensions
+that have nothing directly to do with general arrays.
+Operators and general arrays extensions to the
+IPSA implementation are being introduced
+in a step-by-step manner on the floor system,
+which also contains non-general arrays extensions.
+The only extensions discussed here are those 
+directly related to general arrays.
+References to IPSA&rsquo;s future plans
+are taken from
+<acronym title="Bernecky, R. and Iverson, K.E., 
+Operators and Enclosed Arrays, 
+Proceedings of the IPSA 1980 APL Users Meeting, 
+p. 319.">[1]</acronym>.</p>
+
+<p>The first application is a simplified version
+of a materials data base that maintains
+information on the physical materials used
+in IBM products.
+This data base is implemented in terms of
+a general arrays simulation and has been
+running in that mode for about six years.
+The structure of the data base will be described
+here in terms of one general array,
+although in practice the structure must
+be segmented on files.</p>
+
+<p>The data base is a vector<tt> mdb </tt>
+with one element for each of the several thousand
+materials on which information is maintained.
+The<tt> i</tt>&nbsp;th element of this vector
+<i>holds</i> all the information on the<tt> i</tt>&nbsp;th
+material.</p>
+
+<p>The information on each material is maintained
+in a vector of length 125 with 
+one element for each of the 125 possible 
+physical properties,
+such as color and tensile strength;
+the<tt> j</tt>&nbsp;th element of the<tt> i</tt>&nbsp;th
+vector holds all the information on the<tt> j</tt>&nbsp;th
+property of the<tt> i</tt>&nbsp;th material.
+(It is the variation in the types and ranks
+of the arrays containing physical property information,
+such as character vectors for color and 
+numerical matrices for tensile strength,
+that first suggested the use of general arrays.)
+For our purposes here I will restrict
+the properties to 2 of the 125,
+known as codename and tradename.</p>
+
+<p>The codename of a material is a unique 9-character
+technical name that indicates the chemical classification
+of the material.  A tradename is a name by which 
+a material is commercially known,
+and often is not unique.
+Thus the 2-element vector associated
+with a material holds a 9-element vector
+as its first element containing the codename
+of the material,
+while its second element holds a vector 
+of varying length whose elements in turn
+hold character vectors containing
+the various tradenames of the material.</p>
+
+<p>In terms of general arrays and what we might
+expect to do conveniently with this application,
+we would first of all expect to be able to
+represent the data base much in the same way
+as it has been described, 
+i.e. as a vector whose elements all hold
+2-element vectors, 
+each of whose first element holds a character
+vector and whose second element holds a vector
+whose elements hold character vectors.
+We should also expect to conveniently
+append new information to the data base,
+extract old information, and update old information.
+We might also expect to be able to
+manipulate the data base, 
+such as sorting by codename or tradename.</p>
+
+<p>The second application is the representation
+of rational numbers and rational arithmetic,
+and is an example of the use of general arrays
+for so-called data abstraction.
+A rational number is a fraction consisting
+of a numerator and a denominator,
+and can therefore be represented as a 2-element
+vector whose first element is, say,
+the numerator and whose second element
+is the denominator.
+Thus arrays of rational numbers can be represented
+as general arrays whose elements 
+all hold 2-element vectors.
+(Rational arithmetic, which can be used to
+empirically test the numerical stability
+of algorithms, is only one of many alternate
+arithmetics which could be useful 
+in numerical computations.
+Others are, for example, complex arithmetic,
+high-precision arithmetic, and polynomial arithmetic.
+Polynomial arithmetic, phrased in terms of
+general arrays and new and extended operators,
+has been used in the formal description 
+and implementation
+of a derivative algorithm for computer programs,
+which is the most significant use
+of the new language features I know.)</p>
+
+<p>What might we expect to do conveniently
+with an alternate arithmetic?
+Ideally, we would expect to be able
+to convert an arithmetic algorithm
+(i.e., an algorithm whose numerical computations
+use only the arithmetic 
+primitives<tt> +-×÷</tt>)<tt> </tt>
+to an equivalent algorithm in the alternate
+arithmetic, simply by substituting defined
+functions that carry out the alternate arithmetic
+for the four arithmetic primitives.
+For example, if<tt> plus </tt>is the scalar
+function that applies to arrays of 2-element vectors
+and carries out addition of rational numbers,
+then the expression</p>
+
+<pre>
+   a←x++/y
+</pre>
+
+<p>would be replaced by</p>
+
+<pre>
+   a←x plus plus/y
+</pre>
+
+<p>The third and last application illustrates
+the use of general arrays for emphasizing
+particular axes in ordinary or <i>flat</i> arrays.
+A collection of names can be represented
+as a character matrix whose rows contain
+the names, one to each row.
+The same collection could be represented
+as a vector with each element holding
+a character vector holding one name.
+(Note that in the latter representation
+there is no need to pad the vectors to be
+of equal length.)</p>
+
+<p>What might we expect to do conveniently
+with general arrays in this application
+depends, I think, on our viewpoint
+of the relationship of general arrays 
+to present APL.
+If that view is of general arrays as the foundations
+of a language that significantly transcends
+present APL then we should expect to be able
+to do with the vector of vectors representation
+all that can be done conveniently in APL
+with the matrix representation, and more.
+If, however, that view is of general arrays
+as simply another extension that enhances
+the power of APL, then we might only 
+expect to do some things&mdash;or even, perhaps,
+nothing&mdash;more conveniently than before.</p>
+
+<p>This completes the description of the 
+three applications.
+I will now use these applications to
+illustrate more specifically what we might
+expect to do conveniently with general arrays,
+and to tie these expectations in a general
+way to the IPSA and STSC systems.</p>
+
+<p>It is evident, of course, that all
+applications of general arrays ultimately
+require primitives to form
+&ldquo;compound scalars&rdquo;,
+i.e. to encode arrays as elements of other arrays,
+and to reveal the contents of these compound scalars.
+These primitives are commonly called
+<i>enclose</i> (enclose an array in a scalar)
+and <i>disclose</i> (disclose the contents
+of a scalar), for which I will use the 
+names<tt> enc </tt>and<tt> dis</tt>&nbsp;.<tt> </tt>
+Both the STSC and IPSA systems have such primitives.</p>
+
+<p>The materials data base illustrates 
+the utility of conveniently retrieving
+part of the contents of a compound scalar
+and replacing that part.
+For example, the<tt> j</tt>&nbsp;th
+tradename of the<tt> i</tt>&nbsp;th
+material in the materials data base can be
+obtained by a sequence of disclosures:</p>
+
+<pre>
+   dis(dis(dis mdb[i])[2])[j]
+</pre>
+
+<p>and that tradename can be replaced by the
+following sequence:</p>
+
+<pre>
+   i1←dis mdb[i]
+   i2←dis i1[2]
+   i2[j]←enc b
+   i1[2]←enc i2
+   mdb[i]←enc i1
+</pre>
+
+<p>We might expect more convenient ways to do this,
+particularly when there are many encloses
+and discloses, such as a primitive name<tt> pick </tt>
+with which the above retrieval and replacement
+could be accomplished as follows:</p>
+
+<pre>
+   (i,j,2) pick mdb
+</pre>
+
+<p>and</p>
+
+<pre>
+   ((i,j,2) pick mdb)←b
+</pre>
+
+<p>Only STSC has such a primitive.
+This retrieval and replacement can also
+be accomplished in the STSC system
+by the extensions to indexing and
+index-specification called <i>reach</i>
+and <i>reach-specification</i>:</p>
+
+<pre>
+   dis mdb[enc i,2,j]
+</pre>
+
+<p>and</p>
+
+<pre>
+   mdb[enc i,2,j]←enc b
+</pre>
+
+<p>In many applications, data representations
+change during various phases of computation,
+and we should expect this to be true
+when using general arrays.
+Usually these changes of representations
+occur when it is more convenient to compute
+in one representation than another.
+For example, in the representation of
+names application,
+it may be more convenient to apply certain
+sorting algorithms to the matrix of names
+or to a vector holding the column vectors
+of the matrix as elements,
+while (as we will see below) it may be
+more convenient to look up a name in a list
+when the list is in the vector of vectors
+representation.
+We might expect, then, to be able to move
+conveniently back and forth between
+representations such as a character matrix
+and a vector of character vectors 
+by enclosing an array along specified axes
+(denoted<tt> enc[k]⍵</tt>)<tt> </tt>
+and disclosing all elements of an array
+at once and placing the contents along,
+say, the last axes of the result
+(denoted<tt> disall</tt>).<tt> </tt>
+Both IPSA and STSC provide such primitives.</p>
+
+<p>Continuing this line of reasoning,
+it is not difficult to imagine other interesting
+ways of segmenting an array into subarrays
+and enclosing each resulting subarray.
+For example, for a character vector representing
+a fragment of text we may wish to form
+a vector whose elements hold the words
+in the text, one word per element.
+That is, we may wish to partition the
+original vector at the blanks.
+Only STSC has partitioned enclose primitive
+that carries out this type of transformation,
+although IPSA has a partitioning operator
+planned for later release.</p>
+
+<p>It is evident from the representation
+of a list of names as a vector of vectors
+that it would be very useful to be able
+to conveniently determine when two arrays
+are identical, and thereby when two enclosed
+arrays (or two elements of general arrays)
+are identical.  
+Both IPSA and STSC provide 
+an &ldquo;identical&rdquo; primitive, 
+and both have extended the
+index-of and membership primitives 
+in the obvious ways with this new primitive
+in place of equals.  For example:</p>
+
+<pre>
+   v←(enc 'Tom'),(enc 'Dick'),(enc 'Harry')
+   v⍳enc 'Dick'
+2
+</pre>
+
+<p>It is also very useful to be able to apply
+the present selection and structural primitives
+to general arrays in the obvious ways.
+Both STSC and IPSA have made these extensions,
+but there are some temporary restrictions
+in the IPSA system.</p>
+
+<p>We will now turn to expectations
+for new operators and extensions of old ones.</p>
+
+<p>In the representation of rational numbers
+and rational arithmetic,
+if<tt> pl:(+/⍺×⌽⍵),(¯1↑⍺)×(¯1↑⍵) </tt>and
+if<tt> 2&nbsp;3 </tt>and<tt> 4&nbsp;7 </tt>
+represent rational numbers,
+then<tt> <nobr>2 3 pl 4 7</nobr> </tt>represent
+their sum as a rational number.
+Thus if<tt> a </tt>and<tt> b </tt>are scalars
+holding 2-element vectors representing
+rational numbers,
+then<tt> a pls b </tt>is a scalar holding
+a 2-element vector representing their sum, where</p>
+
+<pre>
+   pls:enc(dis ⍺)pl dis ⍵
+</pre>
+
+<p>It would be very useful to have a scalar
+extension operator which applies<tt> pls </tt>
+element-by-element to arrays whose elements
+all hold 2-element vectors representing
+rational numbers.
+Both STSC and IPSA provide such an operator.
+In the case of STSC the operator
+(called <i>each</i>) achieves this effect
+by applying to<tt> pl </tt>instead 
+of<tt> pls</tt>&nbsp;,<tt> </tt>
+while in the case of IPSA, 
+scalar extension operators that apply
+to<tt> pls </tt>or<tt> pl </tt>are obtained
+as special cases of other operators.
+Let<tt> plus </tt>denote the scalar 
+extension of<tt> pls</tt>&nbsp;.</p>
+
+<p>The STSC each operator is denoted
+by<tt> ¨ </tt>and I will use this notation
+for convenience.
+For a monadic function<tt> f</tt>&nbsp;,<tt> </tt>
+a dyadic function<tt> g</tt>&nbsp;,<tt> </tt>
+and vectors<tt> a </tt>and<tt> b </tt>
+we have</p>
+
+<pre>
+   (f¨b)[i] equals enc f dis b[i]
+</pre>
+
+<p>and</p>
+
+<pre>
+   (a g¨b)[i] equals enc (dis a[i])g(dis b[i])
+</pre>
+
+<p>In the dyadic case,
+if one of<tt> a </tt>and<tt> b </tt>is
+a scalar then it is reshaped to a vector
+of the same size as the other.
+(The enclose function in these
+definitions is assumed to behave
+like the enclose primitive on the STSC system,
+which differs from the one on the IPSA system
+in that the enclose of a flat scalar
+equals that scalar.
+For example,<tt> enc&nbsp;3 </tt>equals<tt> 3 </tt>
+on the STSC system, 
+but<tt> enc&nbsp;3 </tt>does not equal<tt> 3 </tt>
+on the IPSA system.)</p>
+
+<p>As I mentioned before, it would also
+be very useful if the present operators 
+reduction, scan, inner, and outer product
+applied to all scalar functions
+(such as<tt> plus</tt>),<tt> </tt>
+not just the primitive ones.
+Only STSC has extended these operators
+at this time,
+although in the case of<tt> plus </tt>
+the extended operators apply to<tt> pl </tt>
+instead.
+That is, uses of the each operator
+are built into the operator extensions.
+For example, in converting an arithmetic
+algorithm to a rational arithmetic algorithm,
+the expression</p>
+
+<pre>
+   a←x++/y
+</pre>
+
+<p>would be replaced by</p>
+
+<pre>
+   a←x plus pl/y
+</pre>
+
+<p>and not</p>
+
+<pre>
+   a←x plus plus/y
+</pre>
+
+<p>One more thing is needed to conveniently
+produce equivalent rational arithmetic algorithms
+from ones defined for primitive arithmetic,
+and that is the correct application
+of a function derived from reduction
+to an empty vector.
+For example,<tt> plus/⍳0 </tt>
+(or<tt> pl/⍳0 </tt>in the case of STSC)
+should yield the identity 
+element<tt> <nobr>enc 0 1</nobr></tt>&nbsp;.<tt> </tt>
+The STSC system provides no mechanism
+for the user to specify the identity
+element of a non-primitive scalar function,
+and reports<tt> domain error </tt>
+for<tt> pl/⍳0</tt>&nbsp;.</p>
+
+<p>Combinations of a scalar extension operator
+and the primitives for enclosing 
+along specified 
+axes<tt> </tt>(<tt>enc[k]⍵</tt>)<tt> </tt>
+and disclosing all 
+elements<tt> </tt>(<tt>disall</tt>)<tt> </tt>
+provide potentially powerful programming tools.
+For example, if the name contained
+in a character vector is in the order of
+last name first followed by a comma
+and then first name and initial,
+then<tt> f:(¯1+⍵⍳',')↑⍵ </tt>applied
+to the vector produces the last 
+name.<tt> f </tt>can be applied to
+every row of a character matrix by
+applying the following function
+to the matrix:</p>
+
+<pre>
+   f¨enc[2]⍵
+</pre>
+
+<p>The result will be a vector whose elements
+hold character vectors containing the last names
+in the rows of the matrix argument.
+One way to have the last names arranged
+as rows in a matrix is to 
+define<tt> g:(⍴⍵)↑f⍵ </tt>and
+apply the function</p>
+
+<pre>
+   disall g¨enc[2]⍵
+</pre>
+
+<p>to the matrix argument.
+Evidently the effect of combinations like the latter
+could just as well be accomplished
+by a more powerful axis operator,
+as in<tt> g[2]⍵</tt>&nbsp;.<tt> </tt>
+In fact many applications that emphasize
+particular axes of flat arrays can be handled
+with appropriate axis operators,
+and do not require general arrays.
+Neither the IPSA or STSC system has such
+axis operators,
+although IPSA is planning them 
+for future release.</p>
+
+<p>There is an interesting question concerning
+the application, to empty arrays,
+of a function derived from an extended axis operator
+and a defined function.
+For example, how is the shape of the result
+of<tt> g[2]⍵ </tt>(or better yet<tt> f[2]⍵</tt>)<tt> </tt>
+determined when applied to a
+matrix of shape<tt> 0,n</tt>&nbsp;?<tt> </tt>
+Evidently the same mechanism that would permit
+user specification of results of reductions
+on empties (e.g.<tt> plus/⍳0</tt>)<tt> </tt>
+could be applied here.
+Analogous questions for general arrays
+have led to a fairly complex construction
+that I will present in terms of the
+collection of names application,
+taking the viewpoint that we should expect
+to do with the vector of vectors
+representation all that can be done
+conveniently in APL with the matrix representation.</p>
+
+<p>Consider the problem of expanding or
+overtaking the matrix representation
+along the first axis.
+Each new row introduced in this manner
+is a vector of blanks, 
+which suggests that when expand or overtake
+is applied to the vector of vectors 
+representation,
+the resulting new elements should 
+hold vectors of blanks.
+In the case of the matrix,
+all the new rows are of the same length
+as the old ones.
+But how are the lengths of the vectors
+within the new elements of the
+vector of vectors to be determined,
+since the vectors held by the old
+elements are not necessarily all of the same length?
+The answer provided by the STSC system
+and suggested by array theory
+is that the length of the vectors
+held by the new elements equals
+the length of the vector held
+by the first element of the general array.
+IPSA has not yet implemented 
+expand and overtake for general arrays,
+so the following comments refer only
+to the STSC system.</p>
+
+<p>More generally, the fill element
+for a non-empty array (general or flat)
+that is used by expand and overtake
+is called the <i>prototype</i>
+of the array and is obtained
+from the first element of the array
+by descending all the way to the &ldquo;bottom&rdquo;
+of that element,
+replacing each character with a blank
+and each number with a zero.
+As we might suspect, problems can occur
+with this definition in applications
+were the structure of the first element
+is dissimiliar from the structures
+of the other elements.
+(I have found in mathematical applications
+that the best choice of the fill element
+is usually the scalar 0.)
+It would be very helpful if users could
+specify the fill element, 
+but such a feature has not been provided.
+(The fill element for expand can be provided
+in an indirect way by using a
+new primitive called <i>mesh</i>
+in place of expand;
+there is an analogous replacement for take.)</p>
+
+<p>The fill elements for empty arrays
+are also called prototypes,
+but the prototype of an empty array is not so
+easy to define.
+(The prototype of an empty array<tt> a </tt>
+can always be produced by<tt> dis&nbsp;a </tt>
+on the STSC system; the question is how it obtains
+its particular value.)
+If<tt> a </tt>is produced directly from
+a non-empty array<tt> b </tt>as in<tt> 0/b </tt>
+then the prototype of<tt> a </tt>is the same
+as the prototype of<tt> b</tt>&nbsp;.<tt> </tt>
+However, if<tt> a </tt>is produced directly
+from another empty array<tt> b </tt>
+by way of a function<tt> f</tt>&nbsp;,<tt> </tt>
+i.e.<tt> a←f&nbsp;b</tt>&nbsp;,<tt> </tt>
+then the prototype of<tt> b </tt>must
+be <i>propagated</i> through<tt> f </tt>
+to produce the prototype of<tt> a</tt>&nbsp;,<tt> </tt>
+which means<tt> f </tt>may actually be applied
+to the prototype of<tt> b</tt>&nbsp;.</p>
+
+<p>For example, consider the ranking
+function<tt> rank:(⍴alph)⊥⍉alph⍳⍵ </tt>&mdash;the 
+vector<tt> alph </tt>is an alphabet&mdash;that
+can be used to sort the collection of names.
+The names in the matrix representation
+are sorted by the 
+function<tt> ⍵[⍋rank⍵;]</tt>&nbsp;,<tt> </tt>
+while the names in the vector of vectors
+representation are sorted by<tt> ⍵[⍋rank¨⍵;] </tt>
+(if all the vectors are of the same length).
+The expression<tt> ⍋rank⍵ </tt>applies
+to a matrix with no rows and produces
+the empty numerical vector,
+and therefore the expression<tt> ⍋rank¨⍵ </tt>
+should apply to an empty vector whose prototype
+is an enclosed vector of blanks to produce
+an empty vector whose prototype is<tt> 0 </tt>
+(i.e., the empty numerical vector).
+The way this is done on the STSC system
+is to actually apply<tt> rank </tt>
+to the vector of blanks held by the prototype
+of the empty vector argument
+of<tt> ⍋rank¨⍵</tt>&nbsp;,<tt> </tt>
+thereby producing a numeric value,
+and to then take that numeric value&rsquo;s
+prototype, which is<tt> 0</tt>&nbsp;,<tt> </tt>
+as the prototype of the empty vector result
+of<tt> ⍋rank¨⍵</tt>&nbsp;.</p>
+
+<p>Thus the user must be prepared for
+the eventuality of his functions being applied
+to prototypes.
+No difficulties arise in this example,
+but in the rational number representation
+the prototype of an empty array of 2-element
+vectors is<tt> <nobr>enc 0 0</nobr></tt>&nbsp;,<tt> </tt>
+and<tt> 0&nbsp;0 </tt>does not represent a valid
+rational number.
+The defined functions that carry out rational
+arithmetic on 2-element vectors would
+ordinarily produce a domain error report 
+if an argument did not represent 
+a valid rational number,
+thus warning the user of an apparent difficulty.
+The argument<tt> 0&nbsp;0</tt>&nbsp;,<tt> </tt>
+however, may simply be the contents
+of a prototype that should be
+passed along as a function value.
+But how are the functions to know when
+the argument<tt> 0&nbsp;0 </tt>is a prototype
+and when it is the result of a user error?
+There is no way to determine from within
+a defined function as to
+whether or not the function is being
+executed as part of a derived function.</p>
+
+<p>The point is that there are functions<tt> f </tt>
+for which the propagation of prototypes
+cannot produce the correct result
+of<tt> f¨m </tt>
+when<tt> 0=(⍴m)[a] </tt>
+for some axis<tt> a</tt>&nbsp;<tt> </tt>
+and therefore the same mechanism
+employed to specify results
+for<tt> f/[a]m </tt>and<tt> f[a]m </tt>
+must also be permitted by<tt> f¨m</tt>&nbsp;.</p>
+
+<p>Speaking of sorting,
+it was mentioned earlier that we might
+expect to be able to conveniently sort
+the general array representation
+of the materials data base in terms of
+of codenames and tradenames.
+In discussing the algorithms
+that do the sorting I will use the
+above ranking function<tt> rank </tt>
+and will let<tt> sc </tt>(for super catenate)
+denote the monadic function which,
+when applied to a vector 
+of vectors<tt> v</tt>&nbsp;<tt> </tt>
+produces a vector whose elements 
+are the elements held by the elements
+of<tt> v</tt>&nbsp;.<tt> </tt>
+For example,</p>
+
+<pre>
+   sc(enc 'Tom'),(enc 'Dick'),(enc 'Harry')
+</pre>
+
+<p>equals<tt> 'TomDickHarry'</tt>&nbsp;.</p>
+
+<p><tt>sc </tt>can be defined in the 
+STSC system by<tt> sc:dis,/⍵</tt>&nbsp;.</p>
+
+<p>Sorting by codename is the easier
+of the two because there is a one-one
+correspondences between materials
+and codenames.
+For the function</p>
+
+<pre>
+   f:rank dis ⍵[1]
+</pre>
+
+<p>the expression</p>
+
+<pre>
+   ⍋f¨mdb
+</pre>
+
+<p>produces the desired order of the materials.
+To sort by tradename,
+assume that all the tradenames are of the same length
+and define the function</p>
+
+<pre>
+   g:rank¨dis ⍵[2]
+</pre>
+
+<p>Note that<tt> g </tt>applies
+&ldquo;one level deeper&rsquo;
+than<tt> f</tt>&nbsp;.<tt> </tt>
+The analog of the above expression for
+codenames is</p>
+
+<pre>
+   ⍋sc g¨mdb
+</pre>
+
+<p>However, since there is not a one-one
+correspondence between materials and tradenames,
+in order to sort by tradename
+we must determine, for every 
+index<tt> k</tt>&nbsp;<tt> </tt>
+the material and tradename that corresponds
+to the<tt> k</tt>&nbsp;th element of this vector.
+In either IPSA or STSC system we must explicitly
+compute all &ldquo;paths&rdquo;
+to tradenames to establish this correspondence.
+That is, we must compute</p>
+
+<pre>
+   r:⍺,[0.5]⍳⍴dis ⍵[2]
+   paths←sc(⍳⍴mdb)r¨mdb
+</pre>
+
+<p>where<tt> paths </tt>is a two-row
+matrix for which<tt> paths[1;k] </tt>
+is an index of<tt> mdb </tt>
+and<tt> paths[2;k] </tt>is an index
+of<tt> dis(dis mdb[paths[1;k]])[2] </tt>
+for every index<tt> k</tt>&nbsp;.<tt> </tt>
+Therefore</p>
+
+<pre>
+   paths[⍋sc g¨mdb]
+</pre>
+
+<p>produces the desired order for 
+sorting by tradename.</p>
+
+<p>In practice the same problem was encountered,
+and it proved to be more convenient to maintain
+the path information with the data
+instead of computing it every time it was needed.
+It then turned out that the organizational
+information provided by the enclosures
+in<tt> mdb </tt>was redundant.
+That is, it was more convenient to work
+with the materials data base organized
+as a 3-column matrix<tt> mat</tt>&nbsp;,<tt> </tt>
+where the first column<tt> mat[;1] </tt>
+contains material numbers (i.e., the
+indices of the materials in<tt> mdb</tt>),<tt> </tt>
+the second column<tt> mat[;2] </tt>
+contains property numbers (1 for codename,
+2 for tradename),
+and the elements of the third column<tt> mat[;3] </tt>
+hold the character vectors containing codenames
+and tradenames.
+For each row index<tt> k </tt>
+the element<tt> mat[k;3] </tt>holds data
+for the <tt> mat[k;2]</tt>th property
+of the<tt> mat[k;1]</tt>th material.
+The above sorts can be accomplished as follows:</p>
+
+<pre>
+   (j/mat[;1])[⍋rank¨(j←i=mat[;2])/mat[;3]]
+</pre>
+
+<p>where<tt> i </tt>is<tt> 1 </tt>for sorting
+by codename and<tt> 2 </tt>for sorting 
+by tradenames.</p>
+
+<p>Returning to the axis operators,
+the planned IPSA axis operators will not be denoted
+by brackets but will conform to general rules
+for operators.
+Both IPSA and STSC have formalized the operator
+syntax of APL, but only the STSC implementation
+of that syntax is complete.
+All the monadic operators (e.g. reduction)
+have their function arguments on the left
+(in contrast to monadic functions)
+and all dyadic operators (e.g. inner product)
+have their function arguments arranged one
+on the left and one the right
+(like dyadic functions).
+In particular, outer product is syntactically
+a special case of inner product,
+obtained by using the 
+null<tt> </tt>(<tt>∘</tt>)<tt> </tt>
+in place of the left function argument.
+Function arguments of operators 
+can be primitive functions,
+defined functions, or functions derived
+from operators (e.g.<tt> +.×</tt>).<tt> </tt>
+Finally, operators have long scope to the left
+and short scope to the right
+(in contrast to functions).
+For example,<tt> a+.×.×b </tt>is equivalent
+to<tt> a(+.×).×b</tt>&nbsp;.</p>
+
+<p>One point of practical interest is the
+ease of expressing function arguments
+of operators.
+For example, if the numbers in a vector<tt> v </tt>
+represent the terms in a continued fraction,
+then the value of that fraction is</p>
+
+<pre>
+   v[1]+÷v[2]+÷ &#133; +÷v[⍴v]
+</pre>
+
+<p>which we might expect to be able to
+phrase in terms of reduction.
+According to the above rules,<tt> +÷/v </tt>
+is the same as<tt> +(÷/)v </tt>
+and therefore does not product the desired result.
+A simple solution to this problem is 
+provided by the STSC function composition operator,
+denoted here by<tt> <u>C</u></tt>&nbsp;.<tt> </tt>
+(IPSA also has function composition operators,
+but they do not provide a solution 
+to this particular problem.)
+That is,<tt> ⍺+÷⍵ </tt>is functionally
+equivalent to<tt> ⍺+<u>C</u>÷⍵ </tt>
+and<tt> +<u>C</u>÷ </tt>is a derived function,
+so that<tt> +<u>C</u>÷/v </tt>
+has the desired effect.</p>
+
+<p>This use of a composition operator is
+fairly restrictive because derived function expressions,
+like primitive functions, 
+can only take arguments on their left
+(monadic case) or left and right (dyadic case).
+For example, it is awkward at best to 
+describe<tt> (⍺≠⍵)/⍵ </tt>as a derived function
+of a composition operator.
+Of course we can always fix function definitions
+(as we did with the arguments of the 
+each operator in the sorting algorithms 
+for the materials data base<tt> mdb</tt>).<tt> </tt>
+Only STSC provides a convenient 
+way to fix function definitions 
+for arguments to operators,
+which is by way of a function definition operator.
+I will denote this operator here by<tt> <u>D</u> </tt>
+and use it monadically, 
+although the STSC operator is dyadic
+and more general.
+For example, the continued fraction
+evaluation could be expressed
+as<tt> '⍺+÷⍵'<u>D∘</u>/v</tt>&nbsp;.<tt> </tt>
+As a second example, the previous application
+of the axis operator to a defined 
+function<tt> g</tt>&nbsp;,<tt> </tt>
+i.e.<tt> g[2]⍵</tt>&nbsp;,<tt> </tt>
+is equivalent to</p>
+
+<pre>
+   ('(⍴⍵)↑(¯1↑⍵⍳'','')↑⍵'<u>D</u>∘)[2]⍵
+</pre>
+
+<p>Up to now I have spoken of the two systems
+in general terms and have for the most part
+avoided the detailed differences,
+which are many.
+In fact, there are several important differences
+in the function composition operators alone.
+I will conclude the second phase of this summary,
+and introduce the third as well,
+which a brief description of what I believe
+is the most important difference in function
+composition.</p>
+
+<p>The IPSA function composition operators,
+which differ for dyadic function arguments
+but agree for monadic ones, 
+have a feature based on the concept of
+<i>function rank</i> that unifies 
+the concepts of ordinary function composition
+and the application of functions to subarrays
+along certain axes.
+One effect of this feature is that 
+for monadic functions<tt> f </tt>
+and<tt> g</tt>&nbsp;,<tt> f&nbsp;g&nbsp;⍵ </tt>is not
+necessarily identical 
+to<tt> f&nbsp;<u>F</u>&nbsp;g&nbsp;⍵</tt>&nbsp;,<tt> </tt>
+where<tt> <u>F</u> </tt>denotes 
+an operator which agrees with the IPSA function
+composition operators for monadic
+function arguments.</p>
+
+<p>The monadic function<tt> g </tt>is said 
+to have <i>argument rank</i><tt> r </tt>
+if<tt> r </tt>is the smallest non-negative
+integer such that for every argument<tt> a </tt>
+of<tt> g </tt>which has rank 
+at least<tt> r</tt>&nbsp;,<tt> g&nbsp;a </tt>
+is identical to<tt> g[(-r)↑⍳⍴⍴a]a</tt>&nbsp;.<tt> </tt>
+For example,<tt> i/⍵ </tt>has argument rank 1
+for every vector<tt> i</tt>&nbsp;.<tt> </tt>
+The composition operator in the IPSA system
+have the property that the argument rank
+of the composite function<tt> f&nbsp;<u>F</u>&nbsp;g </tt>
+is the same as the argument rank 
+of<tt> g</tt>&nbsp;.<tt> </tt>
+Therefore,<tt> f&nbsp;<u>F</u>&nbsp;g</tt>&nbsp;,<tt> </tt>
+like<tt> g</tt>&nbsp;,<tt> </tt>applies to
+subarrays along the last<tt> r </tt>
+axes of any argument of rank 
+at least<tt> r</tt>&nbsp;.<tt> </tt>
+For example, if<tt> f </tt>is<tt> ⍴ </tt>
+and<tt> g </tt>is<tt> disall</tt>&nbsp;,<tt> </tt>
+which has argument rank 0,
+then<tt> f&nbsp;<u>F</u>&nbsp;g </tt>also has
+argument rank 0 and</p>
+
+<pre>
+   f g (enc 'Tom '),(enc 'Dick '),(enc 'Harry')
+</pre>
+
+<p>equals<tt> 3 5</tt>&nbsp;,<tt> </tt>while</p>
+
+<pre>
+   f <u>F</u> g (enc 'Tom '),(enc 'Dick '),(enc 'Harry')
+</pre>
+
+<p>equals<tt> 3 1⍴3 4 5</tt>&nbsp;.<tt> </tt>
+In effect,<tt> <nobr>f <u>F</u> g ⍵</nobr> </tt>
+is the same
+as<tt> <nobr>(f <u>F</u> g)[⍴⍴⍵]⍵</nobr> </tt>
+in this example.</p>
+
+<p>The function rank feature, which is not
+present in the STSC implementation,
+permits the IPSA system to define the each
+operator in terms of composition with<tt> disall </tt>
+(which has argument rank 0) instead of as
+a separate operator.</p>
+
+<p>And now for the tables showing the details
+of the two systems and their differences.
+An asterisk indicates a temporary 
+restriction in the present implementation.</p>
+
+
+
+<br>
+<table border=1 cellspacing=0 cellpadding=3><tr>
+<td width=50% valign=top>
+<p>IPSA</p>
+<table>
+<tr><td valign=top width=70><tt>&lt;a</tt>&nbsp;</td><td>Enclose<tt> a</tt></td></tr>
+</table>
+<p>Note:<tt> &lt;3 </tt>is not the same as<tt> 3 </tt></p>
+</td><td width=50% valign=top>
+<p>STSC</p>
+<table>
+<tr><td valign=top width=70><tt>⊂a</tt>&nbsp;</td><td>Enclose<tt> a</tt></td></tr>
+<tr><td valign=top><tt>↓a</tt></td><td>Enclose along the last axis (called <i>split</i>)</td></tr>
+<tr><td valign=top><tt>↓[k]a</tt>&nbsp;</td><td>Enclose along axis<tt> k </tt></td></tr>
+<tr><td valign=top><tt>l⊂a</tt>&nbsp;</td><td>Partitioned enclose along the last axis</td></tr>
+<tr><td valign=top><tt>l⊂[k]a</tt>&nbsp;</td><td>Partitioned enclose along axis<tt> k </tt></td></tr>
+<tr><td valign=top><tt>a b c</tt>&nbsp;</td><td><tt>(⊂a),(⊂b),(⊂c)</tt><br>
+   (called <i>vector notation</i> or <i>strand notation</i>)</td></tr>
+</table>
+<p>Note:<tt> ⊂3 </tt>is identical to<tt> 3 </tt></p>
+</td></tr></table>
+
+<p align=center>Table 1: Enclose</p>
+
+
+<br>
+<table border=1 cellspacing=0 cellpadding=3><tr>
+<td width=50% valign=top>
+<p>IPSA</p>
+<table>
+<tr><td valign=top width=70><tt>&gt;a</tt>&nbsp;</td><td>Disclose if<tt> 0=⍴⍴a</tt><br>
+    Disclose-all otherwise (new axes become the last axes)</td></tr>
+</table>
+</td><td width=50% valign=top>
+<p>STSC</p>
+<table>
+<tr><td valign=top width=70><tt>⊃a</tt>&nbsp;</td><td>Disclose if<tt> 0=⍴⍴a</tt><br>
+    <tt>⊃(⍳0)⍴a </tt>otherwise (also called <i>first</i>)</td></tr>
+<tr><td valign=top><tt>v⊃a</tt>&nbsp;</td><td>Pick<tt> </tt>(<tt>v </tt> 
+    is a <i>path</i> into<tt> a</tt>)</td></tr>
+<tr><td valign=top><tt>↑a</tt>&nbsp;</td><td>Disclose-all (called <i>mix</i>)</td></tr>
+<tr><td valign=top><tt>↑[k]a</tt>&nbsp;</td><td>Disclose-all and insert
+    between axes<tt> ⌊k </tt>and<tt> ⌈k</tt></td></tr>
+</table>
+</td></tr></table>
+
+<p align=center>Table 2: Disclose</p>
+
+
+<br>
+<table border=1 cellspacing=0 cellpadding=3><tr>
+<td width=50% valign=top>
+<p>IPSA</p>
+<table>
+<tr><td valign=top width=70><tt>a≡b</tt>&nbsp;</td><td><tt>1 </tt>when<tt> a </tt>and<tt> b </tt>
+    are identical (called <i>match</i>)<br>&nbsp;</td></tr>
+<tr><td valign=top><tt>''≡(⍳0)</tt>&nbsp;</td><td><tt>1</tt>&nbsp;<br>&nbsp;</td></tr>
+<tr><td valign=top><tt>a⍳b </tt>&nbsp;<tt>a∊b</tt></td><td>Extended 
+    using<tt> ≡ </tt>in place of<tt> = </tt></td></tr>
+</table>
+</td><td width=50% valign=top>
+<p>STSC</p>
+<table>
+<tr><td valign=top width=70><tt>a≡b</tt>&nbsp;</td><td><tt>1 </tt>when<tt> a </tt>and<tt> b </tt>
+    are identical (called <i>equivalent</i>)</td></tr>
+<tr><td valign=top><tt>''≡(⍳0)</tt>&nbsp;</td><td><tt>0 </tt>(prototypes must be identical)</td></tr>
+<tr><td valign=top><tt>a⍳b </tt>&nbsp;<tt>a∊b</tt></td><td>Extended 
+    using<tt> ≡ </tt>in place of<tt> = </tt></td></tr>
+<tr><td valign=top><tt>a≢b</tt>&nbsp;</td><td><tt>~a≡b </tt>(called <i>inequivalent</i>)</td></tr>
+<tr><td valign=top><tt>≡b</tt>&nbsp;</td><td><tt>1 </tt>when<tt> b </tt>is flat (called <i>simple</i>)</td></tr>
+<tr><td valign=top><tt>≢b</tt>&nbsp;</td><td><tt>~≡b </tt>(called <i>not-simple</i>)</td></tr>
+</table>
+</td></tr></table>
+
+<p align=center>Table 3: Identical</p>
+
+
+<br>
+<table border=1 cellspacing=0 cellpadding=3><tr>
+<td width=50% valign=top>
+<p>IPSA</p>
+<table>
+<tr><td valign=top width=70><tt>a,b</tt>&nbsp;</td><td>Defined for<tt> a </tt>and<tt> b </tt>
+    both numeric, or both character, or both general
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>a⍴b ⍴b a⍉b ⍉b a/b a\b a⌽b ⌽b a↑b a↓b ,b</tt><br><font size=-3>&nbsp;</font></td><td valign=top>Extended for
+    general<tt> b</tt>&nbsp;,<tt> </tt>except where fill is required</td></tr>
+<tr><td valign=top><tt>a⊥b a⊤b a⌹b ⌹b ⍋b ⍒b a⍕b ⍕b ⍎b a?b</tt></tt><br><font size=-3>&nbsp;</font></td><td valign=top>
+    Not extended</td></tr>
+<tr><td valign=top>Scalar functions</td><td valign=top>Not extended</td></tr>
+</table>
+</td><td width=50% valign=top>
+<p>STSC</p>
+<table>
+<tr><td valign=top width=70><tt>a,b</tt>&nbsp;</td><td>Defined for all<tt> a </tt>and<tt> b </tt>
+    <br>&nbsp;<br>&nbsp;<br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>a⍴b ⍴b a⍉b ⍉b a/b a\b a⌽b ⌽b a↑b a↓b ,b</tt><br><font size=-3>&nbsp;</font></td><td valign=top>Extended for
+    general<tt> b </tt></td></tr>
+<tr><td valign=top><tt>a⊥b a⊤b a⌹b ⌹b ⍋b ⍒b a⍕b ⍕b ⍎b a?b</tt></tt><br><font size=-3>&nbsp;</font></td><td valign=top>
+    Not extended</td></tr>
+<tr><td valign=top>Scalar functions</td><td valign=top>Extended 
+    (now called <i>pervasive</i> functions)
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>a[b]</tt>&nbsp;<br><tt>a[b]←c</tt>&nbsp;</td><td><tt>b </tt>is flat,
+    or the elements of<tt> b </tt>hold &ldquo;index vectors&rsquo;
+    of length<tt> ⍴⍴a</tt>&nbsp;,<tt> </tt>or the elements of<tt> b </tt>
+    hold paths into<tt> a </tt>(see Pick, Table 1)
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>⍳b</tt>&nbsp;</td><td valign=top><tt>a≡a[⍳⍴a] </tt>
+    for all<tt> a</tt><br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>a⍴b</tt>&nbsp;</td><td valign=top>Extended for<tt> b </tt>empty
+    and<tt> ^/0≠a</tt>&nbsp;,<tt> </tt>e.g.<tt> (⍳0)⍴0⍴b </tt>holds the 
+    prototype of<tt> b </tt>(<tt>⊃b </tt>is the prototype)
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>⊤b</tt>&nbsp;</td><td valign=top><tt>⊃0⍴⊂b </tt>(called <i>type</i>)</td></tr>
+</table>
+</td></tr></table>
+
+<p align=center>Table 4: Primitive Functions</p>
+
+
+<br>
+<table border=1 cellspacing=0 cellpadding=3><tr>
+<td width=50% valign=top>
+<p>IPSA</p>
+<table>
+<tr><td valign=top width=70>*<tt> f⍤g</tt><br><tt>&nbsp; f⍥g</tt>&nbsp;</td><td>Composition operators
+    (called <i>on</i> and <i>over</i>)
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>f⍤g⍵</tt></td><td valign=top><tt>f g ⍵</tt></td></tr>
+<tr><td valign=top><tt>f⍥g⍵</tt></td><td valign=top><tt>f g ⍵</tt></td></tr>
+<tr><td valign=top><tt>⍺f⍤g⍵</tt></td><td valign=top><tt>(g⍺)f(g⍵)</tt></td></tr>
+<tr><td valign=top><tt>⍺f⍥g⍵</tt></td><td valign=top><tt>f⍺g⍵</tt>
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top>*<tt> f¨g</tt></td><td><tt>h⍥f⍤g</tt>&nbsp;,<tt> </tt>
+    where<tt> h </tt>is the inverse of<tt> g </tt>(called <i>with</i>)
+    <br><br><br><br></font></td></tr>
+<tr><td valign=top><tt> f¨&gt;</tt>&nbsp;</td><td><i>Each</i> operator</td></tr>
+<tr><td valign=top><tt> f⍤&gt;</tt>&nbsp;</td><td>Scalar extension operator
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>f/⍵ f\⍵ ⍺∘.f⍵ ⍺f.g⍵</tt></td><td valign=top>Not extended</td></tr>
+</table>
+</td><td width=50% valign=top>
+<p>STSC</p>
+<table>
+<tr><td valign=top width=70><tt>f∘g</tt>&nbsp;</td><td>Composition operator
+    (called <i>composition</i>)
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top>Axis operator</td><td><tt>f[i]⍵ </tt>extended to some new
+    primitives and<tt> ⍺f[i]⍵ </tt>is defined for
+    primitive scalar functions<tt> f</tt>
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>f&#x2362;g</tt>&nbsp;</td><td><i>Dual</i> operator</td></tr>
+<tr><td valign=top><tt>f&#x2362;g⍵</tt>&nbsp;</td><td><tt>h f g ⍵</tt>&nbsp;,<tt> </tt>
+    where<tt> h </tt>is the inverse of<tt> g </tt></td></tr>
+<tr><td valign=top><tt>⍺f&#x2362;g⍵</tt></td><td><tt>h(g⍺)f(g⍵)</tt>
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>f¨</tt>&nbsp;</td><td><i>Each</i> operator
+    <br><br><br></td></tr>
+<tr><td valign=top><tt>f/⍵</tt></td><td><tt>⍵[1]f¨f/1↓⍵</tt>
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>f\⍵</tt>&nbsp;</td><td><tt>(f\⍵)[i] </tt>equals<tt> f/⍵[⍳i]</tt>
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>⍺∘.f⍵</tt>&nbsp;</td><td><tt>(⍺∘.f⍵)[i;j] </tt>equals<tt> ⍺[i]f¨⍵[j]</tt>
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>⍺f.g⍵</tt></td><td><tt>f/⍺g¨⍵</tt>
+    <br><font size=-3>&nbsp;</font></td></tr>
+<tr><td valign=top><tt>⍺∇⍵ ∘∇⍵ ⍺∇∘</tt></td><td>Function definition operator
+    (ambivalent, monadic, dyadic)</td></tr>
+</table>
+</td></tr></table>
+
+<p align=center>Table 5: Operators
+<br>&nbsp;</p>
+
+
+<p>In conclusion, I believe that the IPSA and STSC
+systems represent two very different approaches
+to general arrays and APL,
+even though they have many of the same general features.</p>
+
+<p>The STSC system appears to be based on the approach
+of extending existing primitive functions and operators,
+wherever possible, to the domain of general arrays.
+For example:</p>
+
+<table>
+<tr><td valign=top>1.&nbsp;</td><td>
+the extensions of reduction, scan, inner product,
+and outer product use the each operator implicitly;
+ </td></tr>
+<tr><td valign=top>2.&nbsp;</td><td>
+strand notation extends the representation
+of vector numeric constants;
+ </td></tr>
+<tr><td valign=top>3.&nbsp;</td><td>
+the extensions of indexing and monadic<tt> ⍳ </tt>
+use general arrays;
+ </td></tr>
+<tr><td valign=top>4.&nbsp;</td><td>
+extensions for the application of functions
+to collections of subarrays are by way
+of the each operator and enclosing along
+specified axes only.
+ </td></tr>
+</table>
+
+<p>(Note that this approach requires the enclose
+of a flat scalar to be the same flat scalar.
+Otherwise, for example, extensions 1 and 2 fail.)
+Since many of the primitive functions and operators
+so extended could also be effectively extended
+without using general arrays,
+one must conclude that this approach is based
+on the belief that general arrays and APL
+are potentially more effective for most applications
+than flat arrays and APL.</p>
+
+<p>On the other hand, the IPSA system appears
+to be based on the approach that 
+there are alternatives to general arrays extensions
+that are potentially powerful without
+general arrays (i.e., the axis and function
+composition operators),
+but which can also be applied to general arrays
+through the explicit use of enclose and disclose.
+Thus an underlying belief of the IPSA approach
+appears to be that generality is still one of
+the fundamental design principles of APL (see
+<acronym title="Falkoff, A.D. and Iverson, K.E., 
+The Design of APL, 
+IBM Journal of Research and Development, 
+17 4 (July 1973) p.324.">[2]</acronym>).</p>
+
+
+<table><tr><td nowrap>&nbsp; &nbsp; &nbsp;</td><td>
+<p>D.L. Orth<br>
+IBM Thomas J. Watson Research Center<br>
+PO Box 218<br>
+Yorktown Heights, NY<br>
+USA &nbsp; 10598
+<br>&nbsp;</p>
+</td></tr></table>
+
+
+
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Bernecky, R. and Iverson, K.E.,
+<a href="http://www.jsoftware.com/papers/opea.htm"><i>Operators and Enclosed Arrays</i></a>,
+Proceedings of the IPSA 1980 APL Users Meeting,
+p. 319.
+ </td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+Falkoff, A.D. and Iverson, K.E.,
+<a href="http://www.jsoftware.com/papers/APLDesign.htm">The
+Design of APL</a>,
+<i>IBM Journal of Research and Development</i>,
+17 4 (July 1973) p.324.
+ </td></tr>
+</table>
+<br>
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared in the APL Quote Quad, Volume 12, Number 2, 1981-12.</p>
+
+<p><script src="https://www.jsoftware.com/papers/apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2010-10-15 07:45</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2013-07-23 22:10</font></td></tr>
+</table>
+
+</td></tr></table>
+
+<br><br><br>
+
+</body>
+</html>

@@ -1,0 +1,1109 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>A Programming Language</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>A Programming Language</font><br><br>
+<b>Kenneth E. Iverson</b><br>
+Research Division, IBM Corporation<br>
+Yorktown Heights, New York</p>
+
+<a name="abstract"></a>
+<p><b>Abstract</b></p>
+
+<p>The paper describes a succinct problem-oriented programming language.
+The language is broad in scope, 
+having been developed for, 
+and applied effectively in, 
+such diverse areas as microprogramming, switching theory,
+operations research, information retrieval, sorting theory, 
+structure of compilers, search procedures, and language translation. 
+The language permits a high degree of useful formalism. 
+It relies heavily on a systematic extension 
+of a small set of basic operations 
+to vectors, matrices, and trees, 
+and on a family of flexible selection operations 
+controlled by logical vectors. 
+Illustrations are drawn from a variety of applications.
+<br>&nbsp;</p>
+
+<hr>
+
+
+
+<p>The programming language outlined
+<acronym title="Iverson, K.E. , A Programming Language, Wiley, 1962.">[1]</acronym> 
+here has been designed for the succinct description 
+of algorithms. 
+The intended range of algorithms is broad; 
+effective applications include microprogramming,
+switching theory, operations research,
+information retrieval, sorting theory, 
+structure of compilers, search procedures, 
+and language translation. 
+The symbols used have been chosen
+so as to be concise and mnemonic, 
+and their choice has not been restricted to the character
+sets provided in contemporary printers and computers.
+A high degree of formalism is provided.
+<br>&nbsp;</p>
+
+
+
+<a name="basic"></a>
+<p><b>Basic Operations</b></p>
+
+<p>The language is based on a consistent unification
+and extension of existing mathematical
+notations, and upon a systematic extension of a
+small set of basic arithmetic and logical operations
+to vectors, matrices, and trees. 
+The arithmetic operations include the four familiar
+arithmetic operations and the absolute value
+(denoted by the usual symbols) 
+as well as the <i>floor</i>, <i>ceiling</i>, and <i>residue</i> 
+functions denoted and defined as follows:</p>
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td><td>
+<table>
+<tr><td><b>Name</b></td><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td><b>Symbol</b></td><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><b>Definition</b></td>
+ </tr>
+<tr><td>floor</td><td>&nbsp;</td>
+ <td align=center><tt>⌊</tt><i>x</i><tt>&#x230b;</tt></td><td>&nbsp;</td>
+ <td><tt>⌊</tt><i>x</i><tt>&#x230b;</tt> &le; <i>x</i> &lt; <tt>⌊</tt><i>x</i><tt>&#x230b;</tt> + 1</td>
+ </tr>
+<tr><td>ceiling</td><td>&nbsp;</td>
+ <td align=center><tt>⌈</tt><i>x</i><tt>&#x2309;</tt></td><td>&nbsp;</td>
+ <td><tt>⌈</tt><i>x</i><tt>&#x2309;</tt> &ge; <i>x</i> &gt; <tt>⌈</tt><i>x</i><tt>&#x2309;</tt> &ndash; 1</td>
+ </tr>
+<tr><td>residue mod <i>m</i></td><td>&nbsp;</td>
+ <td align=center><i>m</i> | <i>n</i></td><td>&nbsp;</td>
+ <td><i>n</i> = <i>m</i><i>q</i> + <i>m</i> | <i>n</i>;&nbsp; 0 &le; <i>m</i> | <i>n</i> &lt; <i>m</i>,</td>
+ </tr>
+</table>
+</td></tr></table>
+
+<p>where <tt>⌊</tt><i>x</i><tt>&#x230b;</tt>, 
+<tt>⌈</tt><i>x</i><tt>&#x2309;</tt>, 
+<i>m</i>, <i>n</i>, and <i>q</i> are integers.</p>
+
+<p>The logical operations <i>and</i>, <i>or</i>, and <i>not</i> 
+are defined upon the logical variables 0 and 1 and are
+denoted by &and;, &or;, and an overbar. 
+They are augmented
+by the <i>relational statement</i> (proposition)
+<nobr>(<i>x</i> <font face=Script>R</font> <i>y</i>)</nobr> 
+defined as follows. 
+If <i>x</i> and <i>y</i> are any entities 
+(e.g., numerals, alphabetic literals, or logical variables) 
+and <font face=Script>R</font> is any relation defined
+upon them, then 
+<nobr>(<i>x</i> <font face=Script>R</font> <i>y</i>)</nobr> 
+is equal to 1 or 0 according
+to whether the relation <font face=Script>R</font> 
+does or does not hold between <i>x</i> and <i>y</i>. 
+Thus <nobr>(<i>i</i> = <i>j</i>)</nobr> 
+is the familiar
+Kronecker delta <i>&delta;</i><sub><i>ij</i></sub>, 
+<nobr>(<i>u</i> &ne; <i>v</i>)</nobr> 
+is the <i>exclusive or</i> function 
+of the logical variables <i>u</i> and <i>v</i>, and 
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td><td>sgn <i>x</i> = (<i>x</i> &gt; 0) &ndash; (<i>x</i> &lt; 0)</td></tr>
+</table>
+
+is the familiar <i>sign function</i>, 
+defined as +1, 0, or &ndash;1 
+according as <i>x</i> is 
+strictly positive, zero, or strictly negative.
+<br>&nbsp;</p>
+
+
+
+<a name="vectors"></a>
+<p><b>Vectors and Matrices</b></p>
+
+<p>A vector is denoted by a bold italic lowercase letter 
+(e.g., <b><i>x</i></b>), 
+its <i>i</i>-th component by <b><i>x</i></b><sub><i>i</i></sub>,
+and its dimension by <i>&nu;</i>(<b><i>x</i></b>). 
+A matrix is denoted by a  bold italic uppercase letter 
+(e.g., <b><i>X</i></b>), its
+<i>i</i>-th row by <b><i>X</i></b><sup><i>&nbsp;i</i></sup>, 
+its <i>j</i>-th column by <b><i>X</i></b><sub><i>j</i></sub>, 
+its <i>ij</i>-th element 
+by <b><i>X</i></b><sub><i>j</i></sub><sup><i>i</i></sup>, 
+its <i>row dimension</i> (i.e., the
+common dimension of its row vectors) 
+by <i>&nu;</i>(<b><i>X</i></b>),
+and its column dimension by <i>&mu;</i>(<b><i>X</i></b>).</p>
+
+<p>All of the basic operations are extended
+component-by-component to vectors and matrices.
+Thus,</p>
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td><td>
+<table>
+<tr><td><b><i>z</i></b> = <b><i>x</i></b> + <b><i>y</i></b></td><td>&nbsp;&harr;&nbsp;</td>
+ <td><b><i>z</i></b><sub><i>i</i></sub> = <b><i>x</i></b><sub><i>i</i></sub> + <b><i>y</i></b><sub><i>i</i></sub></td></tr>
+<tr><td><b><i>z</i></b> = <b><i>x</i></b> &times; <b><i>y</i></b><td>&nbsp;&harr;&nbsp;</td>
+ <td><b><i>z</i></b><sub><i>i</i></sub> = <b><i>x</i></b><sub><i>i</i></sub> &times; <b><i>y</i></b><sub><i>i</i></sub></td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td><b><i>w</i></b> = <b><i>u</i></b> &and; <b><i>v</i></b><td>&nbsp;&harr;&nbsp;</td>
+ <td><b><i>w</i></b><sub><i>i</i></sub> = <b><i>u</i></b><sub><i>i</i></sub> &and; <b><i>v</i></b><sub><i>i</i></sub></td></tr>
+<tr><td><b><i>w</i></b> = (<b><i>x</i></b> &lt; <b><i>y</i></b>)<td>&nbsp;&harr;&nbsp;</td>
+ <td><b><i>w</i></b><sub><i>i</i></sub> = (<b><i>x</i></b><sub><i>i</i></sub> &lt; <b><i>y</i></b><sub><i>i</i></sub>)</td></tr>
+</table>
+</td></tr></table>
+
+<p>The symbol <tt><b></b></tt>(<i>n</i>) 
+will denote a logical vector
+of dimension <i>n</i> whose components are all unity,
+and 
+<nobr><img src="APLimg/epsboscore.bmp">(<i>n</i>)</nobr> 
+therefore denotes the zero vector. 
+The dimension <i>n</i> will be elided
+whenever it is clear from context.
+The cyclic left shift of a vector <b><i>x</i></b>
+is called <i>left rotation</i>.
+It is denoted by <nobr><i>k</i> &uarr; <b><i>x</i></b></nobr>
+and defined by the relation:
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td><b><i>y</i></b> = (<i>k</i> &uarr; <b><i>x</i></b>)
+ &nbsp;&harr;&nbsp; <b><i>y</i></b><sub><i>i</i></sub> =
+ <b><i>x</i></b><sub><i>j</i></sub>,</td></tr>
+</table>
+
+where <i>j</i> = 1 + <i>&nu;</i>(<b><i>x</i></b>) | 
+(<i>i</i> + <i>k</i> &ndash; 1).
+<i>Right rotation</i> is denoted by 
+<nobr><i>k</i> &darr; <b><i>x</i></b></nobr>
+and is defined analogously.
+<br>&nbsp;</p>
+
+
+
+<a name="reduction"></a>
+<p><b>Reduction</b></p>
+
+<p>For each basic binary operator <img src="APLimg/circledot.bmp">,
+the <nobr><img src="APLimg/circledot.bmp">-<i>reduction</i></nobr>
+of a vector <b><i>x</i></b> is denoted by
+<nobr><img src="APLimg/circledot.bmp">/<b><i>x</i></b></nobr>
+and defined by
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td><img src="APLimg/circledot.bmp">/<b><i>x</i></b> =
+(&#133;((<b><i>x</i></b><sub>1</sub> <img src="APLimg/circledot.bmp">
+<b><i>x</i></b><sub>2</sub>) <img src="APLimg/circledot.bmp">
+<b><i>x</i></b><sub>3</sub>) <img src="APLimg/circledot.bmp">
+&#133; <img src="APLimg/circledot.bmp">
+<b><i>x</i></b><sub><i>&nu;</i>(<b><i>x</i></b>)</sub>).
+</td></tr></table>
+
+Thus +/<b><i>x</i></b> is the sum, 
+and &times;/<b><i>x</i></b> is the product
+of all components of <b><i>x</i></b>. 
+Moreover, if <nobr><b><i>u</i></b> = (1, 0, 1),</nobr>
+then +/<b><i>u</i></b> = 2, 
+<nobr>+/<img src="APLimg/uboscore.bmp"> = 1,</nobr>
+&and;/<b><i>u</i></b> = 0, 
+and &or;/<b><i>u</i></b> = 1.</p>
+
+<p>Reduction is extended to matrices row-by-row:
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td><b><i>z</i></b> = <img src="APLimg/circledot.bmp">/<b><i>X</i></b>
+&nbsp;&harr;&nbsp; <b><i>z</i></b><sub><i>i</i></sub> =
+<img src="APLimg/circledot.bmp">/<b><i>X</i></b><sup><i>&nbsp;i</i></sup>,
+</td></tr></table>
+
+and column-by-column:
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td><b><i>z</i></b> = <img src="APLimg/circledot.bmp">//<b><i>X</i></b>
+&nbsp;&harr;&nbsp; <b><i>z</i></b><sub><i>i</i></sub> =
+<img src="APLimg/circledot.bmp">/<b><i>X</i></b><sub><i>i</i></sub>,
+</td></tr></table>
+
+the column reduction being distinguished by the
+double slash.</p>
+
+<p>For example , if <b><i>u</i></b> = 
+<nobr>(<b><i>u</i></b><sub>1</sub>, <b><i>u</i></b><sub>2</sub>)</nobr> 
+is a logical vector of dimension two, 
+then De Morgan&rsquo;s law may be expressed as:
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td><img src="APLimg/andslasheqn.bmp">.
+</td></tr></table>
+
+Moreover, this is the valid generalization
+of De Morgan&rsquo;s law to a vector <b><i>u</i></b>
+of arbitrary dimension.</p>
+
+<p>The reduction operation can be extended
+to any relation <font face=Script>R</font>
+by substituting <font face=Script>R</font>
+for <img src="APLimg/circledot.bmp">
+in the formal definition above.
+The parentheses in the definition
+now signify relational statements as well as grouping,
+and thus the expression &ne;/<b><i>u</i></b>
+denotes the application of the exclusive-or
+over all components of the logical vector <b><i>u</i></b>.
+For example, <nobr>&ne;/(1, 0, 1)</nobr> = 
+<nobr>((1 &ne; 0) &ne; 1)</nobr> = 
+<nobr>(1 &ne; 1)</nobr> = 0.
+Induction can be used to show that
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td>&ne;/<b><i>u</i></b> = 2|+/<b><i>u</i></b>, and 
+<img src="APLimg/eqslasheqn.bmp">.
+</td></tr></table>
+
+Hence, &ne;/<b><i>u</i></b> &nbsp;=&nbsp; 
+<img src="APLimg/eqslashdual.bmp">, 
+a useful companion to De Morgan&rsquo;s law.
+<br>&nbsp;</p>
+
+
+
+<a name="matrixprod"></a>
+<p><b>Matrix Product</b></p>
+
+<p>The conventional matrix product 
+<b><i>A</i></b><b><i>B</i></b> may
+be defined as:
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td>(<b><i>A</i></b><b><i>B</i></b>)<sub><i>j</i></sub><sup><i>i</i></sup>
+= +/ (<b><i>A</i></b><sup><i>i</i></sup> &times;
+<b><i>B</i></b><sub><i>j</i></sub>).
+</td></tr></table>
+
+Adopting the notation 
+<nobr><b><i>A</i></b> <img src="APLimg/plustimes.bmp"> <b><i>B</i></b></nobr>
+for this product makes explicit
+the roles of the basic operations + and &times;,
+and suggests the following useful generalization:
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td><b><i>A</i></b> <img src="APLimg/circle1circle2.bmp"> <b><i>B</i></b>
+= <img src="APLimg/circledot.bmp"><sub>1</sub>/ (<b><i>A</i></b><sup><i>i</i></sup> 
+<img src="APLimg/circledot.bmp"><sub>2</sub>
+<b><i>B</i></b><sub><i>j</i></sub>),
+</td></tr></table>
+
+where <img src="APLimg/circledot.bmp"><sub>1</sub> 
+and <img src="APLimg/circledot.bmp"><sub>2</sub> 
+are any operators or relations
+with suitable domains.</p>
+
+<p>Thus <nobr><b><i>C</i></b> = <b><i>M</i></b> 
+<img src="APLimg/andeq.bmp"> <b><i>X</i></b></nobr>
+is an &ldquo;incidence matrix&rdquo; such that 
+<b><i>C</i></b><sub><i>j</i></sub><sup><i>i</i></sup> = 1 
+if and only if <b><i>M</i></b><sup><i>&nbsp;i</i></sup> and 
+<b><i>X</i></b><sub><i>j</i></sub> 
+agree in all components. 
+If <b><i>M</i></b> is the memory of a binary computer 
+(i.e., <b><i>M</i></b> is a logical matrix and row 
+<b><i>M</i></b><sup><i>&nbsp;i</i></sup>
+is the <i>i</i>-th word of memory), 
+and if <b><i>x</i></b> is an &ldquo;argument register&rdquo;, 
+then (treating <b><i>x</i></b> as a one column matrix)
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td><b><i>s</i></b> = <b><i>M</i></b>
+<img src="APLimg/andeq.bmp"> <b><i>x</i></b>
+</td></tr></table>
+
+defines the sense vector <b><i>s</i></b> 
+of an associative memory such that 
+<b><i>s</i></b><sub><i>i</i></sub> = 1 
+if and only if word 
+<b><i>M</i></b><sup><i>&nbsp;i</i></sup>
+agrees with <b><i>x</i></b>.</p>
+
+<p>As further examples, 
+<nobr><b><i>R</i></b> = <b><i>P</i></b> 
+<img src="APLimg/plusgt.bmp"> <b><i>Q</i></b></nobr> 
+gives the number of places in which 
+a component of <b><i>P</i></b><sup><i>&nbsp;i</i></sup> exceeds
+the corresponding component 
+of <b><i>Q</i></b><sub><i>j</i></sub>, 
+and <nobr><b><i>K</i></b> = <b><i>P</i></b> 
+<img src="APLimg/andgt.bmp"> <b><i>Q</i></b></nobr>
+is a &ldquo;covering matrix&rdquo; which indicates
+which rows of <b><i>P</i></b> cover 
+(exceed in every component)
+which rows of <b><i>Q</i></b>.</p>
+
+<p>De Morgan&rsquo;s law and the identity
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td>&ne;/<b><i>u</i></b> &nbsp;=&nbsp;
+<img src="APLimg/eqslashdual.bmp">
+</td></tr></table>
+
+establish a duality with respect to negation between
+&and; and &or;, and between &ne; and =. 
+This duality is easily extended to matrices. 
+For example,
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td><img src="APLimg/andeqdual.bmp">.
+</td></tr></table>
+
+&nbsp;</p>
+
+
+
+<a name="selection"></a>
+<p><b>Selection</b></p>
+
+<p>The formation of a vector <b><i>y</i></b> 
+from a vector <b><i>x</i></b> 
+by deleting certain components of <b><i>x</i></b> 
+will be denoted by
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td><b><i>y</i></b> &nbsp;=&nbsp;
+<b><i>u</i></b>/<b><i>x</i></b>,
+</td></tr></table>
+
+where <b><i>u</i></b> is a logical vector 
+(of dimension <i>&nu;</i>(<b><i>x</i></b>)) and
+<b><i>x</i></b><sub><i>i</i></sub> 
+is deleted if and only if <b><i>u</i></b><sub><i>i</i></sub> = 0. 
+Thus <b><i>u</i></b>/<b><i>x</i></b> and
+<nobr><img src="APLimg/uboscore.bmp">/<b><i>x</i></b></nobr> 
+provide a disjoint decomposition of <b><i>x</i></b>, 
+and <nobr>(<b><i>x</i></b>&gt;<img src="APLimg/epsboscore.bmp">)/<b><i>x</i></b></nobr>
+is the vector of all strictly positive
+components of <b><i>x</i></b>.</p>
+
+<p>The operation <b><i>u</i></b>/<b><i>x</i></b> 
+is called <i>compression</i>
+and is extended to matrices by row and by column
+as follows:
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td><b><i>Z</i></b> = <b><i>u</i></b>/<b><i>X</i></b></td>
+ <td>&nbsp;&harr;&nbsp;</td>
+ <td><b><i>Z</i></b><sup><i>&nbsp;i</i></sup> = <b><i>u</i></b>/<b><i>X</i></b><sup><i> i</i></sup>,</td>
+ </tr>
+<tr><td>&nbsp;</td>
+ <td><b><i>Z</i></b> = <b><i>u</i></b>//<b><i>X</i></b></td>
+ <td>&nbsp;&harr;&nbsp;</td>
+ <td><b><i>Z</i></b><sub><i>i</i></sub> = <b><i>u</i></b>/<b><i>X</i></b><sub><i>i</i></sub>.</td>
+ </tr>
+</table>
+
+The familiar identity concerning partitioned 
+matrices can now be generalized as follows:
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td><b><i>X</i></b> <img src="APLimg/plustimes.bmp"> <b><i>Y</i></b>
+ &nbsp;=&nbsp; (<img src="APLimg/uboscore.bmp">/<b><i>X</i></b>)
+ <img src="APLimg/plustimes.bmp"> (<img src="APLimg/uboscore.bmp">//<b><i>Y</i></b>) +
+ (<b><i>u</i></b>/<b><i>X</i></b>) <img src="APLimg/plustimes.bmp">
+ (<b><i>u</i></b>//<b><i>Y</i></b>)
+</td></tr></table>
+
+Since the identity depends only on the associativity
+and commutativity of the operators + and &times;,
+it holds also for all operators
+(and relations) possessing these properties.
+Moreover,
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td><b><i>u</i></b>/(<b><i>X</i></b> <img src="APLimg/plustimes.bmp"> <b><i>Y</i></b>) = 
+ <b><i>X</i></b> <img src="APLimg/plustimes.bmp"> (<b><i>u</i></b>/<b><i>Y</i></b>),
+</td></tr></table>
+
+and
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td><b><i>u</i></b>//(<b><i>X</i></b> <img src="APLimg/plustimes.bmp"> <b><i>Y</i></b>) = 
+ (<b><i>u</i></b>//<b><i>X</i></b>) <img src="APLimg/plustimes.bmp"> <b><i>Y</i></b>.
+</td></tr></table>
+</p>
+
+<p>To illustrate other uses of compression,
+consider a bank ledger <b><i>L</i></b>
+so arranged that <b><i>L</i></b><sup><i>i</i></sup>
+represents the <i>i</i>-th account, and
+<b><i>L</i></b><sub>1</sub>,
+<b><i>L</i></b><sub>2</sub>, and
+<b><i>L</i></b><sub>3</sub> represent
+the vector of names, of account numbers,
+and of balances, respectively.
+Then the preparation of a list <b><i>P</i></b>
+(in the same format) of all accounts
+having a balance less than 2 dollars is
+described by the statement:
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td><b><i>P</i></b> &larr; (<b><i>L</i></b><sub>3</sub> &lt; 
+ 2<tt><b>∊</b></tt>)//<b><i>L</i></b>,
+</td></tr></table>
+
+where the arrow denotes specification
+(in the sense of the symbol = in Fortran
+and the symbol := in Algol).</p>
+
+<p>Three useful operations converse to compression
+are defined as follows:</p>
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td><td>
+<table>
+<tr><td>Mesh:</td><td>&nbsp;</td>
+ <td><b><i>z</i></b> = \<b><i>a</i></b>, <b><i>u</i></b>, <b><i>b</i></b>\</td>
+ <td>&nbsp;&harr;&nbsp;</td><td><img src="APLimg/uboscore.bmp">/<b><i>z</i></b> = <b><i>a</i></b>; &nbsp; &nbsp;
+ <b><i>u</i></b>/<b><i>z</i></b> = <b><i>b</i></b>
+ </td></tr>
+<tr><td>Mask:</td><td>&nbsp;</td>
+ <td><b><i>z</i></b> = /<b><i>a</i></b>, <b><i>u</i></b>, <b><i>b</i></b>/</td>
+ <td>&nbsp;&harr;&nbsp;</td><td><img src="APLimg/uboscore.bmp">/<b><i>z</i></b> = <img src="APLimg/uboscore.bmp">/<b><i>a</i></b>; 
+ <b><i>u</i></b>/<b><i>z</i></b> = <b><i>u</i></b>/<b><i>b</i></b>
+ </td></tr>
+<tr><td>Expansion:</td><td>&nbsp;</td>
+ <td><b><i>z</i></b> = <b><i>u</i></b>\<b><i>b</i></b></td>
+ <td>&nbsp;&harr;&nbsp;</td><td><b><i>z</i></b> = \<img src="APLimg/epsboscore.bmp">, <b><i>u</i></b>, <b><i>b</i></b>\ .
+</table>
+</td></tr></table>
+
+They may be extended to matrices in the established manner
+and are related by the obvious identities:
+
+<table>
+<tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td>\<b><i>a</i></b>, <b><i>u</i></b>, <b><i>b</i></b>\ &nbsp;=&nbsp;
+ /<img src="APLimg/uboscore.bmp">\<b><i>a</i></b>, <b><i>u</i></b>, <b><i>u</i></b>\<b><i>b</i></b>/ ,
+ </td></tr>
+<tr><td>&nbsp;</td>
+ <td>/<b><i>a</i></b>, <b><i>u</i></b>, <b><i>b</i></b>/ &nbsp;=&nbsp;
+ \<img src="APLimg/uboscore.bmp">/<b><i>a</i></b>, <b><i>u</i></b>, <b><i>u</i></b>/<b><i>b</i></b>\ .
+ </td></tr>
+</table>
+&nbsp;</p>
+
+
+
+<a name="special"></a>
+<p><b>Special Vectors</b></p>
+
+  
+<p>In addition to the <i>full vector</i>
+<tt><b>∊</b></tt>(<i>n</i>) already defined,
+it is convenient to define the <i>prefix vector</i>
+<tt><b>⍺</b></tt><sup><i>&nbsp;j</i></sup>(<i>n</i>)
+as a logical vector of dimension <i>n</i>
+whose first <i>j</i> components are unity. 
+The <i>suffix vector</i>
+<tt><b>⍵</b></tt><sup><i>&nbsp;j</i></sup>(<i>n</i>)
+is defined analogously.
+An <i>infix vector</i> having <i>i</i> leading 0&rsquo;s 
+followed by <i>j</i> 1&rsquo;s can be denoted by 
+&nbsp;<nobr><i>i</i>&darr;<tt><b>⍺</b></tt><sup><i>&nbsp;j</i></sup>.</nobr>
+When used in compression operations,
+these special vectors are very useful
+in specifying fixed formats.
+<br>&nbsp;</p>
+
+
+
+<a name="basevalue"></a>
+<p><b>Mixed Base Value</b></p>
+
+<p>If the components of the vector <b><i>y</i></b>
+specify the radices of a mixed base number system and
+if <b><i>x</i></b> is any numerical vector 
+of the same dimension,
+then the value of <b><i>x</i></b> in that number system
+is called the <i>base</i> <b><i>y</i></b> <i>value of</i>
+<b><i>x</i></b>, is denoted by 
+<b><i>y</i></b><tt>⊥</tt><b><i>x</i></b>,
+and is defined formally by
+
+<table><tr><td>&nbsp; &nbsp; &nbsp; &nbsp;</td>
+ <td><b><i>y</i></b><tt>⊥</tt><b><i>x</i></b> &nbsp;=&nbsp; 
+ <b><i>w</i></b> <img src="APLimg/plustimes.bmp"> <b><i>x</i></b>,
+</td></tr></table>
+
+where <b><i>w</i></b> is the weighting vector defined by
+<b><i>w</i></b><sub><i>&nu;</i>(<b><i>w</i></b>)</sub> = 1
+and <b><i>w</i></b><sub><i>i</i>&ndash;1</sub> =
+<nobr><b><i>w</i></b><sub><i>i</i></sub> &times; 
+<b><i>y</i></b><sub><i>i</i></sub>.</nobr>
+For example, if <b><i>y</i></b> = <nobr>(24, 60, 60)</nobr>
+and if <b><i>x</i></b> = <nobr>(1, 2, 5)</nobr>
+is the elapsed time in hours, minutes, and seconds, then
+<b><i>y</i></b><tt>⊥</tt><b><i>x</i></b> = 3725 
+is the elapsed time in seconds.</p>
+
+<p>The value of <b><i>x</i></b> in a decimal system is denoted
+by (10<tt><b>∊</b></tt>)<tt>⊥</tt><b><i>x</i></b>, 
+and in a binary system by either 
+(2<tt><b>∊</b></tt>)<tt>⊥</tt><b><i>x</i></b>, or <tt>⊥</tt><b><i>x</i></b>. 
+Moreover, if <i>y</i> is any
+real number, then (<i>y</i><tt><b>∊</b></tt>)<tt>⊥</tt><b><i>x</i></b> 
+denotes the polynomial in <i>y</i> 
+with coefficients <b><i>x</i></b>.
+<br>&nbsp;</p>
+
+
+
+<a name="micro"></a>
+<p><b>Application to Microprogramming</b></p>
+
+<p>To illustrate the use of the notation 
+in describing the operation of a computer, 
+consider the IBM 7090 with a memory <b><i>M</i></b> 
+of dimension <nobr>2<sup>15</sup>&times;36,</nobr>
+a command vector <b><i>c</i></b> of dimension 36 
+representing the instruction next to be executed, 
+a sequence vector <b><i>s</i></b> of dimension 15 
+representing the instruction counter, 
+and a <nobr>3&times;15</nobr> index matrix <b><i>I</i></b>  
+representing the three index registers. 
+The instruction fetch phase of operation 
+(excluding the channel trap) 
+can then be described as in Figure 1. 
+0-origin indexing will be used 
+for all vectors and matrices.</p>
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0><tr><td>
+<table>
+<tr><td><sup>&nbsp;</sup> <b><i>c</i></b> &larr; <b><i>M</i></b><sup><tt>⊥</tt><b><i>s</i></b></sup> <sub>&nbsp;</sub></td></tr>
+<tr><td><sup>&nbsp;</sup> <tt>⊥</tt><b><i>s</i></b> &larr; 2<sup>15</sup> | (1+<tt>⊥</tt><b><i>s</i></b>) <sub>&nbsp;</sub></td></tr>
+<tr><td><sup>&nbsp;</sup> <i>a</i> &larr; <i>k</i><sup>1</sup>(<b><i>c</i></b>) &and; <b><i>c</i></b><sub>12</sub> &and; <b><i>c</i></b><sub>13</sub> <sub>&nbsp;</sub></td></tr>
+<tr><td><sup>&nbsp;</sup> <i>k</i><sup>2</sup>(<b><i>c</i></b>) : 0 <sub>&nbsp;</sub></td></tr>
+<tr><td><sup>&nbsp;</sup> <b><i>t</i></b> &larr; (18&darr;<tt><b>⍺</b></tt><sup>3</sup>)/<b><i>c</i></b> <sub>&nbsp;</sub></td></tr>
+<tr><td><sup>&nbsp;</sup> <tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b> &larr; 2<sup>15</sup> | 
+ (<tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b> &ndash; 
+ <tt>⊥</tt>(<b><i>t</i></b> <img src="APLimg/orand.bmp"> <b><i>I</i></b>))<sub>&nbsp;</sub></td></tr>
+<tr><td><sup>&nbsp;</sup> <i>a</i> : 0 <sub>&nbsp;</sub></td></tr>
+<tr><td><sup>&nbsp;</sup> <tt><b>⍵</b></tt><sup>18</sup>/<b><i>c</i></b> &larr; 
+ <tt><b>⍵</b></tt><sup>18</sup>/<b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup> <sub>&nbsp;</sub></td></tr>
+<tr><td><sup>&nbsp;</sup> <i>a</i> &larr; 0 <sub>&nbsp;</sub></td></tr>
+</table>
+</td></tr></table>
+-->
+
+<table align=center><tr><td>
+ <img src="APLimg/afips196205fig1.bmp">
+</td></tr></table>
+
+<p align=center>Instruction Fetch of IBM 7090<br>
+Figure 1</p>
+
+
+<p>Step 1 shows the selection of the next instruction
+from the memory word specified 
+by the instruction counter <b><i>s</i></b> 
+and its transfer to the command register <b><i>c</i></b>. 
+Step 2 shows the incrementation (reduced modulo 2<sup>15</sup>) 
+of the counter <b><i>s</i></b>.
+The logical function <i>k</i><sup>1</sup>(<b><i>c</i></b>) 
+of step 3  determines whether the instruction just fetched
+belongs to the class of instructions
+which are subject to indirect addressing, 
+the bits  <b><i>c</i></b><sub>12</sub> and <b><i>c</i></b><sub>13</sub> 
+determine whether this particular instruction is to be indexed,
+and <i>a</i> is therefore set to unity only if
+indirect addressing is to be performed.</p>
+
+<p>The function <i>k</i><sup>2</sup>(<b><i>c</i></b>) 
+determines whether the instruction is indexable.
+If <i>k</i><sup>2</sup>(<b><i>c</i></b>) = 0,
+the branch from step 4 to step 7 skips 
+the potential indexing of steps 5 and 6.
+As shown by step 6, indexing proceeds
+by <i>or</i>ing together the index registers
+(i.e., rows of <b><i>I</i></b>)
+selected by the three tag bits
+<b><i>t</i></b> = 
+<nobr>(18&darr;<tt><b>⍺</b></tt><sup>3</sup>)/<b><i>c</i></b>,</nobr>
+subtracting the base two value 
+of the resulting vector from the address portion
+of the instruction <b><i>c</i></b>,
+reducing the result modulo 2<sup>15</sup>,
+and respecifying the address portion
+of <b><i>c</i></b> accordingly.</p>
+
+<p>The fetch terminates immediately from step 7
+if no indirect addressing is indicated;
+otherwise step 8 performs the indirect addressing
+and the indexing phase is repeated.
+Step 9 limits the indirect addressing to a single level.
+It may be noted that all format information
+is presented directly in the microprogram.</p>
+
+<p>The description of the execution phase of computer operation
+will be illustrated by the family of instructions
+for logical functions in the 7090.
+Representing the 38-bit accumulator
+by the logical vector <b><i>u</i></b> 
+<nobr>(with <i>&nu;</i>(<b><i>u</i></b>) = 38,</nobr>
+and with <b><i>u</i></b><sub>0</sub>,
+<b><i>u</i></b><sub>1</sub>, and
+<b><i>u</i></b><sub>2</sub>
+representing the sign, <i>q</i>, and <i>p</i> bits,
+respectively),
+these instructions may be described as in Figure 2.</p>
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0 align=center>
+<tr><td><table>
+<tr><td><font size=-1>Or to storage</font></td><td>&nbsp;</td>
+ <td><font size=-1>ORS</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup>
+  &larr; (<img src="APLimg/alphaboscore.bmp"><sup>2</sup>/<b><i>u</i></b>)
+  &or; <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup>
+ <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Or to accumulator</font></td><td>&nbsp;</td>
+ <td><font size=-1>ORA</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <b><i>u</i></b> &larr; <b><i>u</i></b> &or;
+  (<img src="APLimg/alphaboscore.bmp"><sup>2</sup> \
+  <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup>)
+ <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>And to storage</font></td><td>&nbsp;</td>
+ <td><font size=-1>ANS</font></td><td>&nbsp;</td>
+ <td nowrap><sub>&nbsp;</sub> <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup>
+  &larr; (<img src="APLimg/alphaboscore.bmp"><sup>2</sup>/<b><i>u</i></b>)
+  &and; <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup>
+ <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>And to accumulator</font></td><td>&nbsp;</td>
+ <td><font size=-1>ANA</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <b><i>u</i></b> &larr; <b><i>u</i></b> &and;
+  (<img src="APLimg/alphaboscore.bmp"><sup>2</sup> \
+  <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup>)
+ <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Exclusive or</font></td><td>&nbsp;</td>
+ <td><font size=-1>ERA</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <b><i>u</i></b> &larr; (<b><i>u</i></b> &ne;
+  (<img src="APLimg/alphaboscore.bmp"><sup>2</sup> \
+  <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup>)) <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>to accumulator</font></td><td>&nbsp;</td>
+ <td><font size=-1>&nbsp;</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <img src="APLimg/alphaboscore.bmp"><sup>2</sup>/<b><i>u</i></b> &larr; <img src="APLimg/epsboscore.bmp"> 
+ <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Complement magnitude</font></td><td>&nbsp;</td>
+ <td><font size=-1>COM</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <img src="APLimg/alphaboscore.bmp"><sup>1</sup>/<b><i>u</i></b> 
+  &larr; <img src="APLimg/alphaboscore.bmp"><sup>1</sup>/<img src="APLimg/uboscore.bmp">
+  <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Clear magnitude</font></td><td>&nbsp;</td>
+ <td><font size=-1>CLM</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <img src="APLimg/alphaboscore.bmp"><sup>1</sup>/<b><i>u</i></b> 
+ &larr; <img src="APLimg/epsboscore.bmp">
+ <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Change sign</font></td><td>&nbsp;</td>
+ <td><font size=-1>CHS</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <b><i>u</i></b><sub>0</sub> &larr; 
+ <img src="APLimg/uboscore.bmp"><sub>0</sub>
+ <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Set sign plus</font></td><td>&nbsp;</td>
+ <td><font size=-1>SSP</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <b><i>u</i></b><sub>0</sub> &larr; 0 <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Set sign minus</font></td><td>&nbsp;</td>
+ <td><font size=-1>SSM</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub>  <b><i>u</i></b><sub>0</sub> &larr; 1 <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Store logical word</font></td><td>&nbsp;</td>
+ <td><font size=-1>SLW</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup>
+  &larr; <img src="APLimg/alphaboscore.bmp"><sup>2</sup>/<b><i>u</i></b>
+  <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Clear and add logical</font></td><td>&nbsp;</td>
+ <td><font size=-1>CAL</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <b><i>u</i></b> &larr; 
+  <img src="APLimg/alphaboscore.bmp"><sup>2</sup> \
+  <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup>
+  <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>Add and carry logical</font></td><td>&nbsp;</td>
+ <td><font size=-1>ACL</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <i>y</i> &larr; 
+  <tt>⊥</tt>(<img src="APLimg/alphaboscore.bmp"><sup>2</sup>/<b><i>u</i></b>) +
+  <b><i>M</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>15</sup>/<b><i>c</i></b></sup> 
+  <sup>&nbsp;</sup></td></tr>
+
+<tr><td><font size=-1>&nbsp;</font></td><td>&nbsp;</td>
+ <td><font size=-1>&nbsp;</font></td><td>&nbsp;</td>
+ <td><sub>&nbsp;</sub> <tt>⊥</tt><img src="APLimg/alphaboscore.bmp"><sup> 2</sup><b><i>u</i></b> &larr; 
+  (2<sup>36</sup>| <i>y</i>) + (<i>y</i> &gt; 2<sup>36</sup>)
+  <sup>&nbsp;</sup></td></tr>
+
+</table></td></tr>
+</table>
+-->
+
+<table align=center><tr><td>
+ <img src="APLimg/afips196205fig2.bmp">
+</td></tr></table>
+
+<p align=center>Instructions in IBM 7090<br>
+Figure 2
+<br>&nbsp;</p>
+
+
+
+<a name="trees"></a>
+<p><b>Ordered Trees</b></p>
+
+<p>A tree can be represented graphically
+as in Figure 3(a) and, 
+since it is a special case of a directed graph,
+it can also be represented by a node vector  <b><i>n</i></b>
+and a connection matrix <b><i>C</i></b>
+as in Figure 3(b).</p>
+
+<table align=center><tr><td>
+ <img src="APLimg/afips196205fig3a.bmp">
+</td><td width=88>&nbsp;</td><td><table>
+<tr><td><b><i>n</i></b> = </td><td>(</td>
+ <td width=12>a,</td><td width=12>c,</td><td width=12>f,</td><td width=12>k,</td><td width=12>e,</td><td width=12>d,</td><td width=12>h,</td><td>g,</td><td>b</td><td>)</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td rowspan=9><b><i>C</i></b> = </td>
+ <td rowspan=9><img src="APLimg/matrixl9.bmp"></td>
+ <td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td>
+ <td rowspan=9><img src="APLimg/matrixr9.bmp"></td></tr>
+<tr><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+</table></td>
+</tr>
+<tr><td align=center>Figure 3(a)</td><td>&nbsp;</td>
+ <td align=center>Figure 3(b)</td></tr>
+</table>
+
+
+<p>Defining an <i>ordered tree</i> as a tree
+in which the set of branches emanating from each node
+has a specific ordering,
+a simple indexing system for order trees can be defined
+in the manner indicated by Figure 4(a).
+The dimension of the vector index <b><i>i</i></b>
+assigned to each node is equal to the number
+of the level on which it occurs.
+If <b>T</b> is an ordered tree, 
+then <b>T</b><sub><b><i>i</i></b></sub>
+will denote the subtree rooted in the node
+with index <b><i>i</i></b>.
+Thus <b>T</b><sub>(1,1)</sub>
+is the subtree enclosed in broken lines in Figure 4(a).
+Moreover, <b>T</b><sup><b><i>i</i></b></sup> 
+will denote the (unique) <i>path vector</i>
+comprising all nodes from the root to node  <b><i>i</i></b>. 
+Thus <b>T</b><sup>(1,2)</sup> = <nobr>(a, b)</nobr>. 
+The maximum dimension occurring among the index vectors
+is called the <i>height</i> of the tree
+and is denoted <i>&nu;</i>(<b>T</b>).</p>
+
+<table align=center><tr><td>
+ <img src="APLimg/afips196205fig4a.bmp">
+</td><td width=80>&nbsp;</td><td><table border=1 cellspacing=0 cellpadding=0>
+ <tr><td align=center>&nbsp; <b><i>d</i></b> &nbsp;</td>
+ <td align=center>&nbsp; <b><i>n</i></b> &nbsp;</td>
+ <td align=center>&nbsp;<b><i>I</i></b>&nbsp;</td></tr>
+<tr><td align=center><table>
+ <tr><td>2</td></tr>
+ <tr><td>2</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>3</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>0</td></tr>
+ </table></td>
+ <td align=center><table>
+ <tr><td>a</td></tr>
+ <tr><td>c</td></tr>
+ <tr><td>k</td></tr>
+ <tr><td>f</td></tr>
+ <tr><td>b</td></tr>
+ <tr><td>d</td></tr>
+ <tr><td>g</td></tr>
+ <tr><td>e</td></tr>
+ <tr><td>h</td></tr>
+ </table></td>
+ <td><table>
+ <tr><td>1 0 0</td></tr>
+ <tr><td>1 1 0</td></tr>
+ <tr><td>1 1 1</td></tr>
+ <tr><td>1 1 2</td></tr>
+ <tr><td>1 2 0</td></tr>
+ <tr><td>2 0 0</td></tr>
+ <tr><td>2 1 0</td></tr>
+ <tr><td>2 2 0</td></tr>
+ <tr><td>2 3 0</td></tr>
+ </table></td></tr>
+</table></td><td width=80>&nbsp;</td><td><table border=1 cellspacing=0 cellpadding=0>
+ <tr><td align=center>&nbsp;<b><i>d</i></b> &prime;&nbsp;</td>
+ <td align=center>&nbsp; <b><i>n</i></b>&prime;&nbsp;</td>
+ <td align=center>&nbsp;<b><i>I</i></b> &prime&nbsp;</td></tr>
+<tr><td align=center><table>
+ <tr><td>2</td></tr>
+ <tr><td>3</td></tr>
+ <tr><td>2</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>0</td></tr>
+ <tr><td>0</td></tr>
+ </table></td>
+ <td align=center><table>
+ <tr><td>a</td></tr>
+ <tr><td>d</td></tr>
+ <tr><td>c</td></tr>
+ <tr><td>b</td></tr>
+ <tr><td>g</td></tr>
+ <tr><td>e</td></tr>
+ <tr><td>h</td></tr>
+ <tr><td>k</td></tr>
+ <tr><td>f</td></tr>
+ </table></td>
+ <td><table>
+ <tr><td>0 0 1</td></tr>
+ <tr><td>0 0 2</td></tr>
+ <tr><td>0 1 1</td></tr>
+ <tr><td>0 1 2</td></tr>
+ <tr><td>0 2 1</td></tr>
+ <tr><td>0 2 2</td></tr>
+ <tr><td>0 2 3</td></tr>
+ <tr><td>1 1 1</td></tr>
+ <tr><td>1 1 2</td></tr>
+ </table></td></tr></table></td></tr>
+<tr><td align=center><b>T</b><br><br>Figure 4(a)</td><td>&nbsp;</td>
+ <td align=center>[<b>T</b><br><br>Figure 4(b)</td><td>&nbsp;</td>
+ <td align=center>]<b>T</b><br><br>Figure 4(c)</td>
+ </tr>
+</table>
+
+<p>The index vector notation proves very convenient
+in describing algorithms involving tree operands.
+Moreover, it provides a simple formalization
+of the two important respresentations of a tree,
+the Lukasiewicz representation 
+and the level-by-level list.</p>
+
+<p>If each index vector is augmented 
+by sufficient <i>null</i> components
+(denoted by 0) to bring all to a common dimension
+equal to the height of the tree,
+then they may all be arrayed in an <i>index matrix</i>
+<b><i>I</i></b> as in Figure 4(b).
+If, as in Figure 4(b), the node vector <b><i>n</i></b>
+is defined such that <b><i>n</i></b><sub><i>j</i></sub>
+is the value of the node indicated by
+(the significant part of) the index vector
+<b><i>I</i></b><sup><i>&nbsp;j</i></sup>,
+then the matrix obtained by appending <b><i>n</i></b>
+to <b><i>I</i></b> provides an 
+unambiguous representation of the tree <b>T</b>.
+It is convenient to also append the degree vector
+<b><i>d</i></b> such that <b><i>d</i></b><sub><i>j</i></sub>
+is the degree (i.e., the number of branches emanating from)
+node <b><i>I</i></b><sup><i>&nbsp;j</i></sup>.
+The resulting matrix of <i>&nu;</i>(<b>T</b>)+2
+columns is called a <i>full list matrix</i> of <b>T</b>.</p>
+
+<p>Any matrix obtained by interchanging rows
+of a full list matrix is also a full list matrix and
+is again an unequivocal representation of the tree.
+If, as in Figure 4(c), the index vectors
+are right justified and arranged in increasing order
+on their value as integers
+(in a positional number system),
+the resulting list matrix is called 
+a <i>full right list matrix</i> and is denoted by ]<b>T</b>.
+If, as in Figure 4(b), the index vectors are
+left justified and arranged in increasing order as fractions,
+the list matrix is called 
+a <i>full left list matrix</i>
+and is denoted by [<b>T</b>.</p>
+
+<p>The right list groups nodes by levels,
+and the left list by subtrees.
+Moreover, in both cases the degree and node vector together
+(that is, <tt><b>⍺</b></tt><sup>2</sup>/(]<b>T</b>)
+or <tt><b>⍺</b></tt><sup>2</sup>/([<b>T</b>))
+can be shown to provide an unequivocal representation
+of the tree without the index matrix.
+If,as in the case of a tree representing
+a compound statement involving operators of known degree,
+the degree vector <b><i>d</i></b>
+is a known function of the node vector <b><i>n</i></b>,
+then the tree may be represented by the node vector
+<b><i>n</i></b> alone.
+In the case of the left list,
+this leads to the Lukasiewicz<sup><a href="AFIPS196205a.htm#notea">[a]</a></sup>
+notation for compound statements.
+<br>&nbsp;</p>
+
+
+
+<a name="treeapp"></a>
+<p><b>Applications of Tree Notation</b></p>
+
+<p>
+The tree notation and the right and left list
+matrices are useful in many
+areas<sup><a href="AFIPS196205a.htm#noteb">[b]</a></sup>. 
+These include sorting algorithms 
+such as the repeated selection sort 
+<acronym title="Friend, E.H., 
+Sorting on Electronic Computer Systems, 
+J. Assoc. Comp. Mach. 3, pp 134 - 168 (March 1956)">[4]</acronym>, 
+the analysis of compound statements 
+and their transformation to optimal form
+as required in a compiler,
+and the construction of an optimal variable-length code 
+of the Huffman 
+<acronym title="Huffman, D.A., 
+A Method for the Construction of Minimum Redundancy Codes, 
+Proc. IRE, Vol. 40 (1952) pp 1098 - 1101">[5]</acronym>
+prefix type. 
+The sorting algorithm proceeds level by level
+and the right list representation of the tree
+is therefore most suitable.
+The analysis of a compound statement
+proceeds by subtrees and the left list
+(i.e., Lukasiewicz) form is therefore appropriate.
+The index vectors of the leaves of any tree
+clearly form a legitimate Huffman prefix code
+and the construction of such a code 
+proceeds by combining subtrees in a manner
+dictated by the frequencies of the characters
+to be encoded,
+and therefore employs a left list.
+However, the characters are finally assigned
+in order of decreasing frequency to the leaves
+in right list order,
+and the index matrix produced
+must therefore be brought to right list order.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td> 
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/APL.htm">&ldquo;A 
+Programming Language&rdquo;</a>, 
+Wiley, 1962.
+ </td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td> 
+Lukasiewicz, Jan, <i>Aristotle&rsquo;s Syllogistic From the Standpoint of
+Modern Formal Logic</i>, Clarendon Press , Oxford, 1951,
+p. 78
+ </td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td> 
+Burks, A.W., D.W. Warren, and J.B. Wright, 
+&ldquo;An Analysis of a Logical Machine 
+Using Parenthesis-free Notation&rdquo;,
+<i>Mathematical Tables and Other Aids to Computation</i>,
+Vol. VIII (1954), pp 53 - 57
+ </td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td> 
+Friend, E.H., &ldquo;Sorting on Electronic Computer Systems&rdquo;,
+<i>J. Assoc. Comp. Mach.</i> 3, pp 134 - 168 (March 1956)
+ </td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td> 
+Huffman, D.A., &ldquo;A Method for the Construction of Minimum
+Redundancy Codes&rdquo;, <i>Proc. IRE</i>, Vol. 40 (1952)
+pp 1098 - 1101
+</td></tr>
+</table>
+<br>
+
+
+
+<a name="notes"></a>
+<p><b>Notes</b></p>
+
+<table>
+<tr><td valign=top>a.<a name="notea"></a></td><td>&nbsp;</td><td>
+First introduced by J. Lukasiewicz 
+<acronym title="Lukasiewicz, Jan, 
+Aristotles Syllogistic From the Standpoint of Modern Formal Logic, 
+Clarendon Press , Oxford, 1951, p. 78">[2]</acronym>,
+and first analyzed by Burks et al 
+<acronym title="Burks, A.W., D.W. Warren, and J.B. Wright, 
+An Analysis of a Logical Machine Using Parenthesis-free Notation, Mathematical Tables and Other Aids to Computation, 
+Vol. VIII (1954), pp 53 - 57">[3]</acronym>.
+ </td></tr>
+<tr><td valign=top>b.<a name="noteb"></a></td><td>&nbsp;</td><td>
+For detailed treatments of the applications mentioned, see
+<acronym title="Iverson, K.E., A Programming Language, 
+Wiley, 1962.">Reference 1</acronym>.
+ </td></tr>
+</table>
+<br>
+
+
+
+<hr>
+<font size=-1>
+<p>Originally appeared in the 
+<a target=_parent href="http://portal.acm.org/citation.cfm?id=1460872">Proceedings</a>
+of the AFIPS Spring Joint Computer Conference,
+San Francisco, 1962-05-01 to -03.
+The notation has been changed to use 
+italic (instead of Roman) lower case for scalars,
+bold italic (instead of underlined) lower case for vectors, and
+bold italic (instead of underlined) upper case for matrices.
+These changes are consistent with usage in
+<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962.">[1]</acronym>.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp; &nbsp;</font></td><td><font size=-1>2009-12-08 20:15</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size="-1">2016-07-29 21:40</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

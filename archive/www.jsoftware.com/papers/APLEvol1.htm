@@ -1,0 +1,3170 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>The Evolution of APL</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>The Evolution of APL</font><br><br>
+<b>Adin D. Falkoff<br>
+Kenneth E. Iverson<br>
+IBM Corporation Research Division</b>
+</b></p>
+
+
+
+<br><hr>
+
+<p>This paper is a discussion of the evolution of the APL language, 
+and it treats implementations and applications 
+only to the extent that they appear to have exercised 
+a major influence on that evolution. 
+Other sources of historical information are cited 
+in References 
+<acronym title="1. Falkoff, A.D., and K.E. Iverson, The Design of APL. IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.
+2. The Story of APL, Computing Report in Science and Engineering, 
+IBM Corp., Vol. 6, No. 2, April 1970, pages 14-18.
+3. Origin of APL, a videotape prepared by John Clark for the Fourth APL Conference, 1974, 
+with the participation of P.S. Abrams, L.M. Breed, A.D. Falkoff, K.E. Iverson, and R.D. Moore. 
+Available from Orange Coast Community College, Costa Mesa, California.">1-3</acronym>; 
+in particular, <i>The Design of APL</i> 
+<acronym title="Falkoff, A.D., and K.E. Iverson, The Design of APL. 
+IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.">[1]</acronym> 
+provides supplementary detail 
+on the reasons behind many of the design decisions 
+made in the development of the language. 
+Readers requiring background on the current definition 
+of the language should consult <i>APL Language</i> 
+<acronym title="Falkoff, A.D., and K.E. Iverson, 
+APL Language, Form No. GC26-3847, 
+IBM Corp., White Plains, New York, 1975.">[4]</acronym>.</p>
+
+<p>Although we have attempted to confirm our recollections 
+by reference to written documents and to the memories of our colleagues, 
+this remains a personal view which the reader 
+should perhaps supplement by consulting the references provided. 
+In particular, much information about individual contributions 
+will be found in the Appendix to <i>The Design of APL</i>
+<acronym title="Falkoff, A.D., and K.E. Iverson, The Design of APL. 
+IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.">[1]</acronym>, 
+and in the Acknowledgments in <i>A Programming Language</i> 
+<acronym title="Iverson, K.E., A Programming Language. 
+New York: Wiley, 1962.">[10]</acronym>
+and in <i>APL\360 User&rsquo;s Manual</i> 
+<acronym title="Falkoff, A.D., and K.E. Iverson, APL\360 User’s Manual, 
+IBM Corp., White Plains, New York, August 1968.">[23]</acronym>. 
+Because 
+<acronym title="Falkoff, A.D., and K.E. Iverson, APL\360 User’s Manual, 
+IBM Corp., White Plains, New York, August 1968.">Reference 23</acronym> 
+may no longer be readily available, 
+the acknowledgments from it are reprinted 
+in <a href="APLEvol1.htm#appendix">Appendix A</a>.</p>
+
+<p>McDonnell&rsquo;s recent paper on the development 
+of the notation for the circular functions 
+<acronym title="McDonnell, E.E., The Story of o ,  
+APL Quote-Quad. 8(2): 48-45 (1977) 
+Dec. ACM, SIGPLAN Technical Committee on APL (STAPL).">[5]</acronym> 
+shows that the detailed evolution 
+of any one facet of the language 
+can be both interesting and illuminating. 
+Too much detail in the present paper would, 
+however, tend to obscure the main points, 
+and we have therefore limited ourselves to one such example. 
+We can only hope that other contributors 
+will publish their views on the detailed developments 
+of other facets of the language, 
+and on the development of various applications of it.</p>
+
+<p>The development of the language 
+was first begun by Iverson as a tool for describing and
+analyzing various topics in data processing, 
+for use in teaching classes, and in writing a book, 
+<i>Automatic Data Processing</i> 
+<acronym title="Brooks, F.P., and K.E. Iverson, 
+Automatic Data Processing. New York: Wiley, 1973.">[6]</acronym>, 
+undertaken together with Frederick P. Brooks, Jr., 
+then a graduate student at Harvard. 
+Because the work began as incidental to other work, 
+it is difficult to pinpoint the beginning, 
+but it was probably early 1956; 
+<a target=_parent href="autobio.htm#test">the first explicit use</a> 
+of the language 
+to provide communication between the designers and programmers 
+of a complex system occurred 
+during a leave from Harvard spent 
+with the management consulting firm of McKinsey and Company in 1957. 
+Even after others were drawn into the development of the language, 
+this development remained largely incidental to the work 
+in which it was used. 
+For example, Falkoff was first attracted to it 
+(shortly after Iverson joined IBM in 1960) 
+by its use as a tool in his work in parallel search memories 
+<acronym title="Falkoff, A.D., Algorithms for Parallel Search Memories. 
+Journal of the ACM, 9: 488-511 (1962).">[7]</acronym>, 
+and in 1964 we began to plan an implementation of the language 
+to enhance its utility as a design tool, 
+work which came to fruition 
+when we were joined by Lawrence M. Breed in 1965.</p>
+
+<p>The most important influences in the early phase 
+appear to be Iverson&rsquo;s background in mathematics, 
+his thesis work in the machine solutions 
+of linear differential equations 
+<acronym title="Iverson, K.E., 
+Machine Solutions of Linear Differential Equations: 
+Applications to a Dynamic Economic Model, 
+Ph.D. Thesis, Harvard University, 1954.">[8]</acronym> 
+for an economic input-output model proposed 
+by Professor Wassily Leontief 
+(who, with Professor Howard Aiken, served as thesis adviser), 
+and Professor Aiken&rsquo;s interest 
+in the newly developing field 
+of commercial applications of computers. 
+Falkoff brought to the work a background 
+in engineering and technical development, 
+with experience in a number of disciplines, 
+which had left him convinced of the overriding importance 
+of simplicity, particularly in a field 
+as subject to complication as data processing.</p>
+
+<p>Although the evolution has been continuous, 
+it will be helpful to distinguish four phases 
+according to the major use or preoccupation of the period: 
+academic use (to 1960), machine description (1961-1963), 
+implementation (1964-1968), and systems (after 1968).
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>1. Academic Use</b></p>
+
+<p>The machine programming required 
+in Iverson&rsquo;s thesis work 
+was directed at the development of a set of subroutines 
+designed to permit convenient experimentation 
+with a variety of mathematical methods. 
+This implementation experience led 
+to an emphasis on implementable language constructs, 
+and to an understanding of the role 
+of the representation of data.</p>
+
+<p>The mathematical background shows itself 
+in a variety of ways, notably:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+In the use of functions with explicit arguments 
+and explicit results; even the relations 
+(<tt>&lt; ≤ = ≥ &gt; ≠</tt>) 
+are treated as such functions.
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+In the use of logical functions and logical variables. 
+For example, the compression function (denoted by<tt> /</tt>) 
+uses as one argument a logical vector 
+which is, in effect, the characteristic vector 
+of the subset selected by compression.
+</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+In the use of concepts and terminology from tensor analysis, 
+as in <i>inner product</i> and <i>outer product</i> 
+and in the use of <i>rank</i> for the &ldquo;dimensionality&rdquo; 
+of an array, and in the treatment of a scalar as an array of rank zero.
+</td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+In the emphasis on generality. 
+For example, the generalizations of summation (by<tt> f/</tt>), 
+of inner product (by<tt> f.g</tt>), 
+and of outer product (by<tt> ∘.f</tt>) 
+extended the utility of these functions 
+far beyond their original area of application.
+</td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+In the emphasis on identities (already evident in 
+<acronym title="Iverson, K.E. The Description of Finite Sequential Processes. 
+Proceedings of the Fourth London Symposium on Information Theory 
+(Colin Cherry, ed.), pp. 447-457. 1960.">[9]</acronym>) 
+which makes the language more useful for analytic purposes, 
+and which leads to a uniform treatment of special cases as, 
+for example, the definition of the reduction of an empty vector, 
+first given in <i>A Programming Language</i> 
+<acronym title="Iverson, K.E., A Programming Language. 
+New York: Wiley, 1962.">[10]</acronym>.
+</td></tr>
+</table>
+
+<p>In 1954 Harvard University published an announcement 
+<acronym title="Graduate Program in Automatic Data Processing (brochure), 
+Harvard University, 1954. ">[11]</acronym> 
+of a new graduate program in Automatic Data Processing 
+organized by Professor Aiken. 
+(The program was also reported in a conference 
+on computer education 
+<acronym title="Iverson, K.E., Graduate Research and Instruction. 
+Proceedings of First Conference on Training Personnel 
+for the Computing Machine Field, Wayne State University, Detroit, Michigan 
+(Arvid W. Jacobson, ed.), pp. 25-29. June 1954.">[12]</acronym>). 
+Iverson was one of the new faculty appointed 
+to prosecute the program; 
+working under the guidance of Professor Aiken 
+in the development of new courses 
+provided a stimulus to his interest in developing notation, 
+and the diversity of interests 
+embraced by the program promoted a broad view of applications.</p>
+
+<p>The state of the language at the end of the academic period 
+is best represented by the presentation in 
+<i>A Programming Language</i> 
+<acronym title="Iverson, K.E., A Programming Language. 
+New York: Wiley, 1962.">[10]</acronym>, 
+submitted for publication in early 1961. 
+The evolution in the latter part of the period 
+is best seen by comparing 
+<acronym title="Iverson, K.E. The Description of Finite Sequential Processes. 
+Proceedings of the Fourth London Symposium on Information Theory 
+(Colin Cherry, ed.), pp. 447-457. 1960.">References 9</acronym> 
+and 
+<acronym title="Iverson, K.E., A Programming Language. 
+New York: Wiley, 1962.">10</acronym>. 
+This comparison shows that <i>reduction</i> and 
+<i>inner</i> and <i>outer product</i> were all introduced in that period, 
+although not then recognized as a class later called <i>operators</i>. 
+It also shows that specification was originally 
+(in <acronym title="Iverson, K.E. The Description of Finite Sequential Processes. 
+Proceedings of the Fourth London Symposium on Information Theory 
+(Colin Cherry, ed.), pp. 447-457. 1960.">References 9</acronym>) 
+denoted by placing the specified name at the right, 
+as in<tt> p+q→z</tt>&nbsp;.<tt> </tt>
+The arguments (due in part to F.P. Brooks, Jr.) 
+which led to the present form (<tt>z←p+q</tt>) 
+were that it better conformed to the mathematical 
+form<tt> z=p+q</tt>&nbsp;,<tt> </tt>
+and that in reading a program, 
+any backward reference to determine 
+how a given variable was specified would be facilitated 
+if the specified variables were aligned at the left margin. 
+What this comparison does not show is 
+the removal of a number of special comparison functions 
+(such as the comparison of a vector with each row of a matrix) 
+which were seen to be unnecessary 
+when the power of the inner product began to be appreciated, 
+as in the expression<tt> m∧.=v</tt>&nbsp;.<tt> </tt>
+This removal provides one example of the simplification 
+of the language produced by generalizations.
+<br>&nbsp;</p>
+
+
+
+<a name="2"></a>
+<p><b>2. Machine Description</b></p>
+
+The machine description phase was marked 
+by the complete or partial description 
+of a number of computer systems. 
+The first use of the language to describe 
+a complete computing system was begun in early 1962 
+when Falkoff discussed with Dr. W.C. Carter 
+his work in the standardization of the instruction set 
+for the machines that were to become the IBM System/360 family. 
+Falkoff agreed to undertake a formal description 
+of the machine language, 
+largely as a vehicle for demonstrating 
+how parallel processes could be rigorously represented. 
+He was later joined in this work by Iverson 
+when he returned from a short leave at Harvard, 
+and still later by E.H. Sussenguth. 
+This work was published as &ldquo;A Formal Description of System/360&rdquo; 
+<acronym title="Falkoff, A.D., K.E. Iverson, and E.H. Sussenguth, 
+A Formal Description of System/360. 
+IBM Systems Journal, 4(4): 198-262 (1964) Oct.">[13]</acronym>.</p>
+
+<p>This phase was also marked by a consolidation and regularization 
+of many aspects which had little to do with machine description. 
+For example, the cumbersome definition of maximum and minimum 
+(denoted in 
+<acronym title="Iverson, K.E., 
+A Programming Language. New York: Wiley, 1962.">Reference 10</acronym> 
+by<tt> u⌈v </tt>and<tt> u⌊v </tt>and equivalent to 
+what would now be written as<tt> ⌈/u/v </tt>and<tt> ⌊/u/v</tt>) 
+was replaced, at the suggestion of Herbert Hellerman, 
+by the present simple scalar functions. 
+This simplification was deemed practical 
+because of our increased understanding 
+of the potential of reduction and inner and outer product.</p>
+
+The best picture of the evolution in this period is given by 
+a comparison of <i>A Programming Language</i> 
+<acronym title="Iverson, K.E., 
+A Programming Language. New York: Wiley, 1962.">[10]</acronym> 
+on the one hand, and &ldquo;A Formal Description of System/360&rdquo; 
+<acronym title="Falkoff, A.D., K.E. Iverson, and E.H. Sussenguth, 
+A Formal Description of System/360. 
+IBM Systems Journal, 4(4): 198-262 (1964) Oct.">[13]</acronym> 
+and &ldquo;Formalism in Programming Languages&rdquo; 
+<acronym title="Iverson, K.E., Formalism in Programming Languages. 
+Communications of the ACM, 7(2): 80-88 (1964) Feb.">[14]</acronym>
+on the other. 
+Using explicit page references to
+<acronym title="Iverson, K.E., 
+A Programming Language. New York: Wiley, 1962.">Reference 10</acronym>, 
+we will now give some further examples 
+of regularization during this period:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+The elimination of embracing symbols 
+(such as<tt> |x| </tt>for absolute value,<tt> &lfloor;x&rfloor; </tt> 
+for floor, and<tt> &lceil;x&rceil; </tt>for ceiling) 
+and replacement by the leading symbol only, 
+thus unifying the syntax for monadic functions.
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+The conscious use of a single function symbol to represent 
+both a <i>monadic</i> and <i>dyadic</i> function 
+(still referred to in
+<acronym title="Iverson, K.E., 
+A Programming Language. New York: Wiley, 1962.">Reference 10</acronym>
+as <i>unary</i> and <i>binary</i>).
+</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+The adoption of multicharacter names which, 
+because of the failure (p. 11) 
+to insist on no elision of the times sign, 
+had been permitted (p. 10) only with a special indicator.
+</td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+The rigorous adoption of a right-to-left order 
+of execution which, although stated (p. 8) 
+had been violated by the unconscious application 
+of the familiar precedence rules of mathematics. 
+Reasons for this choice are presented in 
+<i>Elementary Functions</i> 
+<acronym title="Iverson, K.E., Elementary Functions, 
+Science Research Associates, Chicago, Illinois, 1966.">[15]</acronym>, 
+in Berry&rsquo;s <i>APL\360 Primer</i> 
+<acronym title="Berry, P. C, APL\360 Primer (GH20-0689), 
+IBM Corp., White Plains, New York, 1969.">[16]</acronym>, 
+and in <i>The Design of APL</i>
+<acronym title="Falkoff, A.D., and K.E. Iverson, The Design of APL. 
+IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.">[1]</acronym>.
+</td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+The concomitant definition of reduction 
+based on a right-to-left order of execution 
+as opposed to the opposite convention defined on p. 16.
+</td></tr>
+<tr><td valign=top>6.</td><td>&nbsp;</td><td>
+Elimination of the requirement for parentheses 
+surrounding an expression involving a relation (p. 11). 
+An example of the use without parentheses 
+occurs near the bottom of p. 241 of 
+<acronym title="Falkoff, A.D., K.E. Iverson, and E.H. Sussenguth, 
+A Formal Description of System/360. 
+IBM Systems Journal, 4(4): 198-262 (1964) Oct.">Reference 13</acronym>.
+</td></tr>
+<tr><td valign=top>7.</td><td>&nbsp;</td><td>
+The elimination of implicit specification of a variable 
+(that is, the specification of some function of it, 
+as in the expression<tt> ⊥s←2 </tt>on p. 81), 
+and its replacement 
+by an explicit inverse function (<tt>⊤ </tt>in the cited example).
+</td></tr>
+</table>
+
+<p>Perhaps the most important developments 
+of this period were in the use of a collection 
+of concurrent autonomous programs to describe a system, 
+and the formalization of <i>shared variables</i> 
+as the means of communication among the programs. 
+Again, comparisons may be made 
+between the system of programs of 
+<acronym title="Falkoff, A.D., K.E. Iverson, and E.H. Sussenguth, 
+A Formal Description of System/360. 
+IBM Systems Journal, 4(4): 198-262 (1964) Oct.">Reference 13</acronym>, 
+and the more informal use of concurrent programs 
+introduced on p. 88 of 
+<acronym title="Iverson, K.E., 
+A Programming Language. New York: Wiley, 1962.">Reference 10</acronym>.</p>
+
+<p>It is interesting to note that the need 
+for a random function (denoted by the question mark) 
+was first felt in describing the operation 
+of the computer itself. 
+The architects of the IBM System/360 
+wished to leave to the discretion of the designers 
+of the individual machines of the 360 family 
+the decision as to what was to be found 
+in certain registers after the occurrence of certain errors, 
+and this was done by stating that the result was to be random. 
+Recognizing more general use for the function 
+than the generation of random logical vectors, 
+we subsequently defined the monadic question mark function 
+as a scalar function whose argument specified 
+the population from which the random elements were to be chosen.
+<br>&nbsp;</p>
+
+
+
+<a name="3"></a>
+<p><b>3. Implementation</b></p>
+
+<p>In 1964 a number of factors conspired 
+to turn our attention seriously 
+to the problem of implementation. 
+One was the fact that the language was by now sufficiently 
+well-defined to give us some confidence 
+in its suitability for implementation. 
+The second was the interest of Mr. John L. Lawrence, 
+who, after managing the publication of our description of System/360, 
+asked for our consultation in utilizing the language 
+as a tool in his new responsibility 
+(with Science Research Associates) 
+for developing the use of computers in education. 
+We quickly agreed with Mr. Lawrence 
+on the necessity for a machine implementation in this work. 
+The third was the interest of our then manager, 
+Dr. Herbert Hellerman, who, 
+after initiating some implementation work 
+which did not see completion, 
+himself undertook an implementation 
+of an array-based language which he reported in the
+<i>Communications of the ACM</i> 
+<acronym title="Hellerman, H., Experimental Personalized Array Translator System. 
+Communications of the ACM, 7(7): 433-438 (1964) July.">[17]</acronym>. 
+Although this work was limited in certain important respects, 
+it did prove useful as a teaching tool and 
+tended to confirm the feasibility of implementation.</p>
+
+<p>Our first step was to define a character set for APL. 
+Influenced by Dr. Hellerman&rsquo;s interest 
+in time-sharing systems, 
+we decided to base the design on an 88-character set 
+for the IBM 1050 terminal, 
+which utilized the easily changed Selectric&reg; typing element. 
+The design of this character set exercised a surprising degree 
+of influence on the development of the language.</p>
+
+<p>As a practical matter it was clear that 
+we would have to accept a linearization of the language 
+(with no superscripts or subscripts) 
+as well as a strict limit on the size 
+of the primary character set. 
+Although we expected these limitations 
+to have a deleterious effect, 
+and at first found unpleasant 
+some of the linearity forced upon us, 
+we now feel that the changes were beneficial, 
+and that many led to important generalizations. 
+For example:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+On linearizing indexing we realized that the sub- and 
+superscript form had inhibited the use of arrays 
+of rank greater than 2, 
+and had also inhibited the use of several levels of indexing; 
+both inhibitions were relieved by the linear form<tt> a[i;j;k]</tt>&nbsp;.
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+The linearization of the inner and outer product notation 
+(from<tt> m<img src="imag/plustimes.bmp">n </tt>
+and<tt> m<img src="imag/jottimes.bmp">n </tt>
+to<tt> m+.×n </tt>and<tt> m∘.×n</tt>&nbsp;) 
+led eventually to the recognition of the operator 
+(which was now represented by an explicit symbol, the period) 
+as a separate and important component of the language.
+</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+Linearization led to a regularization of many functions of two arguments 
+(such as<tt> n⍺j </tt>for<tt> ⍺<sup>j</sup>(n) </tt>
+and<tt> a*b </tt>for<tt> a<sup>b</sup></tt>) 
+and to the redefinition of certain functions 
+of two or three arguments so as to eliminate one of the arguments. 
+For example,<tt> ⍳<sup>j</sup>(n) </tt>was replaced 
+by<tt> ⍳n</tt>&nbsp;,<tt> </tt>
+with the simple expression<tt> j+⍳n </tt>
+replacing the original definition. 
+Moreover, the simple form<tt> ⍳n </tt>
+led to the recognition that<tt> j≥⍳n </tt> 
+could replace<tt> n⍺j </tt>(for<tt> j </tt>a scalar) 
+and that<tt> j∘.≥⍳n </tt>
+could generalize<tt> n⍺j </tt>in a useful manner; 
+as a result the functions<tt> ⍺ </tt>and<tt> ⍵ </tt>
+were eventually withdrawn.
+</td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+The limitation of the character set 
+led to a more systematic exploitation 
+of the notion of ambiguous valence, 
+the representation of both a monadic and a dyadic function 
+by the same symbol.
+</td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+The limitation of the character set 
+led to the replacement of the two functions 
+for the number of rows and the number of columns of an array, 
+by the single function (denoted by<tt> ⍴</tt>) 
+which gave the dimension vector of the array. 
+This provided the necessary extension to arrays 
+of arbitrary rank, 
+and led to the simple expression<tt> ⍴⍴a </tt>
+for the rank of<tt> a</tt>&nbsp;.<tt> </tt>
+The resulting notion of the dimension vector 
+also led to the definition 
+of the dyadic reshape function<tt> d⍴x</tt>&nbsp;.
+</td></tr>
+<tr><td valign=top>6.</td><td>&nbsp;</td><td>
+The limitation to 88 primary characters led 
+to the important notion of composite characters 
+formed by striking one of the basic characters over another. 
+This scheme has provided a supply of easily 
+read and easily written symbols 
+which were needed as the language developed further. 
+For example, the quad, overbar, and circle were 
+included not for specific purposes but 
+because they could be used to overstrike many characters. 
+The overbar by itself also proved valuable 
+for the representation of negative numbers, 
+and the circle proved convenient in carrying out the idea, 
+proposed by E.E. McDonnell, 
+of representing the entire family of (monadic) 
+circular functions by a single dyadic function.
+</td></tr>
+<tr><td valign=top>7.</td><td>&nbsp;</td><td>
+<p>The use of multiple fonts had to be reexamined, 
+and this led to the realization that certain functions 
+were defined not in terms of the value of the argument alone, 
+but also in terms of the form of the name of the argument. 
+Such dependence on the forms of names was removed.</p>
+
+<p>We did, however, include characters 
+which could print above and below alphabetics to provide 
+for possible font distinctions. 
+The original typing element included both the present flat underscore, 
+and a saw-tooth one (the <i>pralltriller</i> as shown, 
+for example, in <i>Webster&rsquo;s Second</i>), and a hyphen. 
+In practice, we found the two underscores 
+somewhat difficult to distinguish, 
+and the hyphen very difficult to distinguish from the minus, 
+from which it differed only in length. 
+We therefore made the rather costly change 
+of two characters, substituting the present delta and del (inverted delta) 
+for the pralltriller and the hyphen.</p>
+</td></tr>
+</table>
+
+<p>In the placement of the character set on the keyboard 
+we were subject to a number of constraints 
+imposed by the two forms of the IBM 2741 terminal 
+(which differed in the encoding 
+from keyboard-position to element-position), 
+but were able to devise a grouping of symbols 
+which most users find easy to learn. 
+One pleasant surprise has been the discovery 
+that numbers of people who do not use APL 
+have adopted the type element for use in mathematical typing. 
+The first publication of the character set appears to be in 
+<i>Elementary Functions</i>
+<acronym title="Iverson, K.E., Elementary Functions, 
+Science Research Associates, Chicago, Illinois, 1966.">[15]</acronym>.
+
+<p>Implementation led to a new class of questions, 
+including the formal definition of functions, 
+the localization and scope of names, 
+and the use of tolerances in comparisons and in printing output. 
+It also led to systems questions 
+concerning the environment and its management, 
+including the matter of libraries and 
+certain parameters such as index origin, 
+printing precision, and printing width.</p>
+
+<p>Two early decisions set the tone of the implementation work: 
+(1) The implementation was to be experimental, 
+with primary emphasis on flexibility 
+to permit experimentation with language concepts, 
+and with questions of execution efficiency subordinated, 
+and (2) the language was to be compromised 
+as little as possible by machine considerations.</p>
+
+<p>These considerations led Breed and P.S. Abrams 
+(both of whom had been attracted to our work by 
+<acronym title="Falkoff, A.D., K.E. Iverson, and E.H. Sussenguth, 
+A Formal Description of System/360. 
+IBM Systems Journal, 4(4): 198-262 (1964) Oct.">Reference 13</acronym>) 
+to propose and build an <i>interpretive</i> 
+implementation in the summer of 1965. 
+This was a batch system with punched-card input, 
+using a multicharacter encoding of the primitive function symbols. It ran on the IBM 7090 computer, and we were later able to experiment with it interactively, using the typeball previously designed, by placing the interpreter under an experimental time-sharing monitor (TSM) available on a machine in a nearby IBM facility.
+
+<p>TSM was available to us for only a very short time, 
+and in early 1966 we began to consider an implementation on System/360, 
+work that started in earnest in July 
+and culminated in a running system in the fall. 
+The fact that this interpretive and experimental 
+implementation also proved to be remarkably 
+practical and efficient is a tribute to the skill of the implementers, 
+recognized in 1973 by the award to the principals 
+(L.M. Breed, R.H. Lathwell, and R.D. Moore) 
+of ACM&rsquo;s Grace Murray Hopper Award. 
+The fact that many APL implementations continue 
+to be largely interpretive may be attributed 
+to the array character of the language 
+which makes possible efficient interpretive execution.</p>
+
+<p>We chose to treat the occurrence of a statement 
+as an order to evaluate it, 
+and rejected the notion of an explicit function 
+to indicate evaluation. 
+In order to avoid the introduction of &ldquo;names&rdquo; 
+as a distinct object class, we also rejected the notion 
+of &ldquo;call by name&rdquo;. 
+The constraints imposed by this decision were eventually 
+removed in a simple and general way by the introduction 
+of the <i>execute</i> function, 
+which served to execute its character string argument 
+as an APL expression. 
+The evolution of these notions is discussed at length 
+in the section on &ldquo;Execute and Format&rdquo; 
+in <i>The Design of APL</i> 
+<acronym title="Falkoff, A.D., and K.E. Iverson, The Design of APL. 
+IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.">[1]</acronym>.</p>
+
+<p>In earlier discussions with a number of colleagues, 
+the introduction of declarations into the language 
+was urged upon us as a requisite for implementation. 
+We resisted this on the general basis of simplicity, 
+but also on the basis that information in declarations 
+would be redundant, or perhaps conflicting, 
+in a language in which arrays are primitive. 
+The choice of an interpretive implementation 
+made the exclusion of declarations feasible, 
+and this, coupled with the determination to minimize 
+the influence of machine considerations 
+such as the internal representations of numbers 
+on the design of the language, 
+led to an early decision to exclude them.</p>
+
+<p>In providing a mechanism by which a user could define 
+a new function, we wished to provide six forms in all: 
+functions with 0, 1, or 2 explicit arguments, 
+and functions with 0 or 1 explicit results. 
+This led to the adoption of a <i>header</i> 
+for the function definition which was, 
+in effect, a paradigm for the way 
+in which a function was used. 
+For example, a function<tt> f </tt>
+of two arguments having an explicit result 
+would typically be used in an expression 
+such as<tt> z←a&nbsp;f&nbsp;b</tt>&nbsp;,<tt> </tt> 
+and this was the form used for the header.</p>
+
+<p>The names for arguments and results in the header 
+were of course made local to the function definition, 
+but at the outset no thought was given 
+to the localization of other names. 
+Fortunately, the design of the interpreter 
+made it relatively easy to localize the names 
+by adding them to the header (separated by semicolons), 
+and this was soon done. 
+Names so localized were strictly local to the defined function, 
+and their scope did not extend 
+to any other functions used within it. 
+It was not until the spring of 1968 
+when Breed returned from a talk by Professor Alan Perlis 
+on what he called &ldquo;dynamic localization&rdquo; 
+that the present scheme was adopted, 
+in which name scopes extend to functions 
+called within a function.</p>
+
+<p>We recognized that the finite limits 
+on the representation of numbers imposed 
+by an implementation would raise problems 
+which might require some compromise 
+in the definition of the language, 
+and we tried to keep these compromises to a minimum. 
+For example, it was clear that we would have to provide 
+both integer and floating point representations 
+of numbers and, 
+because we anticipated use of the system in logical design, 
+we wished to provide an efficient (one bit per element) 
+representation of logical arrays as well. 
+However, at the cost of considerable effort 
+and some loss of efficiency, 
+both well worthwhile, the transitions between representations 
+were made to be imperceptible to the user, 
+except for secondary effects such as storage requirements.</p>
+
+<p>Problems such as overflow 
+(i.e., a result outside the range of the representations available) 
+were treated as domain errors, 
+the term <i>domain</i> being understood as the domain 
+of the machine function provided, 
+rather than as the domain of the abstract mathematical 
+function on which it was based.</p>
+
+<p>One difficulty we had not anticipated 
+was the provision of sensible results 
+for the comparison of quantities represented 
+to a limited precision. 
+For example, if<tt> x </tt>and<tt> y </tt>were specified 
+by<tt> y←2÷3 </tt>and<tt> x←3×y</tt>&nbsp;,<tt> </tt>
+then we wished to have the comparison<tt> 2=x </tt>
+yield<tt> 1 </tt>(representing <i>true</i>) 
+even though the representation of the quantity<tt> x </tt>
+would differ slightly from 2.</p>
+
+<p>This was solved by introducing a comparison tolerance 
+(christened <i>fuzz</i> by L.M. Breed, 
+who knew of its use in the Bell Interpreter 
+<acronym title="Wolontis, V.M., A Complete Floating Point Decimal Interpretive System, 
+Tech. Newsl. No. 11, IBM Applied Science Division, 1956. ">[18]</acronym>) 
+which was multiplied by the larger in magnitude of the arguments to give a tolerance to be applied in the comparison. This tolerance
+was at first fixed (at<tt> 1e¯13</tt>)<tt> </tt> 
+and was later made specifiable by the user. 
+The matter has proven more difficult than we first expected, 
+and discussion of it still continues 
+[<acronym title="Lathwell, R. H., APL Comparison Tolerance. 
+APL 76 Conference Proceedings, pp. 255-258. 
+Association for Computing Machinery, 1976.">19</acronym>, 
+<acronym title="Breed, L. M., Definitions for Fuzzy Floor and Ceiling, 
+Tech. Rep. No. TR03.024, 
+IBM Corp., White Plains, New York, March 1977.">20</acronym>].</p>
+
+<p>A related, but less serious, question was what to do 
+with the rational root of a negative number, 
+a question which arose because the exponent 
+(as in the expression<tt> ¯8*2÷3</tt>) 
+would normally be presented as an approximation to a rational. 
+Since we wished to make the mathematics behave 
+&ldquo;as you thought it did in high school&rdquo; 
+we wished to treat such cases properly 
+at least for rationals with denominators of reasonable size. 
+This was achieved by determining the result sign by 
+a continued fraction expansion of the right argument 
+(but only for negative left arguments) 
+and worked for all denominators up to 80 
+and &ldquo;most&rdquo; above.</p>
+
+<p>Most of the mathematical functions required 
+were provided by programs taken from the work 
+of the late Hirondo Kuki in the FORTRAN IV Subroutine Library. 
+Certain functions (such as the inverse hyperbolics) were, 
+however, not available and were developed, 
+during the summers of 1967 and 1968, 
+by K.M. Brown, then on the faculty of Cornell University.</p>
+
+<p>The fundamental decision concerning 
+the systems environment was the adoption of the concept of a workspace. 
+As defined in &ldquo;The APL\360 Terminal System&rdquo; 
+<acronym title="Falkoff, A.D., and K.E. Iverson, The APL\360 Terminal System. 
+Symposium on Interactive Systems for Experimental Applied Mathematics 
+(M. Klerer and J. Reinfelds, eds.), 
+pp. 22-37. New York: Academic Press, 1968.">[21]</acronym>:
+
+<blockquote>APL\360 is built around the idea of a workspace, 
+analogous to a notebook, in which one keeps work in progress. 
+The workspace holds both defined functions and variables (data), 
+and it may be stored into and retrieved from a library 
+holding many such workspaces. 
+When retrieved from a library by an appropriate command 
+from a terminal, a copy of the stored workspace 
+becomes active at that terminal, 
+and the functions defined in it, 
+together with all the APL primitives, 
+become available to the user.</blockquote>
+
+<blockquote>The three commands required 
+for managing a library are &ldquo;save&rdquo;, 
+&ldquo;load&rdquo;, and &ldquo;drop&rdquo;, 
+which respectively store a copy 
+of an active workspace into a library, 
+make a copy of a stored workspace active, 
+and destroy the library copy of a workspace. 
+Each user of the system has a private library 
+into which only he can store. 
+However, he may load a workspace 
+from any of a number of common libraries, 
+or if he is privy to the necessary information, 
+from another user&rsquo;s private library. 
+Functions or variables in different workspaces can be combined, 
+either item by item or all at once, 
+by a fourth command, called &ldquo;copy&rdquo;. 
+By means of three cataloging commands, 
+a user may get the names of workspaces 
+in his own or a common library, 
+or get a listing of functions or variables 
+in his active workspace.</blockquote>
+
+<p>The language used to control the system functions of loading 
+and storing workspaces was not APL, 
+but comprised a set of <i>system commands</i>. 
+The first character of each system command is a right parenthesis, 
+which cannot occur at the left of a valid APL expression, 
+and therefore acts as an &ldquo;escape character&rdquo;,
+freeing the syntax of what follows. 
+System commands were used for other aspects 
+such as sign-on and sign-off, messages to other users, 
+and for the setting and sensing of various system parameters 
+such as the index origin, the printing precision, the print width, 
+and the random link used in generating the pseudo-random sequence 
+for the random function.</p>
+
+<p>When it first became necessary to name 
+the implementation 
+we chose the acronym formed from the book 
+title <i>A Programming Language</i> 
+<acronym title="Iverson, K.E., A Programming Language. 
+New York: Wiley, 1962.">[10]</acronym> 
+and, to allow a clear distinction 
+between the language and any particular implementation of it, 
+initiated the use of the machine name as part of the name 
+of the implementation (as in APL\1130 and APL\360). 
+Within the design group we had until that time 
+simply referred to &ldquo;the language&rdquo;.</p>
+
+<p>A brief working manual of the APL\360 system 
+was first published in November 1966 
+<acronym title="Falkoff, A.D., and K.E. Iverson, APL\360, 
+IBM Corp., White Plains, New York, November 1966.">[22]</acronym>, 
+and a full manual appeared in 1968 
+<acronym title="Falkoff, A.D., and K.E. Iverson, APL\360 User’s Manual, 
+IBM Corp., White Plains, New York, August 1968.">[23]</acronym>. 
+The initial implementation (in FORTRAN on
+an IBM 7090) was discussed by Abrams 
+<acronym title="Abrams, P. S., An Interpreter for Iverson Notation, Tech. Rep. CS47, 
+Computer Science Department, Stanford University, 1966.">[24]</acronym>, 
+and the time-shared implementation on System/360 
+was discussed by Breed and Lathwell 
+<acronym title="Breed, L. M., and R. H. Lathwell, 
+The Implementation of APL\360. Symposium on Interactive Systems 
+for Experimental and Applied Mathematics (M. Klerer and J. Reinfelds, eds.), 
+pp. 390-399. New York: Academic Press, 1968. ">[25]</acronym>.
+<br>&nbsp;</p>
+
+
+
+<a name="4"></a>
+<p><b>4. Systems</b></p>
+
+<p>Use of the APL system by others in IBM began 
+long before it had been completed to the point 
+described in <i>APL\360 User&rsquo;s Manual</i>
+<acronym title="Falkoff, A.D., and K.E. Iverson, APL\360 User’s Manual, 
+IBM Corp., White Plains, New York, August 1968.">[23]</acronym>. 
+We quickly learned the difficulties associated 
+with changing the specifications of a system already in use, 
+and the impact of changes on established users and programs. 
+As a result we learned to appreciate 
+the importance of the relatively long period 
+of development of the language which preceded 
+the implementation; 
+early implementation of languages tends 
+to stifle radical change, limiting further development 
+to the addition of features and frills.</p>
+
+<p>On the other hand, we also learned the advantages 
+of a running model of the language in exposing anomalies and, 
+in particular, the advantage of input from a large population 
+of users concerned with a broad range of applications. 
+This use quickly exposed the major deficiencies of the system.</p>
+
+<p>Some of these deficiencies were rectified 
+by the generalization of certain functions 
+and the addition of others in a process of gradual evolution. 
+Examples include the extension of the catenation function 
+to apply to arrays other than vectors 
+and to permit <i>lamination</i>, and the addition 
+of a generalized matrix inverse function discussed by M.A. Jenkins 
+<acronym title="Jenkins, M.A., 
+The Solution of Linear Systems of Equations and Linear Least Squares Problems in APL, 
+IBM Tech. Rep. No. 320-2989, 1970. ">[26]</acronym>.</p>
+
+<p>Other deficiencies were of a systems nature, 
+concerning the need to communicate 
+between concurrent APL programs 
+(as in our description of System/360), 
+to communicate with the APL system itself 
+within APL rather than by the ad hoc device of system commands, 
+to communicate with alien systems and devices 
+(as in the use of file devices), 
+and the need to define functions within the language 
+in terms of their representation by APL arrays. 
+These matters required more fundamental innovations 
+and led to what we have called the <i>system</i> phase.</p>
+
+<p>The most pressing practical need 
+for the application of APL systems 
+to commercial data processing 
+was the provision of file facilities. 
+One of the first commercial systems to provide 
+this was the File Subsystem reported by Sharp 
+<acronym title="Sharp, Ian P., 
+The Future of APL to Benefit from a New File System. 
+Canadian Data Systems, March 1970.">[27]</acronym> 
+in 1970, and defined in a SHARE presentation by L.M. Breed 
+<acronym title="Breed, L.M., The APL PLUS File System. 
+Proceedings of SHARE XXXV, p. 392. August 1970.">[28]</acronym>, 
+and in a manual published by Scientific Time Sharing Corporation 
+<acronym title="APL PLUS File Subsystem Instruction Manual, 
+Scientific Time Sharing Corp., Washington, D.C., 1970.">[29]</acronym>. 
+As its name implies, 
+it was not an integral part of the language but was, 
+like the system commands, a practical 
+ad hoc solution to a pressing problem.</p>
+
+<p>In 1970 R.H. Lathwell proposed 
+what was to become the basis 
+of a general solution to many systems problems of APL\360, 
+a <i>shared variable processor</i>
+<acronym title="Lathwell, R.H., System Formulation and APL Shared Variables. 
+IBM Journal of Research and Development, 17(4): 353-359 (1973) July.">[30]</acronym>
+which implemented the shared variable scheme 
+of communication among processors. 
+This work culminated in the APLSV System 
+<acronym title="Falkoff, A.D., and K.E. Iverson, APLSV User’s Manual, 
+IBM Corp., White Plains, New York, 1973.">[31]</acronym>
+which became generally available in 1973.</p>
+
+<p>Falkoff&rsquo;s &ldquo;Some Implications of Shared Variables&rdquo; 
+<acronym title="Falkoff, A.D., Some Implications of Shared Variables. 
+In Formal Languages and Programming (R. Aguilar, ed.), pp. 65-75. 
+Amsterdam: North-Holland Publ., 1976. 
+Reprinted in APL 76 Conference Proceedings, pp. 141-148">[32]</acronym>
+presents the essential notion of the shared variable system as follows:</p>
+
+<blockquote>A user of early APL systems essentially 
+had what appeared to be an &ldquo;APL machine&rdquo; at his disposal, 
+but one which lacked access to the rest of the world. 
+In more recent systems, such as APLSV and others, 
+this isolation is overcome and communication 
+with other users and the host system is provided for by 
+<i>shared variables</i>.</blockquote>
+
+<blockquote>Two classes of shared variables are available in these systems. 
+First, there is a <i>general shared variable</i> facility 
+with which a user may establish arbitrary, <i>temporary</i>, 
+interfaces with other users or with auxiliary processors. 
+Through the latter, communication may be had 
+with other elements of the host system, such as its file subsystem, 
+or with other systems altogether. 
+Second, there is a set of <i>system variables</i> 
+which define parts of the <i>permanent</i> interface between 
+an APL program and the underlying processor. 
+These are used for interrogating and controlling 
+the computing environment, 
+such as the origin for array indexing or the action 
+to be taken upon the occurrence of certain exceptional conditions.
+<br>&nbsp;</blockquote>
+
+
+
+<a name="5"></a>
+<p><b>5.  A Detailed Example</b></p>
+
+<p>At the risk of placing undue emphasis on one facet of the language, 
+we will now examine in detail 
+the evolution of the treatment of numeric constants, 
+in order to illustrate how substantial changes 
+were commonly arrived at by a sequence of small steps.</p>
+
+<p>Any numeric constant, including a constant vector, 
+can be written as an expression involving APL primitive functions 
+applied to decimal numbers as, for example, 
+in<tt> 3.14×10*-5 </tt>and<tt> -2.718 </tt>
+and<tt> (3.14×10*-5),(-2.718),5</tt>&nbsp;.<tt> </tt> 
+At the outset we permitted only nonnegative decimal constants 
+of the form<tt> 2.718</tt>&nbsp;;<tt> </tt>all other values 
+had to be expressed as compound statements.</p>
+
+<p>Use of the monadic negation function in producing 
+negative values in vectors was particularly cumbersome, 
+as in<tt> (-4),3,(-5),-7</tt>&nbsp;.<tt> </tt> 
+We soon realized that the adoption 
+of a specific &ldquo;negative&rdquo; symbol would solve the problem, 
+and familiarity with Beberman&rsquo;s work 
+<acronym title="Beberman, M., and H.E. Vaughn, 
+High School Mathematics Course 1. 
+Indianapolis, Indiana: Heath, 1964.">[33]</acronym>
+led us to the adoption of his &ldquo;high minus&rdquo; 
+which we had, rather fortuitously, included in our character set. 
+The constant vector used above could now be written 
+as<tt> ¯4,3,¯5,¯7</tt>&nbsp;.</p>
+
+<p>Solution of the problem of negative numbers 
+emphasized the remaining awkwardness of factors 
+of the form<tt> 10*n</tt>&nbsp;.<tt> </tt> 
+At a meeting of the principals in Chicago, 
+which included Donald Mitchell and Peter Calingaert 
+of Science Research Associates, 
+it was realized that the introduction of 
+a scaled form of constant in the manner used in FORTRAN 
+would not complicate the syntax, and this was soon adopted.</p>
+
+<p>These refinements left one function 
+in the writing of any vector constant, 
+namely, catenation. 
+The straightforward execution of an expression 
+for a constant vector of<tt> n </tt>elements involved<tt> n-1 </tt>
+catenations of scalars with vectors of increasing length, 
+the handling of roughly<tt> .5×n×n+1 </tt>elements in all. 
+To avoid gross inefficiencies in the input 
+of a constant vector from the keyboard, 
+catenation was therefore given special treatment 
+in the original implementation.</p>
+
+<p>This system had been in use for perhaps 
+six months when it occurred to Falkoff 
+that since commas were not required 
+in the normal representation of a matrix, 
+vector constants might do without them as well. 
+This seemed outrageously simple, 
+and we looked for flaws. 
+Finding none we adopted and implemented the idea immediately, 
+but it took some time to overcome 
+the habit of writing expressions such 
+as<tt> (3,3)⍴x </tt>instead of<tt> 3&nbsp;3⍴x</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="6"></a>
+<p><b>6. Conclusions</b></p>
+
+<p>Nearly all programming languages are rooted 
+in mathematical notation, 
+employing such fundamental notions as functions, 
+variables, and the decimal (or other radix) 
+representation of numbers, 
+and a view of programming languages as part 
+of the longer-range development of mathematical notation 
+can serve to illuminate their development.</p>
+
+<p>Before the advent of the general-purpose computer, 
+mathematical notation had, in a long and painful evolution 
+well-described in Cajori&rsquo;s 
+history of mathematical notations 
+<acronym title="Cajori, F., A History of Mathematical Notations, 
+Vol. I, Notations in Elementary Mathematics. 
+La Salle, Illinois: Open Court Publ., 1928.">[34]</acronym>, 
+embraced a number of important notions:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+The notion of assigning an alphabetic name 
+to a variable or unknown quantity 
+(Cajori, Sections 339-341).
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+The notion of a <i>function</i> 
+which applies to an <i>argument</i> or arguments 
+to produce an explicit result 
+which can itself serve as argument to another function, 
+and the associated adoption of specific symbols 
+(such as<tt> + </tt>and<tt> ×</tt>) 
+to denote the more common functions 
+(Cajori, Sections 200-233).
+</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+<i>Aggregation</i> or <i>grouping</i> symbols 
+(such as the parentheses) 
+which make possible the use of composite expressions 
+with an unambiguous specification of the order 
+in which the component functions are to be executed 
+(Cajori, Sections 342-355).
+</td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+Simple uniform representations for numeric quantities 
+(Cajori, Sections 276-289).
+</td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+The treatment of quantities without concern 
+for the particular representation used.
+</td></tr>
+<tr><td valign=top>6.</td><td>&nbsp;</td><td>
+The notion of treating vectors, matrices, 
+and higher-dimensional arrays as entities, 
+which had by this time become fairly widespread 
+in mathematics, physics, and engineering.
+</td></tr>
+</table>
+
+<p>With the first computer languages (machine languages) 
+all of these notions were, for good practical reasons, dropped; 
+variable names were represented 
+by &ldquo;register numbers&rdquo;, 
+application of a function (as in<tt> a+b</tt>) was necessarily 
+broken into a sequence of operations 
+(such as &ldquo;Load register 801 into the Addend register, 
+Load register 802 into the Augend register, etc.&rdquo;), 
+grouping of operations was therefore nonexistent, 
+the various functions provided were represented 
+by numbers rather than by familiar mathematical symbols, 
+results depended sharply 
+on the particular representation used in the machine, 
+and the use of arrays, as such, disappeared.</p>
+
+<p>Some of these limitations were soon removed 
+in early &ldquo;automatic programming&rdquo; languages, 
+and languages such as FORTRAN introduced a limited treatment of arrays, 
+but many of the original limitations remain. 
+For example, in FORTRAN and related languages 
+the size of an array is not a language concept, 
+the asterisk is used instead of 
+any of the familiar mathematical symbols for multiplication, 
+the power function is represented by two occurrences 
+of this symbol rather than by a distinct symbol, 
+and concern with representation 
+still survives in declarations.</p>
+
+<p>APL has, in its development, 
+remained much closer to mathematical notation, 
+retaining (or selecting one of) established symbols where possible, 
+and employing mathematical terminology. 
+Principles of simplicity and uniformity have, 
+however, been given precedence, 
+and these have led to certain departures 
+from conventional mathematical notation as, for example, 
+the adoption of a single form (analogous to<tt> 3+4</tt>) 
+for the dyadic functions, a single form (analogous to<tt> -4</tt>) 
+for monadic functions, and the adoption 
+of a uniform rule for the application 
+of all scalar functions to arrays. 
+This relationship to mathematical notation 
+has been discussed in <i>The Design of APL</i>
+<acronym title="Falkoff, A.D., and K.E. Iverson, The Design of APL. 
+IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.">[1]</acronym>
+and in 
+<a target=_parent href="algebra.htm">&ldquo;Algebra as a Language&rdquo;</a> 
+which occurs as Appendix A
+in <i>Algebra: An Algorithmic Treatment</i> 
+<acronym title="Iverson, K.E., Algebra: An Algorithmic Treatment. 
+Reading, Massachusetts: Addison Wesley, 1972.">[35]</acronym>.</p>
+
+<p>The close ties with mathematical notation are evident 
+in such things as the reduction operator 
+(a generalization of sigma notation), 
+the inner product (a generalization of matrix product), 
+and the outer product (a generalization of the outer product 
+used in tensor analysis). 
+In other aspects the relation to mathematical notation 
+is closer than might appear. 
+For example, the order of execution of the conventional 
+expression<tt> f&nbsp;g&nbsp;h&nbsp;(x) </tt>can be expressed by saying 
+that the right argument of each function 
+is the value of the entire expression to its right; 
+this rule, extended to dyadic as well as monadic functions, 
+is the rule used in APL. 
+Moreover, the term <i>operator</i> is used in the same sense as in 
+&ldquo;derivative operator&rdquo; 
+or &ldquo;convolution operator&rdquo; 
+in mathematics, and to avoid conflict it is not used as a synonym 
+for <i>function</i>.</p>
+
+<p>As a corollary we may remark that the other major programming languages, 
+although known to the designers of APL, 
+exerted little or no influence, because of their radical departures 
+from the line of development of mathematical notation which APL continued. 
+A concise view of the current use of the language, 
+together with comments on matters such as writing style, 
+may be found in Falkoff&rsquo;s review of the 1975 and 1976 
+International APL Congresses 
+<acronym title="Falkoff, A. D., APL75 and APL76: 
+an overview of the Proceedings of the Pisa and Ottawa Congresses. 
+ACM Computing Reviews, 18(4): 139-141 (1977) Apr.">[36]</acronym>.</p>
+
+<p>Although this is not the place to discuss the future, 
+it should be remarked that 
+the evolution of APL is far from finished. 
+In particular, there remain large areas of mathematics, 
+such as set theory and vector calculus, 
+which can clearly be incorporated in APL 
+through the introduction of further operators.</p>
+
+<p>There are also a number of important features 
+which are already in the abstract language, 
+in the sense that their incorporation 
+requires little or no new definition, 
+but are as yet absent from most implementations. 
+Examples include complex numbers, 
+the possibility of defining functions of ambiguous valence 
+(already incorporated in at least two systems 
+[<acronym title="Weidmann, Clark, APLUM Reference Manual, 
+University of Massachusetts, Amherst, Massachusetts, 1975.">37</acronym>, 
+<acronym title="Sharp APL Tech. Note No.25, 
+I. P. Sharp Associates, Toronto, Canada, 1976.">38</acronym>]), 
+the use of user defined functions in conjunction with operators, 
+and the use of selection functions 
+other than indexing to the left of the assignment arrow.</p>
+
+<p>We conclude with some general comments, 
+taken from <i>The Design of APL</i>
+<acronym title="Falkoff, A.D., and K.E. Iverson, 
+The Design of APL. IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.">[1]</acronym>, 
+on principles which guided, and circumstances which shaped, 
+the evolution of APL:
+
+<blockquote>
+<p>The actual operative principles guiding the design 
+of any complex system must be few and broad. 
+In the present instance we believe these principles 
+to be simplicity and practicality. 
+Simplicity enters in four guises: 
+uniformity (rules are few and simple), 
+generality (a small number of general functions 
+provide as special cases a host 
+of more specialized functions), 
+familiarity (familiar symbols and usages 
+are adopted whenever possible), 
+and brevity (economy of expression is sought). 
+Practicality is manifested in two respects: 
+concern with actual application of the language, 
+and concern with the practical limitations 
+imposed by existing equipment.</p>
+
+<p>We believe that the design of APL was also affected 
+in important respects by a number 
+of procedures and circumstances. 
+Firstly, from its inception APL has been developed 
+by using it in a succession of areas. 
+This emphasis on application clearly favors 
+practicality and simplicity. 
+The treatment of many different areas fostered generalization: 
+for example, the general inner product 
+was developed in attempting to obtain the advantages 
+of ordinary matrix algebra 
+in the treatment of symbolic logic.</p>
+
+<p>Secondly, the lack of any machine realization 
+of the language during the first seven or eight years 
+of its development allowed the designers 
+the freedom to make radical changes, 
+a freedom not normally enjoyed by designers 
+who must observe the needs of a large working population 
+dependent on the language for their daily computing needs. 
+This circumstance was due more to the dearth of interest 
+in the language than to foresight.</p>
+
+<p>Thirdly, at every stage the design of the language 
+was controlled by a small group of not more than five people. 
+In particular, the men who designed (and coded) 
+the implementation were part of the language design group, 
+and all members of the design group were involved 
+in broad decisions affecting the implementation. 
+On the other hand, many ideas were received and accepted 
+from people outside the design group, 
+particularly from active users of some implementation of APL.</p>
+
+<p>Finally, design decisions were made by Quaker consensus; 
+controversial innovations were deferred 
+until they could be revised or reevaluated 
+so as to obtain unanimous agreement. 
+Unanimity was not achieved without cost in time and effort, 
+and many divergent paths were explored and assessed. 
+For example, many different notations 
+for the circular and hyperbolic functions 
+were entertained over a period of more than a year 
+before the present scheme was proposed, 
+whereupon it was quickly adopted.
+As the language grows, more effort is needed 
+to explore the ramifications of any major innovation. 
+Moreover, greater care is needed in introducing new facilities, 
+to avoid the possibility of later retraction 
+that would inconvenience thousands of users.
+<br>&nbsp;</p>
+</blockquote>
+
+
+<a name="ack"></a>
+<p><b>Acknowledgments</b></p>
+
+<p>For critical comments arising from their reading 
+of this paper, we are indebted to a number of our colleagues 
+who were there when it happened, 
+particularly P.S. Abrams of Scientific Time Sharing Corporation, 
+R.H. Lathwell and R.D. Moore of I.P. Sharp Associates, 
+and L.M. Breed and E.E. McDonnell of IBM Corporation.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top align=right>1.</td><td>&nbsp;</td><td>
+Falkoff, A.D., and K.E. Iverson, 
+<a target=_parent href="APLDesign.htm"><i>The Design of APL</i></a>.
+IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334. 
+ </td></tr>
+<tr><td valign=top align=right>2.</td><td>&nbsp;</td><td>
+The Story of APL, <i>Computing Report in Science and Engineering</i>, 
+IBM Corp., Vol. 6, No. 2, April 1970, pages 14-18. 
+ </td></tr>
+<tr><td valign=top align=right>3.</td><td>&nbsp;</td><td>
+<a target=_parent href="https://vids.myspace.com/index.cfm?fuseaction=vids.individual&videoid=60771080">Origin of APL</a>, 
+a videotape prepared by John Clark for the Fourth APL Conference, 
+1974, with the participation of P.S. Abrams, L.M. Breed, A.D. Falkoff, K.E. Iverson, and R.D. Moore. 
+Available from Orange Coast Community College, Costa Mesa, California.
+ </td></tr>
+<tr><td valign=top align=right>4.</td><td>&nbsp;</td><td>
+Falkoff, A.D., and K.E. Iverson, <i>APL Language</i>, 
+Form No. GC26-3847, IBM Corp., White Plains, New York, 1975.
+ </td></tr>
+<tr><td valign=top align=right>5.</td><td>&nbsp;</td><td>
+McDonnell, E.E., 
+<a target=_parent href="eem/storyofo.htm">The Story of<tt> o</tt></a>&nbsp;,<tt> </tt> 
+<i>APL Quote-Quad</i>. 8(2): 48-45 (1977) Dec. 
+ACM, SIGPLAN Technical Committee on APL (STAPL).
+ </td></tr>
+<tr><td valign=top align=right>6.</td><td>&nbsp;</td><td>
+Brooks, F.P., and K.E. Iverson, <i>Automatic Data Processing</i>. New York: Wiley, 1973.
+ </td></tr>
+<tr><td valign=top align=right>7.</td><td>&nbsp;</td><td>
+Falkoff, A.D., Algorithms for Parallel Search Memories. <i>Journal of the ACM</i>, 9: 488-511 (1962).
+ </td></tr>
+<tr><td valign=top align=right>8.</td><td>&nbsp;</td><td>
+Iverson, K.E., <a target=_parent href="MSLDE.htm"><i>Machine 
+Solutions of Linear Differential Equations: 
+Applications to a Dynamic Economic Model</i></a>, 
+Ph.D. Thesis, Harvard University, 1954.
+ </td></tr>
+<tr><td valign=top align=right>9.</td><td>&nbsp;</td><td>
+Iverson, K.E. 
+<a target=_parent href="DFSP.htm">The Description of Finite Sequential Processes</a>. 
+<i>Proceedings of the Fourth London Symposium on Information Theory</i> 
+(Colin Cherry, ed.), pp. 447-457. 1960.
+ </td></tr>
+<tr><td valign=top align=right>10.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="APL.htm"><i>A Programming Language</i></a>. 
+New York: Wiley, 1962.
+ </td></tr>
+<tr><td valign=top align=right>11.</td><td>&nbsp;</td><td>
+<i>Graduate Program in Automatic Data Processing</i> (brochure), 
+Harvard University, 1954.
+ </td></tr>
+<tr><td valign=top align=right>12.</td><td>&nbsp;</td><td>
+Iverson, K.E., <a target=_parent href="GradIR.htm">Graduate Research and Instruction</a>. 
+<i>Proceedings of First Conference on Training Personnel
+for the Computing Machine Field</i>, 
+Wayne State University, Detroit, Michigan (Arvid W. Jacobson, ed.), 
+pp. 25-29. June 1954.
+ </td></tr>
+<tr><td valign=top align=right>13.</td><td>&nbsp;</td><td>
+ Falkoff, A.D., K.E. Iverson, and E. H. Sussenguth, 
+A Formal Description of System/360. 
+<i>IBM Systems Journal</i>, 4(4): 198-262 (1964) Oct.
+ </td></tr>
+<tr><td valign=top align=right>14.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="FPL.htm">Formalism in Programming Languages</a>.
+<i>Communications of the ACM</i>, 7(2): 80-88 (1964) Feb.
+ </td></tr>
+<tr><td valign=top align=right>15.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="https://www.jsoftware.com/jwiki/Doc/Elementary%20Functions%20An%20Algorithmic%20Treatment"><i>Elementary Functions</i></a>, 
+Science Research Associates, Chicago, Illinois, 1966.
+ </td></tr>
+<tr><td valign=top align=right>16.</td><td>&nbsp;</td><td>
+Berry, P.C, 
+<a target=_parent href="https://www.softwarepreservation.org/projects/apl/book/196900_APL%20360%20Primer%20Student%20Text_C20-1702-0.pdf/view"><i>APL\360 Primer</i></a> (GH20-0689), 
+IBM Corp., White Plains, New York, 1969.
+ </td></tr>
+<tr><td valign=top align=right>17.</td><td>&nbsp;</td><td>
+Hellerman, H., Experimental Personalized Array Translator System. 
+<i>Communications of the ACM</i>, 7(7): 433-438 (1964) July.
+ </td></tr>
+<tr><td valign=top align=right>18.</td><td>&nbsp;</td><td>
+ Wolontis, V.M., <i>A Complete Floating Point Decimal Interpretive System</i>, 
+Tech. Newsl. No. 11, IBM Applied Science Division, 1956.
+ </td></tr>
+<tr><td valign=top align=right>19.</td><td>&nbsp;</td><td>
+Lathwell, R.H., 
+<a target=_parent href="satn23.htm"><i>APL Comparison Tolerance</i></a>. 
+APL 76 Conference Proceedings, pp. 255-258. 
+Association for Computing Machinery, 1976.
+ </td></tr>
+<tr><td valign=top align=right>20.</td><td>&nbsp;</td><td>
+Breed, L.M., <i>Definitions for Fuzzy Floor and Ceiling</i>, 
+Tech. Rep. No. TR03.024, IBM Corp., White Plains, New York, March 1977.
+ </td></tr>
+<tr><td valign=top align=right>21.</td><td>&nbsp;</td><td>
+Falkoff, A.D., and K.E. Iverson, 
+<a target=_parent href="APL360TerminalSystem.htm">The APL\360 Terminal System</a>. 
+<i>Symposium on Interactive Systems for Experimental Applied Mathematics</i> 
+(M. Klerer and J. Reinfelds, eds.), pp. 22-37. New York: Academic Press, 1968.
+ </td></tr>
+<tr><td valign=top align=right>22.</td><td>&nbsp;</td><td>
+Falkoff, A.D., and K.E. Iverson, <i>APL\360</i>, 
+IBM Corp., White Plains, New York, November 1966.
+ </td></tr>
+<tr><td valign=top align=right>23.</td><td>&nbsp;</td><td>
+Falkoff, A.D., and K.E. Iverson, 
+<a target=_parent href="https://keiapl.org/archive/APL360_UsersMan_Aug1968.pdf"><i>APL\360 User&rsquo;s Manual</i></a>, 
+IBM Corp., White Plains, New York, August 1968.
+ </td></tr>
+<tr><td valign=top align=right>24.</td><td>&nbsp;</td><td>
+Abrams, P.S., <i>An Interpreter for Iverson Notation</i>, Tech. Rep. CS47, 
+Computer Science Department, Stanford University, 1966.
+ </td></tr>
+<tr><td valign=top align=right>25.</td><td>&nbsp;</td><td>
+Breed, L.M., and R.H. Lathwell, The Implementation of APL\360. 
+<i>Symposium on Interactive Systems for Experimental and Applied Mathematics</i> 
+(M. Klerer and J. Reinfelds, eds.), pp. 390-399. New York: Academic Press, 1968.
+ </td></tr>
+<tr><td valign=top align=right>26.</td><td>&nbsp;</td><td>
+Jenkins, M.A., <i>The Solution of Linear Systems of Equations 
+and Linear Least Squares Problems in APL</i>, IBM Tech. Rep. No. 320-2989, 1970.
+ </td></tr>
+<tr><td valign=top align=right>27.</td><td>&nbsp;</td><td>
+Sharp, Ian P., The Future of APL to Benefit from a New File System. 
+<i>Canadian Data Systems</i>, March 1970.
+ </td></tr>
+<tr><td valign=top align=right>28.</td><td>&nbsp;</td><td>
+Breed, L.M., The APL PLUS File System. 
+<i>Proceedings of SHARE XXXV</i>, p. 392. August 1970.
+ </td></tr>
+<tr><td valign=top align=right>29.</td><td>&nbsp;</td><td>
+<i>APL PLUS File Subsystem Instruction Manual</i>, 
+Scientific Time Sharing Corp., Washington, D.C., 1970.
+ </td></tr>
+<tr><td valign=top align=right>30.</td><td>&nbsp;</td><td>
+Lathwell, R.H., System Formulation and APL Shared Variables. 
+<i>IBM Journal of Research and Development</i>, 17(4): 353-359 (1973) July.
+ </td></tr>
+<tr><td valign=top align=right>31.</td><td>&nbsp;</td><td>
+Falkoff, A.D., and K.E. Iverson, 
+<i>APLSV User&rsquo;s Manual</i>, 
+IBM Corp., White Plains, New York, 1973.
+ </td></tr>
+<tr><td valign=top align=right>32.</td><td>&nbsp;</td><td>
+Falkoff, A.D., Some Implications of Shared Variables. 
+In <i>Formal Languages and Programming</i> (R. Aguilar, ed.), pp. 65-75. 
+Amsterdam: North-Holland Publ., 1976. Reprinted in 
+<i>APL 76 Conference Proceedings</i>, pp. 141-148. 
+Association for Computing Machinery, 1976.
+ </td></tr>
+<tr><td valign=top align=right>33.</td><td>&nbsp;</td><td>
+Beberman, M., and H.E. Vaughn, 
+<i>High School Mathematics Course 1</i>. 
+Indianapolis, Indiana: Heath, 1964.
+ </td></tr>
+<tr><td valign=top align=right>34.</td><td>&nbsp;</td><td>
+Cajori, F., <i>A History of Mathematical Notations</i>, Vol. I, 
+<i>Notations in Elementary Mathematics</i>. 
+La Salle, Illinois: Open Court Publ., 1928.
+ </td></tr>
+<tr><td valign=top align=right>35.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="https://www.jsoftware.com/jwiki/Doc/Algebra%20An%20Algorithmic%20Treatment"><i>Algebra: An Algorithmic Treatment</i></a>. 
+Reading, Massachusetts: Addison Wesley, 1972.
+ </td></tr>
+<tr><td valign=top align=right>36.</td><td>&nbsp;</td><td>
+Falkoff, A.D., APL75 and APL76: an overview of the Proceedings of the Pisa and Ottawa Congresses. 
+<i>ACM Computing Reviews</i>, 18(4): 139-141 (1977) Apr.
+ </td></tr>
+<tr><td valign=top align=right>37.</td><td>&nbsp;</td><td>
+Weidmann, Clark, <i>APLUM Reference Manual</i>, 
+University of Massachusetts, Amherst, Massachusetts, 1975.
+ </td></tr>
+<tr><td valign=top align=right>38.</td><td>&nbsp;</td><td>
+<i>Sharp APL Tech. Note No.25</i>, I. P. Sharp Associates, Toronto, Canada, 1976.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="appendix"></a>
+<p><b>Appendix A</b></p>
+
+<p>Reprinted from <i>APL\360 User&rsquo;s Manual</i> 
+<acronym title="Falkoff, A.D., and K.E. Iverson, APL\360 User&rsquo;s Manual, 
+IBM Corp., White Plains, New York, August 1968.">[23]</acronym>.</p>
+
+<p>The APL language was first defined by 
+K.E. Iverson in <i>A Programming Language</i> (Wiley, 1962) 
+and has since been developed in collaboration with A.D. Falkoff. 
+The APL\360 Terminal System was designed 
+with the additional collaboration of L.M. Breed, 
+who with R.D. Moore<sup><tt>*</tt></sup>, also designed the S/360 implementation. 
+The system was programmed for S/360 
+by Breed, Moore, and R.H. Lathwell, 
+with continuing assistance from L.J. Woodrum<sup><tt>⍟</tt></sup>, 
+and contributions by C.H. Brenner, H.A. Driscoll<sup><tt>**</tt></sup>, 
+and S.E. Krueger<sup><tt>**</tt></sup>. 
+The present implementation also benefitted 
+from experience with an earlier version, 
+designed and programmed for the IBM 7090 
+by Breed and P.S. Abrams<sup><tt>⍟⍟</tt></sup>.</p>
+
+<p>The development of the system also profited 
+from ideas contributed by many users and colleagues, 
+notably E.E. McDonnell, who suggested the notation 
+for the signum and the circular functions.</p>
+
+<p>In the preparation of the present manual, 
+the authors are indebted to L.M. Breed 
+for many discussions and suggestions; 
+to R.H. Lathwell, E.E. McDonnell, and J.G. Arnold<sup><tt>*⍟</tt></sup>
+for critical reading of successive drafts; 
+and to Mrs. G.K. Sedlmayer and Miss Valerie Gilbert 
+for superior clerical assistance.</p>
+
+<p>A special acknowledgement is due to 
+John L. Lawrence, who provided important 
+support and encouragement during the early development 
+of APL implementation, 
+and who pioneered the application of APL 
+in computer-related instruction.</p>
+
+<hr align=left width=60%>
+<table>
+<tr><td><tt>*</tt></td><td>&nbsp;</td><td>I.P. Sharp Associates, Toronto, Canada.</td></tr>
+<tr><td><tt>⍟</tt></td><td>&nbsp;</td><td>General Systems Architecture, IBM Corporation, Poughkeepsie, N.Y.</td></tr>
+<tr><td><tt>**</tt></td><td>&nbsp;</td><td>Science Research Associates, Chicago, Illinois.</td></tr>
+<tr><td><tt>⍟⍟</tt></td><td>&nbsp;</td><td>Computer Science Department, Stanford University, Stanford, California.</td></tr>
+<tr><td><tt>*⍟</tt></td><td>&nbsp;</td><td>Industry Development, IBM Corporation, White Plains, NY.</td></tr>
+</table>
+<br>
+
+
+
+<a name="summary"></a>
+<p><b>APL Language Summary</b></p>
+
+<p>APL is a general-purpose programming language
+with the following characteristics 
+(reprinted from <i>APL Language</i> 
+<acronym title="Falkoff, A.D., and K.E. Iverson, APL Language, 
+Form No. GC26-3847, IBM Corp., White Plains, New York, 1975.">[4]</acronym>):
+
+<p>The primitive objects of the language are arrays 
+(lists, tables, lists of tables, etc.).
+For example,<tt> a+b </tt>is meaningful
+for arrays<tt> a </tt>and<tt> b</tt>&nbsp;,<tt> </tt>
+the size of an array<tt> </tt>(<tt>⍴a</tt>)<tt> </tt>
+is a primitive function,
+and arrays may be indexed by arrays as 
+in<tt> a[3&nbsp;1&nbsp;4&nbsp;2]</tt>&nbsp;.</p>
+
+<p>The syntax is simple:
+there are only three statement types
+(name assignment, branch, or neither),
+there is no function precedence hierarchy,
+functions have either one, two, or no arguments,
+and primitive functions and defined functions
+(programs) are treated alike.</p>
+
+<p>The semantic rules are few:
+the definitions of primitive functions
+are independent of the representation of data
+to which they apply,
+all scalar functions are extended to
+other arrays in the same way
+(that is, item-by-item),
+and primitive functions have no hidden effects
+(so-called side-effects).</p>
+
+<p>The sequence control is simple:
+one statement type embraces all types of branches
+(conditional, unconditional, computed, etc.),
+and the termination of the execution
+of any function always returns control
+to the point of use.</p>
+
+<p>External communications is establised by means
+of variables which are shared 
+between APL and other systems or subsystems.
+These <i>shared variables</i> are treated both
+syntactically and semantically like other variables.
+A subclass of shared variables,
+<i>system variables</i>,
+provides convenient communication
+between APL programs and their environment.</p>
+
+<p>The utility of the primitive functions 
+is vastly enhanced by operators 
+which modify their behavior in a systematic manner.
+For example, <i>reduction</i> (denoted by<tt> /</tt>)
+modifies a function to apply over all elements of a list,
+as in<tt> +/l </tt>for summation of the items 
+of<tt> l</tt>&nbsp;.<tt> </tt>
+The remaining operators are <i>scan</i>
+(running totals, running maxima, etc.),
+the <i>axis</i> operator which, for example,
+allows reduction and scan to be applied 
+over a specified axis (rows or columns) of a table,
+the <i>outer product</i>, which produces tables of values
+as in<tt> rate∘.*years </tt>for an interest table,
+and the <i>inner product</i>, a simple generalization 
+of matrix product which is exceedingly useful
+in data processing and other non-mathematical applications.
+</p>
+
+<p>The number of primitive functions is small enough
+that each is represented by a single easily-read
+and easily-written symbol,
+yet the set of primitives embraces operations
+from simple addition to grading (sorting)
+and formatting.
+The complete set can be classified as follows:</p>
+
+<table>
+<tr><td>Arithmetic:</td><td>&nbsp;</td><td><tt>+ - × ÷ * ⍟ ○ | ⌊ ⌈ ! ⌹</tt></td></tr>
+<tr><td>Boolean and Rational:</td><td>&nbsp;</td><td><tt>∨ ^ ⍱ ⍲ ~ < ≤ = ≥ > ≠</tt></td></tr>
+<tr><td>Selection and Structural:</td><td>&nbsp;</td><td><tt>/ \ ⌿ ⍀ [;] ↑ ↓ ⍴ , ⌽ ⍉ ⊖</tt></td></tr>
+<tr><td>General:</td><td>&nbsp;</td><td><tt>∊ ⍳ ? ⊥ ⊤ ⍋ ⍒ ⍎ ⍕</tt></td></tr>
+</table>
+<br>
+
+
+
+<br><hr>
+<a name="present"></a>
+<p><b>Transcript of Presentation</b></p>
+
+<p><b>JAN Lee:</b> For the devotees of the one-liners and APL, 
+I&rsquo;d now like to present Ken Iverson. 
+Ken received his Bachelor&rsquo;s Degree 
+from Queen&rsquo;s University of Kingston, Ontario, Canada, 
+and his Master&rsquo;s and Ph.D. from Harvard University. 
+In looking through his <i>vita</i>, it is very interesting to me to note 
+his progress and to note that he&rsquo;s only had two jobs
+since he graduated.
+One at Harvard as Assistant Professor of Applied Mathematics,
+and then he joined IBM in 1960 and has progressed through
+the ranks since that time.
+In progressing through the ranks,
+he was appointed an IBM Fellow in 1971 for his work on APL,
+I believe.
+It&rsquo;s also interesting to note that three years later,
+having been awarded his Fellowship from IBM,
+he was then appointed the Manager of the APL Design Group.
+Ken Iverson.</p>
+
+<p><b>Kenneth Iverson:</b>  Thank you, JAN.
+They say never quarrel with a newspaper,
+because they will have the last word,
+and I suppose the same applies to chairmen.
+So I won&rsquo;t even comment on that introduction.</p>
+
+<p>Once launched on a topic it&rsquo;s very easy to forget 
+to mention the contributions of others, 
+and although I have a very good memory, 
+it is, in the words of one of my colleagues, 
+very short, so I feel I must begin with acknowledgments, 
+and I first want to mention Adin Falkoff, 
+my co-author and colleague of nearly 20 years. 
+In musing on the contributors to APL 
+in the light of Radin&rsquo;s speculations last night 
+about the relationship between the characteristics 
+of artifacts and the characteristics of the designers, 
+it struck me that we in the APL work tend 
+to remember one another not for the fantastic ideas 
+that we&rsquo;ve contributed, 
+but for the arrant nonsense 
+that we have fought to keep out. 
+Now, I think there&rsquo;s really a serious point here; 
+namely, that design really should be concerned largely, 
+not so much with collecting a lot of ideas, 
+but with shaping them with a view of economy and balance. 
+I think a good designer should make more use 
+of Occam&rsquo;s razor than of the dustbag of a vacuum cleaner, 
+and I thought this was important enough 
+that it would be worthwhile looking 
+for some striking examples of sort of overelaborate design. 
+I was surprised that I didn&rsquo;t find it all that easy, 
+except perhaps for the designers 
+of programming languages and American automobiles, 
+I think that designers seem to have this feeling, 
+a gut feeling of a need for parsimony.</p>
+
+<p>We tried to organize this discussion 
+according to what seemed to be the major phases, 
+and to label these phases with 
+what would seem to be the major preoccupation of the period; 
+and then to try to identify what were the main points of advance 
+in that period, and also ta try to identify 
+what seemed to be the main influences at work at that time 
+[Frame 1].</p>
+
+<table><tr><td width=40>&nbsp;</td><td>
+<table>
+<tr><td colspan=2><b>Major Phases</b></td></tr>
+<tr><td>&nbsp;</td><td>Academic</td><td>&nbsp;</td><td>1957-1960</td></tr>
+<tr><td>&nbsp;</td><td>Machine Description</td><td>&nbsp;</td><td>1961-1963</td></tr>
+<tr><td>&nbsp;</td><td>Implementation</td><td>&nbsp;</td><td>1964-1968</td></tr>
+<tr><td>&nbsp;</td><td>Systems</td><td>&nbsp;</td><td>1968-</td></tr>
+<tr><td colspan=4><tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt><b>Frame 1</b></td></tr>
+</table></td></tr></table>
+
+<p>When I say &ldquo;academic&rdquo;, this is simply a reflection 
+of the fact that when I began to think about this, 
+it was when I was teaching at Harvard, 
+and my main concern was a need for clear expression, 
+some sort of notation for use in classroom work and in writing. 
+As a matter of fact, 
+at the time I was engaged in trying to write a book 
+together with Fred Brooks, 
+and this was one of the motivations 
+for the development of notation.</p>
+
+<p>But it really was as a tool 
+for communication and exposition 
+that I was thinking of it. 
+What seemed to me the major influence at that time 
+was primarily my mathematical background. 
+I was a renegade from mathematics. 
+There are lots of renegades but many
+of them didn&rsquo;t desert as early as I did. 
+[Frame 2] lists the main aspects: 
+the idea of functions 
+with explicit arguments and explicit results, 
+the use of logical functions.</p>
+
+<a name="frame2"></a>
+<table><tr><td width=40>&nbsp;</td><td>
+<table>
+<tr><td colspan=2><b>Mathematical Influence</b></td></tr>
+<tr><td>&nbsp;</td><td>Functions with explicit arguments and results</td></tr>
+<tr><td>&nbsp;</td><td>Use of logical functions</td></tr>
+<tr><td>&nbsp;</td><td>Concepts from tensor analysis</td></tr>
+<tr><td>&nbsp;</td><td>Emphasis on identities</td></tr>
+<tr><td>&nbsp;</td><td>Operators</td></tr>
+<tr><td colspan=4><tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt><b>Frame 2</b></td></tr>
+</table></td></tr></table>
+
+<p>Let me just mention one thing. You may have noticed that, 
+for example, relations in APL 
+are not treated separately as assertions, 
+but simply as more logical functions. 
+They are functions, they produce results 
+which you can think of as true or false, 
+but which in fact are represented 
+by ordinary numbers, 1 and 0.</p>
+
+<p>Also, in the treatment of arrays, let me mention &mdash; 
+well, the number of concepts from tensor analysis, 
+primarily the idea of simply thinking of the array 
+as the one and only argument in the language 
+and simply treating scalars, vectors, and matrices 
+as special cases which had rank 0, 1, and 2.</p>
+
+<p>The emphasis on identities &mdash; 
+by this I mean that we tended to analyze 
+any function to worry about end conditions. 
+Like, what happens in the case of an empty vector 
+and so on? 
+And if you look at this, you&rsquo;ll see that 
+many of the decisions have really come out 
+as simply making identities hold over 
+as wide a range as possible, 
+and so avoid all kinds of special cases.</p>
+
+<p>Finally, the idea of operators, 
+and let me clarify the terminology. 
+I was assured that everybody in the audience 
+would have read the summary, 
+and therefore this won&rsquo;t be necessary, 
+but I will say something about it anyway. 
+Commonly, &ldquo;functions&rdquo; are referred to 
+indiscriminately as &ldquo;functions&rdquo;, &ldquo;procedures&rdquo;,
+&ldquo;operators&rdquo;, and so on, and 
+we tend to say that we call a function a function, 
+and reserve the term &ldquo;operator&rdquo; 
+for the way it is used in certain branches 
+of mathematics when we speak about a derivative operator, 
+a convolution operator, and so on. 
+The basic notion is that it&rsquo;s something 
+that applies to a function or functions, 
+and produces a new function. 
+You think of the &ldquo;slash&rdquo; in the reduction, 
+for example. 
+It&rsquo;s an operator that applies to any function 
+to produce a new function. 
+Similarly, the dot in the inner product and so on. 
+And this too, I think, was probably 
+because of the mathematical influence.</p>
+
+<a name="frame3"></a>
+<table><tr><td width=40>&nbsp;</td><td>
+<table>
+<tr><td colspan=2><b>Machine Description Phase</b></td></tr>
+<tr><td>&nbsp;</td><td>Order of execution</td></tr>
+<tr><td>&nbsp;</td><td>Shared variables</td></tr>
+<tr><td>&nbsp;</td><td>Typography</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp; &nbsp; Linearization</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp; &nbsp; Single Symbols<tt> &nbsp; |x </tt>for<tt> |x|</tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp; &nbsp; Divalence<tt> &nbsp; &nbsp; &nbsp; x*y </tt>and<tt> *y </tt></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp; &nbsp; Vector Shape Function</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp; &nbsp; Compound Characters</td></tr>
+<tr><td colspan=4><tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt><b>Frame 3</b></td></tr>
+</table></td></tr></table>
+
+<p>The next phase, then, 
+was the machine description phase [Frame 3]. 
+I joined IBM in 1960 and shortly thereafter 
+began to work with Adin Falkoff. 
+We turned much more attention 
+to the problem of describing machines themselves. 
+Let me just mention a couple of the things 
+that were sharpened up in this period. 
+One, the order of execution which, 
+if I have time, I will return to a little later, 
+in a different context. 
+And the other was the idea of shared variables. 
+In describing machines one faces very directly 
+the problem of concurrent processes. 
+You have the CPU, you have the channel, so on. 
+They are concurrent processes, 
+and the only thing that makes them a system 
+is the fact that they are able to communicate. 
+And how do they communicate? 
+We chose the idea that any communication 
+has got to take place somehow through 
+the sharing of some medium, some variable. 
+And that is the general notion which has become, 
+in fact, a rather important aspect of later APL.</p>
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0 align=center>
+<tr><td><table>
+<tr><td><sub>&nbsp;</sub> 1 : <i>ipl</i> <sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>0</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>t</i></b>, <b><i>p</i></b><sub>32, 33</sub> &larr; 
+  <img src="img/epsboscore.bmp">(18)<sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>1</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>t</i></b><sub>6</sub> &larr;
+  <img src="img/mboscore.bmp"><sub> 0</sub> &and; 
+  &or;/ <b><i>p</i></b><sub>8, 9, 10, 11</sub> <sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>2</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <i>MAC</i><sup> 9</sup>((<tt>⊥</tt><tt><b>⍵</b></tt><sup>24</sup>/<b><i>p</i></b>), 
+  2, f, i; <b><i>I</i></b><sup><tt>⊥</tt><b><i>p</i></b><sub>32,33</sub></sup>) <sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>3</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>p</i></b><sub>32,33</sub> &larr;
+ (2)<tt>⊤</tt>1 + <tt>⊥</tt><b><i>p</i></b><sub>32,33</sub> <sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>4</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <tt><b>⍵</b></tt><sup>24</sup>/<b><i>p</i></b>
+  &larr; (24)<tt>⊤</tt>2 + <tt>⊥</tt><tt><b>⍵</b></tt><sup>24</sup>/<b><i>p</i></b> <sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>5</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> 1 : &or;/ <b><i>t</i></b><sub>5, 6</sub> <sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>6</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <tt>⊥</tt><b><i>p</i></b><sub>32,33</sub> : 
+  +/ <tt><b>⍺</b></tt><sup>2</sup>/ <b><i>I</i></b><sup> 0</sup> <sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>7</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; 
+  <b><i>O</i></b><sub><tt>⊥</tt><b><i>I</i></b><sup> 0</sup><sub>4, 5, 6, 7</sub></sub><sup><tt>⊥</tt><b><i>I</i></b><sup> 0</sup><sub>0, 1, 2, 3</sub></sup> <sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>8</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <i>n</i> &larr; <b><i>N</i></b><sup><i> i</i></sup> <sup>&nbsp;</sup></td>
+ <td align=right><font size=-1>9</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>t</i></b><sub>1, 2</sub> &larr;
+  <img src="img/nboscore.bmp"><sub> 0</sub>, <b><i>n</i></b><sub>1</sub>
+  &and; <b><i>p</i></b><sub>15</sub> <sup>&nbsp;</sup></td>
+ <td><font size=-1>10</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> &rarr; (12, 14, 13, 17, 19)<sub><b><i>n</i></b><sub>2</sub></sup> 
+  <sup>&nbsp;</sup></td>
+ <td><font size=-1>11</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>a</i></b><sub>2</sub> &larr; 
+  <tt>⊥</tt><tt><b>⍵</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 0</sup> <sup>&nbsp;</sup></td>
+ <td><font size=-1>12</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>a</i></b><sub>3</sub>, <i>j</i> &larr; 
+  (<tt>⊥</tt><tt><b>⍵</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 0</sup>), 0
+  <sup>&nbsp;</sup></td>
+ <td><font size=-1>13</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <i>j</i> &larr; (0 &ne; <tt>⊥</tt><tt><b>⍵</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 0</sup>)
+  &times; <tt>⊥</tt><b><i>R</i></b><sup><tt>⊥</tt><tt><b>⍵</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 0</sup></sup> 
+  <sup>&nbsp;</sup></td>
+ <td><font size=-1>14</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>a</i></b><sub>2</sub> &larr; 
+  2<sup>24</sup> | <i>j</i> + (<tt>⊥</tt><tt><b>⍵</b></tt><sup>12</sup>/<b><i>I</i></b><sup> 1</sup>) +
+  (0 &ne; <tt>⊥</tt><tt><b>⍺</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 1</sup>) &times;
+  <tt>⊥</tt><b><i>R</i></b><sup><tt>⊥</tt><tt><b>⍺</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 1</sup></sup>
+  <sup>&nbsp;</sup></td>
+ <td><font size=-1>15</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>a</i></b><sub>1</sub> &larr; 
+  <tt>⊥</tt><tt><b>⍺</b></tt><sup>4</sup>/<b>⍵</b></tt><sup>8</sup>/<b><i>I</i></b><sup> 0</sup>
+  <sup>&nbsp;</sup></td>
+ <td><font size=-1>16</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>l</i></b> &larr;
+  (<tt>⊥</tt><tt><b>⍵</b></tt><sup>8</sup>/<b><i>I</i></b><sup> 0</sup>), 
+  (<tt>⊥</tt><tt><b>⍺</b></tt><sup>4</sup>/<b>⍵</b></tt><sup>8</sup>/<b><i>I</i></b><sup> 0</sup>),
+  (<tt>⊥</tt><tt><b>⍵</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 0</sup>) 
+  <sup>&nbsp;</sup></td>
+ <td><font size=-1>17</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>a</i></b><sub>2</sub> &larr; 
+  2<sup>24</sup> | (<tt>⊥</tt><tt><b>⍵</b></tt><sup>12</sup>/<b><i>I</i></b><sup> 2</sup>) +
+  (0 &ne; <tt>⊥</tt><tt><b>⍺</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 2</sup>) &times;
+  <tt>⊥</tt><b><i>R</i></b><sup><tt>⊥</tt><tt><b>⍺</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 2</sup></sup>
+  <sup>&nbsp;</sup></td>
+ <td><font size=-1>18</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>a</i></b><sub>1</sub> &larr; 
+  2<sup>24</sup> | (<tt>⊥</tt><tt><b>⍵</b></tt><sup>12</sup>/<b><i>I</i></b><sup> 1</sup>) +
+  (0 &ne; <tt>⊥</tt><tt><b>⍺</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 1</sup>) &times;
+  <tt>⊥</tt><b><i>R</i></b><sup><tt>⊥</tt><tt><b>⍺</b></tt><sup>4</sup>/<b><i>I</i></b><sup> 1</sup></sup>
+  <sup>&nbsp;</sup></td>
+ <td><font size=-1>19</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <i>EXC</i> <sup>&nbsp;</sup></td>
+ <td><font size=-1>20</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> 1 : (<b><i>n</i></b><sub>3</sub> = b0) &and; 
+   ~ &or;/ <b><i>t</i></b><sub> 3, 5, 6</sub> <sup>&nbsp;</sup></td>
+ <td><font size=-1>21</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> 0 : &or;/ <b><i>t</i></b> <sup>&nbsp;</sup></td>
+ <td><font size=-1>22</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>p</i></b><sub>32, 33</sub> &larr;
+  ((<img src="img/tboscore.bmp"><sub>4</sub> &and; 
+  <img src="img/tboscore.bmp"><sub>5</sub>) &or; <i>?</i>) &and;
+  <b><i>p</i></b><sub>32, 33</sub> <sup>&nbsp;</sup></td>
+ <td><font size=-1>23</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>h</i></b><sub>1</sub>, 
+  <b><i>p</i></b><sub><tt><b>⍳</b></tt><sup>16</sup>(16)</sub> &larr;
+  1, (16)<tt>⊤</tt><b><i>?</i></b><sup>1</sup>/<b><i>t</i></b> /<tt><b>⍳</b></tt><sup>0</sup>
+ <sup>&nbsp;</sup></td>
+ <td><font size=-1>24</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> 0 : 
+  &or;/ <b><i>h</i></b> &and; (1, 1, 1, <b><i>p</i></b><sub>7</sub>, 
+  (<tt><b>⍺</b></tt><sup>7</sup>/<b><i>p</i></b>), 
+  <img src="img/orand.bmp"> <b><i>B</i></b><sub>8</sub>) <sup>&nbsp;</sup></td>
+ <td><font size=-1>25</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <i>h</i> &larr;
+  ((<b><i>h</i></b> &and; (1, 1, 1, <b><i>p</i></b><sub>7</sub>, 
+  (<tt><b>⍺</b></tt><sup>7</sup>/<b><i>p</i></b>), 
+  <img src="img/orand.bmp"> <b><i>B</i></b><sub>8</sub>))/<tt><b>⍳</b></tt><sup>0</sup>)<sub>0</sub>
+  <sup>&nbsp;</sup></td>
+ <td><font size=-1>26</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>g</i></b><sub>0</sub> &larr;
+  (<i>h</i> <img src="img/oreq.bmp"> (0, 3, 4)) <sup>&nbsp;</sup></td>
+ <td><font size=-1>27</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> 1 : <b><i>g</i></b><sub>0</sub> <sup>&nbsp;</sup></td>
+ <td><font size=-1>28</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>h</i></b><sub><i>h</i></sub> 
+  &larr; 0 <sup>&nbsp;</sup></td>
+ <td><font size=-1>29</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> 1 : <b><i>g</i></b><sub>1</sub> &and; (<i>h</i> = 4) <sup>&nbsp;</sup></td>
+ <td><font size=-1>30</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <i>MAC</i><sup> 9</sup>((48, 40, 32, 24, 56)<sub><i>h</i></sub>,
+  8, s, g; <b><i>p</i></b>) <sup>&nbsp;</sup></td>
+ <td><font size=-1>31</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <i>MAC</i><sup> 9</sup>((112, 104, 96, 88, 120)<sub><i>h</i></sub>,
+  8, f, g; <b><i>p</i></b>) <sup>&nbsp;</sup></td>
+ <td><font size=-1>32</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <b><i>p</i></b><sub><tt><b>⍳</b></tt><sup>16</sup>(18)</sub> 
+  &larr; <b><i>?</i></b>(18) <sup>&nbsp;</sup></td>
+ <td><font size=-1>33</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <font size=-1><i>operating state</i></font> &larr;
+  /<font size=-1>stop; <i>rate sw</i> = process; 
+  <i>operating state</i></font>/ <sup>&nbsp;</sup></td>
+ <td><font size=-1>34</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <font size=-1>on: <i>manual light</i></font> &larr; 
+   /<font size=-1>off; <i>operating state</i> = stop; on</font>/ <sup>&nbsp;</sup></td>
+ <td><font size=-1>35</font><sup>&nbsp;</sup></td></tr>
+
+<tr><td><sub>&nbsp;</sub> <font size=-1>on: <i>wait light</i></font> &larr; 
+  /<font size=-1>off;</font> <b><i>p</i></b><sub>14</sub><font size=-1>; on</font>/ <sup>&nbsp;</sup></td>
+ <td><font size=-1>36</font><sup>&nbsp;</sup></td></tr>
+
+</table></td></tr>
+</table>
+-->
+<a name="frame4"></a>
+<table align=center><tr><td><img src="imag/frame4.bmp"></td></tr></table>
+<p><b>&nbsp; &nbsp; &nbsp; Frame 4.</b> CPU, central processing unit <i>system program</i>.</p>
+
+<p>Let me just give you an example of this machine description [Frame 4]. 
+That is a 37-line description of the CPU of the 360, 
+and although it obviously subordinates detail, 
+by invoking certain other functions 
+which themselves have definitions, 
+it does exhibit I think in a very straightforward way, 
+the essential detail of the CPU.</p>
+
+<p>You would expect that the channel 
+would be a separate process, 
+but you might not expect that to really describe 
+what happens in a control panel clearly, 
+you&rsquo;ve got to recognize that it&rsquo;s a concurrent process, 
+and it may be in different states. 
+And so it turned out that even the control panel 
+seemed to lend itself very nicely 
+to a clear description as a separate processor. 
+There are certain variables that it shares with the CPU 
+and possibly with other units.</p>
+
+The third phase was the one of implementation. 
+I think it was about 1964 
+that we started thinking seriously of implementation, 
+although this had always been in the back of our minds. 
+We are sometimes asked 
+&ldquo;had we thought about implementation?&rdquo; 
+The answer is yes and no. 
+We simply took it for granted that a language 
+that&rsquo;s good for communication [of algorithms] 
+between you and me is also good 
+for communication with a machine, 
+and I still feel the same way about that.</p>
+
+<p>The first thing that we really started 
+thinking seriously about was the question of typography. 
+Earlier we had, in effect, a publication form. 
+We didn&rsquo;t have to worry seriously 
+about the particular symbols used. 
+And once we faced the question of designing 
+an actual implementation, we had to face that question. 
+And I think pretty much following the advice 
+of Herbert Hellerman who was also with IBM at the time, 
+and his interest in time sharing systems, 
+we decided to take the Selectric typing element 
+and design ourselves an 88-character set, 
+and constrain it to that.</p>
+
+<p>Well, this had what to me 
+were surprising implications for the language. 
+It forced us to think seriously about linearizing things. 
+We could no longer afford superscripts, 
+subscripts, and so on, 
+and somewhat to our surprise 
+we found that this really generalized, 
+and in many cases, simplified the language. 
+The problems of addressing more than 
+a two-dimensional array disappeared &mdash;
+you seem to soon run out of corners on a letter. 
+But when you linearize things, 
+you can go to any dimension.</p>
+
+<p>We faced the problem of things like absolute value. 
+We standardize that, 
+and simply say all monadic functions 
+appear to the left and 
+they are represented by a single symbol.</p>
+
+<p>The idea from mathematics 
+where a function may have two valences &mdash;
+the minus sign, for example, can represent 
+either subtraction or negation, 
+and there&rsquo;s never any confusion 
+because it&rsquo;s resolved by context. 
+We simply exploited that, 
+and that was one of the ways 
+that we greatly conserved symbols. 
+Thus,<tt> x*y </tt>for example, is<tt> x </tt>to the power<tt> y </tt>
+and,<tt> *Y</tt>&nbsp;,<tt> </tt>  
+as you might guess, is<tt> e </tt>
+to the power<tt> y</tt>&nbsp;,<tt> </tt> 
+in other words, the exponential.</p>
+
+<p>Faced with only 88 characters 
+you have to have some way of extending them, 
+and I think the first thing 
+that occurred to us was that 
+when we adopted the exclamation mark 
+for the factorial, 
+we didn&rsquo;t really want to give it space on the keyboard, 
+and recognized we could use a quote symbol and a period. 
+That opened up the idea that is now very familiar, 
+of forming compound characters. 
+And this has given us a large enough number 
+of easily writeable and easily readable characters.</p>
+
+<a name="frame5"></a>
+<table><tr><td width=40>&nbsp;</td><td>
+<table>
+<tr><td colspan=2><b>Implementation</b></td></tr>
+<tr><td>&nbsp;</td><td>Experimental</td></tr>
+<tr><td>&nbsp;</td><td>Machine compromises</td></tr>
+<tr><td>&nbsp;</td><td>Interpreter</td></tr>
+<tr><td>&nbsp;</td><td>TSM</td></tr>
+<tr><td>&nbsp;</td><td>Function definition</td></tr>
+<tr><td>&nbsp;</td><td>Name scope</td></tr>
+<tr><td>&nbsp;</td><td>Fuzz</td></tr>
+<tr><td>&nbsp;</td><td>Workspace</td></tr>
+<tr><td colspan=4><tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt><b>Frame 5</b></td></tr>
+</table></td></tr></table>
+
+<p>Back to the question of the implementation [Frame 5]. 
+In 1965 when we were joined by Larry Breed, 
+who was very much interested in actually 
+producing an implementation, we sort of arrived at two decisions. 
+First of all that it should be experimental. 
+We really were not necessarily aiming at something 
+of practical application, but something 
+that we could experiment with and refine 
+our ideas about the language, 
+and secondly that compromises with the machine, 
+with the representation and so on, 
+should be absolutely minimized. 
+And with those two ideas in mind, 
+Larry Breed and Phil [P.S.] Abrams 
+proposed that we should do this, 
+at the outset at least, as an interpreter. 
+Somewhat surprisingly, 
+I think that all APL implementations 
+have essentially remained that way, 
+and I think not because it&rsquo;s all that difficult 
+to do compilation, 
+but rather, because of its array nature, 
+it is a language which allows reasonably 
+efficient interpretation. 
+And so there hasn&rsquo;t been quite the pressure 
+to make a compiler. 
+Also interpreters do have advantages, 
+particularly for interactive use.</p>
+
+<p>The first implementation was on a 7090. 
+We actually had card input, 
+so we had to have transliteration of symbols, 
+AV for absolute value and all that kind of nonsense. 
+But we did have a system running. 
+We could run it and try it out with card input. 
+Then, there became available to us a system called TSM, 
+for Time Sharing Monitor, 
+which allowed us to really use 
+our typing element and a terminal, 
+and so then we had essentially 
+a terminal implementation very much 
+like what you see today
+&mdash; of course, much more limited.</p>
+
+<p>TSM unfortunately remained available 
+to us for a relatively short period, 
+and shortly thereafter, early in 1966 
+it must have been, we turned attention 
+to an implementation on the 360. 
+And in fact, I might mention that 
+the first interpreter took 2&frac12; people 4&frac12; months, 
+but not as complete as what you see today. 
+The first implementation on the 360 took 
+about the same length of time.</p>
+
+<p>The implementation forced us 
+to think seriously about certain aspects 
+that we had so far been able to ignore: 
+The question of a formal way 
+of making function definitions. 
+Once we faced the question of function definition, 
+then there are questions of name scope. At the
+outset we had a very simple thing, 
+that names were simply localized. 
+I guess the closest thing would be to say 
+that they were like &ldquo;own&rdquo; variables in a function. 
+And then at one point, Larry Breed came back from a talk 
+he attended given by Al Perlis 
+in which Al was talking about 
+what I think he called at the time &ldquo;dynamic localization&rdquo; 
+or &ldquo;dynamic local name scope&rdquo; 
+and we very quickly adopted that, 
+and got what we have now. 
+Names are localized to the function, 
+but in effect can propagate downwards.</p>
+
+<p>The machine representation of numbers 
+raised questions about comparisons. 
+For example, when I say Y is 2 divided by 3, 
+and then try and compare 2 with Y times 3, 
+do I want it to agree or not? 
+Well, we wanted the mathematics to behave 
+the way you thought it did in high school, 
+more or less, 
+and so we introduced this notion 
+of what we then called &ldquo;fuzz&rdquo; 
+but we now more respectably call 
+a &ldquo;comparison tolerance&rdquo; and that, 
+too, I think has become 
+a very very important element of APL.</p>
+
+<p>Finally, the idea of what we called the workspace. 
+Most languages of the time, and perhaps still, 
+tend to give you a library of functions. 
+There are your tools. 
+And your data is someplace else. 
+So we thought it more convenient to work 
+in terms of what we called eventually a &ldquo;workspace&rdquo;, 
+which was, if you like, a place 
+where you have your tools and your materials. 
+And this, too, has proved a very nice concept 
+which has survived in all the later implementations.</p>
+
+<a name="frame6"></a>
+<table><tr><td width=40>&nbsp;</td><td>
+<table>
+<tr><td colspan=2><b>System Phase</b></td></tr>
+<tr><td>&nbsp;</td><td>Shared Variable Processor</td></tr>
+<tr><td>&nbsp;</td><td>System variables</td></tr>
+<tr><td>&nbsp;</td><td>System functions</td></tr>
+<tr><td colspan=4><tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt><b>Frame 6</b></td></tr>
+</table></td></tr></table>
+
+<p>I guess it was probably about 1968, 
+when we got this system running and pretty well cleaned up, 
+that we began to think more seriously 
+about some very serious limitations of that system, 
+effectively the absence of files or more generally, 
+the absence of communication with the outside world, 
+with outside resources. 
+And what was chosen was the notion of shared variables [Frame 6]. 
+In other words, to get our communication 
+with the outside world in effect by allowing 
+an APL user to offer to share a variable 
+with some other processor. 
+It might be a processor written in APL. 
+It might be a file subsystem. 
+It might be anything. 
+And this in fact was an idea which, as I said, 
+was implicit in some of our earlier work, 
+but I think it was primarily Dick [R.H.] Lathwell 
+who pressed this idea and saw it as a general solution 
+to a lot of these problems, 
+and that too has become, I think, 
+a very important aspect in present APL systems. 
+Certainly as a practical matter it&rsquo;s been very important.</p>
+
+<p>And it also allowed us to systematize or rationalize 
+some ideas in the language. 
+We had, in the case of some functions like indexing, 
+the idea of index origin. 
+You could set the system to use 0-origin 
+indexing or 1-origin indexing. 
+And this essentially allowed us to rationalize 
+that by recognizing that here was a variable 
+that we really wanted to communicate 
+to the APL system itself. 
+This is what we call a system variable, 
+a variable that is in effect 
+shared with the interpreter itself, 
+so that we now handle not only index origin 
+but a host of other things like this, 
+printing width, printing precision and so on; 
+by simply treating them as variables 
+that are shared with the system.</p>
+
+<p>System functions are related to that in the following way. 
+There are certain variables to which 
+you might like to have a programmer have access, 
+such as, for example, some information from the symbol table
+&mdash; but even for APL programmers 
+it would be dangerous to give them complete access 
+to the symbol table and allow them to respecify it, for example. 
+And so we gave a limited form of access to variables 
+like that through what we called &ldquo;system functions&rdquo;.</p>
+
+<a name="frame7"></a>
+<table><tr><td width=40>&nbsp;</td><td>
+<table>
+<tr><td colspan=2><b>Relation to Mathematical Notation</b></td></tr>
+<tr><td>&nbsp;</td><td>Variable names</td></tr>
+<tr><td>&nbsp;</td><td>Functions</td></tr>
+<tr><td>&nbsp;</td><td>Grouping</td></tr>
+<tr><td>&nbsp;</td><td>Representation</td></tr>
+<tr><td>&nbsp;</td><td>Arrays</td></tr>
+<tr><td colspan=4><tt>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</tt><b>Frame 7</b></td></tr>
+</table></td></tr></table>
+
+<p>In talking about the development 
+of all programming languages, 
+not just APL, I think we tend to make a mistake 
+in thinking of them as starting, ab initio, 
+in the 1940s when machines first came along. 
+And I think that that is a very serious mistake because, 
+in fact, the essential notions are notions 
+that were worked out in mathematics, 
+and in related disciplines, over centuries [Frame 7]. 
+I mean, just the idea of a formula, 
+the idea of a procedure &mdash; 
+although in mathematics we never had a really nice formal way 
+of specifying this &mdash; 
+it&rsquo;s clear that this is what we do. 
+In fact, in a lecture, you sort of give the kernel 
+of the thing and then you wave your arms 
+and that replaces the looping and what-not. 
+But the idea of algorithms and so on 
+is very central to mathematics. 
+And so I think it&rsquo;s a mistake to think 
+of the development as starting from the computer. 
+I think it&rsquo;s worthwhile trying 
+to examine this in the following sense: 
+if we look at mathematical notation, 
+say, at the time of the development of the computer 
+we had some very important notations. 
+If you don&rsquo;t think they&rsquo;re important, 
+I would recommend strongly that 
+you take a look at some source like [Florian] Cajori&rsquo;s 
+<i>History of Mathematical Notations</i>; 
+it&rsquo;s just incredible the time and effort 
+that went into introducing what we now just take as obvious. 
+For example, the idea of a variable name: 
+a very painful thing. 
+At the outset you wrote calculations 
+in terms of specific quantities. 
+Then it was recognized that you really wanted 
+to make some sort of a universal statement 
+and so they actually wrote out things like 
+&ldquo;universalis&rdquo; which, 
+because we are all lazy, gradually got abbreviated, 
+and I suppose by the time it reached <i>u</i>, 
+somebody said, 
+&ldquo;Aha! We&rsquo;ve got a lot of letters like that. 
+And now we can talk about several universals,&rdquo; 
+and so on.</p>
+
+<p>But the serious thing is that 
+this is a very important notion. 
+The idea of identifying certain important functions 
+like addition, multiplication, and assigning symbols to them. 
+These symbols are not as old as you think. 
+Take the times sign for example. 
+It&rsquo;s only about 200 years old; 
+it&rsquo;s too young to die. 
+That&rsquo;s why we resist the things 
+like the asterisk and so on, 
+that happen to be on tabulating machines 
+because of the need for check protection.</p>
+
+<p>There were other things like grouping. 
+It took a long time for what seems now 
+the obviously beautiful way of showing 
+grouping in an expression by parentheses. 
+It was almost superseded by 
+what is called the &ldquo;vinculum&rdquo; &mdash; 
+where you drew a line 
+over the top of the subexpression &mdash;
+linearization again. 
+I think the main reason that the parentheses 
+won out was because when you have what 
+would now just be a series of parentheses 
+you got lines going up higher and higher on the page, 
+and that was awkward for printing.</p>
+
+<p>The question of representation &mdash; 
+certainly mathematics had long since reached 
+the stage where you don&rsquo;t think 
+about how the numbers are represented. 
+When you think about multiplication, division, 
+and so on, you don&rsquo;t think, 
+&ldquo;Ah &mdash; that&rsquo;s got to be 
+carried out in roman numeral, 
+or in arabic, or in base-2&rdquo; 
+or anything like that. 
+You simply think of it as multiplication. 
+Representation is subordinated.</p>
+
+<p>And of course, the idea of arrays 
+has been in mathematical notation and other applications 
+for something like 150 years. 
+They still haven&rsquo;t really been recognized, 
+but they&rsquo;ve been there.</p>
+
+<p>Now, what happened when the first computer came along? 
+For perfectly good practical reasons 
+every one of these notions disappeared. 
+You couldn&rsquo;t even say &ldquo;A + B&rdquo;. 
+You had to say, &ldquo;Load A into accumulator; 
+load B into so-and-so&rdquo; &mdash; you couldn&rsquo;t even say that. 
+You had to say, 
+&ldquo;Load register 800 into the so-and-so and so on.&rdquo; 
+So all of these things disappeared, 
+for perfectly practical reasons. 
+The sad thing is that 30 years later 
+we&rsquo;re still following that same aberration, 
+and this is where I think it&rsquo;s interesting 
+to look at APL [Frame 7]. 
+But there are many more similarities than you might think; 
+if you look in the paper, 
+there are some of these things pointed out. 
+One of these is the order of execution. 
+Let me just take one second for that. 
+People in programming seem to think 
+that APL has a strange order of execution. 
+The order of execution in APL is very simply this: 
+every function takes as its right hand argument 
+the value of an entire expression to the right of it. 
+This came straight from expression in mathematics 
+like <i>F</i> of <i>G</i> of <i>H</i> of <i>X</i>. 
+And all we did in APL was to recognize 
+that this was a really nice scheme, 
+and let it extend to functions of two arguments as well. 
+This has some very nice consequences. 
+But it came from mathematics.</p>
+
+<p>Now, let me say one last word 
+of a more general character about the influences.</p>
+
+<p>In our earlier paper on the design of APL 
+<acronym title="Falkoff, A.D., and K.E. Iverson, 
+The Design of APL. IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.">[Reference 1 of Paper]</acronym>, 
+Falkoff and I tried to figure out (in retrospect, obviously) 
+what really were the main principles that had guided us. 
+And we concluded that there were really just two: 
+one was simplicity, and the other was practicality. 
+Now, I expect that every one of the other participants 
+in the APL work could cite some sort of important influence 
+that led him to this kind of bias, 
+but I would like to mention where I&rsquo;m sure that mine came from. 
+I&rsquo;m sure it came from studying 
+under Professor [Howard] Aiken [of Harvard]. 
+This is a name that I think occurs much less prominently 
+than it should in the history of computing. 
+And Aiken was raised as an engineer. 
+Although he had a very theoretical turn of mind, 
+he always spoke of himself as an engineer. 
+And an engineer he characterized 
+as being a man who could build for one buck 
+what any damn fool could do for ten. 
+He also emphasized simplicity, 
+and one of the most striking things 
+that I think all of his graduate students remember was, 
+when faced with the usual sort 
+of enthusiastic presentation of something, he would say, 
+&ldquo;I&rsquo;m a simple man. I don&rsquo;t understand that. 
+Could you try to make it clear?&rdquo; 
+And this is a most effective way 
+of dealing with graduate students. 
+I know it had a decided impact on me.</p>
+
+<p>Finally, he had some more general pieces of advice, 
+which I found always useful. 
+Let me just cite one of them. 
+I don&rsquo;t know what the occasion was, 
+but one of his graduate students 
+was becoming a little paranoid 
+that somebody might steal one of the fantastic ideas 
+from his thesis, and so he was stamping every copy 
+&ldquo;Confidential&rdquo;.
+Aiken just shook his head and said, 
+&ldquo;Don&rsquo;t worry about people stealing your ideas. 
+If they&rsquo;re any good, 
+you&rsquo;ll have to ram them down their throats!&rdquo;
+<br>&nbsp;</p>
+
+
+
+<a name="discuss"></a>
+<p><b>Transcript of Discussant&rsquo;s Remarks</b></p>
+
+<p><b>JAN Lee:</b> Thank you, Ken. 
+Our discussant for the APL paper 
+is one of those gentlemen at whom 
+all faculty members look with some awe. 
+This is the student who made good! 
+The one who was your assistant at one time, 
+and then eventually you discover that 
+he becomes the full professor! 
+So I&rsquo;d like to introduce Fred Brooks. 
+Fred is the Professor and Chairman 
+of the Computer Science Department 
+at the University of North Carolina. 
+He is probably best known as the father of System/360, 
+having served as the Project Manager for its development 
+and later as the Manager 
+of the Operating System/360 Software Project. 
+You can&rsquo;t blame him for that, though. 
+Now, in the later years, 
+Fred was responsible for what has become known 
+as the one-language concept, 
+which we alluded to in the PL/I session earlier on this morning, 
+and he is going to comment on that and on APL.</p>
+
+<p><b>Frederick Brooks:</b> In introduction, 
+I&rsquo;d like to say a word about the conference 
+that I think should appropriately come from a part 
+of the APL community &mdash; and that is, 
+the thing I like best about this conference 
+is its character set! 
+I cannot recall a time since the 1976 Los Alamos 
+machine history conference 
+[International Research Conference on the History of Computing] 
+when such a set of characters 
+has been gathered under one roof.</p>
+
+<p>I think one of the themes of the conference &mdash; 
+very illuminating &mdash; 
+is to study the processes by which languages are not only designed, 
+but by which their adoption is accomplished. 
+If you look back over the papers, 
+you see a sharp dichotomy between what one can call 
+the &ldquo;committee&rdquo; languages. 
+The papers about those almost completely 
+concern themselves with process; 
+and the author languages, 
+and the papers about those have almost completely 
+concerned themselves with technical issues. 
+I think there&rsquo;s a lesson there.</p>
+
+<p>I myself have not ever been a major participant 
+in the design of a high-level language, 
+but I have been midwife at two: APL and PL/I. 
+And I would like to remark that 
+there is a class of programming languages 
+which have not been discussed here at all, 
+and that&rsquo;s appropriate. 
+But these are the languages which are intended 
+for direct interpretation by machine hardware. 
+They&rsquo;re called &ldquo;machine&rdquo; languages, 
+and Gerry Blaauw and I are working on an approach 
+to computer architecture that treats that as a problem 
+in programming language design 
+where the utterances are costly.</p>
+
+<p>Today I&rsquo;d like to remark on two things 
+that I can perhaps illuminate about the APL history. 
+One is what Ken calls the &ldquo;academic&rdquo; period at Harvard; 
+and the other is the third, 
+the implementation period at IBM.</p>
+
+<p>Ken accurately identifies the most important influence 
+on his development of APL 
+as being the mathematical background and orientation 
+with which he set out to tackle 
+the description of data processing problems. 
+He set out to do it with ordinary mathematics. 
+He discovered that on the one hand the notations 
+had to be made consistent, and on the other hand, 
+they had to be generalized. 
+And I think it accurate to say that 
+if one asks what other programming language ideas 
+had an influence on APL, the answer is none. 
+It is very much Ken&rsquo;s invention. 
+For those of you who are in the academic community, 
+I will give you a word of comfort and consolation.
+And that is that when Harvard decided 
+that he was not to be reappointed, 
+the excuse was that he had published 
+nothing but one little book!!!</p>
+
+<p>The other important thing to understand 
+about the academic period, 
+because it explains the answers 
+to many commonly asked questions about APL, 
+is that Ken conceived of APL as a language 
+for thinking about computing and data processing. 
+And this I think is,
+in the first place, helpful for explanation, 
+and in the second place, a very great advantage. 
+It means that the language was not constrained 
+by the machines available in 1956, 
+the keypunches, the typewriters, the tabulators, 
+or the computers, or the machines available in the 1960s, 
+or the machines available in the 1970s. 
+And, as a consequence, I think the language goes 
+more directly to the heart of the relevant concepts 
+because at no point has the language been constrained 
+by the equipment available. 
+And for that reason I expect it to last 
+for quite a while.</p>
+
+<p>But some of the questions 
+that are best answered by understanding 
+this orientation as a thinking language are some, 
+for example, that the management asked us: 
+What is the motivation for the terrific compression of programs? 
+It&rsquo;s a thinking language. 
+And you don&rsquo;t want to spend a lot of time writing. 
+Why was such an unusual character set adopted? 
+It is a thinking language, 
+and the principle was one character per operator. 
+In that case, one per &ldquo;function&rdquo;, 
+if you will. 
+In its original form, was the language expected 
+to require such a large run-time system? 
+The whole notion of run time was an alien 
+notion in its original form. 
+It was a thinking language. 
+Why require an entirely new character set, 
+instead of using built-in function names? 
+Why not? It&rsquo;s a thinking language. 
+And I think that 
+that is a very important matter to arrive at.</p>
+
+<p>With respect to the implementation period, 
+IBM at the mid 1960s, as George Radin has very accurately, 
+and I think very deeply characterized it, 
+and indeed the whole community, 
+was characterized by a spirit of unification. 
+That was the spirit of the time, 
+and it was one to which Bob Evans and I 
+were professionally and emotionally committed 
+very deeply in the 360 project. 
+An outgrowth of the development of PL/I 
+was an enunciation of an attempt to take on 
+FORTRAN, ALGOL, and COBOL and replace them all with PL/I &mdash; 
+what was known as the &ldquo;one-language policy&rdquo;. 
+These languages each had sufficiently strong community groups. 
+The one-language policy had no noticeable effect on them. 
+The only one that it had any effect on 
+that I could see was unfortunately 
+the implementation of APL that was underway at the time. 
+So it&rsquo;s rather like one draws his sword 
+and goes out to slay the foe, 
+and in the process of drawing it back, 
+clobbers the friend in the head!</p>
+
+<p>For the remainder of my time I&rsquo;d like 
+to give a little bit of outside-the-APL-development-group view
+&mdash; hindsight &mdash; 
+of what one might do differently, 
+knowing what one knows about languages today, 
+and what seemed to be the strengths 
+that I think are very important and very instructive.</p>
+
+<p>Control structures &mdash; it seems to me we know a lot more 
+about control structures. 
+Parameter passing, character strings; 
+in George Radin&rsquo;s paper he documents my urging 
+the APL approach of character vectors 
+on PL/I and his rebuttal that correctly identifies character strings 
+as a different kind of thing. 
+And that rebuttal in there is instructive and dead right.</p>
+
+<p>I think one would, today, 
+make the decision to declare global variables 
+rather than local variables 
+as the thing to be explicitly declared. 
+Ken and Adin might not agree 
+with how I would do it differently. 
+I think one of the things we recognize 
+today that we did not, any of us, 
+recognize then is the fact that APL 
+incorporates a quite separate system language &mdash; 
+the command language, and this is true 
+of most programming language systems. 
+We didn&rsquo;t recognize in OS/360 
+that JCL was a different language 
+and a full language and had to be designed as such. 
+And the incorporation of system variables and 
+system functions in the on-going development 
+of APL means that they have now recognized this 
+and are building that concept into the system.</p>
+
+<p>What&rsquo;s right, what&rsquo;s very right 
+and still very instructive about APL? 
+I think first of all,
+the conceptual integrity of the language 
+which very much reflects the unification of mind 
+of Ken and Adin in the working out of it; 
+and the courtesy of the APL community which has refrained, 
+by and large, from ad hoc additions to the language 
+without at least going back to the intellectual source 
+and trying to arrive at a consensus.</p>
+
+<p>Next, I think the consistency of the language. 
+I once long ago asked Ken, 
+&ldquo;Why are the human factors of APL so good?&rdquo; 
+And he said it does what you expect it to do. 
+And that&rsquo;s a pretty good statement.</p>
+
+<p>The generality: the symbols are new but the concepts are not. 
+And the power: it works the way we think. 
+I would say to a child, 
+&ldquo;Go to the basement and bring back all the good apples.&rdquo; 
+That&rsquo;s the APL way of saying it. 
+&ldquo;Go to the basement 
+&mdash; pick up an apple &mdash;
+examine it for goodness; 
+if so, put in ...&rdquo;
+The direct interaction, JOSS-like, the economy of keystrokes, 
+the workspace concept where whole environments are called by name, 
+and the fact that it is exciting to use 
+because it improves and generalizes on mathematics.</p>
+
+<p>Thank you.
+<br>&nbsp;</p>
+
+
+
+<a name="qa"></a>
+<p><b>Transcript of Question and Answer Session</b></p>
+
+
+<p><b>JAN Lee</b>: I have a question 
+from Peter Wegner from Brown University. 
+&ldquo;Both SNOBOL4 and APL achieve their attractiveness 
+in part by their lack of declarations; 
+that is, declarations force the programmer to plan ahead, 
+and the attractiveness of SNOBOL and APL 
+is due to the fact that programmers need not plan ahead. 
+Should we encourage this attitude amongst programmers?&rdquo;</p>
+
+<p><b>Kenneth Iverson</b>: Well, as I said at the outset, 
+the ones that I wanted to duck, I&rsquo;d ask Adin. 
+You want to grab that one, Adin? 
+The answer is no &mdash; he doesn&rsquo;t want to. 
+But he&rsquo;s going to.</p>
+
+<p><b>Lee</b>: Basically, the question is 
+that no declarations are required 
+in either SNOBOL 4 or APL and 
+that seems to be 
+against the trend of software engineering.</p>
+
+<p><b>Adin Falkoff</b>: 
+Right, and the second part of the question is &mdash;
+isn&rsquo;t that going to cause programmers 
+to suffer some kind of mental debilitation.</p>
+
+<p><b>Lee</b>: I think that&rsquo;s a good paraphrasing.</p>
+
+<p><b>Falkoff</b>:
+And I&rsquo;m reminded of a conference 
+on programming systems for mathematics 
+that was held in 1966 or 1967, 
+in which the question was, 
+&ldquo;Should we have interactive systems 
+because that&rsquo;s going to cause 
+a degeneration of the mathematical ability of the populace?&rdquo; 
+I think that the presence or absence of declarations 
+has very little to do with the acceptability of the language. 
+I think there are good technical reasons for not having them. 
+By and large they tend to be redundant, 
+and therefore incur many new rules, 
+and thereby make life more complicated.</p>
+
+<p><b>Lee</b>: I have two questions &mdash; 
+one from Bob Rosin at Bell Labs; 
+one from Joseph De Kerf of Agfa Gevaert. 
+Let me paraphrase them. 
+There is an APL interpreter for most medium-scale 
+and large-scale computers. 
+But the manufacturers don&rsquo;t 
+really promote the language. Why not?</p>
+
+<p><b>Iverson</b>: I don&rsquo;t know! 
+I haven&rsquo;t had the time to try and crawl 
+inside their skulls and know why not. 
+I think one reason is very simply that any industry, 
+any organization, when they come to marketing, 
+pushing things, feel very comforted with numbers, 
+some sort of prediction 
+of how many are they going to sell, and so on; 
+and because our prediction processes 
+seem to always simply predict more of what&rsquo;s 
+happened in the past, 
+it&rsquo;s very difficult for them to predict 
+the possibilities of something that&rsquo;s at all radical. 
+And I think that probably explains 
+why it takes not only APL but a lot of new things 
+time to take hold.</p>
+
+<p><b>Lee</b>: Let me close off with one from Aaron Finerman. 
+He says, &ldquo;Periodically we hear that 
+APL is the wave of the future; 
+that IBM will mount a major effort to spread the use of APL. 
+Users of APL also tend to propagate the gospel. 
+Do you believe the use of APL will grow, 
+or that future use will be approximately at the present level?&rdquo;
+
+<p><b>Iverson</b>: Adin Falkoff is presently 
+the Manager of the APL Design Group, 
+and so I really think I have to call on him to speak for IBM.
+
+<p><b>Falkoff</b>: And of course in the total spirit of this meeting, 
+I must start with a disclaimer, 
+and that is that I don&rsquo;t speak for IBM. 
+I think that the growth of the use of APL 
+will probably continue to expand, 
+and I base that simply on a very direct extrapolation 
+of what&rsquo;s happened so far. 
+I see no evidence and no reason why it shouldn&rsquo;t. 
+And I think that Ken really touched 
+at the end of his talk on the fundamental reason for it, 
+and that is that APL does represent, 
+I believe, a return to the main trend line 
+in the development of mathematics, 
+and thereby represents the means for a rapprochement, 
+if you like, between mathematics and programming.</p>
+
+<p><b>Lee</b>: Thank you, Adin, and thank you, Ken.
+<br>&nbsp;</p>
+
+
+
+<a name="qasub"></a>
+<p><b>Full Text of all Questions Submitted</b></p>
+
+<p><font size=-1>Dr. Iverson has been kind enough to provide answers 
+for many of the questions that were not asked at the session. 
+References here refer to the <a href="APLEvol1.htm#ref">bibliography</a> 
+on pp. 673-674. Ed.</font></p>
+
+<p><b>Kenneth Brooks</b>:
+(1)  How did the distinction between APL operators and system commands come about?
+(2)  Was any thought ever given to including an IF-THEN construction in APL?</p>
+
+<p><i>Answers:</i> 
+(1) APL system commands were introduced as an ad hoc 
+&ldquo;escape&rdquo; from APL to handle peripheral matters 
+which we did not see how to introduce 
+cleanly into the language at the time. 
+If you compare APL\360 with APLSV, 
+you will see that many system commands 
+have been superseded by the use of system variables 
+and other devices which bring the required function 
+within the language.</p>
+<p> (2) APL operators provide &ldquo;program structures&rdquo; 
+in the sense of applying functions to arrays 
+or subsets thereof, 
+and any extensions to include further types 
+will be done by introducing further operators 
+and not by introducing an anomalous syntax.</p>
+
+<p><b>Neil G. Cuadra</b>:
+(1)  You have observed in the past that APL operators, 
+unlike functions, are not treated in a uniform manner. 
+How might a more uniform treatment be given to operators? 
+In particular, would operators be applicable 
+to user-defined functions, 
+and could user-defined operators be permitted?
+(2)  The APL notation for function application 
+introduces syntactic ambiguity in certain expressions. 
+Were this fact and its effect on the implementation 
+of APL realized at the time this notation was adopted?</p>
+
+<p><i>Answer</i>: 
+(1) Formalization of the syntax 
+of APL operators is discussed in Iverson, 
+<a target=_parent href="opfns.htm"><i>Operators and Functions</i></a>, 
+IBM Research Report No. 7091, 
+and 
+<a target=_parent href="APLOperators.htm">further discussions of APL operators</a>
+appear in the Proceedings 
+of the 1979 APL Conference sponsored by STAPL. 
+In particular, operators should apply to user-defined functions, 
+and user-defined operators should be permitted. 
+The earlier observation that operators 
+are not treated uniformly was not accurate.</p>
+
+<p>(2) Since I am not aware of any such syntactic ambiguity 
+and since the matter was not clarified during the session, 
+this question is omitted.</p>
+
+<p><b>Joseph De Kerf</b>:
+There is an APL interpreter 
+for most medium-scale and large computers. 
+The manufacturers generally don&rsquo;t 
+really promote this language, however. Why?</p>
+
+<p>(Answered during session.)</p>
+
+
+<p><b>Aaron Finerman</b>:
+Periodically we hear that APL is the wave of the future
+&mdash; that IBM will mount a major effort to spread the use of APL. 
+Users of APL also tend to propagate the gospel. 
+Do you believe that the use of APL 
+will grow or that its future use 
+will be at approximately the present level?</p>
+
+<p>(Answered by Falkoff during session.)</p>
+
+<p><b>Dan Friedman</b>:
+Why did you limit functions to just two arguments?</p>
+
+<p><i>Answer</i>: 
+The limitation is to two formal arguments, 
+which may themselves be arrays. 
+This is the method used in mathematics, 
+both in the use of vector arguments 
+and in the use of expressions such as <i>f(a,b,c,d)</i>. 
+If <i>a</i>, <i>b</i>, <i>c</i>, and <i>d</i> are scalars, 
+the latter can be written directly in APL, 
+and if they are not, 
+the matter can be handled by the enclose function discussed in 
+Iverson&rsquo;s Research Report 7091 (already cited) and elsewhere.</p>
+
+<p><b>Bernie Galler</b>: 
+Why the decision to avoid an operator precedence ordering?</p>
+
+<p><i>Answer</i>: 
+In APL, different classes of functions 
+are used together so freely that no precedence scheme 
+can reduce the amount of parenthesization required. 
+The ill-defined precedence in mathematics 
+is limited to five functions and appears to have evolved 
+to make convenient the writing of polynomials. 
+The use of vectors in APL makes the use of polynomials 
+convenient without precedence, 
+as in<tt> +/c×y*⍳⍴c</tt>&nbsp;.<tt> </tt>
+The eight- (or more) level schemes commonly used 
+in programming languages are too cumbersome 
+to even contemplate.</p>
+
+<p><b>Helen Gigley</b>:
+Both APL and LISP provide functions to execute 
+or evaluate character strings respectively as expressions. 
+Was this feature an original design feature in APL? 
+Why or why not? If not, why was it added?</p>
+
+<p><i>Answer</i>: 
+The execute function was not 
+present in the original APL\360 implementation 
+and was added several years later. 
+Arguments for its inclusion were presented at length in our 
+<i>Design of APL</i> 
+<acronym title="Falkoff, A.D., and K.E. Iverson, 
+The Design of APL. IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.">[Ref. 1 in Paper]</acronym>
+from which I quote one brief section as follows:</p>
+
+<blockquote>The concept of an execute function is a very powerful one. 
+In a sense, it makes the language &ldquo;self-conscious&rdquo;, 
+and introduces endless possibilities for obscurity in programs. 
+This might have been a reason for not allowing it, 
+but we had long since realized 
+that a general-purpose language cannot 
+be made foolproof and remain effective.</blockquote>
+
+<p><b>James P. Hobbs</b>:
+Please comment on comments. 
+At what point were they added to the language? 
+The placement of comments requires a left to right scan 
+to the comment symbol before the statement 
+can be evaluated right to left. 
+This seems inconsistent.</p>
+
+<p><i>Answer</i>: Comments were included in APL\360 (1968). 
+The leading symbol of an entry must be examined 
+in any case to detect system commands; 
+and the order of execution is independent 
+of the parsing algorithm.</p>
+
+<p><b>J.B. Harvill</b>:
+How much, if any, influence did Aiken&rsquo;s algebra 
+have in your work in APL?</p>
+
+<p><i>Answer</i>:   
+He must be thinking of Aitken. [I.e., not Howard Aiken.]
+</p>
+
+<p><b>Tom Kurtz</b>:
+In designing BASIC, we briefly considered &ldquo;fuzz&rdquo;, 
+following the practice in Cornell&rsquo;s CORC, 
+but dropped the idea because we didn&rsquo;t know 
+how much fuzz to allow in a given situation. 
+How does APL decide how much fuzz to use?</p>
+
+<p><i>Answer</i>: The comparison tolerance (fuzz) in APL 
+is controllable by the user by assigning a value 
+to the system variable<tt> ⎕ct</tt>&nbsp;.<tt> </tt>
+The default value is<tt> le¯13</tt>&nbsp;.</p>
+
+<p><b>Richard Miller</b>:
+(1)  Did you have any other applications 
+in mind besides a notational one 
+during the early design phase?
+(2)  How much parallelism did you intend 
+to exploit in the problems run? 
+With the machines used?</p>
+
+<p><i>Answers</i>:   
+(1) Six of the seven chapters of Iverson&rsquo;s original book 
+were devoted to various applications, 
+including sorting, searching, trees, and logic. 
+Moreover, as stated in our <i>Design of APL</i>
+<acronym title="Falkoff, A.D., and K.E. Iverson, 
+The Design of APL. IBM Journal of Research and Development, 
+Vol. 17, No., 4, July 1973, pages 324-334.">[Ref. 1 in Paper]</acronym>:
+
+<blockquote>
+... from its inception APL has been developed by using 
+it in a succession of areas. 
+This emphasis on application clearly 
+favors practicality and simplicity. 
+The treatment of many different areas 
+fostered generalization; 
+for example, the general inner product 
+was developed in attempts to obtain the advantages 
+of ordinary matrix algebra in the treatment 
+of symbolic logic.</blockquote>
+
+<p>(2) As stated in our paper, &ldquo;The language was 
+to be compromised as little as possibly by machine considerations&rdquo;,
+and the possibilities of parallel execution (or lack thereof) 
+in computers had no effect. 
+However, the abundant possibilities 
+for parallel execution of APL are there 
+for exploitation by machine and software designers.</p>
+
+<p><b>Bob Rosin</b>:
+What do you think would have been the effect on APL 
+had it been promoted as little as was SNOBOL?</p>
+
+<p><i>Answer</i>: The answer to this question 
+must either be so brief as to be useless, 
+or so long as to be impractical.</p>
+
+<p><b>Joe Schwebel</b>:
+In view of the fact that business programmers 
+are reluctant to use even a &ldquo;<tt>+</tt>&rdquo; or &ldquo;<tt>-</tt>&rdquo; 
+when they can use &ldquo;ADD&rdquo; or &ldquo;SUBTRACT&rdquo;, 
+did the designers expect APL to be usable 
+as a business data processing language 
+as is now proposed by some?</p>
+
+<p><i>Answer</i>: 
+Expectation of its use in business data processing 
+is clear from examples used as early as my 1962 book 
+<acronym title="Iverson, K.E., A Programming Language. 
+New York: Wiley, 1962.">[10]</acronym>
+and as recently as the current APL Language manual 
+<acronym title="Falkoff, A.D., and K.E. Iverson, APL Language, 
+Form No. GC26-3847, IBM Corp., White Plains, New York, 1975.">[4]</acronym>. 
+Not only is APL usable as a business data processing language 
+&ldquo;as is now proposed by some&rdquo;, 
+but this has long been its major area of use.</p>
+
+<p><b>Daniel Solomon</b>:
+If you had used a right arrow rather than a left arrow 
+for the assignment operator then the direction of evaluation 
+of an APL statement would be left to right.</p>
+
+<p><i>Answer</i>:   
+This is a statement, not a question, and appears irrelevant.</p>
+
+<p><b>Henry Tropp</b>:
+(1)  Is the history of APL part of the history of mathematics, or vice versa?
+(2)  When I look at the architecture of the Harvard Mark I, 
+its architecture closely resembles the way Howard Aiken 
+solved mathematical problems. 
+Can you briefly comment on the personal influence 
+that Howard Aiken had on you as you approached the design of APL?</p>
+
+<p><i>Answer</i>: (1) Since chronology alone makes it impossible 
+to consider the history of mathematics part of the history of APL, 
+I assume that the question is put facetiously 
+to challenge the claim that APL is closely related 
+to mathematical notation. 
+If this assumption is correct, I can only recommend a careful study 
+of the relevant part of our paper <a href="APLEvol1.htm#5">(Section 5)</a> and of 
+<acronym title="Iverson, K.E., Algebra: An Algorithmic Treatment. 
+Reading, Massachusetts: Addison Wesley, 1972. ">Reference 35</acronym>
+and other works which employ APL in the treatment
+of mathematical topics.</p>
+
+<p>(2) I know the architecture of Mark I 
+and I know Professor Aiken,
+but I cannot presume to characterize
+&ldquo;the way Howard Aiken solved 
+mathematical problems&rdquo;,
+nor do I see how it could be related 
+to the architecture of the Mark I.
+I have already commented on the general influence
+of Aiken on my work; 
+however, he took no direct interest in APL.</p>
+
+<p><b>Peter Wegner:</b> Both SNOBOL4 and APL achieve 
+their attractiveness in part by their lack of declarations. 
+Declarations force the programmer to plan ahead, 
+and the attractiveness of SNOBOL and APL 
+is due to the fact that programmers need not plan ahead
+as usual in writing their programs.
+Should we encourage this attitude amongst programmers?</p>
+
+<p>(Answered by Falkoff during session.)
+<br>&nbsp;</p>
+
+
+
+<a name="bioadf"></a>
+<p><b>Biography of Adin D. Falkoff</b></p>
+
+<p>Adin Falkoff holds the degrees of B.Ch.E.
+from the City College of New York (1941)
+and M.A. in Mathematics from Yale University (1963).
+He has worked for IBM since 1955, 
+specializing in computer science and language design
+since 1960.
+He has a part-time staff member of the
+IBM Systems Research Institute from 1963 to 1967
+and a Visiting Lecturer in Computer Science
+at Yale from 1968 to 1970.
+During the period 1970-1974,
+he managed the IBM Philadelphia Scientific Center
+and he is currently manager of the APL Design Group
+at the T.J. Watson Research Center.</p>
+
+<a name="biokei"></a>
+<p><b>Biography of Kenneth E. Iverson</b></p>
+
+<p>Ken Iverson received the B.A. degree in Mathematics
+and Physics at Queen&rsquo;s University 
+in Kingston, Ontario, in 1950.
+He holds an A.M. in Mathematics (1951)
+and a Ph.D. in Applied Mathematics (1954),
+both from Harvard.
+He was an Assistant Professor of Applied Math at Harvard
+from 1955 to 1960 and then joined IBM 
+as a Research Staff Member.  
+He was made IBM Fellow in 1971.</p>
+
+He received the AFIPS 
+<a target=_parent href="goode.htm">Harry Goode Award</a>
+in 1975 and was given ACM&rsquo;s 
+<a target=_parent href="tot.htm">Turing Award</a> in 1979.
+<br>&nbsp;</p>
+
+
+
+<hr>
+<font size=-1>
+<p>Originally appeared in the ACM SIGPLAN Notices 13, 1978-08.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-07-22 00:00</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2018-06-22 19:55</font></td></tr>
+</table>
+
+</td></tr></table>
+<br>
+</body>
+</html>

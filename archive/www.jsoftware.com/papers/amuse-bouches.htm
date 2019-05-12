@@ -1,0 +1,930 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Amuse-Bouches</title>
+<link href="https://www.jsoftware.com/papers/adoc.css" rel=stylesheet></head>
+<body>
+
+<table width=520 align=center><tr><td>
+
+<br>
+<p align=center><font size=+2>Sixteen APL Amuse-Bouches</font><br><br>
+<b>Roger K.W. Hui</b></p>
+
+<br><hr>
+
+<table>
+<tr><td>The amuse-bouche is the best way &#133; to express big ideas in small bites.</td></tr>
+<tr><td align=right>&mdash; Jean-Georges Vongerichten, 2002</td></tr>
+
+<tr><td>&nbsp;</td></tr>
+
+<tr><td>Such were the vagaries of what may have been the most powerful computer 
+language ever hatched by a Canadian. 
+Yes, I know that James Gosling, an alumnus of the University of Calgary, 
+was the &ldquo;father of Java.&rdquo; He and I have talked about it. 
+And yes, there is a now a game called &ldquo;Perl Golf&rdquo; in which 
+you try to do the most work in that scripting language with the fewest number of (key-) strokes. 
+Java and Perl are good and useful and popular, but APL was &#133; beautiful.
+ </td></tr>
+<tr><td align=right>&mdash; Tom Keenan, 
+<a href="https://keiapl.org/rhui/passage.htm#businessedge"><i>Business Edge</i></a>, 2004</td></tr>
+</table>
+<br>
+
+<table>
+<tr><td colspan=2><a name="0"></a><tt><font size=+1>0. </font> (x>0)-(x<0)</tt><br>&nbsp;</td></tr>
+<tr><td nowrap width=18>&nbsp;</td>
+ <td><p>Signum of<tt> x </tt>for real<tt> x</tt>&nbsp;,<tt> </tt>
+assuming the values<tt> 1</tt>&nbsp;,<tt> 0</tt>&nbsp;,<tt> </tt>
+or<tt> ¯1 </tt>according as<tt> x </tt>
+is strictly positive, 0, or strictly negative. 
+The phrase dates from the earliest days of APL,
+being found in section 1.4 of <i>A Programming Language</i>
+<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962-05.">[0]</acronym>.
+Three decades later, the idea was adopted by Knuth 
+<acronym title="Knuth, Donald E., Two Notes on Notation, American Mathematical Monthly, Volume 99, Number 5, 1992-05-01.">[1]</acronym>,
+who wrote that &ldquo;Iverson&rsquo;s convention&rdquo; led to improvements in exposition and technique.
+Some writers call these &ldquo;data-driven conditionals&rdquo;
+<acronym title="Scholes, John, Data-driven Conditionals, Dyalog Blog, 2014-10-13.">[2]</acronym>;
+during a discussion between Phil Last, John Scholes, and myself 
+it was suggested that they be called &ldquo;array logic&rdquo;
+<acronym title="Hui, Roger K.W., Phil Last, and John Scholes, e-mail discussion, 2014-10-18 to -20.">[3]</acronym>.</p>
+
+<p>The usefulness of array logic in APL is due to the following:</p>
+
+<table>
+<tr><td nowrap valign=top>&#149;&nbsp;</td><td>Boolean functions have value 0 and 1 rather than true and false
+ <nobr><acronym title="Hui, Roger K.W., editor, Ken Iverson Quotations and Anecdotes, 2014-10-10.">[4, #implementers2]</acronym>.</nobr>
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>Functions apply to entire arrays, as in, for 
+ example,<tt> +/x&gt;100 </tt>to compute the number of elements of vector<tt> x </tt>
+ greater than 100
+ <nobr><acronym title="Hui, Roger K.W., editor, Ken Iverson Quotations and Anecdotes, 2014-10-10.">[4, #Maple]</acronym>.</nobr>
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>A simple function precedence (&ldquo;right to left&rdquo;).</td></tr>
+</table>
+
+<p>Amuse-bouches 0, 2, 4, D, and E use array logic.
+<br>&nbsp;</p>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="1"></a><tt><font size=+1>1. </font> (+⌿÷≢) x</tt><br>&nbsp;</td>
+<tr><td>&nbsp;</td>
+ <td><p>The average of<tt> x</tt>&nbsp;.<tt> </tt>
+The construct<tt> +⌿÷≢ </tt>is a fork, a 3-train.
+Using<tt> +⌿ </tt>and<tt> ≢ </tt>instead of the more familiar<tt> +/ </tt>and<tt> ⍴ </tt>
+is superior for reasons described in 
+<acronym title="Hui, Roger K.W., On Average, Vector, Volume 24, Number 2&3, 2010-08.">[5]</acronym>.
+<br>&nbsp;</p>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="2"></a><tt><font size=+1>2. </font> x⌹x=x</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>A shortest phrase for the average 
+of vector<tt> x</tt>&nbsp;.<tt> </tt>Note that<tt> + / ⌿ ÷ ⍴ ≢ </tt>are not used.
+The idea originated with Timo Seppälä at APL82 
+<acronym title="Azzarello, Arlene, editor, APL QUOTE-QUAD: The Early Years, APL Press, Palo Alto, 1982-11.">[6]</acronym>.
+To see why it works, start with the definition</p>
+
+<p><tt>&nbsp; y⌹x ←→ (⌹(+⍉x)+.×x)+.×(+⍉x)+.×y </tt></p>
+
+<p>which defines the rectangular case in terms of the square case.</p>
+
+<table>
+<tr><td><tt>x⌹x=x</tt></td></tr>
+<tr><td><tt>x⌹w</tt></td>                             <td><tt>w←x=x</tt></td></tr>
+<tr><td><tt>(⌹(+⍉w)+.×w)+.×(+⍉w)+.×x &nbsp;</tt></td> <td>definition of<tt> ⌹ </tt></td></tr>
+<tr><td><tt>(⌹(⍉w)+.×w)+.×(⍉w)+.×x</tt></td>          <td><tt>w </tt>is non-complex</td></tr>
+<tr><td><tt>(÷≢x)+.×w+.×x</tt></td>                   <td><tt>w </tt>is<tt> (≢x)⍴1; w+.×w </tt>is<tt> ≢x</tt></td></tr>         
+<tr><td><tt>(÷≢x)+.×+⌿x</tt></td>                     <td><tt>((≢x)⍴1)+.×x ←→ +⌿x</tt></td></tr>
+<tr><td><tt>(÷≢x)×+⌿x</tt></td>                       <td>LHS and RHS of<tt> +.× </tt>are scalars</td></tr>
+<tr><td><tt>(+⌿x)÷≢x</tt></td></tr>
+</table>
+
+<p>Alternatively,<tt> y⌹x </tt>computes a linear regression for<tt> y </tt>wherein the constant term
+is the mean of<tt> y</tt>&nbsp;;<tt> </tt>that is, the best least square 
+&ldquo;fit&rdquo; of a vector by a single number,
+is its mean.
+<br>&nbsp;</p>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="3"></a><tt><font size=+1>3. </font>x⍳x</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>Index-of with both arguments being the same, an instance of a &ldquo;selfie&rdquo;
+<acronym title="Hui, Roger K.W., Index-Of, A 30-Year Quest, J Conference 2014, 2014-07-25.">[7]</acronym>.<tt> x⍳x </tt>
+are like ID numbers; questions of identity on<tt> x </tt>
+can often be answered more efficiently on<tt> x⍳x </tt>than on<tt> x </tt>itself.</p>
+
+<p>The<tt> x⍳x </tt>selfie occurs in several important and useful computations:</p>
+
+<table>
+<tr><td><tt>((⍳≢x)=x⍳x)⌿x</tt></td> <td>nub (unique)</td></tr>
+<tr><td valign=top><tt>(x⍳x)∘.=(x⍳y)</tt></td> <td>an efficient computation for<tt> x∧.=⍉y </tt>for matrices<nobr><tt> x </tt>and<tt> y </tt></nobr>
+<acronym title="Hui, Roger K.W., Dyalog Potential v14.0 Language Features, Dyalog User Conference, 2012-10-15.">[8]</acronym>
+ </td></tr>
+<tr><td valign=top><tt>(x⍳x)∘.=(x⍳y)</tt></td> <td>an efficient computation for<tt> x∘.≡y </tt>for non-simple vector<tt> x </tt>
+<acronym title="Hui, Roger K.W., A Speed-Up Story, Dyalog Blog, 2014-11-05.">[9]</acronym>
+ </td></tr>
+<tr><td nowrap><tt>(⍉↑x⍳¨x)⍳(⍉↑x⍳¨y)&nbsp;</tt></td> <td>inverted table index-of
+ <acronym title="Hui, Roger K.W., Rank & Friends, Dyalog User Conference, 2013-10-22.">[10]</acronym></td></tr>
+<tr><td><tt>(x⍳x) f⌸ y</tt></td> <td>equivalent to<tt> x f⌸ y</tt></td></tr>
+
+</table>
+<br>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="4"></a><tt><font size=+1>4. </font> '.⎕'[x∘.>⍳⌈/x]</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>A bar chart of non-negative integer vector<tt> x</tt>&nbsp;.</p>
+
+<pre>
+   x← 3 1 4 1 5 9 
+   '.⎕'[x∘.>⍳⌈/x]
+⎕⎕⎕......
+⎕........
+⎕⎕⎕⎕.....
+⎕........
+⎕⎕⎕⎕⎕....
+⎕⎕⎕⎕⎕⎕⎕⎕⎕
+</pre>
+
+<p>I encountered this phrase when I first learned APL in the mid 1970s.
+By then, it was part of the APL milieu, found in STATPACK
+<acronym title="Smillie, Keith W., STATPACK: An APL Statistical Package, University of Alberta, 1968.">[11]</acronym>
+and <i>APL in Exposition</i>
+<acronym title="Iverson, K.E., APL in Exposition, IBM Corp, 1972-01.">[12,&nbsp;p.13]</acronym>.
+(I believe I saw it in the former.)
+The phrase brought home to me that indices can be entire arrays.
+<br>&nbsp;</p>
+ </td></tr>
+
+
+
+<tr><td colspan=2><tt><a name="5"></a><tt><font size=+1>5. </font> +\1 ¯1 0['()'⍳x]</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>Depth of parentheses nesting.</p>
+<pre>
+   x←'⍵((∇&lt;S),=S,(∇>S))⍵⌷⍨?≢⍵'
+   x ,[¯0.5] +\1 ¯1 0['()'⍳x]
+⍵ ( ( ∇ < S ) , = S , ( ∇ > S ) ) ⍵ ⌷ ⍨ ? ≢ ⍵
+0 1 2 2 2 2 1 1 1 1 1 2 2 2 2 1 0 0 0 0 0 0 0
+</pre>
+
+<p>The phrase has an ancient and storied history.  As recounted by Alan Perlis 
+<acronym title="Perlis, A.J., Almost Perfect Artifacts Improve only in Small Ways: APL is more French than English, APL78, 1978-03-29.">[13]</acronym>:</p>
+
+<p>I was at a meeting in Newcastle, England, where I&rsquo;d been invited to give a talk, 
+as had Don Knuth of Stanford, Ken Iverson from IBM, and a few others as well.
+I was sitting in the audience sandwiched between two very esteemed people 
+in computer science and computing &mdash; 
+Fritz Bauer, who runs computing in Bavaria from his headquarters in Munich, 
+and Edsger Dijkstra, who runs computing all over the world 
+from his headquarters in Holland.</p>
+
+<p>Ken was showing some slides &mdash; and one of his slides had something on it 
+that I was later to learn was an APL one-liner. 
+And he tossed this off as an example of the expressiveness of the APL notation. 
+I believe the one-liner was one of the standard ones for indicating 
+the nesting level of the parentheses in an algebraic expression. 
+But the one-liner was very short &mdash; ten characters, something like that &mdash; 
+and having been involved with programming things like that for a long time 
+and realizing that it took a reasonable amount of code to do, 
+I looked at it and said, &ldquo;My God, there must be something in this language.&rdquo;
+Bauer, on my left, didn&rsquo;t see that. 
+What he saw or heard was Ken&rsquo;s remark that APL is an extremely appropriate language 
+for teaching algebra, and he muttered under his breath to me, 
+in words I will never forget, &ldquo;As long as I am alive, 
+APL will never be used in Munich.&rdquo; 
+And Dijkstra, who was sitting on my other side, 
+leaned toward Bauer and said, &ldquo;Nor in Holland.&rdquo; 
+The three of us were listening to the same lecture, 
+but we obviously heard different things.
+<br>&nbsp;</p>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="6"></a><tt><font size=+1>6. </font> x[⍋⍒(⍴x)⍴0 1]</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>Perfect shuffle, a special case of a solution to the more general <i>mesh</i>
+problem described by Ken Iverson 
+<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962-05.">[0,&nbsp;&sect;1.9]</acronym>
+and solved by Luthor Woodrum 
+<acronym title="Hui, Roger K.W., An Amuse-Bouche from APL History, 2014-10-25.">[14]</acronym>.
+The phrase was found on the back of I.P. Sharp T-shirts in the 1970s and 1980s.
+</p>
+
+<pre>
+   x←'ABCDEFGHIJKLMNOPQ'
+   x[⍋⍒(⍴x)⍴0 1]
+IAJBKCLDMENFOGPHQ
+</pre>
+
+<p>The phrase<tt> ⍋⍒n⍴0&nbsp;1 </tt>is a permutation of length<tt> n</tt>&nbsp;.<tt> </tt>
+Its order is the minimum number of times a perfect shuffle has to be applied 
+to yield the original argument
+[<acronym title="Thomson, Norman, Jottings 43: A Rippling Good Yarn!, Vector, Volume 21, Number 3, 2005-05.">15</acronym>,
+<acronym title="Scholes, John, Ripple, D-Function Workspaces, 2007-03-05.">16</acronym>].
+The sequence of these orders is A024222 in the indispensible On-line Encyclopedia of Integer Sequences 
+<acronym title="OEIS, Sequence A024222, On-line Encyclopedia of Integer Sequences, 2014.">[17]</acronym>.
+<br>&nbsp;</p>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="7"></a><tt><font size=+1>7. </font> Q←{1≥≢⍵:⍵ ⋄ S←{⍺⌿⍨⍺ ⍺⍺ ⍵} ⋄ ⍵((∇&lt;S),=S,(∇>S))⍵⌷⍨?≢⍵}</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>Quicksort
+<acronym title="Hui, Roger K.W., Quicksort, J Wiki Essay, 2005-09-28.">[18]</acronym>.</p>
+
+<p>The &ldquo;pivot&rdquo;<tt> ⍵⌷⍨?≢⍵ </tt>is randomly 
+chosen.<tt> ((∇&lt;S),=S,(∇>S)) </tt>is a fork, selecting the parts of<tt> ⍵ </tt>
+which are less than the pivot, equal to the pivot, and greater than the pivot.
+The function is recursively applied to the first and the last of these three parts.
+</p>
+
+<pre>
+   ⎕←x←?13⍴20
+2 2 7 10 10 11 3 10 14 5 9 1 16
+   Q x
+1 2 2 3 5 7 9 10 10 10 11 14 16
+</pre>
+
+<p>The variant<tt> Q1 </tt>obtains by enclosing each of the 
+three parts. 
+Its result exhibits an interesting structure.
+The middle item of each triplet is the value of the pivot
+at each recursion.
+Since the pivot is randomly chosen the result of<tt> Q1 </tt>
+can be different on the same argument.</p>
+
+<pre>
+   Q1←{1≥≢⍵:⍵ ⋄ S←{⍺⌿⍨⍺ ⍺⍺ ⍵} ⋄ 
+                  ⍵((⊂∘∇&lt;S),(⊂=S),(⊂∘∇>S))⍵⌷⍨?≢⍵}
+   Q1 x
+┌─────────┬─┬────────────────────────────────┐
+│┌─┬───┬─┐│5│┌┬─┬───────────────────────────┐│
+││1│2 2│3││ │││7│┌─┬────────┬──────────────┐││
+│└─┴───┴─┘│ │││ ││9│10 10 10│┌┬──┬────────┐│││
+│         │ │││ ││ │        │││11│┌┬──┬──┐││││
+│         │ │││ ││ │        │││  │││14│16│││││
+│         │ │││ ││ │        │││  │└┴──┴──┘││││
+│         │ │││ ││ │        │└┴──┴────────┘│││
+│         │ │││ │└─┴────────┴──────────────┘││
+│         │ │└┴─┴───────────────────────────┘│
+└─────────┴─┴────────────────────────────────┘
+   Q1 x
+┌────────────────────────────────┬──┬────────┐
+│┌────────────────────┬────────┬┐│11│┌┬──┬──┐│
+││┌──────────────┬─┬─┐│10 10 10│││  │││14│16││
+│││┌─┬───┬──────┐│7│9││        │││  │└┴──┴──┘│
+││││1│2 2│┌─┬─┬┐││ │ ││        │││  │        │
+││││ │   ││3│5││││ │ ││        │││  │        │
+││││ │   │└─┴─┴┘││ │ ││        │││  │        │
+│││└─┴───┴──────┘│ │ ││        │││  │        │
+││└──────────────┴─┴─┘│        │││  │        │
+│└────────────────────┴────────┴┘│  │        │
+└────────────────────────────────┴──┴────────┘
+
+</pre>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="8"></a><tt><font size=+1>8. </font> P ← ↑ {(0∘,+,∘0)⍣⍵,1}¨∘⍳</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>Pascal&rsquo;s triangle
+<acronym title="Hui, Roger K.W., Pascal’s Triangle, J Wiki Essay, 2005-09-28.">[19]</acronym>.</p>
+
+<pre>
+   P 10
+1 0  0  0   0   0  0  0 0 0
+1 1  0  0   0   0  0  0 0 0
+1 2  1  0   0   0  0  0 0 0
+1 3  3  1   0   0  0  0 0 0
+1 4  6  4   1   0  0  0 0 0
+1 5 10 10   5   1  0  0 0 0
+1 6 15 20  15   6  1  0 0 0
+1 7 21 35  35  21  7  1 0 0
+1 8 28 56  70  56 28  8 1 0
+1 9 36 84 126 126 84 36 9 1
+
+   10 ↑ (,∘.+⍨⍳10) {+/⍵}⌸ ,P 10
+1 1 2 3 5 8 13 21 34 55
+</pre>
+
+<p>The expression<tt> (0,x)+(x,0) </tt>or its commute,
+which generates the next set of binomial coefficients, is present 
+in the document that introduced <i>APL</i>\360 in 1967
+<acronym title="Falkoff, A.D., and K.E. Iverson, The APL\360 Terminal System, Research Report RC-1922, IBM, 1967-10-16.">[20,&nbsp;Fig.1]</acronym>
+and the one that introduced J in 1990 
+<acronym title="Hui, R.K.W., K.E. Iverson, E.E. McDonnell, and A.T. Whitney, APL\?, APL90, APL Quote Quad, Volume 20, Number 4, 1990-07.">[21,&nbsp;Gc&amp;Gd]</acronym>;
+in <i>Elementary Functions: An Algorithmic Treatment</i> in 1966
+<acronym title="Iverson, K.E., Elementary Functions: An Algorithmic Treatment, Science Research Associates, Inc., 1966.">[22,&nbsp;p.69]</acronym>,
+in <i>APL\360 User&rsquo;s Manual</i> in 1968
+<acronym title="Falkoff, A.D. and K.E. Iverson, APL\360 User’s Manual, IBM Corporation, 1968-08.">[23,&nbsp;A.5]</acronym>,
+in <i>Algebra: An Algorithmic Treatment</i> in 1972
+<acronym title="Iverson, K.E., Algebra: An Algorithmic Treatment, Addison-Wesley, 1972.">[24,&nbsp;p.141]</acronym>,
+in <i>Introducing APL to Teachers</i> in 1972
+<acronym title="Iverson, K.E., Introducing APL to Teachers, IBM Corporation, 1972-07.">[25,&nbsp;p.22]</acronym>,
+in <i>An Introduction to APL for Scientists and Engineers</i> in 1973
+<acronym title="Iverson, K.E., An Introduction to APL for Scientists and Engineers, IBM Corporation, 1973-03.">[26,&nbsp;p.19]</acronym>,
+in <i>Elementary Analysis</i> in 1976
+<acronym title="Iverson, K.E., Elementary Analysis, APL Press, 1976.">[27,&nbsp;ex.1.68]</acronym>,
+in <i>Programming Style in APL</i> in 1978
+<acronym title="Iverson, K.E., Programming Style in APL, 1978 APL Users Meeting Proceedings, 1978-09-18.">[28,&nbsp;&sect;6]</acronym>,
+in <i>Notation as a Tool of Thought</i> in 1980
+<acronym title="Iverson, K.E., Notation as a Tool of Thought, Communications of the ACM, Volume 23, Number 8, 1980-08.">[29,&nbsp;A.3]</acronym>, 
+in <i>A Dictionary of APL</i> in 1987
+<acronym title="Iverson, K.E., A Dictionary of APL, APL Quote Quad, Volume 18, Number 1, 1987-09.">[30,<tt>&nbsp;m∇n</tt>]</acronym>, 
+and probably others.</p>
+
+<p><tt>∘.!⍨⍳n </tt>also computes Pascal&rsquo;s triangle of order<tt> n</tt>&nbsp;.<tt> </tt>
+It <i>is</i> shorter, but is less interesting algorithmically and historically.
+<br>&nbsp;</p>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="9"></a><tt><font size=+1>9. </font> +∘÷\n⍴1</tt><br>&nbsp;</td></tr></tr>
+<tr><td>&nbsp;</td>
+ <td><p>
+Convergents to the golden mean by continued fractions
+<acronym title="Hui, Roger K.W., Fibonacci Sequence, J Wiki Essay, 2005-09-26.">[31]</acronym>.</p>
+
+<pre>
+   +∘÷\16⍴1
+1 2 1.5 1.66667 1.6 1.625 1.61538 1.61905 1.61765 1.61818
+      1.61798 1.61806 1.61803 1.61804 1.61803 1.61803
+   1 ∧ +∘÷\16⍴1
+1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597
+
+</pre>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="A"></a><tt><font size=+1>A. </font> (2 ÷⍨ ⊢ + ÷)\ n⍴x</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>Convergents to the square root of<tt> x </tt>by Newton&rsquo;s method
+<acronym title="Hui, Roger K.W., Newton’s Method, J Wiki Essay, 2005-10-15.">[32]</acronym>.</p>
+
+<p>The operand of<tt> \ </tt>is a fork, 
+itself a composition of two forks<tt> (2÷⍨(⊢+÷)) </tt>and equivalent
+to<nobr><tt> {0.5×⍵+⍺÷⍵}</tt>&nbsp;.</nobr></p>
+<pre>
+   ⎕←t← (2 ÷⍨ ⊢ + ÷)\ 7⍴2
+2 1.5 1.41667 1.41422 1.41421 1.41421 1.41421
+   (2*0.5) - t
+¯0.585786 ¯0.0857864 ¯0.0024531 ¯0.0000021239 ¯1.59472e¯12 
+      2.22045e¯16 2.22045e¯16
+</pre>
+
+<p>Since the phrase uses only rational operations,
+it yields rational convergents when applied to rational arguments.
+The following result is computed in J:</p>
+
+<pre>
+2 3r2 17r12 577r408 665857r470832 886731088897r627013566048 
+      1572584048032918633353217r1111984844349868137938112
+
+</pre>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="B"></a><tt><font size=+1>B. </font> x (+⌿ ×⍤¯1)⍤1 2 ⊢y</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>Inner product using row-at-a-time operation.  For example:</p>
+
+<pre>
+   x←?3 4⍴100
+   y←?4 5⍴100
+   (x+.×y) ≡ x (+⌿ ×⍤¯1)⍤1 2 ⊢y
+1
+</pre>
+
+<p>The main advantages of row-at-a-time
+over the conventional row-by-column
+are better cache utilization and
+ability to exploit sparsity 
+<acronym title="Hui, Roger K.W., Inner Product — An Old/New Problem, 2009-06-07.">[33]</acronym>
+and
+<acronym title="Hui, Roger K.W., editor, APL Quotations and Anecdotes, 2014.">[34,&nbsp;#IC2013]</acronym>.
+Note: The Dyalog implementation of<tt> +.× </tt>is already row-at-a-time,
+so there is no need to resort to the circumlocution.
+<br>&nbsp;</p>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="C"></a><tt><font size=+1>C. </font> r←,⍳⊢ ⋄ (r G) ≡ r ∘.{⍺[⍵]}⍨ ↓r G</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>The finite case of Cayley&rsquo;s theorem
+<acronym title="Hui, Roger K.W., Some Uses of { and }, APL87, APL Quote Quad, Volume 17, Number 4, 1987-05.">[35,&nbsp;&sect;4.4]</acronym>: 
+every group G is isomorphic to a subgroup of the group of permutations.
+For example:</p>
+
+<pre>
+   ⎕←T←2 2∘⍴¨(4⍴2)∘⊤¨9 6 7 11 13 14
+┌───┬───┬───┬───┬───┬───┐
+│1 0│0 1│0 1│1 0│1 1│1 1│
+│0 1│1 0│1 1│1 1│0 1│1 0│
+└───┴───┴───┴───┴───┴───┘
+   ⎕←G←∘.(≠.∧)⍨T
+┌───┬───┬───┬───┬───┬───┐
+│1 0│0 1│0 1│1 0│1 1│1 1│
+│0 1│1 0│1 1│1 1│0 1│1 0│
+├───┼───┼───┼───┼───┼───┤
+│0 1│1 0│1 1│1 1│0 1│1 0│
+│1 0│0 1│0 1│1 0│1 1│1 1│
+├───┼───┼───┼───┼───┼───┤
+│0 1│1 0│1 1│1 1│0 1│1 0│
+│1 1│1 1│1 0│0 1│1 0│0 1│
+├───┼───┼───┼───┼───┼───┤
+│1 0│0 1│0 1│1 0│1 1│1 1│
+│1 1│1 1│1 0│0 1│1 0│0 1│
+├───┼───┼───┼───┼───┼───┤
+│1 1│1 1│1 0│0 1│1 0│0 1│
+│0 1│1 0│1 1│1 1│0 1│1 0│
+├───┼───┼───┼───┼───┼───┤
+│1 1│1 1│1 0│0 1│1 0│0 1│
+│1 0│0 1│0 1│1 0│1 1│1 1│
+└───┴───┴───┴───┴───┴───┘
+</pre>
+
+<p><tt>T </tt>are the non-singular 2-by-2 boolean matrices, 
+and<tt> G </tt>is its group table under boolean matrix multiplication.
+The function<nobr><tt> r←,⍳⊢ </tt></nobr>relabels a group
+table according to its index in its ravel (<i>cf.</i><tt> x⍳x</tt>);
+such relabelling, like displaying in a different font, 
+does not affect group-theoretic properties.</p>
+
+<pre>
+   r ← , ⍳ ⊢
+   r G
+0 1 2 3 4 5
+1 0 4 5 2 3
+2 3 5 4 1 0
+3 2 1 0 5 4
+4 5 3 2 0 1
+5 4 0 1 3 2
+</pre>
+
+<p>The rows of<tt> r&nbsp;G </tt>are permutations, 
+and the relabeled version of <i>its</i> group table 
+as permutations is the same as the relabelling of the original group:</p>
+
+<pre>
+   (r G) ≡ r ∘.{⍺[⍵]}⍨ ↓r G
+1
+
+</pre>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="D"></a><tt><font size=+1>D. </font></tt> Symmetries of the square
+<acronym title="Hui, Roger K.W., Some Uses of { and }, APL87, APL Quote Quad, Volume 17, Number 4, 1987-05.">[35,&nbsp;&sect;4.4]</acronym>
+and
+<acronym title="Hui, Roger K.W., Symmetries of the Square, J Wiki Essay, 2005-11-07.">[36]</acronym>.
+ </td></tr>
+<tr><td>&nbsp;</td>
+ <td><pre>
+
+   D8
+┌──┬──┬──┬──┬──┬──┬──┬──┐
+│⊢ │⍒ │⍒⍒│⍋⌽│⌽ │⍋ │⍋⍒│⍒⌽│
+├──┼──┼──┼──┼──┼──┼──┼──┤
+│⍒ │⍒⍒│⍋⌽│⊢ │⍒⌽│⌽ │⍋ │⍋⍒│
+├──┼──┼──┼──┼──┼──┼──┼──┤
+│⍒⍒│⍋⌽│⊢ │⍒ │⍋⍒│⍒⌽│⌽ │⍋ │
+├──┼──┼──┼──┼──┼──┼──┼──┤
+│⍋⌽│⊢ │⍒ │⍒⍒│⍋ │⍋⍒│⍒⌽│⌽ │
+├──┼──┼──┼──┼──┼──┼──┼──┤
+│⌽ │⍋ │⍋⍒│⍒⌽│⊢ │⍒ │⍒⍒│⍋⌽│
+├──┼──┼──┼──┼──┼──┼──┼──┤
+│⍋ │⍋⍒│⍒⌽│⌽ │⍋⌽│⊢ │⍒ │⍒⍒│
+├──┼──┼──┼──┼──┼──┼──┼──┤
+│⍋⍒│⍒⌽│⌽ │⍋ │⍒⍒│⍋⌽│⊢ │⍒ │
+├──┼──┼──┼──┼──┼──┼──┼──┤
+│⍒⌽│⌽ │⍋ │⍋⍒│⍒ │⍒⍒│⍋⌽│⊢ │
+└──┴──┴──┴──┴──┴──┴──┴──┘
+</pre>
+<p>A permutation can be represented as an integer vector or as
+a square boolean matrix with exactly one 1 in each row and each column.
+Functions<tt> pm←⊢∘.=⍳∘≢ </tt>and<tt> mp←⍳∘1⍤1 </tt>transform from one to the other.</p>
+
+<pre>
+   p                     x
+6 3 2 1 5 4 0         96 84 59 5 19 47 36
+   pm p      
+0 0 0 0 0 0 1            x[p]
+0 0 0 1 0 0 0         36 5 59 84 47 19 96
+0 0 1 0 0 0 0
+0 1 0 0 0 0 0            (pm p)+.×x
+0 0 0 0 0 1 0         36 5 59 84 47 19 96
+0 0 0 0 1 0 0
+1 0 0 0 0 0 0
+   mp pm p
+6 3 2 1 5 4 0
+</pre>
+
+<p><tt>⊢ ⍋ ⍒ ⌽ </tt>on permutations produce permutation results.
+They can be identified with<tt> ⊢ ⍉ ⊖⍉ ⊖ </tt>
+on square matrices.</p>
+
+<pre>
+   (⊢ pm p) ≡ pm ⊢p
+1
+   (⍉ pm p) ≡ pm ⍋p
+1
+   (⊖⍉pm p) ≡ pm ⍒p
+1
+   (⊖ pm p) ≡ pm ⌽p
+1
+</pre>
+
+<p>Since<tt> ⊢ ⍉ ⊖⍉ ⊖ </tt>on matrices are transpositions of the square,
+then so are<nobr><tt> ⊢ ⍋ ⍒ ⌽ </tt></nobr>on permutations.
+The group table<tt> D8 </tt>is a compact presentation
+of numerous identities involving<nobr><tt> ⊢ ⍋ ⍒ ⌽ </tt></nobr>on permutations 
+&mdash;<tt> D8[i;0] </tt>composed with<tt> D8[0;j] </tt>is<tt> D8[i;j]</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<table border=1 cellspacing=0 cellpadding=6>
+<tr><td align=center><b>i</b></td> <td align=center><b>j</b></td> 
+ <td align=center><b>D8[i;0]</b></td> <td align=center><b>D8[0;j]</b></td> 
+ <td align=center><b>D8[i;j]</b></td> </tr>
+<tr><td>5</td> <td>5</td> <td align=center><tt>⍋</tt></td>  <td align=center><tt>⍋</tt></td>   <td align=center><tt>⊢ </tt></td> </tr>
+<tr><td>2</td> <td>2</td> <td align=center><tt>⍒⍒</tt></td> <td align=center><tt>⍒⍒</tt></td>  <td align=center><tt>⊢ </tt></td> </tr>
+<tr><td>1</td> <td>2</td> <td align=center><tt>⍒</tt></td>  <td align=center><tt>⍒⍒</tt></td>  <td align=center><tt>⍋⌽</tt></td> </tr>
+<tr><td>1</td> <td>5</td> <td align=center><tt>⍒</tt></td>  <td align=center><tt>⍋</tt></td>   <td align=center><tt>⌽ </tt></td> </tr>
+<tr><td>1</td> <td>6</td> <td align=center><tt>⍒</tt></td>  <td align=center><tt>⍋⍒</tt></td>  <td align=center><tt>⍋ </tt></td> </tr>
+</table>
+
+<p>That is, the 2 2 entry asserts that<tt> ⍒⍒⍒⍒p ←→ ⊢p</tt>&nbsp;;<tt> </tt>
+the 1 5 entry asserts that<nobr><tt> ⍒⍋p ←→ ⌽p</tt>&nbsp;;<tt> </tt></nobr>and so on.
+The veracity of these assertions can be checked 
+by<nobr><tt> (⍎¨D8,¨'p') ≡ ⍎¨(∘.,⍨0⌷D8),¨'p' ⊣ p←?⍨n</tt>&nbsp;.</nobr> 
+</p>
+
+<p>Finally, per the previous section,<nobr><tt> (r D8) ≡ r ∘.{⍺[⍵]}⍨ ↓r D8</tt>&nbsp;.</nobr>
+<br>&nbsp;</p>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="E"></a><tt><font size=+1>E. </font> I←{(⍴⍵)⍴(≢⍺)↓i⊣i[i]←+\(≢⍺)>i←⍋⍺,,⍵}</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>Interval index:<tt> ⍺ </tt>is a sorted (strictly ascending) vector;<tt> ⍺ I ⍵[i] </tt>
+is the least<tt> j </tt>such that<tt> ⍺[j] </tt>
+follows<tt> ⍵[i] </tt>in the ordering, or<tt> ≢⍺ </tt>if<tt> ⍵[i] </tt>
+follows<tt> ¯1↑⍺ </tt>in the ordering or 
+if<tt> ⍺ </tt>is empty. 
+The function is named<tt> classify </tt>in
+<nobr><acronym title="Hui, Roger K.W., Some Uses of { and }, APL87, APL Quote Quad, Volume 17, Number 4, 1987-05.">[35,&nbsp;&sect;1.2]</acronym></nobr>
+and is a limited version of the<tt> I. </tt>primitive in J
+<acronym title="Hui, Roger K.W., and K.E. Iverson, J Introduction and Dictionary, 2011-05-03.">[37]</acronym>.</p>
+
+<pre>
+   t ,[¯0.5] ¯1.5 1 4 I t←¯2+⍳8
+¯2 ¯1 0 1 2 3 4 5
+ 0  1 1 2 2 2 3 3
+   ¯1.5 1 4 I 2 2⍴5 3.1 4 ¯20
+3 2
+3 0
+   'aeiou' I 'deipnosophist'
+1 2 3 4 3 4 4 4 4 2 3 4 4
+</pre>
+
+<p>The function can be expressed more concisely and more clearly by use of the <i>merge</i> operator, discussed in 
+[<acronym title="Hui, Roger K.W., Some Uses of { and }, APL87, APL Quote Quad, Volume 17, Number 4, 1987-05.">35</acronym>,
+<acronym title="Hui, Roger K.W., and K.E. Iverson, J Introduction and Dictionary, 2011-05-03.">37</acronym>, 
+<acronym title="Scholes, John, Merge, D-Function Workspaces, 2014.">38</acronym>] 
+and whimsically denoted by<tt> →</tt>&nbsp;:</p>
+
+<pre>
+   {(⍴⍵)⍴(≢⍺)↓(+\i<≢⍺)(i→)i←⍋⍺,,⍵}
+
+</pre>
+ </td></tr>
+
+
+
+<tr><td colspan=2><a name="F"></a><tt><font size=+1>F. </font> ¯1+{≢⍵}⌸(⍳41),(5×⍳40)I+⌿?10 1e6⍴21</tt><br>&nbsp;</td></tr>
+<tr><td>&nbsp;</td>
+ <td><p>An illustration of the central limit theorem,
+that the sum of independent random variables converges to the normal distribution
+<acronym title="Hui, Roger K.W., and K.E. Iverson, J Introduction and Dictionary, 2011-05-03.">[37,<tt>&nbsp;I.</tt>]</acronym>.</p>
+
+<pre>
+   t←¯1+{≢⍵}⌸(⍳41),(5×⍳40)I+⌿?10 1e6⍴21
+   ⍴t
+41
+   5 8⍴t
+    0     0     0     0      0     13    28    90
+  317   894  2095  4574   8671  15001 24338 36728
+51254 66804 82787 93943 101045 101752 96510 85281
+70418 54506 39802 27267  16964   9764  5031  2467
+ 1059   422   136    32      6      1     0     0
+</pre>
+
+<p><tt>t </tt>counts the number of occurrences 
+in the intervals with endpoints<tt> 5×⍳40</tt>&nbsp;,<tt> </tt>
+of<tt> 1e6 </tt>samples 
+from the sum of ten repetitions of<tt> ?21</tt>&nbsp;.<tt> </tt> 
+A plot of<tt> t</tt>&nbsp;:</p>
+
+<img src="https://www.jsoftware.com/papers/img/amuse-plot.jpg">
+
+<p>The derived function<tt> {≢⍵}⌸x </tt>counts the number
+of occurrences of each unique cell of<tt> x</tt>&nbsp;.<tt> </tt>
+On 1-byte integers the computation takes only 1.4 times as
+long as required for the apparently simpler problem<tt> ⌈/x</tt>&nbsp;.<tt> </tt>
+Thinking about an obvious C implementation for<tt> {≢⍵}⌸x </tt>
+leads to a non-obvious implementation for<tt> ⌈/x </tt>
+<acronym title="Hui, Roger K.W., Index-Of, A 30-Year Quest, J Conference 2014, 2014-07-25.">[7,&nbsp;&sect;16]</acronym>
+faster than</p>
+
+<pre>
+max=*x++; for(i=1;i&lt;n;++i){if(max&lt;*x)max=*x; ++x;}
+</pre>
+ </td></tr>
+
+</table>
+<br><br>
+
+
+<p><b>The fine print.</b>  The exposition requires:  
+Dyalog APL Version 14.0 or later;<tt> ⎕io←0</tt>&nbsp;;<tt> ⎕ml←1</tt>&nbsp;;<tt> ]box on</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>[0]</td><td>
+Iverson, K.E., 
+<a href="APL.htm"><i>A Programming Language</i></a>, 
+Wiley, <nobr>1962-05</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[1]</td><td>
+Knuth, Donald E., 
+<a href="https://arxiv.org/PS_cache/math/pdf/9205/9205211v1.pdf"><i>Two Notes on Notation</i></a>, 
+American Mathematical Monthly, Volume 99, Number 5, <nobr>1992-05-01</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[2]</td><td>
+Scholes, John, 
+<a href="https://www.dyalog.com/blog/2014/10/data-driven-conditionals-2/"><i>Data-driven Conditionals</i></a>,
+Dyalog Blog, <nobr>2014-10-13</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[3]</td><td>
+Hui, Roger K.W., Phil Last, and John Scholes,
+e-mail discussion, 
+<nobr>2014-10-18</nobr> to -20.
+ </td></tr>
+
+<tr><td valign=top>[4]</td><td>
+Hui, Roger K.W., editor,
+<a href="https://keiapl.org/anec"><i>Ken Iverson Quotations and Anecdotes</i></a>,
+<nobr>2014-10-10</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[5]</td><td>
+Hui, Roger K.W., 
+<a href="https://archive.vector.org.uk/art10500270"><i>On Average</i></a>, 
+Vector, Volume 24, Number 2&amp;3, <nobr>2010-08</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[6]</td><td>
+Azzarello, Arlene, editor, 
+<a href="QQ_Early_Years.htm"><i>APL QUOTE-QUAD: The Early Years</i></a>, 
+APL Press, Palo Alto, <nobr>1982-11</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[7]</td><td>
+Hui, Roger K.W., 
+<a href="https://www.jsoftware.com/papers/indexof/indexofscript.htm"><i>Index-Of, A 30-Year Quest</i></a>, 
+J Conference 2014, <nobr>2014-07-25</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[8]</td><td>
+Hui, Roger K.W., 
+<a href="https://www.dyalog.com/uploads/conference/dyalog12/presentations/D04_14.0/v14.0_Roger.zip"><i>
+Dyalog Potential v14.0 Language Features</i></a>, Dyalog User Conference, <nobr>2012-10-15</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[9]</td><td>
+Hui, Roger K.W., 
+<a href="https://www.dyalog.com/blog/2014/11/a-speed-up-story-2/"><i>A Speed-Up Story</i></a>,
+Dyalog Blog, 2014-11-05.
+ </td></tr>
+
+<tr><td valign=top>[10]</td><td>
+Hui, Roger K.W., 
+<a href="https://www.dyalog.com/uploads/conference/dyalog13/presentations/D08_Rank_and_Friends/"><i>Rank &amp; Friends</i></a>,
+Dyalog User Conference, <nobr>2013-10-22</nobr>.
+  </td></tr>
+
+<tr><td valign=top>[11]</td><td>
+Smillie, Keith W.,
+<i>STATPACK: An APL Statistical Package</i>,
+University of Alberta, 1968.
+ </td></tr>
+
+<tr><td valign=top>[12]</td><td>
+Iverson, K.E.,
+<i>APL in Exposition</i>,
+IBM Corporation, <nobr>1972-01</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[13]</td><td>
+Perlis, Alan J., 
+<a href="perlis78.htm"><i>Almost 
+Perfect Artifacts Improve only in Small Ways: APL is more French than English</i></a>, 
+APL78, <nobr>1978-03-29</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[14]</td><td>
+Hui, Roger K.W.,
+<a href="mesh.htm"><i>An Amuse-Bouche from APL History</i></a>,
+<nobr>2014-10-25</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[15]</td><td>
+Thomson, Norman,
+<a href="https://archive.vector.org.uk/art10010570"><i>Jottings 43: A Rippling Good Yarn!</i></a>,
+Vector, Volume 21, Number 3, <nobr>2005-05</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[16]</td><td>
+Scholes, John,
+<a href="https://dfns.dyalog.com/n_ripple.htm"><i>Ripple</i></a>,
+D-Function Workspaces, <nobr>2007-03-05</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[17]</td><td>
+OEIS, 
+<a href="https://oeis.org/A024222"><i>Sequence A024222</i></a>, 
+On-line Encyclopedia of Integer Sequences, 2014.
+ </td></tr>
+
+<tr><td valign=top>[18]</td><td>
+Hui, Roger K.W., 
+<a href="https://www.jsoftware.com/jwiki/Essays/Quicksort"><i>Quicksort</i></a>, 
+J Wiki Essay, <nobr>2005-09-28</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[19]</td><td>
+Hui, Roger K.W., 
+<a href="https://www.jsoftware.com/jwiki/Essays/Pascal's_Triangle"><i>Pascal&rsquo;s Triangle</i></a>, 
+J Wiki Essay, <nobr>2005-09-28</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[20]</td><td>
+Falkoff, A.D., and K.E. Iverson, 
+<a href="APL360TerminalSystem.htm"><i>The APL\360 Terminal System</i></a>, 
+Research Report RC-1922, IBM, <nobr>1967-10-16</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[21]</td><td>
+Hui, R.K.W., K.E. Iverson, E.E. McDonnell, and A.T. Whitney, 
+<a href="J1990.htm"><i>APL\?</i></a>, 
+APL90, APL Quote Quad, Volume 20, Number 4, <nobr>1990-07</nobr>. 
+ </td></tr>
+
+<tr><td valign=top>[22]</td><td>
+Iverson, K.E.,
+<i>Elementary Functions: An Algorithmic Treatment</i>, 
+Science Research Associates, Inc., 1966.
+ </td></tr>
+
+<tr><td valign=top>[23]</td><td>
+Falkoff, A.D. and K.E. Iverson,
+<i>APL\360 User&rsquo;s Manual</i>,
+IBM Corporation, <nobr>1968-08</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[24]</td><td>
+Iverson, K.E.,
+<i>Algebra: An Algorithmic Treatment</i>, 
+Addison-Wesley, 1972.
+ </td></tr>
+
+<tr><td valign=top>[25]</td><td>
+Iverson, K.E.,
+<i>Introducing APL to Teachers</i>, 
+IBM Corporation, <nobr>1972-07</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[26]</td><td>
+Iverson, K.E.,
+<i>An Introduction to APL for Scientists and Engineers</i>, 
+IBM Corporation, <nobr>1973-03</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[27]</td><td>
+Iverson, K.E.,
+<i>Elementary Analysis</i>,
+APL Press, 1976.
+ </td></tr>
+
+<tr><td valign=top>[28]</td><td>
+Iverson, K.E.,
+<a href="APLStyle.htm"><i>Programming Style in APL</i></a>,
+1978 APL Users Meeting Proceedings, <nobr>1978-09-18</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[29]</td><td>
+Iverson, K.E.,
+<a href="tot.htm"><i>Notation as a Tool of Thought</i></a>,
+Communications of the ACM, Volume 23, Number 8, <nobr>1980-08</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[30]</td><td>
+Iverson, K.E.,
+<a href="APLDictionary.htm"><i>A Dictionary of APL</i></a>,
+APL Quote Quad, Volume 18, Number 1, <nobr>1987-09</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[31]</td><td>
+Hui, Roger K.W., 
+<a href="https://www.jsoftware.com/jwiki/Essays/Fibonacci_Sequence"><i>Fibonacci Sequence</i></a>, 
+J Wiki Essay, <nobr>2005-09-26</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[32]</td><td>
+Hui, Roger K.W., 
+<a href="https://www.jsoftware.com/jwiki/Essays/Newton's_Method"><i>Newton&rsquo;s Method</i></a>, 
+J Wiki Essay, <nobr>2005-10-15</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[33]</td><td>
+Hui, Roger K.W.,
+<a href="https://www.jsoftware.com/papers/innerproduct/ip.htm"><i>Inner Product &mdash; An Old/New Problem</i></a>,
+<nobr>2009-06-07</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[34]&nbsp;</td><td>
+Hui, Roger K.W., editor,
+<a href="APLQA.htm"><i>APL Quotations and Anecdotes</i></a>,
+2014.
+ </td></tr>
+
+<tr><td valign=top>[35]</td><td>
+Hui, Roger K.W.,
+<a href="from.htm"><i>Some Uses of { and }</i></a>,
+APL87, APL Quote Quad, Volume 17, Number 4, <nobr>1987-05</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[36]</td><td>
+Hui, Roger K.W., 
+<a href="https://www.jsoftware.com/jwiki/Essays/Symmetries%20of%20the%20Square"><i>Symmetries of the Square</i></a>, 
+J Wiki Essay, <nobr>2005-11-07</nobr>.
+ </td></tr>
+
+<tr><td valign=top>[37]</td><td>
+Hui, Roger K.W., and K.E. Iverson,
+<a href="https://www.jsoftware.com/help/dictionary/vocabul.htm"><i>J Introduction and Dictionary</i></a>,
+<nobr>2011-05-03.</nobr>
+ </td></tr>
+
+<tr><td valign=top nowrap>[38]&nbsp;</td><td>
+Scholes, John,
+<a href="https://dfns.dyalog.com/n_merge.htm"><i>Merge</i></a>,
+D-Function Workspaces, 2014.
+ </td></tr>
+
+</table>
+
+
+<br><hr>
+<font size=-1>
+<p><script src="https://www.jsoftware.com/papers/apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2014-10-11 20:00</font></td></tr>
+<tr><td><font size=-1>updated:       </font></td><td><font size=-1>2018-06-22 20:30</font></td></tr>
+</table>
+
+
+</td></tr></table>
+
+<br><br><br>
+
+</body>
+</html>

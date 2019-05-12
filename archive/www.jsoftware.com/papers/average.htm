@@ -1,0 +1,235 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>On Average</title>
+<link href="https://www.jsoftware.com/papers/adoc.css" rel=stylesheet></head>
+<body>
+
+<table width=520 align=center><tr><td>
+
+<br>
+<p align=center><font size=+2>On Average</font><br>
+<b>Roger Hui</b></p>
+<br>
+
+
+<p>How do you compute the average in APL?
+Many authors and speakers say:</p>
+
+<pre>
+      avg←{(+/⍵)÷⍴⍵} 
+</pre>
+
+<p>The function is often used to demonstrate
+the beauty and power of the language.
+It is presented in the
+<a href="http://sites.google.com/site/baavector/about-us">About the APLs</a>
+page of <i>Vector</i>.
+It is the first program 
+in the <i>Dyalog APL Tutorial</i> (page 10).
+At the recent Dyalog User Conference
+in Princeton it was presented in at least
+three sessions, and in one was
+described as &ldquo;the very best APL expression&rdquo;.</p>
+
+<p>Let&rsquo;s look into it:</p>
+
+<pre>
+      avg 1 2 3 4
+2.5
+</pre>
+
+<p>So far so good.  What about</p>
+
+<pre>
+      avg¨ (1 2) (3 4 5) (6 5 4 3.14159)
+ 1.5  4  4.5353975 
+</pre>
+
+<p>The extra blanks hint at the trouble.
+Application of the monad<tt> ↑ </tt>to the result
+brings the problem into relief:</p>
+
+<pre>
+      ↑ avg¨ (1 2) (3 4 5) (6 5 4 3.14159)
+1.5      
+4        
+4.5353975
+</pre>
+
+<p>That is,<tt> avg </tt>should return
+a scalar rather than a vector result.</p>
+
+<p>Now consider:</p>
+
+<pre>
+      avg 1 2 3 4
+2.5
+      avg 1 2 3
+2
+      avg 1 2
+1.5
+      avg 1
+
+</pre>
+
+<p>What just happened with the last expression?
+A few moments of reflection reveal that<tt> avg </tt>
+mishandles scalar arguments.</p>
+
+<p>What about matrices and higher-ranked arrays?</p>
+
+<pre>
+      ⎕←data←?3 4⍴10
+1 7 4 5
+2 0 6 6
+9 3 5 8
+
+      avg data
+RANK ERROR
+avg[0] avg←{(+/⍵)÷⍴⍵}
+           ∧
+</pre>
+
+<p>In summary, the problems with<tt>&nbsp;avg←{(+/⍵)÷⍴⍵}&nbsp;</tt>are:</p>
+
+<table>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td>
+ <td>It gives a non-scalar result for vector arguments.</td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td>
+ <td>It fails on non-vector arguments; 
+in particular, it gives a puzzling (and wrong) 
+result for scalar arguments.  
+</td></tr>
+</table>
+
+<p>Fortunately, a better definition readily obtains.
+It is somewhat longer than the commonly promulgated version,
+but fixes its defects:</p>
+
+<pre>
+      avg1←{(+⌿⍵)÷⍬⍴(⍴⍵),1}
+
+      avg1 1 2 3 4
+2.5
+
+      avg1¨ (1 2) (3 4 5) (6 5 4 3.14159)
+1.5 4 4.5353975
+
+      ↑ avg1¨ (1 2) (3 4 5) (6 5 4 3.14159)
+1.5 4 4.5353975
+
+      avg1 1
+1
+
+      avg1 data
+4 3.333333333 5 6.333333333
+</pre>
+
+<p>There is one more point:<p>
+
+<pre>
+      avg ⍳0
+1
+      avg1 ⍳0
+1
+</pre>
+
+<p>I would argue that<tt> 0 </tt>is a better answer
+for the average of an empty vector.  For example,
+<tt> (+/⍵)÷⍴⍵ ←→ +/⍵÷⍴⍵ </tt>
+and<tt> (+⌿⍵)÷⍬⍴(⍴⍵),1 ←→ +⌿⍵÷⍬⍴(⍴⍵),1 </tt>
+for vector<tt> ⍵</tt>&nbsp;,<tt> </tt>
+except when<tt> ⍵ </tt>is an empty vector.
+If instead<tt> 0 </tt>is that average, then the identity
+holds for all vectors.
+Possibly<tt> 1 </tt>is a reasonable answer,
+but if so it should be a considered answer and
+not an unintended consequence of that<tt> 0÷0 </tt>
+is<tt> 1</tt>&nbsp;.</p>
+
+<p>Finally, the common definition of average in J 
+<i>is</i> arguably &ldquo;the best expression in J&rdquo;:
+
+<pre>
+   avgj=: +/ % #
+
+   avgj 1 2 3 4
+2.5
+
+   avgj&amp;> 1 2 ; 3 4 5 ; 6 5 4 3.14159
+1.5 4 4.5354
+
+   avgj data
+4 3.33333 5 6.33333
+
+   avgj 1
+1
+   avgj i.0
+0
+</pre>
+
+<p>Together with the rank operator (<tt>&quot;</tt>),<tt> </tt>
+this definition of the average makes it easy
+to find the average of various parts of 
+an array.</p>
+
+<pre>
+   avgj"1 data
+4.25 3.5 6.25
+
+   ] x=: ? 2 3 4 $ 20
+10  7 18  9
+ 2 12 15  5
+15 13 18 10
+
+ 0  5  9  6
+14  0  6  4
+ 9  8 15 17
+
+   avgj x
+ 5    6 13.5  7.5
+ 8    6 10.5  4.5
+12 10.5 16.5 13.5
+
+   avgj"3 x
+ 5    6 13.5  7.5
+ 8    6 10.5  4.5
+12 10.5 16.5 13.5
+
+   avgj&quot;2 x
+      9 10.6667 17 8
+7.66667 4.33333 10 9
+
+   avgj&quot;1 x
+11 8.5    14
+ 5   6 12.25
+
+   avgj&quot;0 x
+10  7 18  9
+ 2 12 15  5
+15 13 18 10
+
+ 0  5  9  6
+14  0  6  4
+ 9  8 15 17
+</pre>
+
+<br><hr>
+<font size=-1>
+<p>Also appeared in <i>Vector</i>, Volume 24, Number 2&amp;3, 2010-08.</p>
+<p><script src="https://www.jsoftware.com/papers/apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-09-17 11:25</font></td></tr>
+<tr><td><font size=-1>updated:       </font></td><td><font size=-1>2013-09-28 18:45</font></td></tr>
+</table>
+
+
+</td></tr></table>
+
+<br><br><br>
+
+</body>
+</html>

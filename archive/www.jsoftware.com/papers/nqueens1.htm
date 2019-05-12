@@ -1,0 +1,451 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>The N Queens Problem</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>The N Queens Problem</font><br>
+<b>Roger Hui</b>
+<br>&nbsp;</p>
+
+
+
+<a name="0"></a>
+<p><b>Problem</b>: place<tt> n </tt>queens on an<tt> n×n </tt>chess board
+so that no two are on the same row, column, or
+diagonal.  (Call this the<tt> n </tt>queens property.)
+Determine all such configurations.
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>An Initial Solution</b></p>
+
+<p>We represent the chess board by an<tt> n,n </tt>matrix.
+An arrangement of the<tt> n </tt>queens are the row
+and column indices of their locations on a board;
+a solution is an arrangement satisfying the<tt> n </tt>queens
+property.</p>
+
+<p>In a solution, each possible row (column) index
+must appear exactly once:  an index occurring
+more than once means that two queens are on the
+same row (column); and the absence of an index means
+that some other index must occur more than once.
+Hence, we can specify an arrangement as a
+permutation of<tt> ⍳n</tt>&nbsp;,<tt> </tt>which are the column
+indices, with the row indices understood to 
+be<tt> ⍳n</tt>&nbsp;.<tt> </tt>
+With this, the number of possibilities
+is reduced from<tt> n!n×n </tt>to<tt> !n</tt>&nbsp;.<tt> </tt>
+It remains to
+eliminate arrangements having two queens on the
+same diagonal.</p>
+
+<p>If two queens occupy the same diagonal, the line
+connecting them has slope<tt> 1 </tt>or<tt> ¯1</tt>&nbsp;.<tt> </tt>Conversely,
+if the line connecting two queens has 
+slope<tt> 1 </tt>or<tt> ¯1</tt>&nbsp;,<tt> </tt>the
+two queens share a diagonal.  Therefore, we seek to eliminate all
+permutations specifying a pair of queens where</p>
+
+<tt> &nbsp; ((change in y) ÷ (change in x)) ∊ 1 ¯1 </tt> ,<br>
+or <br>
+<tt> &nbsp; (|change in y) = (|change in x)</tt>
+
+<p>Let<tt> p←perm n </tt>be a function where rows of<tt> p </tt>are all the permutations 
+of<tt> ⍳n</tt>&nbsp;;<tt> </tt>and<tt> c←n comb m </tt>
+be a function where rows of<tt> c </tt>are all size<tt> n </tt>
+combinations of<tt> ⍳m</tt>&nbsp;.<tt> </tt>We can now
+solve the<tt> n </tt>queens problem:</p>
+
+<pre>
+∇ z←kweens n;c;p
+ ⍝ all solns to the &lt;n> queens problem
+  p←perm n
+  c←2 comb n
+  z←((|-/p[;c])^.≠|-/c)⌿p
+∇
+</pre>
+
+<p>(See Appendix for definitions of<tt> perm </tt>
+and<tt> comb</tt>&nbsp;.)<tt> </tt>For 
+each permutation, we compute the change
+in column indices (<tt>y</tt>) and the change in row
+indices (<tt>x</tt>) for all distinct pairs of queens.
+A permutation is a solution if and only if the
+absolute values of these are unequal.
+<br>&nbsp;</p>
+
+
+
+<a name="2"></a>
+<p><b>Computational Considerations</b></p>
+
+<p>It is hard to imagine a more succinct<tt> n </tt>queens
+function than<tt> kweens</tt>&nbsp;!<tt> </tt>
+However, for all its
+&ldquo;elegance&rdquo;,<tt> kweens </tt>has two rather large drawbacks:</p>
+
+<table>
+<tr><td valign=top>&#149; &nbsp; &nbsp;</td><td>
+It is voracious for work space.  For concreteness, 
+consider the case<tt> n←8</tt>&nbsp;.<tt> </tt>
+The intermediate expression<tt> p[;c] </tt>has shape<tt> (!8),(2!8),2</tt>&nbsp;,<tt> </tt>
+requiring 9031704 bytes on IBM-based APL systems.
+</td></tr>
+<tr><td valign=top>&#149; &nbsp; &nbsp;</td><td>
+It is grossly inefficient.  
+Again, consider the case<tt> n←8</tt>&nbsp;.<tt> </tt>
+No solution can begin with<tt> ⍳2</tt>&nbsp;;<tt> </tt>
+yet, in the array<tt> p</tt>&nbsp;,<tt> </tt>
+there are<tt> !6 </tt>such arrangements, 
+and for each of these,<tt> 2!8 </tt>slopes are computed, 
+for a total of<tt> 20160-1 </tt>redundant slope computations.  
+And this is just for arrangements beginning with<tt> ⍳2</tt>&nbsp;!
+</td></tr>
+</table>
+
+<p>We present an alternative which avoids these pitfalls,
+by not generating too many intermediate invalid arrangements.</p>
+
+<p>The method is recursive.  Let a<tt> k</tt>-solution be the column indices
+of queens placed on the first<tt> k </tt>rows, with no pair
+sharing a row, column, or diagonal.
+The<tt> 1</tt>-solutions 
+are<tt> (n,×n)⍴⍳n</tt>&nbsp;.<tt> </tt>Now,
+assume we have all<tt> k</tt>-solutions; we wish to
+generate all<tt> (1+k)</tt>-solutions.
+The queen on the next row can be placed
+on columns not occupied in the first<tt> k </tt>rows,
+<i>and</i> are not on any diagonals occupied 
+in those rows.  For example,</p>
+
+<pre>
+   0 1 2 3 4 5 6 7
+ 0 . × . . . . . .
+ 1 . . . × . . . .
+ 2 . . . . . × . .
+ 3 + . + . . . . +
+</pre>
+ 
+<p>from the 3-solution<nobr><tt> 1 3 5</tt>&nbsp;,<tt> </tt></nobr>we get
+the<tt> 4</tt>-solutions<nobr><tt> 1 3 5 0</tt>&nbsp;,</nobr><nobr><tt> 1 3 5 2</tt>&nbsp;,</nobr><tt> </tt>
+and<nobr><tt> 1 3 5 7</tt>&nbsp;.<tt> </tt></nobr>
+If a<tt> k</tt>-solution has no possible next entry,
+we know it cannot be part of a solution and can
+be ignored.</p>
+
+<pre>
+∇ z←queens n;b;i;k;m;s
+ ⍝ all solns to the &lt;n> queens problem
+  s←2+n
+  k←0
+  z←(n,×n)⍴⍳n
+  →l20
+ l10:m←1↑⍴z
+  b←(m×s)⍴1
+  i←⍉(k,m)⍴s×(⍳m)-⎕io
+  b[1+i+z]←0
+  b[i+⎕io⌈z+(⍴z)⍴⌽⎕io-⍳k]←0
+  b[i+(1+⎕io+n)⌊z+(⍴z)⍴⌽2-⎕io-⍳k]←0
+  b←(0,(n⍴1),0)/(m,s)⍴b
+  z←((+/b)⌿z),(,b)/(×/⍴b)⍴⍳n
+ l20:→(n>k←1+k)⍴l10
+∇
+</pre>
+
+<p>(Note: The expression<tt> (+/b)⌿z </tt>in the penultimate line uses
+SHARP APL&rsquo;s replicate 
+function<tt> ⌿</tt>&nbsp;,<tt> </tt>a generalization of
+compression.  A specialized version of replicate is:</p>
+
+<pre>
+∇ z←l rep mat;c;i
+ ⍝ replicate mat[i;] l[i] times
+  c←0&lt;l
+  i←(+/l)⍴0
+  i[+\¯1↓(⍳⍳1),c/l]←1
+  z←(c⌿mat)[+\i;]
+∇                       )
+
+</pre>
+
+
+
+<a name="3"></a>
+<p><b>Interlude: Pictures, Reflections, and Rotations</b></p>
+
+<p>Earlier, we identified a permutation<tt> p </tt>with the
+coordinates<tt> (⍳n;p) </tt>in an<tt> n,n </tt>matrix:<tt> ⍳n </tt>are
+the row indices;<tt> p </tt>the column indices.  Let the
+picture of a permutation<tt> p </tt>be the matrix of<tt> '.'</tt>s,<tt> </tt>with
+locations specified by<tt> p </tt>being<tt> '×' </tt>(say).
+It is simple to convert from permutations to pictures
+and vice versa:</p>
+
+<pre>
+∇ z←pic p
+ ⍝ pictures of permutations &lt;p>
+  z←'.×'[⎕io+p∘.=⍳¯1↑⍴p]
+∇ 
+
+∇ z←unpic p
+ ⍝ permutations corresp. to pictures &lt;p>
+  z←(⎕io+¯1↑⍴p)-+/∨\p∊'×'
+∇ 
+</pre>
+
+<p>Since a 1-1 correspondence exists between permutations
+and pictures having exactly one<tt> '×' </tt>on each row
+and each column, we shall frequently speak of a permutation
+and its picture interchangeably.</p>
+
+<p>The (horizontal) reflection of a 
+matrix<tt> m </tt>is<tt> ⊖m</tt>&nbsp;,<tt> </tt>and
+the<tt> ○÷2 </tt>rotation of<tt> m </tt>is the rotation 
+of<tt> m </tt>by<tt> ○÷2 </tt>radians (<tt>⊖⍉m</tt>);<tt> </tt>the reflection
+and<tt> ⍺ </tt>rotation of permutation<tt> p </tt>are, respectively,
+the reflection and<tt> ⍺ </tt>rotation of the picture of<tt> p</tt>&nbsp;.</p>
+
+<pre>
+   20314    42031    03142    31420
+   ..×..    ....×    ×....    ...×.
+   ×....    ..×..    ...×.    .×...
+ 0 ...×.  1 ×....  2 .×...  3 ....×
+   .×...    ...×.    ....×    ..×..
+   ....×    .×...    ..×..    ×....
+
+   41302    13024    24130    02413
+   ....×    .×...    ..×..    ×....
+   .×...    ...×.    ....×    ..×..
+ 4 ...×.  5 ×....  6 .×...  7 ....×
+   ×....    ..×..    ...×.    .×...
+   ..×..    ....×    ×....    ...×.   
+</pre>
+
+<p>The reflection of<tt> p </tt>is easily seen 
+to be<tt> ⌽p</tt>&nbsp;.<tt> </tt>
+What about the<tt> ○÷2 </tt>rotation<tt> q </tt>of<tt> p</tt>&nbsp;?<tt> </tt>
+If<tt> m←pic p</tt>&nbsp;,<tt> </tt>
+then<tt> (⊖⍉m)[i;j] ←→ m[(n+⎕io-~⎕io)-j;i]</tt>&nbsp;,<tt> </tt>and<tt> q </tt>are
+the coordinates<tt> (((n+⎕io-~⎕io)-p;⍳n)</tt>&nbsp;.<tt> </tt>
+Converting into standard form (so that the row indices 
+are<tt> ⍳n</tt>)&nbsp;,<tt> q←⍋(n+⎕io-~⎕io)-p</tt>&nbsp;,<tt> </tt>or,
+more (most) concisely,<tt> q←⍒p</tt>&nbsp;.</p>
+
+<p>A natural next question is an expression for the<tt> ○÷¯2 </tt>
+rotation<tt> q </tt>of<tt> p</tt>&nbsp;.<tt> q←⍒⍒⍒p</tt>&nbsp;,<tt> </tt>since
+the<tt> ○÷¯2 </tt>rotation is the same as the<tt> ○3÷2 </tt>rotation; 
+and<tt> q←⌽⍒⌽p</tt>&nbsp;,<tt> </tt>since
+rotating by<tt> ○÷¯2 </tt>is the same as reflecting, 
+then rotating by<tt> ○÷2</tt>&nbsp;,<tt> </tt>
+then reflecting again.  
+Hence, within the domain of permutations, 
+we have<tt> ⍒⍒⍒ ←→ ⌽⍒⌽</tt>&nbsp;.</p>
+
+<p>What is<tt> ⍋p</tt>&nbsp;?<tt> </tt>
+It is the inverse of<tt> p</tt>&nbsp;.<tt> </tt>
+In terms of pictures,<tt> pic&nbsp;⍋p ←→ ⍉pic&nbsp;p </tt>
+(graph of the inverse).  
+But<tt> ⍉pic&nbsp;p ←→ pic&nbsp;⌽⍒p</tt>&nbsp;;<tt> </tt>
+hence<tt> ⍋ ←→ ⌽⍒</tt>&nbsp;.<tt> </tt>
+An algebraic proof is<tt> p[⍋p] ←→ ⌽p[⍒p] ←→ p[⌽⍒p]</tt>&nbsp;,<tt> </tt>
+so<tt> ⍋ ←→ ⌽⍒</tt>&nbsp;.</p>
+
+<p>We now describe informally the minisystem PRR for 
+proving some identities involving strings of the 
+symbols<tt> + ⌽ ⍒ ⍋ </tt>on permutations.
+The symbols are interpreted in PRR as functions on 
+the digits<nobr><tt> 0 1 2 3 4 5 6 7</tt>&nbsp;,<tt> </tt></nobr>
+with the following definitions:</p>
+
+<table>
+<tr><td>&nbsp;</td><td><tt>+k &nbsp;</tt></td><td><tt>k </tt>itself</td></tr>
+<tr><td>&nbsp;</td><td><tt>⌽k</tt></td><td><tt>8|4+k</tt></td></tr>
+<tr><td>&nbsp;</td><td><tt>⍒k</tt></td><td><tt>1↑k↓ 1 2 3 0 7 4 5 6</tt></td></tr>
+<tr><td>&nbsp;</td><td><tt>⍋k</tt></td><td><tt>1↑k↓ 5 6 7 4 3 0 1 2</tt></td></tr>
+</table>
+
+<p>The digits represent the reflectional and rotational
+variants of a permutation; the rules are based
+on their geometry.  (See the eight 5x5 pictures above.)</p>
+
+<p>A string of symbols defines a function on
+the starting digit<tt> 0</tt>&nbsp;;<tt> </tt>
+the ending digit is obtained 
+by applying each symbol in the string,
+from right to left.  Two strings are equivalent
+if their ending digits are equal.  
+It is a metatheorem that equivalences in PRR are
+equivalences in APL within the domain of permutations.
+Some equivalences and their proofs:</p>
+
+<pre>
+   Equivalences        Proof
+ ⍒⍒⍒⍒ ←→ +           01230  00
+ ⍋⍋   ←→ +           050    00
+ ⌽⌽   ←→ +           040    00
+ ⍒⍒⍒  ←→ ⌽⍒⌽         0123   0473
+ ⍋    ←→ ⌽⍒          05     015
+ ⍒⍒⍒  ←→ ⍋⌽          0123   043
+ ⌽⍋   ←→ ⍒           051    01
+ ⍒⍋   ←→ ⌽           054    04
+ ⍒⍋⍒  ←→ ⍋           0165   05
+
+</pre>
+
+
+
+<a name="4"></a>
+<p><b>Essentially Different Solutions</b></p>
+
+<p>We return to the<tt> n </tt>queens problem.
+Fact: if a permutation satisfies the<tt> n </tt>queens
+property, then so do its reflections and
+rotations.  We can add a twist to the<tt> n </tt>queens
+problem by requiring only the
+essentially different solutions.
+Two solutions are essentially the same if
+one can be obtained from the other by reflections
+and/or rotations; they are essentially different
+otherwise.</p>
+
+<p>This is simple, since we know how to reflect
+and rotate permutations.  For each solution,
+consider the lexicographically least of
+the solutions essentially the same as it,
+then take only those having distinct minima.</p>
+
+<pre>
+∇ z←unique p;i;j;n
+ ⍝ the essentially different of permutations &lt;p> (matrix)
+  n←''⍴1↓⍴p
+  i←n⊥n⍴n
+  j←4
+ l10:i←i⌊(n⊥⍉p)⌊n⊥⍉⌽p
+  p←rot p
+  →(×j←j-1)⍴l10
+  i←i[j←⍋i]
+  z←p[(i≠¯1↓0,i)/j;]
+∇  
+</pre>
+
+<p>Function<tt> rot</tt>&nbsp;,<tt> </tt>
+which computes<tt> ○÷2 </tt>rotations,
+uses a less elegant but provably more efficient
+equivalent of<tt> ⍒p</tt>&nbsp;:
+
+<pre>
+  q[(n+⎕io-~⎕io)-p]←q←⍳n
+  q ←→ ⍒p
+  
+∇ z←rot p;rho
+ ⍝ ○÷2 rotation of permutations &lt;p>
+  n←1⌈¯1↑rho←⍴p
+  z←(×/rho)⍴2
+  z[((¯1⌽⍳⍴rho)⍉(¯1⌽rho)⍴(n+⎕io-~⎕io)+n×(⍳×/¯1↓rho)-
+      ⎕io)-p]←rho⍴⍳n
+  z←rho⍴z
+∇  
+</pre>
+
+<p>Since the<tt> n </tt>queens problem is traditionally
+stated with<tt> n←8</tt>&nbsp;,<tt> </tt>
+we conclude by discussing
+some results for the 8 queens problem. 
+There are 92 solutions, with 12 essentially 
+different ones.  The expression</p>
+
+<pre>
+(36⍴(8⍴1),0)\ 3 8 32 ⍴ (⎕io+ 0 2 1 3)⍉pic 3 4 8 ⍴
+    unique queens 8
+</pre>
+
+<p>generates a pleasing display.
+<br>&nbsp;</p>
+
+
+
+<a name="ax"></a>
+<p><b>Appendix: Functions<tt> perm </tt>and<tt> comb</tt></b></p>
+
+<pre>
+∇ p←perm n;i;ind;t
+ ⍝ all permutations of ⍳n
+  p←(×n,n)⍴⎕io
+  →(1≥n)⍴0
+  t←perm n-1
+  p←(0,n)⍴ind←⍳n
+  i←n-~⎕io
+ l10:p←(i,((i≠ind)/ind)[t]),[⎕io] p
+  →(⎕io≤i←i-1)⍴l10
+∇
+
+∇ r←n comb m;cons;ct;i;j;offset;t
+ ⍝ all size &lt;n> combinations of ⍳m
+  i←1+(×n)×m-n
+  cons←''⍴2+i-offset←1-⎕io
+  ct←(⎕io↓0),i⍴j←1
+  r←(i,×n)⍴⍳i
+  →l30
+ l10:i←offset+cons-2
+  r←⎕io,t←1+r
+ l20:r←r,[⎕io](cons-i),t←(ct[i],0)↓t
+  →(1&lt;i←i-1)⍴l20
+  ct←+\ct
+ l30:→(n≥j←1+j)⍴l10
+∇
+</pre>
+
+<p>The results of<tt> perm </tt>and<tt> comb </tt>are in
+lexicographic order.  Much more elegant definitions
+of these functions exist.  For example, the following
+is by R. De Haas of Edmonton, Alberta:</p>
+
+<pre>
+∇ r←n combin m;t
+ ⍝ all size &lt;n> combinations of ⍳m
+  t←⍉(m⍴2)⊤⌽(⍳2*m)-⎕io
+  z←((n!m),n)⍴(,(n=+/t)⌿t)/(m×n!m)⍴⍳m
+∇
+</pre>
+
+<p>However,<tt> comb </tt> can be many times faster, and 
+requires less work space.
+<br>&nbsp;</p>
+
+
+
+<a name="ack"></a>
+<p><b>Acknowledgments</b></p>
+
+<p>The ideas described herein were developed with
+computational support from I.P. Sharp Associates.
+</p>
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared as <i>The N Queens Problem</i>, 
+APL Quote Quad, Volume 11, Number 3, 1981-03.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2008-04-11 13:55</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2013-06-17 10:30</font></td></tr>
+</table>
+
+</td></tr></table>
+<br>
+</body>
+</html>

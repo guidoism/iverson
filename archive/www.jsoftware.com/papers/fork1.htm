@@ -1,0 +1,681 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Phrasal Forms</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Phrasal Forms</font></p>
+
+<table align=center><tr>
+<td valign=top><font size=+1>&nbsp; &nbsp; K. E. Iverson<br>&nbsp; &nbsp; </font>Toronto</td>
+<td>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td>
+<td><font size=+1>E. E. McDonnell</font><br>
+I. P. Sharp Associates<br>
+Palo Alto</td>
+</tr></table>
+
+<br><hr>
+
+
+
+
+<p><i>Note</i>: In this paper we use the linguistic terms 
+<i>verb</i> and <i>pronoun</i> interchangeably 
+with the mathematical terms <i>function</i> and <i>variable</i>.</p>
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>In standard APL 
+<acronym title=
+"Morrow, L. A., ed., Programming Language APL, International Standards Organization, Geneva (to appear).">[ISO88]</acronym>
+certain forms are ungrammatical, and
+new definitions could be adopted for them without conflict.
+Such definitions we shall call <i>phrasal forms</i> 
+<acronym title=
+"American Heritage Dictionary, Second College Edition, Houghton-Mifflin Company, Boston (1976).">[AHD76]</acronym>. 
+For example, if<tt> b </tt>and<tt> c </tt>are pronouns, 
+the phrase<tt> b c </tt>is meaningless, and in APL2 
+<acronym title="APL2 Programming: Language Reference, SH20-9227-1, IBM Corporation, San Jose, CA (1985)">[IBM85]</acronym> 
+the definition<tt> (⊂&nbsp;b),&nbsp;(⊂&nbsp;c)</tt>&nbsp;,<tt> </tt>where<tt> ⊂ </tt>
+is the APL2 <i>enclose</i> function, is adopted for it.</p>
+
+
+
+<a name="rank"></a>
+<p><b>Verb Rank</b></p>
+
+<p>The notion of <i>verb rank</i>, first introduced by Iverson 
+<acronym title=
+"Iverson, K. E., Operators and Functions, IBM Research Report RC7091, April 1978.">[Iv78]</acronym>,
+later elaborated by Keenan 
+<acronym title=
+"Keenan, Douglas J., Operators and Uniform Forms, APL Quote-Quad 9,4, part 1 (June, 1979).">[Ke79]</acronym>, 
+and further evolved by Whitney 
+<acronym title=
+"Whitney, A. T., informal communication, Heidelberg, 1984.">[Wh84]</acronym>, 
+has been adopted by Iverson in his Dictionary
+<acronym title=
+"Iverson, K. E., A Dictionary of APL, APL Quote-Quad 18, 1 (1987).">[Iv87]</acronym>. 
+It refers to the rank of the subarrays of an argument
+which are the cells to which the verb aplies. For example, the
+cells that negate applies to are items, and items are ranlk zero
+objects, and thus we say the rank of negate is zero. Similarly,
+the cells to which reverse applies are lists, or rank ome objects,
+and thus we say the rank of reverse is one. Not only primitive
+verbs, but also derived and defined verbs have rank. The idea
+is a powerful one, producing great simplifications, and so we
+define the ranks of the new constructions we describe herein.</p>
+
+
+
+<br><a name="defn"></a>
+<p><b>Definitions</b></p>
+
+<p>In the following definitions,<tt> f</tt>&nbsp;,<tt>  g</tt>&nbsp;,<tt> </tt>
+and<tt> h </tt>denote verbs 
+and<tt> ⍺ </tt>and<tt> ⍵ </tt>denote pronouns.</p>
+
+<p><b>Hook</b>. A <i>hook</i> is denoted 
+by<tt> f g </tt>and is defined formally by
+identities and informally by hook-shaped diagrams as follows:</p>
+
+<pre>
+      (fg)⍵ ←→ ⍵fg⍵ ;          ⍺(fg)⍵ ←→ ⍺fg⍵
+
+          f                         f     
+         / \                       / \
+        ⍵   g                     ⍺   g
+             \                         \
+              ⍵                         ⍵
+</pre>
+
+<p>The rank of the hook<tt> f g </tt>is the maximum of the ranks 
+of<tt> f </tt>and<tt> g</tt>&nbsp;.<tt> </tt>
+Note that the verb is used monadically.</p>
+
+<p><b>Fork</b>. A <i>fork</i> is denoted 
+by<tt> f g h </tt>and is defined formally by
+identities and informally by forking diagrams as follows:</p>
+
+<pre>
+   (fgh)⍵ ←→ (f⍵)g(h⍵) ;       ⍺(fgh)⍵ ←→ (⍺f⍵)g(⍺h⍵)
+
+          g                            g     
+         / \                         /   \
+        f   h                       f     h
+       /     \                     / \   / \
+      ⍵       ⍵                   ⍺   ⍵  ⍺  ⍵
+</pre>
+
+<p>The rank of the fork<tt> f g h </tt>is the maximum of the 
+ranks of<tt> f </tt>and<tt> g</tt>&nbsp;.<tt> </tt> 
+Note that the central verb is used dyadically or
+monadically according to whether the fork is applied to two
+arguments or one. Parenthesis are required around hook and
+fork forms only to avoid ambiguity.</p>
+
+
+
+<br><a name="discuss"></a>
+<p><b>Discussion of Hook and Fork</b></p>
+
+<p><b>Hook</b>. In combinatory logic one of the most useful primitive
+combinators is designated by<tt><b> S </b></tt>
+<acronym title=
+"Schönfinkel, M., Über die Bausteine der mathematischen Logik, Math. Ann. 92 (1924).">[Sch24]</acronym>. 
+Curry defines<tt><b> S</b>fgx </tt>
+in prefix notation to be<tt>  fx(gx) </tt>
+<acronym title=
+"Curry, Haskell B., and Robert Feys, with William Craig, Combinatory Logic, North-Holland Publishing Company, Amsterdam (1974).">[CuFeCr74]</acronym>. 
+In common mathematical infix notation this would be given 
+by<tt> (x)f(g(x))</tt>&nbsp;,<tt> </tt> 
+which one can write in APL as<tt> xfgx</tt>&nbsp;,<tt> </tt>and this
+is the hook form<tt> (fg)x</tt>&nbsp;.<tt> </tt>
+The combinatory logician appreciates
+this form because of its great expressiveness: 
+it can be shown that<tt><b> S</b></tt>&nbsp;,<tt> </tt>
+along with<tt><b> K</b></tt>&nbsp;,<tt> </tt>
+the <i>constancy</i> combinator,
+suffice to define all other combinators of interest 
+<acronym title=
+"Rosenbloom, Paul C., The Elements of Mathematical Logic, Dover (1950).">[Ro50]</acronym>. 
+(The constancy combinator<tt><b> K </b></tt>is 
+defined in infix notation so that<tt> c<b>K</b>x </tt>
+has the value<tt> c </tt>for all<tt> x</tt>&nbsp;.)<tt> </tt>
+Users of APL will appreciate the hook for the same reasons.</p>
+
+<p>For example,<tt> +÷ </tt>adds the reciprocal of the right argument to
+the left argument, a form used in describing continued
+fractions. Thus<tt> (+÷)\3&nbsp;7&nbsp;16&nbsp;¯294 </tt>gives the first four convergents
+to pi, which, to nine decimals, are 3, 3.1412857143,
+3.14159292, and 3.141592654. Further,<tt> =⌊ </tt>is a proposition
+that tests whether its argument is an integer, the number of
+primes less than positive integer<tt> ⍵ </tt>is 
+approximately<tt> (÷⍟)⍵</tt>&nbsp;;<tt> </tt>
+and to decompose a number<tt> ⍵ </tt>into numerator and denominator,
+one can write<tt> (÷∨/)⍵, 1 </tt>(where<tt> ∨ </tt>is the 
+<i>greatest common divisor</i>).</p>
+
+<p><b>Fork</b>. The forks<tt> f&nbsp;+&nbsp;h </tt>and<tt> f&nbsp;×&nbsp;h </tt>
+and<tt> f&nbsp;÷&nbsp;h </tt>provide formal
+treatment of the identical but informal phrases used in
+mathematics 
+[e.g. <acronym title=
+"Effros, Edward G., Why the circle is connected, The Mathematical Intelligencer 11, 1, Springer-Verlag (Winter 1989).">Ef89</acronym>] 
+for the sum and product and quotient,
+respectively, of two functions. Further, the treatment of sets
+in terms of propositions<tt> p </tt>and<tt> q </tt>defining 
+them may be expressed
+as the forks<tt> p&nbsp;∨&nbsp;q </tt>and<tt> p&nbsp;∧&nbsp;q </tt>
+and<tt> p&nbsp;≠&nbsp;q </tt>for the union,
+intersection, and symmetric difference of sets. The fork form
+also provides a convenient notation for expressing the notion
+of function arrays, as in<tt> +,-,×,÷ </tt>as will be discussed in more
+detail below.</p>
+
+<p>Curry 
+<acronym title=
+"Curry, Haskell B., The universal quantifier in combinatory logic, Ann. of Math. (2) 32, (1931).">[Cu31]</acronym>
+defines a <i>formalizing 
+combinator</i>,<tt><b> &Phi;</b></tt>&nbsp;,<tt> </tt>
+in prefix notation, such that<tt><b> &Phi;</b>fghx </tt>
+means<tt> f(gx)(hx)</tt>&nbsp;.<tt> </tt>In common
+mathematical infix notation this would be designated 
+by<tt> (g(x))f(h(x))</tt>&nbsp;.<tt> </tt>
+An example of this form 
+is<tt><b> &Phi;</b>+sin<sup>2</sup>cos<sup>2</sup>&theta;</tt>&nbsp;,<tt> </tt>
+meaning<tt> sin<sup>2</sup>&theta;+cos<sup>2</sup>&theta;</tt>&nbsp;.<tt> </tt> 
+The fork<tt> (f&nbsp;g&nbsp;h)⍵ </tt>has the same
+meaning, namely<tt> (f⍵)g(h⍵)</tt>&nbsp;.<tt> </tt>
+Curry named this the <i>formalizing combinator</i> 
+because of its role in defining formal
+implication in terms of ordinary implication.</p>
+
+<p>Iverson and Whitney have made several earlier suggestions 
+of ways to achieve what the fork form provides: 
+the <i>scalar operators</i> of 
+<acronym title=
+"Iverson, K. E., Operators and Functions, IBM Research Report RC7091, April 1978.">[Iv78]</acronym>, 
+<acronym title=
+"Iverson, K. E., The Derivative Operator, APL Quote-Quad 9, 4, part 1 (June, 1979). ">[Iv79a]</acronym>, 
+<acronym title=
+"Iverson, K. E., Operators, ACM Transactions on Programming Languages and Systems 1, 2, October 1979.">[Iv 79b]</acronym>, 
+the <i>til</i> operator of 
+<acronym title=
+"Iverson, K. E., and Arthur T. Whitney, Practical Uses of a Model of APL, APL Quote-Quad 13, 1 (1982).">[Iv82]</acronym>,
+the <i>union</i> and <i>intersection</i> conjunctions of 
+<acronym title=
+"Iverson, K. E., A Dictionary of APL, APL Quote-Quad 18, 1 (1987).">[Iv87]</acronym>, 
+and the <i>yoke</i> adverb of 
+<acronym title=
+"Iverson, K. E., A Commentary on APL Development, APL Quote-Quad 19, 1 (September, 1988).">[Iv88]</acronym>. 
+Benkard 
+<acronym title=
+"Benkard, J. P., Implications of APL2 Grammar, APL Quote-Quad 17, 4 (May, 1987).">[Bk87]</acronym> 
+has also suggested a way to
+achieve the meaning of this form, in his proposal 
+for<tt> ↑g/(f h)⍺ ⍵</tt>&nbsp;,<tt> </tt>
+using the notion of <i>function 
+pair</i><tt> </tt>(<tt>↑ </tt>is APL2&rsquo;s
+<i>first</i> function). 
+The present proposal has significant advantages
+over these earlier ones.</p>
+
+<p>As instances of the use of this 
+form,<tt> f + h </tt>and<tt> f - h </tt>and<tt> f × h </tt>yield verbs that are the sum, difference, and product of
+the verbs<tt> f </tt>and<tt> h</tt>&nbsp;.<tt> </tt>
+If<tt> f </tt>and<tt> h </tt>are propositions defining sets,
+then<tt> f ∨ h </tt>and<tt> f ∧ h </tt>and<tt> f &gt; h </tt>
+yield propositions defining the
+union, intersection, and difference of sets. 
+The dyadic case of<tt> f g h </tt>handles relations, 
+as in<tt> &lt; ∧ = </tt>for<tt> ≤</tt>&nbsp;,<tt> </tt>
+or in the tautology<tt> &lt; = (&lt; ∨ =)</tt>&nbsp;.<tt> </tt> 
+The set greater than 0 and less than 100 can
+be defined by<tt> &gt;¨O∨&lt;¨100</tt>&nbsp;.<tt> </tt>
+In words this says &ldquo;greater than
+zero and less than one hundred&rdquo;. 
+The corresponding set restricted to integers can be 
+expressed using <i>hook</i>
+by<tt> &gt;¨O∨&lt;¨100∨(=⌊)</tt>&nbsp;.<tt> </tt>
+(The forms<tt> m¨g </tt>
+and<tt> f¨n</tt>&nbsp;,<tt> </tt>where<tt> m </tt>
+and<tt> n </tt>are nouns, are from 
+<acronym title=
+"Iverson, K. E., A Dictionary of APL, APL Quote-Quad 18, 1 (1987).">[IV87]</acronym>, 
+and provide a way of
+obtaining a monadic verb from a dyadic one, 
+by <i>fixing</i> the left or right argument, 
+respectively. 
+Logicians have coined the verb
+&ldquo;to Curry&rdquo; to describe this fixing. 
+They can be read 
+&ldquo;<tt>m </tt>with<tt> g</tt>&rdquo; 
+and &ldquo;<tt>f </tt>with<tt> n</tt>&rdquo;, respectively.)</p>
+
+<p>The forms<tt> (⊢ g ⊢)⍵ </tt>
+and<tt> (⊢ g ⊣)⍵ </tt>are equivalent to<tt> ⍵g⍵ </tt>
+and<tt> ⍵g⍺</tt>&nbsp;,<tt> </tt>respectively, 
+and thus provide the functionality of
+the <i>duplicate</i> and <i>swap</i> adverbs of 
+<acronym title=
+"Iverson, K. E., A Dictionary of APL, APL Quote-Quad 18, 1 (1987).">[Iv87]</acronym>. 
+The symbols<tt> ⊢ </tt>and<tt> ⊣ </tt>denote the 
+right and left functions of 
+<acronym title=
+"Iverson, K. E., A Dictionary of APL, APL Quote-Quad 18, 1 (1987).">[Iv87]</acronym>, 
+respectively.</p>
+
+<p>Backus 
+<acronym title=
+"Backus, John, Can Programming Be Liberated from the von Neumann Style? A Functional Style and its Algebra of Programs, CACM 21, 8, (August 1978).">[Ba78]</acronym>
+defines a <i>construction</i> functional form</p>
+
+<pre>
+      [f<sub>1</sub>,&#133;,f<sub>n</sub>] : x
+</pre>
+
+<p>to mean<tt> &lt;&nbsp;f<sub>1</sub> : x,&#133;,f<sub>n</sub> : x&nbsp;></tt>&nbsp;.<tt> </tt>
+For example,<tt> [f,g] :x </tt>would
+be written as<tt> f(x),g(x) </tt>in common 
+mathematical notation.
+In the specific fork form where the central verb<tt> g </tt>is
+catenation, as in<tt> f,h, </tt>we obtain 
+the equivalent of Backus&rsquo;s <i>construction</i> form. 
+For example,</p>
+
+<pre>
+      (-b)(+,-)&radic;((b*2)-4×a×c)÷2×a
+</pre>
+
+<p>gives the two roots of the quadratic 
+equation<tt> ax<sup>2</sup>+bx+c</tt>&nbsp;.</p>
+
+<p>Note that the fork form extends to any odd number of verbs.
+(If there are an even number of verbs, the leftmost of these
+is the composite fork defined by the remaining odd number of
+verbs.) 
+For example, the tautology<tt> ≤&nbsp;=&nbsp;(&lt;&nbsp;∨&nbsp;=) </tt>
+may also be written without the parentheses 
+as<tt> ≤&nbsp;=&nbsp;<&nbsp;∨&nbsp;=</tt>&nbsp;.<tt> </tt>
+On the other hand, the 
+expression<tt> +,-,x,÷ </tt>of seven verbs from
+<acronym title=
+"Falkoff, Adin D., Kenneth E. Iverson, and Edward D. Sussenguth, A Formal Description of System/360, IBM Systems Journal 3, 3 (1964).">[FIS64]</acronym> 
+can be parenthesized (redundantly) without changing
+its meaning as<tt> (+,(-,(x,÷)))</tt>&nbsp;.<tt> </tt>
+If we assign<tt> f&nbsp;←&nbsp;+,-,x,÷</tt>&nbsp;,<tt> </tt>
+then<tt> f&nbsp;10 </tt>yields<tt> 10&nbsp;¯10&nbsp;1&nbsp;0.1 </tt>
+and<tt> 9f10 </tt>yields<tt> 19&nbsp;¯1&nbsp;90.&nbsp;0.9</tt>&nbsp;.<tt> </tt>
+If the central verb<tt> g </tt>is<tt>  ⍤&lt;</tt>&nbsp;,<tt> </tt>that is, 
+catenation composed with box, 
+the results of applying the verbs<tt> f </tt>and<tt> h </tt>are boxed before
+being catenated, thus accommodating results which are not
+uniform in shape.</p>
+
+<p>This <i>construction</i> form was used informally 
+in the early years of APL 
+[<acronym title=
+"Falkoff, Adin D., Algorithms for Parallel-Search Memories, JACM 9, 4 (October, 1962).">Fa62</acronym>,
+<acronym title=
+"Falkoff, Adin D., Kenneth E. Iverson, and Edward D. Sussenguth, A Formal Description of System/360, IBM Systems Journal 3, 3 (1964).">FIS64</acronym>], 
+preceding its initial implementation, and
+has in recent years been discussed in APL papers under the
+heading function arrays: 
+[<acronym title=
+"Benkard, J. P., Valence and Precedence in APL Extensions, APL Quote-Quad 13, 3 (March, 1983).">Bk83</acronym>, 
+<acronym title=
+"Benkard, J. P., Syntactic Experiments with Arrays of Functions and Operators, APL Quote-Quad 14, 4 (June, 1984).">Bk84</acronym>, 
+<acronym title=
+"Bernecky, Robert, Function Arrays, APL Quote-Quad 14, 4 (June, 1984).">Be84</acronym>, 
+<acronym title=
+"Brown, James A., Function Assignment and Arrays of Functions, APL Quote-Quad 14, 4 (June, 1984).">Br84</acronym>, 
+<acronym title=
+"Benkard, J. P., Control of Structure and Evaluation, APL Quote-Quad 15, 4 (June, 1985).">Bk85a</acronym>,
+<acronym title=
+"Benkard, J. P., Structural Experiments with Arrays of Functions, APL Quote-Quad 15, 4 (June, 1985).">Bk85b</acronym>, 
+<acronym title=
+"Benkard, J. P., Analysis of Function Application in Deep Arrays, APL Quote-Quad 16, 4 (July, 1986).">Bk86</acronym>, 
+<acronym title=
+"Landaeta, David J., A Notation for Manipulating Arrays of Operations, APL Quote-Quad 16, 4 (July, 1986).">La86</acronym>, 
+<acronym title=
+"Benkard, J. P., Implications of APL2 Grammar, APL Quote-Quad 17, 4 (May, 1987).">Bk87</acronym>, 
+<acronym title=
+"Landaeta, David J., The Theory of Function Arrays, APL Quote-Quad 18, 2 (December, 1987).">La88</acronym>]. 
+In most of these discussions,
+the form<tt> (f&nbsp;g&nbsp;h)x </tt>is taken to 
+mean<tt> (f&nbsp;0{x),(g&nbsp;1{x),(h&nbsp;2(x)</tt>&nbsp;,<tt> </tt>
+and an error would be signalled if<tt> x </tt>were a vector or
+higher-rank array with first axis not of length three; and for
+scalar<tt> x </tt>the form<tt> (f&nbsp;g&nbsp;h)x </tt>would mean<tt> (fx),(gx),(hx) </tt>
+(where<tt> ⍺{⍵ </tt>selects element<tt> ⍺ </tt>
+from array<tt> ⍵</tt>)&nbsp;.</p>
+
+
+
+<br><a name="exp"></a>
+<p><b>Experimenting with Hook and Fork</b></p>
+
+<p>The functions<tt> defs </tt>and<tt> def </tt>(both listed in ISO APL)
+can be used to experiment with hook and 
+fork.<tt> defs </tt>permits entering definitions until an empty line is 
+entered.<tt> def </tt>permits entering a single definition. 
+They both use the inner function<tt> d</tt>&nbsp;,<tt> </tt>
+which in turn uses the auxiliary 
+functions<tt> m</tt>&nbsp;,<tt> t</tt>&nbsp;,<tt> </tt>
+and<tt> n</tt>&nbsp;.<tt> </tt>Spaces are used to 
+separate the functions, but this a device
+only required in the model. A sample session is given below:</p>
+
+<pre>
+            defs
+whole←= ⌊
+whin←3¨> ^ whole ^ 0¨<
+
+      whole a←.5×⍳7
+1 0 1 0 1 0 1
+      whin a
+0 0 1 0 1 0 0
+      2 whole a
+0 0 0 0 1 1 0
+      def
+sort←{⊂ ⎕av¨⍋
+      sort 'I sing of Olaf'
+   IOaffgilnos
+</pre>
+
+<p>The definitions of the functions are as follows:</p>
+
+<pre>
+defs;b;⎕io
+→(0=⍴b←⍞)/⎕io←0
+→1,0⍴⎕fx d b,' '
+
+def:0 0⍴⎕fx d ⍞,' ',0⍴⎕io←0
+
+r←d b;e;h;i;p;r;u;y           
+i←¯1↓(b∊' ')/⍳⍴b←u\(u←b≠'←')/b
+h←'z←x ',(i[0]↑y←' y)'     
+r←(e←~2|⍴i)/'yx',m t 0        
+→u/l,⍴p←' ',(1,~u←2=⍴i)⍴' x'  
+k:r←r,'(',' x',m(t e),y,t e+1  
+→((⍴i)>1+e←e+2)/k             
+l:r←(m'→0,0⍴z←'),r,p,m(¯1↑i)↓b 
+r←h n('→2+0≠⎕nc''x''')n r,'y' 
+
+m:⍵,[¯.5]⍵
+
+t:i[⍵]↓i[⍵1]↑b
+
+n:((1↓m)↑⍺),[0](m←(0,⍴⍺) ⌈⍴⍵)↑⍵
+</pre>
+
+
+
+<br><a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>[AHD76]</td><td>&nbsp;</td><td>
+<i>American Heritage Dictionary, Second College
+Edition</i>, Houghton-Mifflin Company, Boston (1976). 
+See page 51: &ldquo;A <i>phrasal verb</i> 
+is an idiomatic expression &#133;
+with a unitary meaning that is equal to more than the sum
+of the separate meanings of its elements.&rdquo;
+ </td></tr>
+<tr><td valign=top>[Ba78]</td><td>&nbsp;</td><td>
+Backus, John, &ldquo;Can Programming Be Liberated
+from the von Neumann Style? A Functional Style and its
+Algebra of Programs&rdquo;, <i>CACM 21</i>, 8, (August 1978).
+ </td></tr>
+<tr><td valign=top>[Bk83]</td><td>&nbsp;</td><td>
+Benkard, J. P., &ldquo;Valence and Precedence in APL
+Extensions&rdquo;, <i>APL Quote-Quad 13</i>, 3 (March, 1983).
+ </td></tr>
+<tr><td valign=top>[Bk84]</td><td>&nbsp;</td><td>
+Benkard, J. P., &ldquo;Syntactic Experiments with Arrays
+of Functions and Operators&rdquo;, <i>APL Quote-Quad 14</i>,
+4 (June, 1984).
+ </td></tr>
+<tr><td valign=top>[Bk85a]</td><td>&nbsp;</td><td>
+Benkard, J. P., &ldquo;Control of Structure and Evaluation&rdquo;,
+<i>APL Quote-Quad 15</i>, 4 (June, 1985).
+ </td></tr>
+<tr><td valign=top>[Bk85b]</td><td>&nbsp;</td><td>
+Benkard, J. P., &ldquo;Structural Experiments with Arrays
+of Functions&rdquo;, <i>ibid</i>.
+ </td></tr>
+<tr><td valign=top>[Bk86]</td><td>&nbsp;</td><td>
+Benkard, J. P., &ldquo;Analysis of Function Application
+in Deep Arrays&rdquo;, <i>APL Quote-Quad 16</i>, 4 (July, 1985).
+ </td></tr>
+<tr><td valign=top>[Bk87]</td><td>&nbsp;</td><td>
+Benkard, J. P., &ldquo;Implications of APL2 Grammar&rdquo;,
+<i>APL Quote-Quad 17</i>, 4 (May, 1987).
+ </td></tr>
+<tr><td valign=top>[Be84]</td><td>&nbsp;</td><td>
+Bernecky, Robert, &ldquo;Function Arrays&rdquo;, 
+<i>APL Quote-Quad 14</i>, 4 (June, 1984).
+ </td></tr>
+<tr><td valign=top>[Br84]</td><td>&nbsp;</td><td>
+Brown, James A., &ldquo;Function Assignment and Arrays
+of Functions&rdquo;, <i>APL Quote-Quad 14</i>, 4 (June, 1984).
+ </td></tr>
+<tr><td valign=top>[Cu31]</td><td>&nbsp;</td><td>
+Curry, Haskell B., &ldquo;The universal quantifier in combinatory
+logic&rdquo;, <i>Ann. of Math. (2) 32</i>, (1931).
+ </td></tr>
+<tr><td valign=top>[CuFeCr74]</td><td>&nbsp;</td><td>
+Curry, Haskell B., and Robert Feys, with
+William Craig, <i>Combinatory Logic</i>, North-Holland Publishing
+Company, Amsterdam (1974).
+ </td></tr>
+<tr><td valign=top>[Ef89]</td><td>&nbsp;</td><td>
+Effros, Edward G., &ldquo;Why the circle is connected&rdquo;,
+<i>The Mathematical Intelligencer 11</i>, 1, Springer-Verlag (Winter
+1989).
+ </td></tr>
+<tr><td valign=top>[Fa62]</td><td>&nbsp;</td><td>
+Falkoff, Adin D., &ldquo;Algorithms for Parallel-Search
+Memories&rdquo;, <i>JACM 9</i>, 4 (October, 1962).
+ </td></tr>
+<tr><td valign=top>[FIS64],</td><td>&nbsp;</td><td>
+Falkoff, Adin D., Kenneth E. Iverson, and Edward
+D. Sussenguth, &ldquo;A Formal Description of System/360&rdquo;,
+<i>IBM Systems Journal 3</i>, 3 (1964).
+ </td></tr>
+<tr><td valign=top>[IBM85]</td><td>&nbsp;</td><td>
+<i>APL2 Programming: Language Reference</i>, SH20-9227-1, 
+IBM Corporation, San Jose, CA (1985).
+ </td></tr>
+<tr><td valign=top>[ISO88]</td><td>&nbsp;</td><td>
+Morrow, L. A., ed., <i>Programming Language APL</i>,
+International Standards Organization, Geneva (to appear).
+ </td></tr>
+<tr><td valign=top>[Iv78]</td><td>&nbsp;</td><td>
+Iverson, K. E., 
+<a target=_parent href="http://www.jsoftware.com/papers/opfns.htm">&ldquo;Operators and Functions&rdquo;</a>,
+IBM Research Report RC7091, April 1978.
+ </td></tr>
+<tr><td valign=top>[Iv79a]</td><td>&nbsp;</td><td>
+Iverson, K. E., &ldquo;The Derivative Operator&rdquo;, 
+<i>APL Quote-Quad 9</i>, 4, part 1 (June, 1979).
+ </td></tr>
+<tr><td valign=top>[Iv79b]</td><td>&nbsp;</td><td>
+Iverson, K. E., &ldquo;Operators&rdquo;, <i>ACM Transactions on
+Programming Languages and Systems 1</i>, 2, October 1979.
+ </td></tr>
+<tr><td valign=top>[Iv82]</td><td>&nbsp;</td><td>
+Iverson, K. E., and Arthur T. Whitney, 
+<a target=_parent href="http://www.jsoftware.com/papers/APLModel.htm">&ldquo;Practical Uses of a Model of APL&rdquo;</a>, 
+<i>APL Quote-Quad 13</i>, 1 (1982).
+ </td></tr>
+<tr><td valign=top>[Iv87]</td><td>&nbsp;</td><td>
+Iverson, K. E., 
+<a target=_parent href="http://www.jsoftware.com/papers/APLDictionary.htm">&ldquo;A Dictionary of APL&rdquo;</a>, 
+<i>APL Quote-Quad 18</i>, 1 (1987).
+ </td></tr>
+<tr><td valign=top>[Iv88]</td><td>&nbsp;</td><td>
+Iverson, K. E., 
+<a target=_parent href="http://www.jsoftware.com/papers/commentary.htm">&ldquo;A Commentary on APL Development&rdquo;</a>,
+<i>APL Quote-Quad 19</i>, 1 (September, 1988).
+ </td></tr>
+<tr><td valign=top>[Ke79]</td><td>&nbsp;</td><td>
+Keenan, Douglas J., &ldquo;Operators and Uniform Forms&rdquo;,
+<i>APL Quote-Quad 9</i>,4, part 1 (June, 1979).
+ </td></tr>
+<tr><td valign=top>[La86]</td><td>&nbsp;</td><td>
+Landaeta, David J., &ldquo;A Notation for Manipulating
+Arrays of Operations&rdquo;, <i>APL Quote-Quad 16</i>, 4 (July, 1986).
+ </td></tr>
+<tr><td valign=top>[La88]</td><td>&nbsp;</td><td>
+Landaeta, David J., &ldquo;The Theory of Function Arrays&rdquo;,
+<i>APL Quote-Quad 18</i>, 2 (December, 1987).
+ </td></tr>
+<tr><td valign=top>[Mo73]</td><td>&nbsp;</td><td>
+More, Trenchard, <i>Notes on the development of a
+theory of arrays</i>, IBM Philadelphia Scientific Center Technical
+Report Number 320-3016, May 1973.
+ </td></tr>
+<tr><td valign=top>[Ro50]</td><td>&nbsp;</td><td>
+Rosenbloom, Paul C., <i>The Elements of Mathematical
+Logic</i>, Dover (1950).
+ </td></tr>
+<tr><td valign=top>[Sch24]</td><td>&nbsp;</td><td>
+Sch&ouml;nfinkel, M., &ldquo;&Uuml;ber die Bausteine der mathematischen
+Logik&rdquo;, <i>Math. Ann. 92</i> (1924).
+ </td></tr>
+<tr><td valign=top>[Wh84]</td><td>&nbsp;</td><td>
+Whitney, A. T., informal communication, Heidelberg,
+1984.
+</table>
+<br>
+
+
+
+<br><hr>
+<a name="err"></a>
+<p align=center><font size=+2>Errata</font></p>
+
+<table>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the Verb Rank section, it should say &ldquo;applies&rdquo;
+instead of &ldquo;aplies&rdquo;; &ldquo;rank zero objects&rdquo;
+instead of &ldquo;ranlk zero objects&rdquo;; 
+and &ldquo;rank one objects&rdquo;
+instead of &ldquo;rank ome objects&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the definition of hook, it should say 
+&ldquo;the verb<tt> g </tt>is used monadically&rdquo;
+instead of &ldquo;the verb is used monadically&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the definition of fork, it should say 
+that the rank of<tt> f g h </tt>is the maximum of the
+ranks of<tt> f </tt>and<tt> h </tt>instead of 
+the maximum of the ranks of<tt> f </tt>
+and<tt> g</tt>&nbsp;.<tt> </tt>Moreover, it should
+say &ldquo;Note that the verbs<tt> f </tt>and<tt> h </tt>
+are used dyadically or monadically &#133;&rdquo; instead of
+&ldquo;Note that the central verb
+is used dyadically or monadically &#133;&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the discussion of fork, it should say [Iv79b]
+instead of [Iv 79b].
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the discussion of fork,<tt> ≤ </tt>is equivalent
+to the fork<tt> <∨= </tt>and not to<tt> &lt^=</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the discussion of fork, the set greater than 0 and
+less than 100 is defined by<tt> &gt;¨0^&lt;¨100 </tt>
+and not<tt> &gt;¨0∨&lt;¨100</tt>&nbsp;.<tt> </tt>
+The corresponding set restricted to integers is
+expressed as<tt> &gt;¨0^&lt;¨100^(=⌊) </tt>
+and not<tt> &gt;¨0∨&lt;¨100∨(=⌊)</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the discussion of fork, the label for the 1987 
+Iverson paper should be [Iv87] rather than [IV87].
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the discussion of fork, it should 
+say<nobr><tt> ⍺(⊢ g ⊣)⍵ </tt></nobr>
+instead of<nobr><tt> (⊢ g ⊣)⍵</tt>&nbsp;.</nobr>
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the discussion of fork, the quadratic formula<br>
+&nbsp;<tt> &nbsp; (-b)(+,-)&radic;((b*2)-4×a×c)÷2×a </tt><br>
+should be<br>
+&nbsp;<tt> &nbsp; ((-b)(+,-)&radic;(b*2)-4×a×c)÷2×a</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the discussion of fork, in the next-to-last paragraph, 
+the verb &ldquo;catenation composed with box&rdquo; is<tt> ,⍤&gt; </tt>
+(the<tt> , </tt>is missing in the text).
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the Experimenting with Hook and Fork section,
+the first line in the sample session should be indented 
+by 6 spaces instead of 12.
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+The model of hook and fork does not work.
+It has multiple errors: for example, line 2 
+of function<tt> d </tt>has an unmatched left parenthesis,
+and function<tt> t </tt>has the illegal 
+construct<tt> ⍵1</tt>.&nbsp;<tt> </tt>
+It is not apparent how to fix the model 
+without rewriting it in its entirety.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+Reference [Bk86] was published in July 1986
+instead of July 1985.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the References, it should say &ldquo;[FIS64]&rdquo; 
+instead of &ldquo;[FIS64],&rdquo;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+The label for the 1982 Iverson and Whitney paper should
+be [IW82] instead of [Iv82].
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+[Mo73] is not referenced.
+ </td></tr>
+</table>
+<br>
+
+
+
+<br><hr>
+
+<font size=-1>
+<p>First appeared 
+in the Proceedings of the APL89 Conference, 
+APL Quote-Quad, Volume 19, Number 4, 1989-08.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-10-10 21:20</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2014-11-04 09:45</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

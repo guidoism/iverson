@@ -1,0 +1,567 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>SATN-41: Composition and Enclosure</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><b>SATN-41</b><br>
+<font size=+2>Composition and Enclosure</font><br><br>
+<b>K. E. Iverson</b>
+<br>&nbsp;</p>
+
+
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>This technical note treats the new functions, 
+<i>enclose</i>, <i>disclose</i>, and <i>match</i>
+(denoted by<tt> &lt;</tt>&nbsp;,<tt> &gt;</tt>&nbsp;,<tt> </tt>
+and<tt> ≡</tt>&nbsp;),<tt> </tt>
+and three new operators, <i>on</i>, <i>over</i>, and <i>with</i>. 
+In the current release of SHARP APL 
+the domains of these operators are rather restricted; 
+for a discussion of their intended extensions see Bernecky and Iverson
+<acronym title="K.E. Iverson and R. Bernecky, Operators and Enclosed Arrays, 
+Proceedings, I.P. Sharp Associates 1980 Users Meeting.">[1]</acronym>.</p>
+
+One important related extension not in this release is 
+the application of<tt> ⍕ </tt>to enclosed arrays; 
+as a consequence simple display is not defined, 
+and entry of an expression such 
+as<tt> ⎕←&lt;1&nbsp;2 </tt>or<tt> &lt;1&nbsp;2 </tt>
+will produce only the message<tt> **array**</tt>&nbsp;.</p>
+
+<p>To facilitate the use of examples in discussion 
+we have provided in workspace<tt> 1&nbsp;satn41 </tt>
+the function<tt> th </tt>
+which models the proposed definition of the thorn 
+function<tt> ⍕</tt>&nbsp;.<tt> </tt> 
+It will be used freely in what follows.
+<br>&nbsp;</p>
+
+
+
+<a name="fns"></a>
+<p><b>New Functions</b></p>
+
+<p>The function <i>match</i> applies to any two arguments 
+to produce a boolean scalar,<tt> 0 </tt>if the arguments differ 
+in shape or in any element, and<tt> 1 </tt>otherwise. For example:</p>
+
+<pre>
+      mn←0 3 ∘.+ vn←1 2 3
+      mc←2 4⍴vc←'abc'
+
+      mc ≡ vn
+0
+      vn ≡ vn*1
+1
+      '' ≡ ⍳0
+1
+</pre>
+
+<p>The <i>enclose</i> function applies to any array 
+to produce a result of rank zero; 
+the <i>disclose</i> function is its inverse 
+in the sense that<tt> x≡>&lt;x</tt>&nbsp;.<tt> </tt> 
+The enclose function is <i>strict</i>
+in the sense that<tt> &lt;x </tt>
+differs from<tt> x</tt>&nbsp;.<tt> </tt> 
+For example:</p>
+
+<pre>
+      vn≡&lt;vn 
+0
+      b≡&lt;b←&lt;mc 
+0
+</pre>
+
+<p>Catenation applies to enclosed arguments, 
+but not to one enclosed argument and one simple argument. 
+The extension of other structural and selection functions 
+is based on this extension of catenation. For example:</p>
+
+<pre>
+      vn,&lt;vn
+domain error
+      vn,&lt;vn
+      ^
+      ⍴p←(&lt;mn),(&lt;vn),(&lt;mc),(&lt;vc)
+4
+      th q←2 3⍴p
+1 2 31 2 3
+4 5 6
+abca abc
+bcab
+1 2 31 2 3
+4 5 6
+      (0 1 2⌽q)[;1] ≡ (&lt;mn),(&lt;vc),&lt;mn
+1
+</pre>
+
+<p>The extension of the &lsquo;comparison&rsquo; 
+functions<tt> ∊ </tt>and<tt> ⍳ </tt>is based upon 
+the match function rather than upon equality. 
+Thus:</p>
+
+<pre>
+      (&lt;vn)∊q
+1
+      p⍳&lt;vn 
+2
+</pre>
+
+
+<p>The remaining primitive functions are   
+not extended to enclosed arrays.   
+Thus<tt> vn+&lt;vn </tt>and<tt> (&lt;vn)+&lt;vn </tt>
+yield domain errors.</p>
+
+<p>The argument rank of the disclose function is zero 
+(i.e., it applies to each of the scalars in its argument), 
+and<tt> &gt;a </tt>therefore produces 
+an array of shape<tt> (⍴a),s </tt>
+where<tt> s </tt>is the (necessarily common) 
+shape of the results produced by disclosing 
+each element of<tt> a</tt>&nbsp;.<tt> </tt> 
+For example:</p>
+
+<pre>
+      ⍴r←>q[1 3;1]
+2 2 3
+      r
+1 2 3
+4 5 6
+
+1 2 3
+4 5 6
+      >q[1;]
+domain error
+      >q[1;]
+      ^
+      >q[;1]
+domain error
+      >q[;1]
+      ^
+</pre>
+
+
+<p>The expressions<tt> >q[1;] </tt>and<tt> >q[;1] </tt>
+yield domain errors for different reasons, 
+the first because the disclosed arrays differ in shape, 
+and the second because they differ in type.</p>
+
+<p>The disclose function is <i>permissive</i>, i.e., 
+when applied to a simple argument (which has no enclosed elements) 
+it behaves as an identity function and yields its argument. Thus:</p>
+
+<pre>
+      r ≡ >r←2 3⍴⍳6
+1
+</pre>
+
+<p>The restriction of catenation to apply 
+only to two numeric or to two character arguments 
+prohibited the introduction of &lsquo;non-homogeneous&rsquo; arrays; 
+the present extension of catenation 
+to two enclosed arguments only likewise 
+prohibits non-homogeneous arrays. 
+As a consequence, a function which determines 
+whether its argument is simple may be defined 
+rather plainly as follows:</p>
+
+<pre>
+      simple: x ≡ >x←1⍴⍵: O∊⍴⍵: 1
+</pre>
+
+
+<p>In order to avoid (or at least defer) the introduction of further 
+&lsquo;fill elements&rsquo; for the functions 
+<i>take</i> and <i>expand</i>, 
+and the introduction of further dependence 
+on the &lsquo;type&rsquo; of an empty argument, 
+we have introduced a<tt> nonce error </tt> 
+for the overtake or expansion of enclosed arrays. For example:
+</p>
+
+<pre>
+      3↑&lt;1 2
+nonce error
+      3↑&lt; 1 2
+       ^
+
+</pre>
+
+
+<a name="ops"></a>
+<p><b>Composition Operators</b></p>
+
+<p>Three new operators have been introduced, 
+called <i>on</i>, <i>over</i>, and <i>with</i>; 
+they are denoted by the symbols<tt> ⍤</tt>&nbsp;<tt> ⍥</tt>&nbsp;,<tt> </tt>
+and<tt> ¨</tt>&nbsp;,<tt> </tt>
+the first two of which are sometimes 
+given the nicknames <i>paw</i> and <i>hoof</i>.</p>
+
+<p>The dyadic operator<tt> ⍤ </tt>applies to two functions 
+in the form<tt> f⍤g </tt>and may be read as<tt> f </tt> <i>on</i>
+(the result of)<tt> g</tt>&nbsp;.<tt> </tt>
+The resulting derived function is ambivalent 
+and may therefore be used in the dyadic form<tt> x&nbsp;f⍤g&nbsp;y </tt>
+as well as the monadic form<tt> f⍤g&nbsp;y</tt>&nbsp;.</p>
+
+<p>The monadic case is similar to composition in mathematics, 
+which is defined by the expression<tt> f g y</tt>&nbsp;.<tt> </tt> 
+This is the definition adopted here for the case 
+that<tt> y </tt>is a single argument of the function<tt> g</tt>&nbsp;<tt> </tt>
+However, for an array of such arguments 
+we insist that the composition is <i>close</i> 
+in the sense that the expression<tt> f g </tt>is applied 
+individually to each subarray argument of<tt> g</tt>&nbsp;,<tt> </tt> 
+and the overall result is formed 
+(as in the example of the disclose function given earlier) 
+by placing the axes of the individual results last.</p>
+
+<p>The significance of close composition 
+may be best appreciated by comparing the results 
+of<tt> f⍤g&nbsp;x </tt>and<tt> f&nbsp;g&nbsp;x </tt>in a few examples:</p>
+
+<pre>
+      th fonts←(&lt;2 3⍴'abcdef'),&lt;2 3⍴'123456'
+abc123
+def456
+      >fonts
+abc
+def
+
+123
+456
+      ⍉>fonts
+a1
+d4
+
+b2
+e5
+
+c3
+f6
+      ⍉⍤>fonts
+ad
+be
+cf
+
+14
+25
+36
+      ⍴ >fonts
+2 2 3
+      ⍴⍤>fonts
+2 3
+2 3
+      , >fonts
+abcdef123456
+      ,⍤>fonts
+abcdef
+123456
+</pre>
+
+
+<p>The dyadic case of the derived function<tt> f⍤g </tt>
+is defined similarly by the identity:</p>
+
+<pre>
+      a f⍤g b ←→ (g a) f (g b)
+</pre>
+
+
+<p>again with the understanding that the composition is <i>close</i>, 
+and that the identity applies strictly only 
+if<tt> a </tt>and<tt> b </tt>are single arguments of the 
+function<tt> g</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+
+      4 ⍴ + 1 2 3 
+1 2 3 1
+      4 ⍴⍤+ 1 2 3
+1 1 1 1
+2 2 2 2
+3 3 3 3
+      x←&lt;1 2 3
+      x×⍤>x 
+1 4 9
+      x×>x
+domain error
+      x×>x
+      ^
+</pre>
+
+<p>Even with the present restrictions 
+which preclude composition with derived and user-defined functions, 
+the user will find many interesting applications of composition. 
+For examples,<tt> ≡⍤⍴ </tt>compares the shapes of its 
+arguments;<tt> ,⍤&lt; </tt>is the <i>pair</i> function 
+that encloses each of its arguments and catenates them; 
+and summing and &lsquo;padding&rsquo; of each of the enclosed vectors 
+in an array may be performed as follows:</p>
+
+
+<pre>
+      m←2 2⍴(&lt;2 3),(&lt;5 7 11),(&lt;⍳0),(&lt;2 3 4 5)
+
+      1 ⊥⍤> m 
+5 23 
+0 14
+      (⌈/,⍴⍤> m) ↑⍤> m
+2  3  0  0 
+5  7 11  0
+
+0  0  0  0 
+2  3  4  5
+</pre>
+
+<p>The operator<tt> ⍥ </tt>provides another form of 
+close composition in which the dyadic case 
+is defined by the identity:</p>
+
+<pre>
+      a f⍥g b ←→ f a g b
+</pre>
+
+<p>For example:</p>
+
+<pre>
+      n←2 4⍴⌽,m←2 4⍴1 2 3 4 5 6 7 8
+
+      m |⍥- n
+7 5 3 1
+1 3 5 7
+
+      th r←0 <⍥+ m 
+1234 
+5678
+      r
+**array**
+      ⍴r
+2 4
+      >r
+1 2 3 4
+5 6 7 8
+</pre>
+
+<p>In the derived function<tt> f⍥g </tt>the function<tt> g </tt>is used 
+dyadically, whereas in<tt> f⍤g </tt>it is used monadically; 
+the association of the larger symbol<tt> </tt>(<tt>⍥</tt>)<tt> </tt>
+with the larger valence may prove useful as a mnemonic aid. 
+The monadic cases of the derived functions produced 
+by<tt> ⍤ </tt>and<tt> ⍥ </tt>are identical, that is:</p>
+
+<pre>
+      f⍤g y ←→ f⍥g y
+</pre>
+
+<p>Except that it is also based on close composition, 
+the monadic case of the derived 
+function<tt> f¨g </tt>(read as<tt> f </tt><i>with</i><tt> g</tt>) 
+is equivalent to the mathematical notion 
+of the dual of<tt> f </tt><i>with</i> respect 
+to<tt> g</tt>&nbsp;,<tt> </tt>that is:</p>
+
+<pre>
+      f¨g y ←→ gi f g y
+</pre>
+
+
+<p>where<tt> gi </tt>is the inverse of<tt> g</tt>.</p>
+
+<p>The importance of the basis in close composition 
+is particularly clear in the case of<tt> f¨> </tt>
+(the dual with disclose), because whatever the shapes or ranks 
+of the arguments and results 
+of<tt> f</tt>&nbsp;,<tt> </tt>the function<tt> f¨> </tt>is, 
+in effect, a scalar function. 
+Applied to an argument<tt> a</tt>&nbsp;,<tt> </tt>
+the function<tt> f¨>a </tt>produces a result 
+of the same shape as<tt> a </tt>in which each element is the enclose of 
+the result of<tt> f </tt>applied to the disclose 
+of the corresponding element of<tt> a</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+      ⍴q
+3 2
+      th q
+1 2 31 2 3
+4 5 6
+abca abc
+bcab
+1 2 31 2 3
+4 5 6
+      ⍴sh←⍴¨>q
+3 2
+      >sh[;1]
+2 3
+2 4
+2 3
+      >sh[;2]
+3
+3
+3
+
+      ⍴w←⍳¨> 2 3⍴1 2 3 4 5 6
+2 3
+      th w
+1      1 2      1 2 3
+1 2 3 41 2 3 4 51 2 3 4 5 6
+
+      1 ⊥⍤> w
+ 1  3  6
+10 15 21
+
+      * 1 ⊥⍤> ⍟¨> w
+ 1   2   5
+24 120 720
+</pre>
+
+
+<p>The definition of the dyadic derived function provided 
+by<tt> f¨g </tt>is similar to the monadic case. Thus:</p>
+
+<pre>
+      x f¨g y ←→ gi (g x) f (g y)
+</pre>
+
+<p>For example, since the inverses 
+of<tt> *</tt>&nbsp;,<tt> ~</tt>&nbsp;,<tt> </tt> 
+and<tt> &lt; </tt>are<tt> ⍟</tt>&nbsp;,<tt> ~</tt>&nbsp;,<tt> </tt>
+and<tt> &gt;</tt>&nbsp;,<tt> </tt> 
+we have a number of 
+identities suggested by the following examples:</p>
+
+<pre>
+      v +¨⍟ v←1 2 3 4
+1 4 9 16
+      v×v
+1 4 9 16
+      v ×¨* v
+2 4 6 8
+      v+v
+2 4 6 8
+
+      a ∨¨~ b←⍉a←2 2⍴0 0 1 1
+0 0
+0 1
+      a ^ b
+0 0
+0 1
+      a ^¨~ b
+0 1
+1 1
+      a∨b
+0 1
+1 1
+
+      a ,¨&lt; b
+0 0
+1 1
+
+0 1
+0 1
+      a ,[⎕io-.5] b
+0 0
+1 1
+
+0 1
+0 1
+
+</pre>
+
+
+
+<a name="restrict"></a>
+<p><b>Restrictions on Arguments of Operators</b></p>
+
+<p>The utility of the three operators 
+will be greatly enhanced when they are extended 
+in the manner discussed in 
+<acronym title="K.E. Iverson and R. Bernecky, Operators and Enclosed Arrays, 
+Proceedings, I.P. Sharp Associates 1980 Users Meeting.">[1]</acronym>, 
+and are allowed to apply to arrays and to derived 
+and user-defined functions as well as to primitives. 
+In the present release they apply to primitives only, 
+and are further restricted as follows:</p>
+
+<table>
+<tr><td valign=top>a)</td><td>&nbsp;</td><td>
+The right argument of<tt> ¨ </tt>(with) is limited 
+to the following functions:<tt> ⍉ < > ~ ÷ * ⍟ - + </tt>
+ <br>&nbsp;</td></tr>
+
+<tr><td valign=top>b)</td><td>&nbsp;</td><td>
+The right argument of<tt> ⍥ </tt>for the monadic case, 
+and of<tt> ⍤ </tt>for either case may be any scalar primitive, 
+or one of the following:<tt> ⍉ < > , ⍋ ⍒ ⍕ ⍴ </tt>
+ <br>&nbsp;</td></tr>
+
+<tr><td valign=top>c)</td><td>&nbsp;</td><td>
+The right argument for<tt> ⍥ </tt>for the dyadic case 
+may be any dyadic scalar primitive.
+ <br>&nbsp;</td></tr>
+
+<tr><td valign=top>d)</td><td>&nbsp;</td><td>
+Because the symbols<tt> / </tt>and<tt> \ </tt>denote <i>operators</i>, 
+an expression such as<tt> 1&nbsp;0&nbsp;1/x </tt>is the application 
+to<tt> x </tt>of the monadic derived function<tt> 1&nbsp;0&nbsp;1/ </tt>
+rather than the application of a dyadic function denoted 
+by<tt> /</tt>&nbsp;.<tt> </tt> 
+Since the composition operators apply to functions only, 
+compositions of the form<tt> f⍤/ </tt>and<tt> /⍤f </tt>cannot be used.
+ <br>&nbsp;</td></tr>
+
+<tr><td valign=top>e)</td><td>&nbsp;</td><td>
+All system functions and the function<tt> ⍎ </tt>
+are excluded from use as arguments to operators.
+ </td></tr>
+</table>
+<br>
+
+
+<a name="bib"></a>
+<p><b>Bibliography</b></p>
+
+<table>
+<tr><td valign=top>[1]</td><td>&nbsp;</td><td>
+K.E. Iverson and R. Bernecky,  
+<a href="http://www.jsoftware.com/papers/opea.htm"><i>Operators and Enclosed Arrays</i></a>, Proceedings, 
+I.P. Sharp Associates 1980 Users Meeting.
+</td></tr>
+</table>
+
+
+
+<br><hr>
+<font size=-1>
+<p>First appeared as SHARP APL Technical Note 41, 
+<i>Composition and Enclosure</i>, 1981-06-20.</p> 
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-11-08 22:40</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2018-11-28 16:15</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

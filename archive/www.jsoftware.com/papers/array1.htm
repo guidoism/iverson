@@ -1,0 +1,324 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>What is an Array?</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+<table align=center width=520><tr><td>
+
+<p align=center><font size=+2>What is an Array?</font>
+<br><font size=+1>Roger Hui</font>
+<br>&nbsp;</p>
+
+
+
+<a name="0"></a>
+<p><b>0. Origin</b></p>
+
+<p>In a recent e-mail
+<acronym title="Scholes, J.M., e-mail on 2010-10-11 11:41.">[0]</acronym>,
+John Scholes reminded me of his last encounter
+with Ken Iverson, originally described as follows
+<acronym title="Christensen, G., Ken Iverson in Denmark, 
+Vector, Volume 22, Number 3, 2006-08.">[1]</acronym>:</p>
+
+<table><tr><td nowrap width=18>&nbsp;</td><td>
+<p>In Scranton in 1999 during one of the sessions I was sitting next to Ken,
+and he leaned over and said to me&mdash;in his impish way&mdash;John, 
+what is an array? 
+Now I knew better than to rush into an answer to Ken. 
+I guess I&rsquo;m still working on my answers to that question.</p>
+</td><td nowrap width=28>&nbsp;</td></tr></table>
+
+<p>Fools rush in where angels fear to tread &#133;
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>1. What is an Array?</b></p>
+
+<p>An <i>array</i> is a function from a set of indices 
+to numbers, characters, &#133;
+A rank-<i>n</i> array is one whose function <i>f</i> applies 
+to <i>n</i>-tuples of non-negative integers.
+A rank-<i>n</i> array is <i>rectangular</i> if
+there exist non-negative integer maxima&nbsp;
+<nobr><b><i>s</i></b> = (<b><i>s</i></b><sub>0</sub>, <b><i>s</i></b><sub>1</sub>, &#133;, <b><i>s</i></b><sub><i>n</i>-1</sub>)</nobr> 
+such that 
+<nobr><i>&nbsp;f</i>(<b><i>i</i></b><sub>0</sub>, <b><i>i</i></b><sub>1</sub>, &#133;, <b><i>i</i></b><sub><i>n</i>-1</sub>)&nbsp;</nobr> 
+is defined (has a value) for all integer <b><i>i</i></b><sub><i>j</i></sub> 
+such that (0≤<b><i>i</i></b><sub><i>j</i></sub>)^(<b><i>i</i></b><sub><i>j</i></sub>&lt;<b><i>s</i></b><sub><i>j</i></sub>).&nbsp;
+<b><i>s</i></b> is called the <i>shape</i> of the array. Etc. </p>
+
+This definition accommodates:
+<table>
+<tr><td valign="top">&nbsp; &#149;&nbsp;</td><td>APL/J rectangular arrays</td></tr>
+<tr><td valign="top">&nbsp; &#149;&nbsp;</td><td>J sparse arrays</td></tr>
+<tr><td valign="top">&nbsp; &#149;&nbsp;</td><td>Infinite arrays</td></tr>
+<tr><td valign="top">&nbsp; &#149;&nbsp;</td><td>Dictionaries (associative arrays)</td></tr>
+</table>
+<br>
+
+
+
+<a name="2"></a>
+<p><b>2. APL/J Rectangular Arrays</b></p>
+
+<p>A typical APL/J rectangular array:</p>
+
+<pre>
+   2 2 3 ⍴ 'ABCDEFGHIJKL'
+ABC
+DEF
+   
+GHI
+JKL
+</pre>
+
+<p>Listing the indices with the corresponding array elements makes
+the index function more apparent:</p>
+
+<pre>
+0 0 0   A
+0 0 1   B
+0 0 2   C
+0 1 0   D
+0 1 1   E
+0 1 2   F
+1 0 0   G
+1 0 1   H
+1 0 2   I
+1 1 0   J
+1 1 1   K
+1 1 2   L
+</pre>
+
+<p>APL rectangular arrays to-date have been implemented
+by enumerating the array elements in row major order
+(and employ the &ldquo;implementation trick&rdquo; of
+not storing the indices).
+But there are ways to represent a function other than
+enumerating the domain and/or range of the function.
+<br>&nbsp;</p>
+
+
+
+<a name="3"></a>
+<p><b>3. J Sparse Arrays</b></p>
+
+<p>Sparse arrays were introduced in J in 1999
+[<acronym title="Hui, R.K.W., Sparse Arrays in J, 
+APL99 Conference Proceedings, APL Quote Quad, 
+Volume 29, Number 2, 1999-08-10 to -14.">2</acronym>,
+<acronym title="Hui, R.K.W., and K.E. Iverson, 
+J Introduction and Dictionary, 2010.">3</acronym>].  
+In the sparse representation, the indices
+and values of only the non-&ldquo;zero&rdquo;
+elements are stored.</p>
+
+<pre>
+   ] d=: (?. 3 5 $ 2) * ?. 3 5 $ 100
+ 0 55 79 0  0
+39  0 57 0  0
+ 0  0 13 0 51
+
+   ] s=: $. d   NB. convert from dense to sparse
+0 1 │ 55
+0 2 │ 79
+1 0 │ 39
+1 2 │ 57
+2 2 │ 13
+2 4 │ 51
+
+   3 + s
+0 1 │ 58
+0 2 │ 82
+1 0 │ 42
+1 2 │ 60
+2 2 │ 16
+2 4 │ 54
+</pre>
+
+<p>Reference
+<acronym title="Hui, R.K.W., Sparse Arrays in J, 
+APL99 Conference Proceedings, APL Quote Quad, 
+Volume 29, Number 2, 1999-08-10 to -14.">[2]</acronym>
+has an example of solving a 1e5-by-1e5 tridiagonal sparse matrix
+in 0.28 seconds.
+<br>&nbsp;</p>
+
+
+
+<a name="4"></a>
+<p><b>4. Infinite Arrays</b></p>
+
+<p>Infinite arrays in were described by McDonnell and Shallit 
+<acronym title="McDonnell, E.E., and J.O. Shallit, Extending APL to Infinity, 
+APL80 Conference Proceedings, 1980.">[4]</acronym>
+and Shallit 
+<acronym title="Shallit, J.O., Infinite Arrays and Diagonalizaton, APL81 Conference Proceedings, 
+APL Quote Quad, Volume 12, Number 1, 1981-09.">[5]</acronym>.
+Having infinite arrays facilitates 
+working with infinite series and limits of sequences.
+</p>
+
+
+<pre>
+   ⍳4
+0 1 2 3
+
+   ⍳&infin;
+0 1 2 3 4 5 &#133;
+
+   - ⍳&infin;
+0 ¯1 ¯2 ¯3 ¯4 ¯5 &#133;
+
+   3 * - ⍳&infin;
+1 0.333333 0.111111 0.037037 &#133;
+
+   +/ 3 * - ⍳&infin;
+1.5
+
+   ⌽ ⍳&infin;
+DOMAIN ERROR
+   ⌽⍳&infin;
+  ^
+</pre>
+
+<p>Infinite arrays can be implemented 
+by specifying the index function as a function.  
+For example, the index function
+for<tt> ⍳&infin; </tt>is the identity 
+function,<tt> ⊢ </tt>or<tt> {⍵}</tt>&nbsp;.</p>
+
+<p>Let<tt> x </tt>and<tt> y </tt>be infinite
+vectors with index functions<tt> fx </tt>and<tt> fy</tt>&nbsp;.<tt> </tt>
+If<tt> s1 </tt>is a scalar monadic function,
+then<tt> s1&nbsp;x </tt>is an infinite vector
+and its index function is<tt> s1∘fx</tt>&nbsp;,<tt> s1 </tt>
+composed with<tt> fx</tt>&nbsp;.<tt> </tt>
+If<tt> s2 </tt>is a scalar dyadic function,
+then<tt> x&nbsp;s2&nbsp;y </tt>is an infinite vector
+and its index function is the <i>fork</i><tt> fx s2 fy</tt>&nbsp;,<tt> </tt>
+or the dynamic function<nobr><tt> {(fx ⍵) s2 (fy ⍵)}</tt>&nbsp;.</nobr></p>
+
+<p>In the following examples, the infinite vectors are listed
+with the index function,
+both as an operator expression (tacit function) and
+as a dynamic function.</p>
+
+<pre>
+   ⍳&infin;                   │  ⊢
+0 1 2 3 4 5 6 7 &#133;       │  {⍵}
+                        │
+   &infin; ⍴ 2                │  ⊢∘2
+2 2 2 2 2 2 2 2 &#133;       │  {2}
+                        │
+   - ⍳&infin;                 │  -∘⊢
+0 ¯1 ¯2 ¯3 ¯4 ¯5 &#133;      │  {-⍵}
+                        │
+   3 * - ⍳&infin;             │  (3∘*)∘-∘⊢
+1 0.333333 0.111111 &#133;   │  {3*-⍵}
+                        │
+   ⎕←x←3*⍳&infin;             │  3∘*∘⊢
+1 3 9 27 81 243 729 &#133;   │  {3*⍵}
+                        │
+   ⎕←y←(⍳&infin;)*2           │  *∘2∘⊢
+0 1 4 9 16 25 36 &#133;      │  {⍵*2}
+                        │
+   x+y                  │  3∘*∘⊢ + *∘2∘⊢
+1 4 13 36 97 268 765 &#133;  │  {(3*⍵)+(⍵*2)}
+
+</pre>
+
+
+
+<a name="5"></a>
+<p><b>5. Dictionaries (Associative Arrays)</b></p>
+
+<p>The proposed <i>string scalars</i> are
+suitable for use as indices in dictionaries.
+For example:</p>
+
+<pre>
+   ⍴⍴Caps
+1
+   Caps["UK" "China" "France"]←'London' 'Beijing' 'Paris'
+   Caps
+"UK"     │ London
+"China"  │ Beijing
+"France" │ Paris
+  
+   Caps["China"]
+ Beijing
+
+   Caps["USA"]
+INDEX ERROR
+   Caps["USA"]
+  ∧
+
+   Caps ⍳ 'Paris' 'Tokyo' 'London'   
+"France" &lambda; "UK" 
+
+   ⌽ Caps
+DOMAIN ERROR
+   ⌽Caps
+  ^
+
+</pre>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>[0]</td><td>&nbsp;</td><td>
+Scholes, J.M., e-mail on 2010-10-11 11:41.
+ </td></tr>
+<tr><td valign=top>[1]</td><td>&nbsp;</td><td>
+Christensen, G., 
+<a target=_parent href="http://www.vector.org.uk/archive/v223/gitte222.htm"><i>Ken Iverson in Denmark</i></a>, 
+Vector, Volume 22, Number 3, 2006-08.
+ </td></tr>
+<tr><td valign=top>[2]</td><td>&nbsp;</td><td>
+Hui, R.K.W.,  
+<i>Sparse Arrays in J</i>, APL99 Conference Proceedings,
+APL Quote Quad, Volume 29, Number 2, 1999-08-10 to -14.
+ </td></tr>
+<tr><td valign=top>[3]</td><td>&nbsp;</td><td>
+Hui, R.K.W., and K.E. Iverson, 
+<a target=_parent href="http://www.jsoftware.com/help/dictionary/d211.htm"><i>J Introduction and Dictionary</i></a>,
+2010.
+ </td></tr>
+<tr><td valign=top>[4]</td><td>&nbsp;</td><td>
+McDonnell, E.E., and J.O. Shallit,
+<a target=_parent href="http://www.jsoftware.com/papers/eem/infinity.htm"><i>Extending APL to Infinity</i></a>,
+APL80 Conference Proceedings, 1980.
+ </td></tr>
+<tr><td valign=top>[5]</td><td>&nbsp;</td><td>
+Shallit, J.O.,
+<i>Infinite Arrays and Diagonalizaton</i></a>,
+APL81 Conference Proceedings, APL Quote Quad, Volume 12, Number 1, 1981-09.
+ </td></tr>
+</table>
+<br>
+
+<br><hr>
+
+<p><font size=-1>
+<script src="apldisplay.js" type="text/javascript"></script>
+</font></p>
+
+<table>
+<tr><td><font size=-1>original writing: &nbsp;</font></td><td><font size=-1>2010-10-12 17:20</font></td></tr>
+<tr><td><font size=-1>last updated:</font></td><td><font size=-1>2011-11-05 11:20</font></td></tr>
+</table>
+</td></tr></table>
+</td></tr></table>
+<br><br>
+
+</body>
+</html>

@@ -1,0 +1,1451 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>A Common Language for Hardware, Software, and Applications</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>A Common Language<br>
+for Hardware, Software, and Applications</font><br><br>
+<b>Kenneth E. Iverson</b><br><br>
+Thomas J. Watson Research Center, IBM<br>
+Yorktown Heights, New York</b>
+<br>&nbsp;</p>
+
+
+
+<br><hr>
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>Algorithms commonly used in automatic
+data processing are, 
+when considered in terms of the sequence 
+of individual physical operations actually executed, 
+incredibly complex.
+Such algorithms are normally made amenable 
+to human comprehension and analysis
+by expressing them 
+in a more compact and abstract form 
+which suppresses systematic detail. 
+This suppression of detail
+commonly occurs in several fairly well defined stages, 
+providing a hierarchy of distinct
+descriptions of the algorithm 
+at different levels of detail. 
+For example, an algorithm expressed 
+in the <font size=-1>FORTRAN</font> language 
+may be transformed by a compiler to a machine code
+description at a greater level of detail 
+which is in turn transformed 
+by the &ldquo;hardware&rdquo; of the computer 
+into the detailed algorithm actually executed.</p>
+
+<p>Distinct and independent languages 
+have commonly been developed 
+for the various levels used. 
+For example, the operations
+and syntax of the <font size=-1>FORTRAN</font> language 
+show little semblance to the operations and syntax
+of the computer code into which it is translated,
+and neither <font size=-1>FORTRAN</font> 
+nor the machine language resemble 
+the circuit diagrams and other descriptors 
+of the processes eventually executed by the machine. 
+There are, nevertheless,
+compelling reasons for attempting
+to use a single &ldquo;universal&rdquo; language 
+applicable to all levels, 
+or at least a single core language 
+which may be slightly augmented 
+in different ways at the various levels.</p>
+
+<p>First, it is difficult, and perhaps undesirable,
+to make a precise separation 
+into a small number of levels. 
+For example, the programmer or analyst operating 
+at the highest (least detailed) level, 
+may find it convenient or necessary to revert 
+to a lower level 
+to attain greater efficiency 
+in eventual execution 
+or to employ convenient operations
+not available at the higher level. 
+Programming languages such as <font size=-1>FORTRAN</font> 
+commonly permit the use of lower levels, 
+frequently of a lower level &ldquo;assembly language&rdquo; 
+and of the underlying machine language. 
+However, the employment of disparate languages 
+on the various levels clearly complicates 
+their use in this manner.</p>
+
+<p>Second, it is not even possible to make a
+clear separation of level between the <i>software</i>
+(metaprograms which transform the higher level algorithms) 
+and the hardware, 
+since the hardware circuits 
+may incorporate permanent or semipermanent memory 
+which determines its action and hence the computer language.
+If this special memory can itself be changed
+by the execution of a program, 
+its action may be considered that of software, 
+but if the memory is &ldquo;read-only&rdquo; 
+its action is that of hardware&mdash;leaving 
+a rather tenuous distinction
+between software and hardware 
+which is likely to be further blurred 
+in the future.</p>
+
+<p>Finally, in the design of a data processing system 
+it is imperative to maintain close communication 
+between the programmers (i.e., the ultimate users), 
+the software designers, and the hardware designers, 
+not to mention the communication required among
+the various groups within any one of these levels. 
+In particular, it is desirable to be able 
+to describe the metaprograms of the software 
+and the microprograms of the hardware
+in a common language accessible to all.</p>
+
+<p>The language presented in 
+<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962.">Reference 1</acronym>
+shows promise as a universal language, 
+and the present paper is devoted to illustrating 
+its use at a variety of levels, 
+from microprograms, through metaprograms, 
+to &ldquo;applications&rdquo;
+programs in a variety of areas.
+To keep the treatment within reasonable bounds, 
+much of the illustration will be limited to 
+reference to other published material. 
+For the same reason the presentation
+of the language itself will be
+limited to a summary of that portion 
+required for microprogramming (Table 1), 
+augmented by brief definitions 
+of further operations as required.
+<br>&nbsp;</p>
+
+
+
+<a name="micro"></a>
+<p><b>Microprograms</b></p>
+
+<p>In the so-called &ldquo;systems design&rdquo; 
+of a computer it is perhaps best to describe the computer 
+at a level suited to the machine language programmer. 
+This type of description has been explored in detail 
+for a single machine (the IBM 7090) in 
+<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962.">Reference 1</acronym>, 
+and more briefly in 
+<acronym title="Iverson, K.E., “A Programming Language”, 
+Spring Joint Computer Conference, San Francisco, May 1962.">Reference 2</acronym>. 
+Attention will therefore be restricted to problems 
+of description on a more detailed level, 
+to specialized equipment such as associative memory,
+and to the practical problem of keying
+and printing microprograms which arise from
+their use in design automation and simulation.</p>
+
+<p>The need for extending the detail in a
+microprogram may arise from restrictions
+on the operations permitted 
+(e.g., logical <i>or</i> and negation, 
+but not <i>and</i>), 
+from restrictions on the data paths provided, 
+and from a need to specify the overall 
+&ldquo;control&rdquo; circuits
+which (by controlling the data paths) 
+determine the sequence in the microprogram, 
+to name but a few. 
+For example, 
+the basic &ldquo;instruction fetch&ldquo; operation 
+of fetching from a memory (i.e., a logical matrix) <b><i>M</i></b> 
+the word (i.e., row) <b><i>M</i></b><sup>&nbsp;<i>i</i></sup>
+selected according to the base two value 
+of the instruction location register
+<b><i>s</i></b> (that is, <i>i</i> = <tt>⊥</tt><b><i>s</i></b>), 
+and transferring it to the command register <b><i>c</i></b>, 
+may be described as
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>c</i></b> &larr; <b><i>M</i></b><sup><tt>⊥</tt><b><i>s</i></sup></b>.
+</td></tr></table>
+
+Suppose, however, that the base two value operation 
+(i.e., address decoding) 
+is not provided on the register <b><i>s</i></b> directly, 
+but only on
+a special register <b><i>a</i></b> 
+to which <b><i>s</i></b> may be transferred.
+The fetch then becomes
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>a</i></b> &larr; <b><i>s</i></b><br>
+<b><i>c</i></b> &larr; <b><i>M</i></b><sup><tt>⊥</tt><b><i>a</i></b></sup>.
+</td></tr></table>
+
+Suppose, moreover, that all communication
+with memory must pass through a buffer
+register <b><i>b</i></b>, 
+that each transfer out of a memory word 
+<b><i>M</i></b><sup>&nbsp;<i>i</i></sup> 
+is accompanied by a subsequent
+reset to zero of that word 
+(that is, <b><i>M</i></b><sup>&nbsp;<i>i</i></sup> &larr; <img src="APLimg/epsboscore.bmp">),
+that every transfer from a register 
+(or word of memory) <b><i>x</i></b>, 
+to a register (or word of memory)
+<b><i>y</i></b> must be of the form
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>y</i></b> &larr; <b><i>x</i></b> &or; <b><i>y</i></b>,
+</td></tr></table>
+
+and that any register may be reset to zero,
+then the instruction fetch becomes</p>
+
+<table><tr><td width=31>&nbsp;</td><td><table>
+<tr><td>1</td><td>&nbsp; &nbsp;</td>
+ <td><b><i>a</i></b> &larr; <img src="APLimg/epsboscore.bmp"> </td></tr>
+<tr><td>2</td><td>&nbsp;</td><td><b><i>a</i></b> &larr; <b><i>s</i></b> &or; <b><i>a</i></b> </td></tr>
+<tr><td>3</td><td>&nbsp;</td><td><b><i>b</i></b> &larr; <img src="APLimg/epsboscore.bmp"></td></tr>
+<tr><td>4</td><td>&nbsp;</td><td><b><i>b</i></b> &larr; 
+ <b><i>M</i></b><sup><tt>⊥</tt><b><i>a</i></b></sup> &or; <b><i>b</i></b> </td>
+ <td rowspan=2><img src="APLimg/matrixr2.bmp"></td></tr>
+<tr><td>5</td><td>&nbsp;</td><td><b><i>M</i></b><sup><tt>⊥</tt><b><i>a</i></b></sup> &larr; <img src="APLimg/epsboscore.bmp"></td></tr>
+<tr><td>6</td><td>&nbsp;</td><td><b><i>M</i></b><sup><tt>⊥</tt><b><i>a</i></b></sup> &larr; <b><i>b</i></b> &or;
+ <b><i>M</i></b><sup><tt>⊥</tt><b><i>a</i></b></sup></td></tr>
+<tr><td>7</td><td>&nbsp;</td><td><b><i>c</i></b> &larr; <img src="APLimg/epsboscore.bmp"></td></tr>
+<tr><td>8</td><td>&nbsp;</td><td><b><i>c</i></b> &larr; <b><i>b</i></b> &or; <b><i>c</i></b></td></tr>
+</table></td></tr></table>
+
+<p>In this final form, 
+the successive statements correspond directly 
+(except for the bracketed pair 4 and 5 
+which together comprise
+an indivisible operation) to individual
+register-to-register transfers. 
+Each statement can, in fact, be taken 
+as the &ldquo;name&rdquo; of
+the corresponding set of data gates, 
+and the overall control circuits 
+need only cycle through a set of states 
+which activate the data gates 
+in the sequence indicated.</p>
+
+<p>The sequence indicated in a microprogram
+such as the above is more restrictive than
+necessary and certain of the statements 
+(such as 1 and 3 or 6 and 7) 
+could be executed concurrently 
+without altering the overall result. 
+Such overlapping is normally employed
+to increase the speed of execution of microprograms. 
+The corresponding relaxation 
+of sequence constraints 
+complicates their specification, 
+e.g., execution of statement <i>k</i>
+might be permitted to begin as soon as statements
+<i>h</i>, <i>i</i> and <i>j</i> were completed. 
+Senzig
+(<acronym title="Senzig, D.N., “Suggested Timing Notation for the Iverson Notation”, 
+Research Note NC-120, IBM Corporation.">Reference 3</acronym>)
+proposes some useful techniques
+and conventions for this purpose.</p>
+
+<p>The &ldquo;tag&rdquo; portion 
+of an associative memory can, as shown in 
+<acronym title="Iverson, K.E., “A Programming Language”, 
+Spring Joint Computer Conference, San Francisco, May 1962.">Reference 2</acronym>, 
+be characterized
+as a memory <b><i>M</i></b>, 
+an argument vector <b><i>x</i></b>, 
+and a sense vector <b><i>s</i></b> 
+related by the expression
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>s</i></b> = <b><i>M</i></b> <img src="APLimg/andeq.bmp"> 
+<b><i>x</i></b>
+</td></tr></table>
+
+or by the equivalent expression
+
+<table><tr><td width=31>&nbsp;</td><td>
+<img src="APLimg/AFIPS196212eqn1.bmp"> ,
+</td></tr></table>
+
+obtained by applying De Morgan&rsquo;s law. 
+Falkoff
+<acronym title="Falkoff, A.D., “Algorithms for Parallel-Search Memories”, 
+J.A.C.M., October 1962. ">(Reference 4)</acronym> 
+has used microprograms of the
+type discussed here in a systematic exploration
+of schemes for the realization 
+of associative memories for a variety 
+of functions including exact match, 
+largest tag, and nearest larger tag.</p>
+
+<p>Because the symbols used in the language
+have been chosen for their mnemonic properties
+rather than for compatibility with the
+character sets of existing keyboards and printers, 
+transliteration is required in entering
+microprograms into a computer, 
+perhaps for processing by a simulation 
+or design automation metaprogram. 
+For that portion of the language 
+which is required in microprogramming,
+<acronym title="Iverson, K.E., “A Transliteration Scheme for the Keying 
+and Printing of Microprograms”, 
+Research Note NC-79, IBM Corporation.">Reference 5</acronym>
+provides a simple and mnemonic solution 
+of the transliteration problem. 
+It is based upon a two-character representation 
+of each symbol in which the second character 
+need be specified but rarely.
+Moreover, it provides a simple representation
+of the index structure (permitting subscripts
+and superscripts to an arbitrary number of levels) 
+based upon a Lukasiewicz or parenthesis-free 
+representation of the corresponding tree.
+<br>&nbsp;</p>
+
+
+
+<a name="meta"></a>
+<p><b>Metaprograms</b></p>
+
+<p>Just as a microprogram description of a computer 
+(couched at a suitable level) can provide a clear specification 
+of the corresponding computer language, 
+so can a program description of a compiler or other metaprogram
+give a clear specification of the &ldquo;macro-language&rdquo; 
+which it accepts as input.
+No complete description of a compiler expressed
+in the present language has been published, 
+but several aspects have been treated. 
+Brooks and Iverson 
+(Chapter 8, <acronym title="Brooks, F.P., Jr., and Iverson, K.E., 
+“Automatic Data Processing”, Wiley (in press).">Reference 6</acronym>) 
+treat the <font size=-1>SOAP</font> assembler in some detail, 
+particularly the use of the open addressing system 
+and &ldquo;availability&rdquo; indicators
+in the construction and use of symbol tables, 
+and also treat the problem of generators.
+<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962.">Reference 1</acronym>
+treats the analysis of compound statements in compilers, 
+including the optimization of a parenthesis-free statement 
+and the translations between parenthesis 
+and parenthesis-free forms. 
+The latter has also been treated 
+(using an emasculated form of the language) 
+by Oettinger 
+<acronym title="Oettinger, A.G., “Automatic Syntactic Analysis of the Pushdown Store”, 
+Proceedings of the Twelfth Symposium in Applied Mathematics, April 1960, 
+published by American Mathematical Society, 1961.">(Reference 7)</acronym> 
+and by Huzino 
+<acronym title="Huzino, S., “On Some Applications of the Pushdown Store Technique”, 
+Memoirs of the Faculty of Science, 
+Kyushu University, Ser. A, Vol. XV, No. 1, 1961.">(Reference 8)</acronym>; 
+it will also be used for illustration here.</p>
+
+<p>Consider a vector <b><i>c</i></b> representing 
+a compound statement 
+in complete<sup><a href="AFIPS196212a.htm#notea">[a]</a></sup> parenthesis form 
+employing operators drawn from a set
+<b><i>p</i></b> (e.g., <b><i>p</i></b> = 
+<nobr>(+, &times;, &ndash;, <tt>÷</tt>)</nobr>). 
+Then Program 1 shows an algorithm for translating 
+any well-formed statement <b><i>c</i></b> 
+into the equivalent statement <b><i>l</i></b> 
+in parenthesis-free (i.e., Lukasiewicz) form.</p>
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0><tr><td><table>
+<tr><td>1</d><td><sup>&nbsp;</sup> <b><i>l</i></b> &larr; <img src="APLimg/epsboscore.bmp">(0) <sub>&nbsp;</sub></td></tr>
+<tr><td>2</d><td><sup>&nbsp;</sup> <b><i>s</i></b> &larr; <img src="APLimg/epsboscore.bmp">(0) <sub>&nbsp;</sub></td></tr>
+<tr><td>3</d><td><sup>&nbsp;</sup> <i>&nu;</i>(<b><i>c</i></b>) : 0 <sub>&nbsp;</sub></td></tr>
+<tr><td>4</d><td><sup>&nbsp;</sup> <i>x</i> &larr; <b><i>c</i></b><sub>1</sub> <sub>&nbsp;</sub></td></tr>
+<tr><td>5</d><td><sup>&nbsp;</sup> <b><i>c</i></b> &larr; <img src="APLimg/alphaboscore.bmp"><sup>1</sup>/<b><i>c</i></b> <sub>&nbsp;</sub></td></tr>
+<tr><td>6</d><td><sup>&nbsp;</sup> <i>x</i> : [ <sub>&nbsp;</sub></td></tr>
+<tr><td>7</d><td><sup>&nbsp;</sup> <i>x</i> : ]  <sub>&nbsp;</sub></td></tr>
+<tr><td>8</d><td><sup>&nbsp;</sup> <i>x</i> : <b><i>p</i></b> <sub>&nbsp;</sub></td></tr>
+<tr><td>9</d><td><sup>&nbsp;</sup> <b><i>l</i></b> &larr; <i>x</i> <img src="APLimg/circleplus.bmp"> <b><i>l</i></b> <sub>&nbsp;</sub></td></tr>
+<tr><td>10</d><td><sup>&nbsp;</sup> <b><i>s</i></b> &larr; <i>x</i> <img src="APLimg/circleplus.bmp"> <b><i>s</i></b> <sub>&nbsp;</sub></td></tr>
+<tr><td>11</d><td><sup>&nbsp;</sup> <b><i>l</i></b> &larr; <b><i>s</i></b><sub>1</sub> <img src="APLimg/circleplus.bmp"> <b><i>l</i></b> <sub>&nbsp;</sub></td></tr>
+<tr><td>12</d><td><sup>&nbsp;</sup> <b><i>s</i></b> &larr; <img src="APLimg/alphaboscore.bmp"><sup>1</sup>/<b><i>s</i></b> <sub>&nbsp;</sub></td></tr>
+</table></td></tr></table>
+-->
+
+<table align=center><tr><td><img src="APLimg/AFIPS196212prog1.bmp">
+</td></tr></table>
+
+<p align=center><b>Program 1</b><br>
+Translation from complete parenthesis statement <b><i>c</i></b><br>
+to equivalent Lukasiewicz statement <b><i>l</i></b></p>
+
+<p><i>Program 1</i> - 
+The components of <b><i>c</i></b> are
+examined, and deleted from <b><i>c</i></b>, 
+in order from left to right (steps 4, 5). 
+According to the decisions on steps 6, 7, 
+and 8,<sup><a href="AFIPS196212a.htm#noteb">[b]</a></sup> 
+each component is discarded if it is a left parenthesis,
+appended at the head of the resulting vector
+<b><i>l</i></b> if it is a variable (step 9), 
+appended at the head of the auxiliary stack vector 
+<b><i>s</i></b> if it is an operator (step 10), 
+and initiates a transfer of the leading component 
+of the stack <b><i>s</i></b> to the head 
+of the result <b><i>l</i></b> 
+if it is a right parenthesis (steps 11, 12). 
+The behavior is perhaps best appreciated 
+by tracing the program for a given case, 
+e.g., if <b><i>c</i></b> = 
+<nobr>([, [, <i>x</i>, +, <i>y</i>, ], &times;, 
+[, <i>p</i>, +, <i>q</i>, ],]),</nobr>
+then <b><i>l</i></b> = <nobr>(&times;, +, <i>q</i>, 
+<i>p</i>, +, <i>y</i>, <i>x</i>).</nobr><br>&nbsp;</p>
+
+
+
+<a name="appl"></a>
+<p><b>Applications</b></p>
+
+<p>Areas in which the programming language
+has been applied include search and sorting procedures, 
+symbolic logic, linear programming,
+information retrieval, and music theory. 
+The first two are treated extensively in 
+<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962.">Reference 1</acronym>, 
+and <acronym title="Iverson, K.E., “The Description of Finite Sequential Processes”, 
+Fourth London Symposium on Information Theory, 
+August 1960, Colin Cherry, Ed., Butterworth and Company.">Reference 9</acronym> 
+illustrates the application to linear programming 
+by a 13-step algorithm for the simplex method.
+The areas of symbolic logic and matrix
+algebra illustrate particularly the utility of
+the formalism provided. 
+Salton 
+<acronym title="Salton, G.A., “Manipulation of Trees in Information Retrieval”, 
+Communications of the ACM, February 1961, pp. 103-114.">(Reference 10)</acronym>
+has treated some aspects of information retrieval, 
+making particular use of the notation for trees. 
+Kassler&rsquo;s use in music concerns
+the analysis of Schoenberg&rsquo;s 
+12-tone system of composition 
+(<acronym title="Kassler, M., “Decision of a Musical System”, Research Summary, 
+Communications of the ACM, April 1962, page 223.">Reference 11</acronym>).</p>
+
+<p>Three applications will be illustrated here:
+search procedures, 
+the relations among the canonical forms of symbolic logic, 
+and matrix inversion.</p>
+
+<a name="search"></a>
+<p><i>Search Algorithms</i>. <a href="AFIPS196212a.htm#fig1">Figure 1</a> shows search
+programs and examples (taken from 
+<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962.">Reference 1</acronym>) 
+for five methods of &ldquo;hash addressing&rdquo;
+(cf. Peterson, 
+<acronym title="Peterson, W.W., “Addressing for Random Access Storage”, 
+IBM Journal of Research and Development, 
+Vol. 1, 1957, pp. 130-146.">Reference 12</acronym>), 
+wherein the functional correspondent 
+of an argument <i>x</i> is determined 
+by using some <i>key transformation</i>
+function <i>t</i> which maps each argument <i>x</i> 
+into an integer <i>i</i> in the range 
+of the indices of some table (i.e., matrix) 
+which contains the arguments and their correspondents. 
+The key transformation <i>t</i> is, 
+in general, a many-to-one function 
+and the index <i>i</i> is merely used
+as the starting point in searching the table
+for the given argument <i>x</i>. 
+Figure 1 is otherwise self-explanatory. 
+Method (e) is the widely used open addressing system 
+described by Peterson 
+<acronym title="Peterson, W.W., “Addressing for Random Access Storage”, 
+IBM Journal of Research and Development, 
+Vol. 1, 1957, pp. 130-146.">(Reference 12)</acronym>.
+
+<a name="logic"></a>
+<p><i>Symbolic Logic</i>. 
+If <b><i>x</i></b> is a logical vector
+and <b><i>T</i></b> is a logical matrix of dimension
+<nobr>2<sup><i>&nu;</i>(<b><i>x</i></b>)</sup>  &times; <i>&nu;</i>(<b><i>x</i></b>)</nobr>
+such that the base two value of
+<b><i>T</i></b><sup>&nbsp;<i>i</i></sup> is <i>i</i> 
+(that is, <tt>⊥</tt><b><i>T</i></b> = 
+<tt><b>⍳</b></tt><sup>0</sup>(2<sup><i>&nu;</i>(<b><i>x</i></b>)</sup>)), 
+then the rows of <b><i>T</i></b> 
+define the domain of the argument <b><i>x</i></b>,
+and any logical function <i>f</i>(<b><i>x</i></b>) 
+defined on <b><i>x</i></b>
+can be completely specified 
+by the <i>intrinsic vector</i> <b><i>i</i></b>(<i>f</i>) 
+such that <b><i>i</i></b><sub><i>j</i></sub>(<i>f</i>) = 
+<i>f</i>(<b><i>T</i></b><sup>&nbsp;<i>j</i></sup>).</p>
+
+<p>Expansion of the expression <b><i>p</i></b> = 
+<nobr><b><i>T</i></b> <img src="APLimg/andeq.bmp"> 
+<b><i>x</i></b></nobr>
+shows that <b><i>p</i></b> is the vector 
+of minterms in <b><i>x</i></b>,
+and consequently
+
+<table><tr><td width=31>&nbsp;</td>
+ <td><i>f</i>(<b><i>x</i></b>)</td><td>&nbsp;=&nbsp; <b><i>&gamma;</i></b>(<i>f</i>,&or;) 
+<img src="APLimg/orand.bmp"> <b><i>p</i></b></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;=&nbsp; <b><i>&gamma;</i></b>(<i>f</i>,&or;) 
+<img src="APLimg/orand.bmp"> (<b><i>T</i></b> 
+<img src="APLimg/andeq.bmp"> <b><i>x</i></b>),
+ </td></tr>
+</table>
+
+where <b><i>&gamma;</i></b>(<i>f</i>,&or;) 
+denotes the characteristic vector
+of the function <i>f</i> in the disjunctive canonical form. 
+Formally, <b><i>&gamma;</i></b>(<i>f</i>,&or;) may be defined
+by the relation
+
+<table width=400><tr><td width=31>&nbsp;</td><td>
+ <b><i>i</i></b>(<i>f</i>) &nbsp;=&nbsp; <b><i>&gamma;</i></b>(<i>f</i>,&or;) 
+<img src="APLimg/orand.bmp"> (<b><i>T</i></b>
+<img src="APLimg/andne.bmp"> <img src="APLimg/transposenott.bmp">),
+</td><td align=right>(1)</td></tr></table>
+
+where <img src="APLimg/transposenott.bmp"> 
+denotes the transpose of <img src="APLimg/tcapboscore.bmp">. 
+It is easily shown that 
+<nobr><b><i>T</i></b> <img src="APLimg/andne.bmp"> <img src="APLimg/transposenott.bmp"></nobr>
+is equal to the identity matrix, and hence that
+<nobr><b><i>&gamma;</i></b>(<i>f</i>,&or;) = <b><i>i</i></b>(<i>f</i>).</nobr></p>
+
+<p>In a similar manner, 
+the expression for the exclusive disjunctive canonical form 
+may be written 
+(<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962.">Reference 1</acronym>, 
+Chapter 7) as
+
+<table width=400><tr><td width=31>&nbsp;</td><td>
+ <b><i>i</i></b>(<i>f</i>) &nbsp;=&nbsp; <b><i>&gamma;</i></b>(<i>f</i>,&ne;) 
+<img src="APLimg/neand.bmp"> (<b><i>T</i></b>
+<img src="APLimg/andor.bmp"> <img src="APLimg/transposenott.bmp">),
+</td><td align=right>(2)</td></tr></table>
+
+and the relation between the intrinsic vector
+and the exclusive disjunctive characteristic
+vector <b><i>&gamma;</i></b>(<i>f</i>,&ne;) 
+(first derived by Muller, 
+<acronym title="Muller, D.E., “Application of Boolean Algebra to 
+Switching Circuit Design and to Error Detection”, 
+Transactions of the IRE, Vol. EC-3, 1954, pp. 6-12.">Reference 13</acronym>) 
+is given directly by the square matrix 
+<b><i>S</i></b> = <nobr><b><i>T</i></b>
+<img src="APLimg/andor.bmp"> <img src="APLimg/transposenott.bmp">.</nobr> 
+The properties of the matrix <b><i>S</i></b> 
+are easily derived from this formulation.
+Moreover, the formal application
+of De Morgan&rsquo;s laws to equations (1) and (2)
+yields the two remaining canonical forms directly 
+(<acronym title="Iverson, K.E., A Programming Language, Wiley, 1962.">Reference 1</acronym>, 
+Chapter 7).</p>
+
+
+<a name="matinv"></a>
+<p><i>Matrix Inversion</i>. 
+The method of matrix inversion 
+using Gauss-Jordan (complete)
+elimination with pivoting 
+and restricting the total major storage 
+to a single square matrix
+augmented by one column (described in 
+<acronym title="Iverson, K.E., “Machine Solutions of Linear Differential Equations”, 
+Doctoral Thesis, Harvard University, 1954.">Reference 14</acronym>
+and <acronym title="Rutishauser, H. (1959), “Zur Matrizeninversion nach Gauss-Jordan”, 
+Zeitschrift für Angewandte Mathematik und Physik, vol. X, pp. 281-291. ">15</acronym>) 
+involves enough selection, permutation, 
+and decision type operations to render 
+its complete description by classical
+matrix notation rather awkward. 
+Program 2 describes the entire process. 
+The starred statements perform the pivoting operations
+and their omission leaves a valid program
+without pivoting; 
+exegesis of the program will first be limited 
+to the abbreviated program without pivoting.</p>
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0>
+<tr><td><table>
+<tr><td>&nbsp;</td><td>1</td><td><sub>&nbsp;</sub> <i>k</i> &larr; <i>&nu;</i>(<b><i>M</i></b>) <sup>&nbsp;</sup></td></tr>
+<tr><td>*</td><td>2</td><td><sub>&nbsp;</sub> <b><i>p</i></b> &larr; <tt><b>⍳</b></tt><sup>1</sup>(<i>k</i>) <sup>&nbsp;</sup></td></tr>
+<tr><td>&nbsp;</td><td>3</td><td><sub>&nbsp;</sub> <b><i>M</i></b> &larr; <b><i>M</i></b> <img src="APLimg/circleplus.bmp"> <tt><b>⍺</b></tt><sup>1</sup> <sup>&nbsp;</sup></td></tr>
+<tr><td>*</td><td>4</td><td><sub>&nbsp;</sub> <i>j</i> &larr; ((<tt><b>⍺</b></tt><sup><i>k</i></sup><tt>⌈</tt>|<b><i>M</i></b><sub>1</sub>|)/<tt><b>⍳</b></tt><sup>1</sup>)<sub>1</sub> <sup>&nbsp;</sup></td></tr>
+<tr><td>*</td><td>5</td><td><sub>&nbsp;</sub> <b><i>p</i></b><sub>1</sub> &harr; <b><i>p</i></b><sub><i>j</i></sub> <sup>&nbsp;</sup></td></tr>
+<tr><td>*</td><td>6</td><td><sub>&nbsp;</sub> <img src="APLimg/omegaboscore.bmp"><sup>1</sup>/<b><i>M</i></b><sup>&nbsp;1</sup> &harr; <img src="APLimg/omegaboscore.bmp"><sup>1</sup>/<b><i>M</i></b><sup><i>&nbsp;j</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td>&nbsp;</td><td>7</td><td><sub>&nbsp;</sub> <b><i>M</i></b><sup>&nbsp;1</sup> &larr; <b><i>M</i></b><sup>&nbsp;1</sup> <tt>÷</tt> <b><i>M</i></b><sub>1</sub><sup>1</sup><tt><b>∊</b></tt> <sup>&nbsp;</sup></td></tr>
+<tr><td>&nbsp;</td><td>8</td><td><sub>&nbsp;</sub> <b><i>M</i></b> &larr; <b><i>M</i></b> &ndash; (<img src="APLimg/alphaboscore.bmp"><sup>1</sup> <tt>×</tt> <b><i>M</i></b><sub>1</sub>) <img src="APLimg/jottimes.bmp"> <b><i>M</i></b><sup>&nbsp;1</sup> <sup>&nbsp;</sup></td></tr>
+<tr><td>&nbsp;</td><td>9</td><td><sub>&nbsp;</sub> <b><i>M</i></b> &larr; <tt><b>∊</b></tt> &uarr; (<img src="APLimg/alphaboscore.bmp"><sup>1</sup> <img src="APLimg/uarr.bmp"> <b><i>M</i></b>)<sup>&nbsp;</sup></td></tr>
+<tr><td>*</td><td>10</td><td><sub>&nbsp;</sub> <b><i>p</i></b> &larr; 1 &uarr; <b><i>p</i></b> <sup>&nbsp;</sup></td></tr>
+<tr><td>&nbsp;</td><td>11</td><td><sub>&nbsp;</sub> <i>k</i> &larr; <i>k</i> &ndash; 1<sup>&nbsp;</sup></td></tr>
+<tr><td>&nbsp;</td><td>12</td><td><sub>&nbsp;</sub> <b><i>M</i></b> &larr; <img src="APLimg/omegaboscore.bmp"><sup>1</sup>/<b><i>M</i></b> <sup>&nbsp;</sup></td></tr>
+<tr><td>*</td><td>13</td><td><sub>&nbsp;</sub> <b><i>M</i></b> &larr; <b><i>M</i></b><sub><b><i>p</i></b> <tt>⍳</tt> <tt><b>⍳</b></tt><sup>1</sup></sub> <sup>&nbsp;</sup></td></tr>
+</table></td></tr>
+</table>
+-->
+
+<table align=center>
+<tr><td><img src="APLimg/AFIPS196212prog2.bmp"></td></tr>
+</table>
+
+<p align=center><b>Program 2</b><br>
+Matrix inversion by Gauss-Jordan elimination</p>
+
+<p><i>Program 2</i> - Step 1 initializes the counter
+<i>k</i> which limits (step 11) the number of
+iterations and step 3 appends to the given
+square matrix <b><i>M</i></b> 
+a final column of the form
+<nobr>(1, 0, 0, &#133;, 0)</nobr> 
+which is excised (step 12)
+only after completion of the main inversion process. 
+Step 7 divides the pivot (i.e., the
+first) row by the pivot element, and step 8
+subtracts from <b><i>M</i></b> 
+the outer product of its first row 
+(except that the first element is replaced by zero) 
+with its first column.<sup><a href="AFIPS196212a.htm#notec">[c]</a></sup>
+The result of steps 7 and 8 is to reduce the
+first column of <b><i>M</i></b> to the form 
+<nobr>(1, 0, 0, &#133;, 0)</nobr> 
+as required in Jordan elimination.</p>
+
+<p>The net result of step 9 is to bring the
+next pivot row to first position and the next
+pivot element to first position within it by
+(1) cycling the old pivot row to last place
+and the remaining rows up by one place, and
+(2) cycling the leading column 
+<nobr>(1, 0, 0, &#133;, 0)</nobr>
+to last place 
+(thus restoring the configuration
+produced by step 3) 
+and the remaining columns
+one place to the left. 
+The column rotation<sup><a href="AFIPS196212a.htm#noted">[d]</a></sup>
+<nobr><img src="APLimg/alphaboscore.bmp"><sup>1</sup>
+<img src="APLimg/uarr.bmp"> <b><i>M</i></b></nobr>
+rotates all columns save the
+first upward by one place, 
+and the subsequent
+row rotation <tt><b>∊</b></tt>&uarr; 
+rotates all rows to the left by one place.</p>
+
+<p>The pivoting provided by steps 2, 4, 5, 6,
+10, and 13 proceeds as follows. 
+Step 4 determines the index <i>j</i> of the next pivot row by
+selecting the maximum<sup><a href="AFIPS196212a.htm#notee">[e]</a></sup> 
+over the magnitudes of the first <i>k</i> elements of the first column,
+where 
+<nobr><i>k</i> = <i>&nu;</i>(<b><i>M</i></b>) 
++ 1 &ndash; <i>q</i></nobr>
+on the <i>q</i>-th iteration.
+Step 6 interchanges the first row with the
+selected pivot row, except for their final
+components. Step 5 records the interchange
+in the permutation vector<sup><a href="AFIPS196212a.htm#notef">[f]</a></sup> 
+<b><i>p</i></b> which is itself
+initialized (step 2) to the value of the identity
+permutation vector <tt><b>⍳</b></tt><sup>1</sup>(<i>k</i>) = 
+<nobr>(1, 2, &#133; , k).</nobr> 
+The rotation of <b><i>p</i></b> on step 10 is necessitated by
+the corresponding rotations of the matrix <b><i>M</i></b>
+(which it indexes) on step 9. 
+Step 13 performs the appropriate inverse 
+reordering<sup><a href="AFIPS196212a.htm#noteg">[g]</a></sup> 
+among the columns of the resulting inverse <b><i>M</i></b>.</p>
+
+<p>A description in the <font size=-1>ALGOL</font> language of
+matrix inversion by the Gauss-Jordan method is provided in 
+<acronym title="Cohen, D., “Algorithm 58, Matrix Inversion”, 
+Communications of the ACM, May 1961, p. 236.">Reference 16</acronym>.
+<br>&nbsp;</p>
+
+
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/APL.htm"><i>A Programming Language</i></a>,
+Wiley, 1962.
+ </td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/AFIPS196205.htm">&ldquo;A Programming Language&rdquo;</a>,
+<i>Spring Joint Computer Conference</i>,
+San Francisco, May 1962.
+ </td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+Senzig, D.N., &ldquo;Suggested Timing Notation
+for the Iverson Notation&rdquo;, 
+Research Note NC-120, IBM Corporation.
+ </td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+Falkoff, A.D., &ldquo;Algorithms for Parallel-Search Memories&rdquo;, 
+J.A.C.M., October 1962.
+ </td></tr>
+<tr><td valign=top>5.</td><td>&nbsp;</td><td>
+Iverson, K.E., &ldquo;A Transliteration Scheme
+for the Keying and Printing of Microprograms&rdquo;,
+Research Note NC-79, IBM Corporation.
+ </td></tr>
+<tr><td valign=top>6.</td><td>&nbsp;</td><td>
+Brooks, F.P., Jr., and Iverson, K.E.,
+&ldquo;Automatic Data Processing&rdquo;, 
+Wiley (in press).
+ </td></tr>
+<tr><td valign=top>7.</td><td>&nbsp;</td><td>
+Oettinger, A.G., &ldquo;Automatic Syntactic
+Analysis of the Pushdown Store&rdquo;, 
+<i>Proceedings of the Twelfth Symposium in
+Applied Mathematics</i>, April 1960, published
+by American Mathematical Society, 1961.
+ </td></tr>
+<tr><td valign=top>8.</td><td>&nbsp;</td><td>
+Huzino, S., &ldquo;On Some Applications of the
+Pushdown Store Technique&rdquo;, 
+<i>Memoirs of the Faculty of Science</i>, 
+Kyushu University, Ser. A, Vol. XV, No. 1, 1961.
+ </td></tr>
+<tr><td valign=top>9.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/DFSP.htm">&ldquo;The Description of Finite Sequential Processes&rdquo;</a>, 
+Fourth London Symposium on Information Theory, 
+August 1960, Colin Cherry, Ed., Butterworth and Company.
+ </td></tr>
+<tr><td valign=top>10.</td><td>&nbsp;</td><td>
+Salton, G.A., &ldquo;Manipulation of Trees in
+Information Retrieval&rdquo;, 
+<i>Communications of the ACM</i>, February 1961, pp. 103-114.
+ </td></tr>
+<tr><td valign=top>11.</td><td>&nbsp;</td><td>
+Kassler, M., &ldquo;Decision of a Musical
+System&rdquo;, Research Summary, 
+<i>Communications of the ACM</i>, April 1962, page 223.
+ </td></tr>
+<tr><td valign=top>12.</td><td>&nbsp;</td><td>
+Peterson, W.W., &ldquo;Addressing for Random
+Access Storage&rdquo;, 
+<i>IBM Journal of Research and Development</i>, 
+Vol. 1, 1957, pp. 130-146.
+ </td></tr>
+<tr><td valign=top>13.</td><td>&nbsp;</td><td>
+Muller, D.E., &ldquo;Application of Boolean
+Algebra to Switching Circuit Design and
+to Error Detection&rdquo;, 
+<i>Transactions of the IRE</i>, 
+Vol. EC-3, 1954, pp. 6-12.
+ </td></tr>
+<tr><td valign=top>14.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/MSLDE.htm">&ldquo;Machine 
+Solutions of Linear Differential Equations&rdquo;</a>, 
+Doctoral Thesis, Harvard University, 1954.
+ </td></tr>
+<tr><td valign=top>15.</td><td>&nbsp;</td><td>
+Rutishauser, H., &ldquo;Zur Matrizeninversion
+nach Gauss-Jordan&rdquo;, 
+<i>Zeitschrift f&uuml;r Angewandte Mathematik und Physik</i>, 
+Vol. X, 1959, pp. 281-291.
+ </td></tr>
+<tr><td valign=top>16.</td><td>&nbsp;</td><td>
+Cohen, D., &ldquo;Algorithm 58, Matrix Inversion&rdquo;,
+<i>Communications of the ACM</i>, 
+May 1961, p. 236.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="notes"></a>
+<p><b>Notes</b></p>
+
+<table>
+<tr><td valign=top>a.<a name="notea"></a></td><td>&nbsp;</td><td>
+In complete parenthesis form all implied
+parentheses are explicity included, e.g., 
+the statement <nobr>((<i>x</i> + <i>y</i>) &times; (<i>p</i> + <i>q</i>)) </nobr>
+is represented by 
+<nobr><b><i>c</i></b> = ([, [, <i>x</i>, +, <i>y</i>, ], &times;, 
+[, <i>p</i>, +, <i>q</i>, ], ])</nobr>.
+ </td></tr>
+
+<tr><td valign=top>b.<a name="noteb"></a></td><td>&nbsp;</td><td>
+A branch is followed if the relation with
+which it is labelled holds 
+between the quantities separated by the colon. 
+The relation &ldquo;&epsilon;&rdquo; denotes set membership.
+ </td></tr>
+
+<tr><td valign=top>c.<a name="notec"></a></td><td>&nbsp;</td><td>
+The outer product <b><i>Z</i></b> of vector <b><i>x</i></b> 
+by vector <b><i>y</i></b>
+is the &ldquo;column by row product&rdquo; denoted by
+<b><i>Z</i></b> &larr; 
+<nobr><b><i>x</i></b> <img src="APLimg/jottimes.bmp"> <b><i>y</i></b></nobr>
+and defined by <b><i>Z</i></b><sub><i>j</i></sub><sup><i>i</i></sup> = 
+<nobr><b><i>x</i></b><sub><i>i</i></sub> &times; <b><i>y</i></b><sub><i>j</i></sub>.</nobr>
+ </td></tr>
+
+<tr><td valign=top>d.<a name="noted"></a></td><td>&nbsp;</td><td>
+The row rotation <nobr><b><i>k</i></b> &uarr; <b><i>X</i></b></nobr> 
+is a row-by-row extension of the rotation 
+<nobr><i>k</i> &uarr; <b><i>x</i></b></nobr>, 
+that is,
+<nobr>(<b><i>k</i></b> &uarr; <b><i>X</i></b>)<sup><i>i</i></sup></nobr> 
+= <nobr><b><i>k</i></b><sub><i>i</i></sub> &uarr; <b><i>X</i></b><sup><i>&nbsp;i</i></sup>.</nobr>
+Similarly, <nobr>(<b><i>k</i></b> <img src="APLimg/uarr.bmp"> 
+<b><i>X</i></b>)<sub><i>j</i></sub></nobr> =
+<nobr><b><i>k</i></b><sub><i>j</i></sub> &uarr; <b><i>X</i></b><sup>&nbsp;<i>j</i></sup>.</nobr>
+ </td></tr>
+
+<tr><td valign=top>e.<a name="notee"></a></td><td>&nbsp;</td><td>
+The expression <b><i>u</i></b> = 
+<nobr><b><i>v</i></b> <tt>⌈</tt> <b><i>x</i></b></nobr>
+denotes a logical vector <b><i>u</i></b> 
+such that <b><i>u</i></b><sub><i>i</i></sub> = 1 
+if and only if <b><i>x</i></b><sub><i>i</i></sub> is
+a maximum among those components 
+<b><i>x</i></b><sub><i>k</i></sub> such
+that <b><i>v</i></b><sub><i>k</i></sub> = 1. 
+Clearly, <b><i>u</i></b>/<tt><b>⍳</b></tt><sup>1</sup> 
+is the vector of indices of the (restricted) maxima, 
+and (<b><i>u</i></b>/<tt><b>⍳</b></tt><sup>1</sup>)<sub>1</sub>
+is the first among them.
+ </td></tr>
+
+<tr><td valign=top>f.<a name="notef"></a></td><td>&nbsp;</td><td>
+A permutation vector is any vector <b><i>p</i></b> whose
+components take on all the values 
+1, 2, &#133;, <i>&nu;</i>(<b><i>p</i></b>). 
+The expression <b><i>y</i></b> = <b><i>x</i></b><sub><b><i>p</i></b></sub> 
+denotes that <b><i>y</i></b>
+is a permutation of <b><i>x</i></b> defined by 
+<b><i>y</i></b><sub><i>i</i></sub> = 
+<b><i>x</i></b><sub><b><i>p</i></b><sub><i>i</i></sub></sub>.
+ </td></tr>
+
+<tr><td valign=top>g.<a name="noteg"></a></td><td>&nbsp;</td><td>
+Permutation is extended to matrices as follows:
+
+<table><tr><td width=31>&nbsp;</td><td>
+<b><i>N</i></b> = <b><i>M</i></b><sub><b><i>p</i></b></sub> &nbsp;&harr;&nbsp;
+ <b><i>N</i></b><sub><i>j</i></sub> = <b><i>M</i></b><sub><b><i>p</i></b><sub><i>j</i></sub></sub> ,
+ </td></tr>
+<tr><td>&nbsp;</td><td>
+<b><i>L</i></b> = <b><i>M</i></b><sup>&nbsp;<b><i>p</i></b></sup> &nbsp;&harr;&nbsp;
+ <b><i>L</i></b><sup><i>i</i></sup> = <b><i>M</i></b><sup>&nbsp;<b><i>p</i></b><sub><i>i</i></sub></sup>.
+ </td></tr>
+</table>
+
+<p>The expression <nobr><b><i>a</i></b> <tt>⍳</tt> <i>x</i></nobr>
+is called the <b><i>a</i></b> <i>index of</i>
+<i>x</i> and is defined by the relation 
+<nobr><b><i>a</i></b> <tt>⍳</tt> <i>x</i> = <i>j</i></nobr>, 
+where <i>x</i> = <b><i>a</i></b><sub><i>j</i></sub>. 
+If <b><i>x</i></b> is a vector, 
+then <b><i>j</i></b> = 
+<nobr><b><i>a</i></b> <tt>⍳</tt> <b><i>x</i></b></nobr> 
+is defined by <b><i>j</i></b><sub><i>i</i></sub> = 
+<nobr><b><i>a</i></b> <tt>⍳</tt> <b><i>x</i></b><sub><i>i</i></sub></nobr>. 
+Consequently, 
+<nobr><b><i>p</i></b> <tt>⍳</tt> <tt><b>⍳</b></tt><sup>1</sup></nobr>
+denotes the permutation inverse to <b><i>p</i></b>.</p> </td></tr>
+</table>
+<br>
+
+
+
+<a name="fig1"></a>
+<p align=center><b>Figure 1</b>. 
+Programs and examples for methods of scanning<br>
+equivalence classes defined by a 1-origin key transformation <i>t</i>
+</p>
+
+
+<table>
+<tr><td align=right><b><i>k</i></b></td><td>=</td>
+ <td>(Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday)</td></tr>
+<tr><td align=right><i>t</i>(<b><i>k</i></b><sub><i>i</i></sub>)</td><td>=</td>
+ <td>1 + (6 |<sub>0</sub> <b><i>n</i></b><sub><i>i</i></sub>), where</td></tr>
+<tr><td align=right valign=top><b><i>n</i></b></td><td valign=top>=</td>
+ <td>(19, 13, 20, 23, 20, 6, 19)<br>
+ (<b><i>n</i></b><sub><i>i</i></sub> is the rank in the alphabet
+ of the first letter of <b><i>k</i></b><sub><i>i</i></sub>)</td></tr>
+<tr><td align=right><b><i>z</i></b></td><td>=</td>
+ <td>(2, 2, 3, 6, 3, 1, 2), 
+ where <b><i>z</i></b><sub><i>i</i></sub> = <b><i>t</i></b>(<b><i>k</i></b><sub><i>i</i></sub>)</td></tr>
+<tr><td align=right><b><i>d</i></b></td><td>=</td>
+ <td>(1, 2, 3, 6), and <b><i>s</i></b> = 6.</td></tr>
+</table>
+<p align=center>Data of examples
+<br>&nbsp;</p>
+
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0>
+<tr><td><table>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <i>t</i>(<i>x</i>) <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>x</i> : <b><i>F</i></b><sub>1</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>j</i> &larr; <b><i>F</i></b><sub>2</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; 0 <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> : <i>&mu;</i>(<b><i>V</i></b>) <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <i>i</i> + 1 <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>x</i> : <b><i>V</i></b><sub>1</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>j</i> &larr; <b><i>V</i></b><sub>2</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+</table></td></tr>
+</table>
+<p>= &ne;</p>
+-->
+
+<table align=center>
+<tr><td><table>
+<tr><td>1</td><td rowspan=6>&nbsp; &nbsp;</td>
+ <td rowspan=6 valign=center><b><i>F</i></b> =</td>
+ <td rowspan=6><img src="APLimg/matrixl6.bmp"></td>
+ <td>Friday</td><td>&nbsp;</td><td>6</td>
+ <td rowspan=6><img src="APLimg/matrixr6.bmp"></td></tr>
+<tr><td>2</td><td>Sunday </td><td>&nbsp;</td><td>1</td></tr>
+<tr><td>3</td><td>Tuesday</td><td>&nbsp;</td><td>3</td></tr>
+<tr><td>4</td><td><tt>∘</tt></td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>5</td><td><tt>∘</tt></td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>6</td><td>Wesnesday</td><td>&nbsp;</td><td>4</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>1</td><td rowspan=3>&nbsp; &nbsp;</td>
+ <td rowspan=3 valign=center><b><i>V</i></b> =</td>
+ <td rowspan=3><img src="APLimg/matrixl3.bmp"></td>
+ <td>Monday</td><td>&nbsp;</td><td>2</td>
+ <td rowspan=3><img src="APLimg/matrixr3.bmp"></td></tr>
+<tr><td>2</td><td>Thursday</td><td>&nbsp;</td><td>5</td></tr>
+<tr><td>3</td><td>Saturday</td><td>&nbsp;</td><td>7</td></tr>
+</table></td>
+<td width=59>&nbsp;</td>
+<td rowspan=2><img src="APLimg/AFIPS196212fig1a.bmp"></td></tr>
+</table>
+<p align=center>(a) Overflow
+<br>&nbsp;</p>
+
+
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0>
+<tr><td><table>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <i>t</i>(<i>x</i>) <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>x</i> : <b><i>F</i></b><sub>1</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>j</i> &larr; <b><i>F</i></b><sub>2</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <b><i>F</i></b><sub>3</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> : <tt>∘</tt> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>x</i> : <b><i>V</i></b><sub>1</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <b><i>V</i></b><sub>3</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>j</i> &larr; <b><i>V</i></b><sub>2</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+</table></td></tr>
+</table>
+<p>= &ne;</p>
+-->
+
+<table align=center>
+<tr><td><table>
+<tr><td>1</td><td rowspan=6>&nbsp; &nbsp;</td>
+ <td rowspan=6 valign=center><b><i>F</i></b> =</td>
+ <td rowspan=6><img src="APLimg/matrixl6.bmp"></td>
+ <td>Friday</td><td>&nbsp;</td><td>6</td><td>&nbsp;</td><td><tt>∘</tt></td>
+ <td rowspan=6><img src="APLimg/matrixr6.bmp"></td></tr>
+<tr><td>2</td><td>Sunday </td><td>&nbsp;</td><td>1</td><td>&nbsp;</td><td>1</td></tr>
+<tr><td>3</td><td>Tuesday</td><td>&nbsp;</td><td>3</td><td>&nbsp;</td><td>2</td></tr>
+<tr><td>4</td><td><tt>∘</tt></td><td>&nbsp;</td><td><tt>∘</tt></td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>5</td><td><tt>∘</tt></td><td>&nbsp;</td><td><tt>∘</tt></td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>6</td><td>Wesnesday</td><td>&nbsp;</td><td>4</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>1</td><td rowspan=3>&nbsp; &nbsp;</td>
+ <td rowspan=3 valign=center><b><i>V</i></b> =</td>
+ <td rowspan=3><img src="APLimg/matrixl3.bmp"></td>
+ <td>Monday</td><td>&nbsp;</td><td>2</td><td>&nbsp;</td><td>3</td>
+ <td rowspan=3><img src="APLimg/matrixr3.bmp"></td></tr>
+<tr><td>2</td><td>Thursday</td><td>&nbsp;</td><td>5</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>3</td><td>Saturday</td><td>&nbsp;</td><td>7</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+</table></td>
+<td width=59>&nbsp;</td>
+<td rowspan=2><img src="APLimg/AFIPS196212fig1b.bmp"></td></tr>
+</table>
+<p align=center>(b) Overflow with chaining
+<br>&nbsp;</p>
+
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0>
+<tr><td><table>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <i>t</i>(<i>x</i>) <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> : <tt>∘</tt> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>x</i> : <b><i>T</i></b><sub>1</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <b><i>T</i></b><sub>3</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>j</i> &larr; <b><i>T</i></b><sub>2</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+</table></td></tr>
+</table>
+<p>= </p>
+-->
+
+<table align=center>
+<tr><td><table>
+<tr><td>1</td><td rowspan=7>&nbsp; &nbsp;</td>
+ <td rowspan=7 valign=center><b><i>T</i></b> =</td>
+ <td rowspan=7><img src="APLimg/matrixl7.bmp"></td>
+ <td>Friday</td><td>&nbsp;</td><td>6</td><td>&nbsp;</td><td><tt>∘</tt></td>
+ <td rowspan=7><img src="APLimg/matrixr7.bmp"></td></tr>
+<tr><td>2</td><td>Sunday </td><td>&nbsp;</td><td>1</td><td>&nbsp;</td><td>4</td></tr>
+<tr><td>3</td><td>Tuesday</td><td>&nbsp;</td><td>3</td><td>&nbsp;</td><td>5</td></tr>
+<tr><td>4</td><td>Monday</td><td>&nbsp;</td><td>2</td><td>&nbsp;</td><td>7</td></tr>
+<tr><td>5</td><td>Thursday</td><td>&nbsp;</td><td>5</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>6</td><td>Wesnesday</td><td>&nbsp;</td><td>4</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>7</td><td>Saturday</td><td>&nbsp;</td><td>7</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+</table></td>
+<td width=59>&nbsp;</td>
+<td rowspan=2><img src="APLimg/AFIPS196212fig1c.bmp"></td></tr>
+</table>
+<p align=center>(c) Single table with chaining
+<br>&nbsp;</p>
+
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0>
+<tr><td><table>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <i>t</i>(<i>x</i>) <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <b><i>m</i></b><sub><i>i</i></sub> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> : <tt>∘</tt> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>x</i> : <b><i>T</i></b><sub>1</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <b><i>T</i></b><sub>3</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>j</i> &larr; <b><i>T</i></b><sub>2</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+</table></td></tr>
+</table>
+<p>= </p>
+-->
+
+<table align=center>
+<tr><td><table>
+<tr><td>1</td><td rowspan=7>&nbsp; &nbsp;</td>
+ <td rowspan=7 valign=center><b><i>T</i></b> =</td>
+ <td rowspan=7><img src="APLimg/matrixl7.bmp"></td>
+ <td>Sunday</td><td>&nbsp;</td><td>1</td><td>&nbsp;</td><td>2</td>
+ <td rowspan=7><img src="APLimg/matrixr7.bmp"></td></tr>
+<tr><td>2</td><td>Monday </td><td>&nbsp;</td><td>2</td><td>&nbsp;</td><td>7</td></tr>
+<tr><td>3</td><td>Tuesday</td><td>&nbsp;</td><td>3</td><td>&nbsp;</td><td>5</td></tr>
+<tr><td>4</td><td>Wednesday</td><td>&nbsp;</td><td>4</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>5</td><td>Thursday</td><td>&nbsp;</td><td>5</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>6</td><td>Friday</td><td>&nbsp;</td><td>6</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>7</td><td>Saturday</td><td>&nbsp;</td><td>7</td><td>&nbsp;</td><td><tt>∘</tt></td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><b><i>m</i></b> =</td>
+ <td colspan=7>(6, 1, 3, <tt>∘</tt>, <tt>∘</tt>, 4)</td></tr>
+</table></td>
+<td width=59>&nbsp;</td>
+<td rowspan=2><img src="APLimg/AFIPS196212fig1d.bmp"></td></tr>
+</table>
+<p align=center>(d) Single table with chaining and mapping vector
+<br>&nbsp;</p>
+
+
+<!--
+<table border=1 cellspacing=0 cellpadding=0>
+<tr><td><table>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <i>t</i>(<i>x</i>) <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>x</i> : <b><i>T</i></b><sub>1</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <tt>∘</tt> : <b><i>T</i></b><sub>1</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>i</i> &larr; <i>&mu;</i>(<b><i>T</i></b>) |<sub>1</sub> (<i>i</i> + 1) <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <b><i>T</i></b><sub>1</sub><sup><i>i</i></sup> &larr; <i>x</i> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <b><i>T</i></b><sub>2</sub><sup><i>i</i></sup> &larr;  <b><i>k</i></b> <tt>⍳</tt><sub>1</sub> <i>x</i> <sup>&nbsp;</sup></td></tr>
+<tr><td><sub>&nbsp;</sub> <i>j</i> &larr; <b><i>T</i></b><sub>2</sub><sup><i>i</i></sup> <sup>&nbsp;</sup></td></tr>
+</table></td></tr>
+</table>
+<p>= </p>
+-->
+
+<table align=center>
+<tr><td><table>
+<tr><td>1</td><td rowspan=7>&nbsp; &nbsp;</td>
+ <td rowspan=7 valign=center><b><i>T</i></b> =</td>
+ <td rowspan=7><img src="APLimg/matrixl7.bmp"></td>
+ <td>Friday</td><td>&nbsp;</td><td>6</td>
+ <td rowspan=7><img src="APLimg/matrixr7.bmp"></td></tr>
+<tr><td>2</td><td>Sunday </td><td>&nbsp;</td><td>1</td></tr>
+<tr><td>3</td><td>Monday</td><td>&nbsp;</td><td>2</td></tr>
+<tr><td>4</td><td>Tuesday</td><td>&nbsp;</td><td>3</td></tr>
+<tr><td>5</td><td>Thursday</td><td>&nbsp;</td><td>5</td></tr>
+<tr><td>6</td><td>Wednesday</td><td>&nbsp;</td><td>4</td></tr>
+<tr><td>7</td><td>Saturday</td><td>&nbsp;</td><td>7</td></tr>
+</table></td>
+<td width=59>&nbsp;</td>
+<td rowspan=2><img src="APLimg/AFIPS196212fig1e.bmp"></td></tr>
+</table>
+<p align=center>(e) Open addressing system-construction and use of table
+<br>&nbsp;</p>
+
+
+</td></tr></table>
+<br>
+
+
+
+<a name="table1"></a>
+<p align=center><b>Table 1</b>.  Basic operators for microprogramming<br> 
+(selected from Iverson, <i>A Programming Language</i>, Wiley, 1962)
+</p>
+
+<table align=center border=1 cellspacing=0 cellpadding=5>
+<tr><td>&nbsp;</td>
+ <td align=center><i>Operation</i></td>
+ <td align=center><i>Notation</i></td>
+ <td align=center><i>Definition</i></td>
+ <td align=center><i>Examples</i></td></tr>
+<tr><td valign=middle align=center><font size=-2>O<br>P<br>E<br>R<br>A<br>N<br>D<br>S</font></td>
+ <td><table>
+  <tr><td height=18>Scalar</td></tr>
+  <tr><td height=18>Vector</td></tr>
+  <tr><td height=110>Matrix</td></tr>
+  </table></td>
+ <td><table>
+  <tr><td height=18><i>a</i></td></tr>
+  <tr><td height=18><b><i>a</i></b></td></tr>
+  <tr><td height=110><b><i>A</i></b></td></tr>
+  </table></td>
+ <td><table>
+  <tr><td height=18>&nbsp;</td></tr>
+  <tr><td height=18><b><i>a</i></b> = (<b><i>a</i></b><sub>0</sub>, <b><i>a</i></b><sub>1</sub>, &#133;, <b><i>a</i></b><sub><i>&nu;</i>(<b><i>a</i></b>)&ndash;1</sub>)</td></tr>
+  <tr><td height=110>
+   <table><tr><td><b><i>A</i></b> =&nbsp;</td>
+    <td><img src="APLimg/matrixl2.bmp"></td>
+    <td><table>
+     <tr><td><b><i>A</i></b><sup>0</sup></td></tr>
+     <tr><td><b><i>A</i></b><sup><i>&mu;</i>(<b><i>A</i></b>)&ndash;1</sup></td></tr>
+    </table></td>
+    <td><img src="APLimg/matrixr2.bmp"></td>
+    <td>= (<b><i>A</i></b><sub>0</sub>, &#133;, <b><i>A</i></b><sub><i>&nu;</i>(<b><i>A</i></b>)&ndash;1</sub>)</td>
+   </tr></table>
+   <b><i>A</i></b><sup><i>i</i></sup> is <i>i</i>th row vector<br>
+   <b><i>A</i></b><sub><i>j</i></sub> is <i>j</i>th column vector
+   </td>
+  </table></td>
+ <td><table>
+  <tr><td height=18 colspan=10><b><i>a</i></b> = (3, 4, 5, 6, 7),&nbsp; <b><i>b</i></b> = (8, 9),&nbsp; <b><i>c</i></b> = (3, 2, 1)</td></tr>
+  <tr><td height=18 colspan=10><b><i>p</i></b> = (1, 0, 1, 0, 1),&nbsp; <b><i>q</i></b> = (1, 0, 1)</td></tr>
+  <tr><td height=110><b><i>A</i></b> =</td>
+   <td><table>
+    <tr><td rowspan=3><img src="APLimg/matrixl3.bmp"></td><td>0 1 2 3 4</td><td rowspan=3><img src="APLimg/matrixr3.bmp"></td></tr>
+    <tr><td>1 2 3 4 5</td></tr>
+    <tr><td>2 3 4 5 6</td></tr>
+    </table></td>
+   <td>&nbsp;</td>
+   <td><b><i>P</i></b> =</td></td>
+   <td><table>
+    <tr><td rowspan=2><img src="APLimg/matrixl2.bmp"><td>0 1 1</td><td rowspan=2><img src="APLimg/matrixr2.bmp"></td></tr>
+    <tr><td>1 0 1</td></tr>
+   </table></td>
+   </tr>
+  </table></td>
+ </tr>
+<tr><td valign=middle align=center><font size=-2>B<br>A<br>S<br>I<br>C<br><br>O<br>P<br>E<br>R<br>A<br>T<br>I<br>O<br>N<br>S</font></td>
+ <td valign=top><table>
+  <tr><td height=28>Floor</td></tr>
+  <tr><td height=28>Ceiling</td></tr>
+  <tr><td height=50 valign=top>Residue mod <i>m</i></td></tr>
+  <tr><td height=28>And</td></tr>
+  <tr><td height=28>Or</td></tr>
+  <tr><td height=28>Negation</td></tr>
+  <tr><td height=68 valign=top>Proposition</td></tr>
+ </table></td>
+ <td valign=top><table>
+  <tr><td height=28><i>k</i> &larr; <tt>⌊</tt><i>x</i><tt>&#x230b;</tt></td></tr>
+  <tr><td height=28><i>k</i> &larr; <tt>⌈</tt><i>x</i><tt>&#x2309;</tt></td></tr>
+  <tr><td height=50 valign=top><i>k</i> &larr; <i>m</i> | <i>n</i></td></tr>
+  <tr><td height=28><i>w</i> &larr; <i>u</i>&and;<i>v</i></td></tr>
+  <tr><td height=28><i>w</i> &larr; <i>u</i>&or;<i>v</i></td></tr>
+  <tr><td height=28><i>w</i> &larr; <img src="APLimg/uoscore.bmp"></td></tr>
+  <tr><td height=68 valign=top><i>w</i> &larr; (<i>x</i><font face=script>R</font><i>y</i>)</td></tr>
+ </table></td>
+ <td valign=top><table>
+  <tr><td height=28><i>k</i> &le; <i>x</i> &lt; <i>k</i> + 1</td>
+   <td rowspan=3><img src="APLimg/matrixr3.bmp"> &nbsp;</td>
+   <td rowspan=3><i>k</i>, <i>m</i>, <i>n</i>, <i>q</i> integers</td></tr>
+  <tr><td height=28><i>k</i> &ge; <i>x</i> &gt; <i>k</i> &ndash; 1</td></tr>
+  <tr><td height=50 valign=top><i>n</i> = <i>m</i><i>q</i> + <i>k</i>, <br>0 &le; <i>k</i> &lt; <i>m</i></td></tr>
+  <tr><td height=28 colspan=3><i>w</i> = 1 iff <i>u</i>=1 and <i>v</i>=1</td></tr>
+  <tr><td height=28 colspan=3><i>w</i> = 1 iff <i>u</i>=1 or <i>v</i>=1</td></tr>
+  <tr><td height=28 colspan=3><i>w</i> = 1 iff <i>u</i>=0</td></tr>
+  <tr><td height=28 colspan=3 valign=top><i>w</i> = 1 iff <i>x</i> stands in relation <font face=script>R</font> to <i>y</i></td></tr>
+ </table>
+  <hr width=85%>
+  All basic operations are extended <br>
+  component-by-component to<br>
+  vectors and matrices, e.g.,
+  <table><tr><td>&nbsp; &nbsp;</td>
+   <td><b><i>z</i></b> &larr; <b><i>x</i></b> + <b><i>y</i></b><br>
+   <b><i>z</i></b> &larr; <b><i>x</i></b> &times; <b><i>y</i></b><br>
+   <b><i>W</i></b> &larr; <b><i>U</i></b> &or; <b><i>V</i></b><br> 
+   <b><i>w</i></b> &larr; (<b><i>x</i></b> &le; <b><i>y</i></b>)
+  </td></tr></table>
+ </td>
+ <td valign=top><table>
+  <tr><td height=28><tt>⌊</tt>3.14<tt>&#x230b;</tt> = 3, &nbsp; <tt>⌊</tt>&ndash;3.14<tt>&#x230b;</tt> = &ndash; 4</td></tr>
+  <tr><td height=28><tt>⌈</tt>3.14<tt>&#x2309;</tt> = 4, &nbsp; <tt>⌈</tt>&ndash;3.14<tt>&#x2309;</tt> = &ndash;3</td></tr>
+  <tr><td height=50 valign=top>7 | 19 = 5, &nbsp; 7 | 21 = 0, &nbsp; 7 | &ndash;3 = 4</td></tr>
+  <tr><td height=28>&nbsp;</td></tr>
+  <tr><td height=28>&nbsp;</td></tr>
+  <tr><td height=28>&nbsp;</td></tr>
+  <tr><td height=68 valign=top>(3 &ge; 2) = 1, &nbsp; (5 &ne; 2) = 1, &nbsp; (<i>i</i> = <i>j</i>) = <i>&delta;</i><sub><i>ij</i></sub>,<br>
+   (<i>u</i> &ne; <i>v</i>) = exclusive-or of <i>u</i> and <i>v</i>, <br>
+   (<i>u</i> &lt; <i>v</i>) = <img src="APLimg/uoscore.bmp">&and;<i>v</i>.</td></tr>
+ </table></td>
+ </tr>
+<tr><td valign=middle align=center><font size=-2>S<br>P<br>E<br>C<br>I<br>A<br>L<br><br>A<br>R<br>R<br>A<br>Y<br>S</font></td>
+ <td valign=top><table>
+  <tr><td height=28>Full vector</td></tr>
+  <tr><td height=28>Unit vector</td></tr>
+  <tr><td height=28>Prefix vector</td></tr>
+  <tr><td height=28>Suffix vector</td></tr>
+  <tr><td height=28>Infix vector</td></tr>
+  <tr><td height=50 valign=top>Interval vector <sup>&nbsp;</sup></td></tr>
+  <tr><td height=28>Full matrix</td></tr>
+  <tr><td height=28>Identity matrix</td></tr>
+ </table></td>
+ <td valign=top><table> 
+  <tr><td height=28><b><i>w</i></b> &larr; <tt><b>∊</b></tt>(<i>n</i>)</td></tr>
+  <tr><td height=28><b><i>w</i></b> &larr; <tt><b>∊</b></tt><sup>&nbsp;<i>j</i></sup>(<i>n</i>)</td></tr>
+  <tr><td height=28><b><i>w</i></b> &larr; <tt><b>⍺</b></tt><sup>&nbsp;<i>j</i></sup>(<i>n</i>)</td></tr>
+  <tr><td height=28><b><i>w</i></b> &larr; <tt><b>⍵</b></tt><sup>&nbsp;<i>j</i></sup>(<i>n</i>)</td></tr>
+  <tr><td height=28><b><i>w</i></b> &larr; <i>i</i> &darr; <tt><b>⍺</b></tt><sup>&nbsp;<i>j</i></sup>(<i>n</i>)</td></tr>
+  <tr><td height=50 valign=top><b><i>k</i></b> &larr; <tt><b>⍳</b></tt><sup>&nbsp;<i>j</i></sup>(<i>n</i>)</td></tr>
+  <tr><td height=28><b><i>W</i></b> &larr; <b><i>E</i></b>(<i>m</i> &times; <i>n</i>)</td></tr>
+  <tr><td height=28><b><i>W</i></b> &larr; <b><i>I</i></b>(<i>m</i> &times; <i>n</i>)</td></tr>
+ </table></td>
+ <td><table> 
+  <tr><td height=28><b><i>w</i></b><sub><i>i</i></sub> = 1 (All 1&rsquo;s)</td>
+   <td valign=top rowspan=6><img src="APLimg/matrixr6.bmp"></td><td rowspan=6>a</a></tr>
+  <tr><td height=28><b><i>w</i></b><sub><i>i</i></sub> = (<i>i</i> = <i>j</i>) (1 in position <i>j</i>)</td></tr>
+  <tr><td height=28><b><i>w</i></b><sub><i>i</i></sub> = (<i>i</i> &lt; <i>j</i>) (<i>j</i> leading 1&rsquo;s)</td></tr>
+  <tr><td height=28><b><i>w</i></b><sub><i>i</i></sub> = (<i>i</i> &ge; <i>n</i>&ndash;<i>j</i>) (<i>j</i> final 1&rsquo;s)</td></tr>
+  <tr><td height=28>See Rotation (<i>j</i> 1&rsquo;s after <i>i</i> 0&rsquo;s)</td></tr>
+  <tr><td height=50 valign=top><b><i>k</i></b><sub><i>i</i></sub> = <i>i</i>+<i>j</i> (Integers from <i>j</i>) <sup>&nbsp;</sup></td></tr>
+  <tr><td height=28><b><i>W</i></b><sub><i>j</i></sub><sup><i>i</i></sup> = 1 (All 1&rsquo;s)</td>
+   <td rowspan=2><img src="APLimg/matrixr2.bmp"></td><td rowspan=2>b</a></tr></tr>
+  <tr><td height=28><b><i>W</i></b><sub><i>j</i></sub><sup><i>i</i></sup> = (<i>i</i> = <i>j</i>) (Diagonal 1&rsquo;s)</td></tr>
+  </table>
+  <hr width=85%>
+  <table><tr><td valign=top>a.</td><td>&nbsp;</td><td>Of dimension <i>&nu;</i>(<b><i>w</i></b>) = <i>n</i>. The <i>n</i> may <br>
+   be omitted if clear from context.</td></tr>
+   <tr><td valign=top>b.</td><td>&nbsp;</td><td>Of dimension <i>m</i> &times; <i>n</i> (may be omitted)</td></tr>
+   </table>
+ </td>
+ <td valign=top><table>
+  <tr><td height=28><tt><b>∊</b></tt>(<i>5</i>) = (1, 1, 1, 1, 1),&nbsp;
+   <img src="APLimg/epsboscore.bmp"> = zero vector</td></tr>
+  <tr><td height=28><tt><b>∊</b><sup>0</sup></tt>(5) = (1, 0, 0, 0, 0),&nbsp; <tt><b>∊</b><sup>3</sup></tt>(5) = (0, 0, 0, 1, 0)</td></tr>
+  <tr><td height=28><tt><b>⍺</b></tt><sup>3</sup>(5) = (1, 1, 1, 0, 0),&nbsp; <tt><b>⍺</b></tt><sup>2</sup>(4) = (1, 1, 0, 0) </td></tr>
+  <tr><td height=28><tt><b>⍵</b></tt><sup>3</sup>(5) = (0, 0, 1, 1, 1),&nbsp; 
+   <i>j</i> &darr; <tt><b>⍵</b></tt><sup>&nbsp;<i>j</i></sup> = <tt><b>⍺</b></tt><sup>&nbsp;<i>j</i></sup>,&nbsp;
+   <i>j</i> &uarr <tt><b>⍺</b></tt><sup>&nbsp;<i>j</i></sup> = <tt><b>⍵</b></tt><sup>&nbsp;<i>j</i></sup></td></tr>
+  <tr><td height=28>2 &darr; <tt><b>⍺</b></tt><sup>3</sup>(9) = (0, 0, 1, 1, 1, 0, 0, 0, 0)</td></tr>
+  <tr><td height=50><tt><b>⍳</b></tt><sup>0</sup>(3) = (0, 1, 2),&nbsp; <tt><b>⍳</b></tt><sup>1</sup>(3) = (1, 2, 3),&nbsp;<br> 
+   <tt><b>⍳</b></tt><sup>&ndash;6</sup>(4) = (&ndash;6, &ndash;5, &ndash;4, &ndash;3)</td></tr>
+  <tr><td height=28><img src="APLimg/ecapboscore.bmp">(<i>m</i> &times; <i>n</i>) = zero matrix</td></tr>
+ </table></td>
+ </tr>
+<tr><td valign=middle align=center><font size=-2>S<br>E<br>L<br>E<br>C<br>T<br>I<br>O<br>N</font></td>
+ <td><table>
+  <tr><td height=50 valign=top>Compression <sup>&nbsp;</sup></td></tr>
+  <tr><td height=50 valign=top>Row compression</td></tr>
+  <tr><td height=50 valign=top>Column compression</td></tr>
+  <tr><td height=50 valign=top>Mesh</td></tr>
+  <tr><td height=50 valign=top>Mask</td></tr>
+  <tr><td height=50 valign=top>Expansion</td></tr>
+  <tr><td height=28 valign=top>Catenation</td></tr>
+ </table></td>
+ <td><table>
+  <tr><td height=50 valign=top><b><i>z</i></b> &larr; <b><i>u</i></b>/<b><i>x</i></b> <sup>&nbsp;</sup></td></tr>
+  <tr><td height=50 valign=top><b><i>Z</i></b> &larr; <b><i>u</i></b>/<b><i>X</i></b></td></tr>
+  <tr><td height=50 valign=top><b><i>Z</i></b> &larr; <b><i>u</i></b>//<b><i>X</i></td></tr>
+  <tr><td height=50 valign=top><b><i>z</i></b> &larr; \<b><i>x</i></b>, <b><i>u</i></b>, <b><i>y</i></b>\</td></tr>
+  <tr><td height=50 valign=top><b><i>z</i></b> &larr; /<b><i>x</i></b>, <b><i>u</i></b>, <b><i>y</i></b>/</td></tr>
+  <tr><td height=50 valign=top><b><i>z</i></b> &larr; <b><i>u</i></b>\<b><i>x</i></b></td></tr>
+  <tr><td height=28 valign=top><b><i>z</i></b> &larr; <b><i>x</i></b><img src="APLimg/circleplus.bmp"><b><i>y</i></b></td></tr>
+ </table></td>
+ <td><table>
+  <tr><td height=50 valign=top><b><i>z</i></b> obtained from <b><i>x</i></b> by suppressing <sup>&nbsp;</sup><br>
+   each <b><i>x</i></b><sub><i>i</i></sub> for which <b><i>u</i></b><sub><i>i</i></sub> = 0</td></tr>
+  <tr><td height=50 valign=top><b><i>Z</i></b><sup>&nbsp;<i>i</i></sup> = <b><i>u</i></b>/<b><i>X</i></b><sup>&nbsp;<i>i</i></sup> </td></tr>
+  <tr><td height=50 valign=top><b><i>Z</i></b><sub><i>j</i></sub> = <b><i>u</i></b>/<b><i>X</i></b><sub><i>j</i></sub> </td></tr>
+  <tr><td height=50 valign=top><img src="APLimg/uboscore.bmp">/<b><i>z</i></b> = <b><i>x</i></b> and <b><i>u</i></b>/<b><i>z</i></b> = <b><i>y</i></b>
+   (Selected in<br>order from <b><i>x</i></b> or <b><i>y</i></b> as <b><i>u</i></b><sub><i>i</i></sub> = 0 or 1) </td></tr>
+  <tr><td height=50 valign=top><img src="APLimg/uboscore.bmp">/<b><i>z</i></b> = <img src="APLimg/uboscore.bmp">/<b><i>x</i></b> and
+   <b><i>u</i></b>/<b><i>z</i></b> = <b><i>u</i></b>/<b><i>y</i></b><br>
+   (<b><i>z</i></b><sub><i>i</i></sub> = <b><i>x</i></b><sub><i>i</i></sub> or 
+   <b><i>y</i></b><sub><i>i</i></sub> as <b><i>u</i></b><sub><i>i</i></sub> = 0 or 1)</td></tr>
+  <tr><td height=50 valign=top><img src="APLimg/uboscore.bmp">/<b><i>z</i></b> = <img src="APLimg/epsboscore.bmp"> and <b><i>u</i></b>/<b><i>z</i></b>
+   = <b><i>y</i></b><br>(Mesh using zero vector for <b><i>x</i></b>) </td></tr>
+  <tr><td height=28 valign=top><b><i>z</i></b> = (<b><i>x</i></b><sub>0</sub>, <b><i>x</i></b><sub>1</sub>,&#133;,
+   <b><i>x</i></b><sub><i>&nu;</i>(<b><i>x</i></b>)&ndash;1</sub>, <b><i>y</i></b><sub>0</sub>, <b><i>y</i></b><sub>1</sub>,&#133;, 
+   <b><i>y</i></b><sub><i>&nu;</i>(<b><i>y</i></b>)&ndash;1</sub>)</td></tr>
+ </table></td>
+ <td><table>
+  <tr><td height=50 valign=top colspan=3><b><i>p</i></b>/<b><i>a</i></b> = (3, 5, 7),&nbsp; 
+   <img align=middle src="APLimg/pboscore.bmp">/<b><i>a</i></b> = (4, 6),&nbsp;
+   <tt><b>⍺</b></tt><sup>3</sup>/<b><i>x</i></b> = (<b><i>x</i></b><sub>0</sub>, <b><i>x</i></b><sub>1</sub>, <b><i>x</i></b><sub>2</sub>)
+   </td></tr>
+  <tr><td height=100 colspan=3><table><tr>
+     <td><b><i>p</i></b>/<b><i>A</i></b> =</td>
+     <td><table>
+      <tr><td rowspan=3><img src="APLimg/matrixl3.bmp"></td><td>0 2 4</td>
+       <td rowspan=3><img src="APLimg/matrixr3.bmp"></td><td rowspan=3>,</td></tr>
+      <tr><td>1 3 5</td></tr>
+      <tr><td>2 4 6</td></tr>
+     </table></td>
+     <td>&nbsp;</td>
+     <td><b><i>q</i></b>//<b><i>A</i></b> =</td>
+      <td><table>
+      <tr><td rowspan=2><img src="APLimg/matrixl2.bmp"></td><td>0 1 2 3 4</td>
+       <td rowspan=3><img src="APLimg/matrixr2.bmp"></td></tr>
+      <tr><td>2 3 4 5 6</td></tr>
+     </table></td>
+    </td></tr></table>
+   </td></tr>
+  <tr><td height=50 valign=top>\<b><i>b</i></b>, <b><i>p</i></b>, <b><i>c</i></b>\ = (3, 8, 2, 9, 1)</td>
+   <td rowspan=3>&nbsp; <img src="APLimg/matrixr5.bmp"></td>
+   <td rowspan=3>Extend to matrices<br>as for compression</td>
+   </tr>
+  <tr><td height=50 valign=top colspan=3>/<b><i>a</i></b>, <b><i>p</i></b>, <b><i>A</i></b><sup>0</sup>/ = (0, 4, 2, 6, 4) </td></tr>
+  <tr><td height=50 valign=top colspan=3><b><i>p</i></b>\<b><i>c</i></b> = (3, 0, 2, 0, 1)</td></tr>
+  <tr><td height=28 valign=top colspan=3><b><i>a</i></b> <img src="APLimg/circleplus.bmp"> <b><i>b</i></b> = (3, 4, 5, 6, 7, 8, 9),&nbsp;
+   <b><i>x</i></b> <img src="APLimg/circleplus.bmp"> <b><i>y</i></b> = \<b><i>x</i></b>, <tt><b>⍵</b></tt><sup><i>&nu;</i>(<b><i>y</i></b>)</sup>, <b><i>y</i></b>\
+   </td></tr>
+ </table></td>
+ </tr>
+<tr><td valign=middle align=center><font size=-2>M<br>I<br>S<br>C<br>E<br>L<br>L<br>A<br>N<br>E<br>O<br>U<br>S</font></td>
+ <td><table>
+  <tr><td height=84>Base 2 value</td><td><img src="APLimg/matrixl3.bmp"></td></tr>
+  <tr><td height=28>Left rotation</td></tr>
+  <tr><td height=28>Right rotation</td></tr>
+  <tr><td height=50>&nbsp;</td></tr>
+  <tr><td height=50 valign=top>Reduction</td></tr>
+  <tr><td height=28>Row reduction</td></tr>
+  <tr><td height=28>Column reduction</td></tr>
+  <tr><td height=130 valign=top>Matrix product<sup>&nbsp;</sup></td></tr>
+  <tr><td height=40>Maximum prefix</td></tr>
+  <tr><td height=40>Maximum suffix</td></tr>
+  <tr><td height=50 valign=top>Representation</td></tr>
+ </table></td>
+ <td><table>
+  <tr><td height=28><i>z</i> &larr; <tt>⊥</tt> <b><i>u</i></b></td></tr>
+  <tr><td height=28><b><i>z</i></b> &larr; <tt>⊥</tt> <b><i>U</i></b></td></tr>
+  <tr><td height=28><b><i>z</i></b> &larr; <img src="APLimg/decode2.bmp"> <b><i>U</i></b></td></tr>
+  <tr><td height=28><b><i>z</i></b> &larr; <i>k</i> &uarr; <b><i>x</i></b></td></tr>
+  <tr><td height=28><b><i>z</i></b> &larr; <i>k</i> &darr; <b><i>x</i></b></td></tr>
+  <tr><td height=50>&nbsp;</td></tr>
+  <tr><td height=50 valign=top><i>z</i> &larr; <img src="APLimg/circledot.bmp">/<b><i>x</i></b></td></tr>
+  <tr><td height=28><b><i>z</i></b> &larr; <img src="APLimg/circledot.bmp">/<b><i>X</i></b></td></tr>
+  <tr><td height=28><b><i>z</i></b> &larr; <img src="APLimg/circledot.bmp">//<b><i>X</i></b></td></tr>
+  <tr><td height=130 valign=top><b><i>Z</i></b> &larr; <b><i>X</i></b><img src="APLimg/circle1circle2.bmp"><b><i>X</i></b></td></td></tr>
+  <tr><td height=40><b><i>w</i></b> &larr; <tt>⍺</tt>/<b><i>u</i></b> </td></tr>
+  <tr><td height=40><b><i>w</i></b> &larr; <tt>⍵</tt>/<b><i>u</i></b> </td></tr>
+  <tr><td height=50 valign=top><b><i>z</i></b> &larr; <tt><b>⍴</b></tt>(<b><i>x</i></b>) </td></tr>
+ </table></td>
+<td><table>
+  <tr><td height=28 colspan=3>Value of <b><i>u</i></b> as a base 2 number</td></tr>
+  <tr><td height=28 colspan=3><b><i>z</i></b><sub><i>i</i></sub> = <tt>⊥</tt> <b><i>U</i></b><sup>&nbsp;<i>i</i></sup></td></tr>
+  <tr><td height=28 colspan=3><b><i>z</i></b><sub><i>j</i></sub> = <tt>⊥</tt> <b><i>U</i></b><sub>&nbsp;<i>j</i></sub></td></tr>
+  <tr><td height=28><b><i>z</i></b><sub><i>i</i></sub> = <b><i>x</i></b><sub><i>j</i></sub>,&nbsp; <i>j</i> = &nu;(<b><i>x</i></b>) | (<i>i</i> + <i>k</i>)</td>
+   <td rowspan=2 width=50><img src="APLimg/matrixr2.bmp"></td></tr>
+  <tr><td height=28><b><i>z</i></b><sub><i>i</i></sub> = <b><i>x</i></b><sub><i>j</i></sub>,&nbsp; <i>j</i> = &nu;(<b><i>x</i></b>) | (<i>i</i> &ndash; <i>k</i>)</td></tr>
+  <tr><td height=50>Cyclic left (right) rotation of <b><i>x</i></b><br>by <i>k</i> places</td></tr>
+  <tr><td height=50 valign=top colspan=3><i>z</i> = (&#133;((<b><i>x</i></b><sub>0</sub> <img src="APLimg/circledot.bmp"> <b><i>x</i></b><sub>1</sub>) 
+   <img src="APLimg/circledot.bmp"> <b><i>x</i></b><sub>2</sub>) 
+   <img src="APLimg/circledot.bmp">&#133;<img src="APLimg/circledot.bmp"> <b><i>x</i></b><sub><i>&nu;</i>&ndash;1</sub>)<br>
+    <img src="APLimg/circledot.bmp"> is any binary operator or relation</td></tr>
+  <tr><td height=28 colspan=3><b><i>z</i></b><sub><i>i</i></sub> = <img src="APLimg/circledot.bmp">/<b><i>X</i></b><sup>&nbsp;<i>i</i></sup></td></tr>
+  <tr><td height=28 colspan=3><b><i>z</i></b><sub><i>j</i></sub> = <img src="APLimg/circledot.bmp">/<b><i>X</i></b><sub><i>j</i></sub></td></tr>
+  <tr><td height=130 valign=top colspan=2><b><i>Z</i></b><sub><i>j</i></sub><sup><i>i</i></sup> = <img src="APLimg/circledot.bmp"><sub>1</sub>/(<b><i>X</i></b><sup>&nbsp;<i>i</i></sup>
+   <img src="APLimg/circledot.bmp"><sub>2</sub> <b><i>Y</i></b><sub><i>j</i></sub>), where <img src="APLimg/circledot.bmp"><sub>1</sub> and 
+   <img src="APLimg/circledot.bmp"><sub>2</sub> <br>are binary operations or relations</td></tr>
+  <tr><td height=80 colspan=3><table><tr><td><img src="APLimg/matrixr2.bmp"> &nbsp;</td><td><b><i>w</i></b> 
+   is the maximum length<br>prefix (suffix) in <b><i>u</i></b></td></tr></table> </td></tr>
+  <tr><td height=50 valign=top colspan=3><b><i>z</i></b> is the vector representation<br>of the character <b><i>x</i></b></td></tr>
+ </table></td>
+ <td><table>
+  <tr><td height=28><tt>⊥</tt><b><i>q</i></b> = 5,&nbsp; <tt>⊥</tt><b><i>p</i></b> = 21</td></tr>
+  <tr><td height=28><tt>⊥</tt><b><i>P</i></b> = (3, 5)</td></tr>
+  <tr><td height=28><img src="APLimg/decode2.bmp"></tt><b><i>P</i></b> = (1, 2, 3) = <tt><b>⍳</b></tt><sup>1</sup>(3)</td></tr>
+  <tr><td height=28>2 &uarr; <b><i>a</i></b> = (5, 6, 7, 3, 4),&nbsp; 5 &uarr; <b><i>a</i></b> = <b><i>a</i></b></td></tr>
+  <tr><td height=28>1 &darr; <b><i>a</i></b> = (7, 3, 4, 5, 6)</td></tr>
+  <tr><td height=50>&nbsp;</td></tr>
+  <tr><td height=50 valign=top>+/<b><i>p</i></b> = 3,&nbsp; &times;/<b><i>c</i></b> = 6,&nbsp; &and;/<b><i>p</i></b> = 0,&nbsp;<br>
+   &ne;/<b><i>q</i></b> = ((1 &ne; 0) &ne; 1) = (1 &ne; 1) = 0,&nbsp;
+   </td></tr>
+  <tr><td height=28>+/<b><i>A</i></b> = (10, 15, 20),&nbsp; &or;/<b><i>P</i></b> = (1, 1),&nbsp; &ne;/<b><i>P</i></b> = (0, 0)</td></tr>
+  <tr><td height=28>+//<b><i>A</i></b> = (3, 6, 9, 12, 15),&nbsp; +/(&ne;//<b><i>P</i></b>) = 2</td></tr>
+  <tr><td height=130 valign=top><table>
+   <tr><td colspan=5><b><i>X</i></b> <img src="APLimg/plustimes.bmp"> <b><i>Y</i></b> is ordinary matrix product,</td></tr>
+   <tr><td rowspan=2><b><i>P</i></b> <img src="APLimg/plustimes.bmp"> <b><i>A</i></b> = </td>
+    <td rowspan=2><img src="APLimg/matrixl2.bmp"></td><td>3, 5, 7, 9, 11</td>
+    <td rowspan=2><img src="APLimg/matrixr2.bmp"></td><td rowspan=2 width=80>,</td></tr>
+   <tr><td>2, 4, 6, 8, 10</td></tr>
+   <tr><td colspan=5><b><i>c</i></b> <img src="APLimg/plustimes.bmp"> <b><i>A</i></b> = (4, 10, 16, 22, 28),&nbsp; 
+    <b><i>P</i></b> <img src="APLimg/andeq.bmp"> <b><i>q</i></b> = (0, 1),</td></tr>
+   <tr><td colspan=5><b><i>x</i></b> <img src="APLimg/plustimes.bmp"> <b><i>y</i></b> is ordinary scalar product,
+    <b><i>b</i></b> <img src="APLimg/plustimes.bmp"> <b><i>b</i></b> = 145</td></tr>
+   </table></td></tr>
+  <tr><td height=80><tt>⍺</tt>/(1,1,0,1,0) = (1,1,0,0,0),&nbsp; <tt>⍵</tt>/(1,1,0,1,0) = (0,0,0,0,0),<br>
+   <tt>⍺</tt>/<b><i>p</i></b> = (1,0,0,0,0),&nbsp; <tt>⍵</tt>/<b><i>p</i></b> = (0,0,0,0,1),<br>
+   <tt>⍺</tt>/<b><tt>⍺</tt></b><sup>&nbsp;<i>j</i></sup> = <b><tt>⍺</tt></b><sup>&nbsp;<i>j</i></sup>,&nbsp;
+    (+/<tt>⍺</tt>/(<b><i>x</i></b> = <img src="APLimg/epsboscore.bmp">)) &uarr; <b><i>x</i></b> = <b><i>x</i></b> left justified
+   </td></tr>
+    <tr><td height=50 valign=top>In 7090, <tt><b>⍴</b></tt>(<i>d</i>) = (0,1,0,1,0,0),&nbsp; <tt><b>⍴</b></tt>(<i>e</i>) = (0,1,0,1,0,1)<br>
+   In 8421 code, <tt><b>⍴</b></tt>(0) = (0,0,0,0),&nbsp; <tt><b>⍴</b></tt>(1) = (0,0,0,1)
+   </td></tr>
+ </table></td>
+ </tr>
+</table>
+
+
+<table width=520 align=center><tr><td>
+
+<br><hr>
+
+<font size=-1>
+<p>Originally appeared in the 
+<a target=_parent href="http://portal.acm.org/citation.cfm?id=1461518.1461530">Proceedings</a>
+of the AFIPS Fall Joint Computer Conference, Philadelphia, 1962-12-04 to -06.</p>
+
+<script src="apldisplay.js" type="text/javascript"></script>
+</font></p>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-12-08 17:55</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2012-08-15 22:55</font></td></tr>
+</table>
+
+</td></tr></table>
+<br>
+</body>
+</html>

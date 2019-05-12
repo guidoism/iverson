@@ -1,0 +1,2251 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Some Uses of { and }</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Some Uses of { and }</font><br><br>
+<b>Roger Hui</b><br><br>
+I.P. Sharp Associates Limited<br>
+2 First Canadian Place. Suite 1900<br>
+Toronto, Ontario M5X 1E3
+<br>&nbsp;</p>
+
+<p>We believe that the design of APL was also affected
+in important respects by a number of procedures and
+circumstances. Firstly, from its inception APL has
+been developed by <i>using</i> it in a succession of areas.
+This emphasis on application clearly favors
+practicality and simplicity. The treatment of many
+different areas fostered generalization &#133;</p>
+
+<p>&nbsp; &nbsp; &mdash; Falkoff and Iverson, 
+<i>The Design of APL</i><br>&nbsp;</p>
+
+<hr>
+
+
+
+<a name="0"></a>
+<p><b>0. Introduction</b></p>
+
+<p>This paper explores uses of the new primitives all,
+from, select, and merge<tt> </tt>
+(<tt>{⍵</tt>,<tt> ⍺{⍵</tt>,<tt> v}⍵ </tt>and<tt> ⍺v}⍵</tt>).<tt> </tt>
+Facilities of K.E. Iverson&rsquo;s 
+<i>A Dictionary of APL</i>
+<acronym title="Iverson, Kenneth Eugene, A Dictionary of APL, I.P. Sharp Associates Limited, 1986 7.">[1986]</acronym> 
+are exploited. 
+Brief explanations of the less
+familiar aspects of the notation 
+are in Appendix A.
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>1. A Few Applications</b></p>
+
+<p>Examples here illustrate the meaning 
+of<tt> { }</tt>&nbsp;.<tt> </tt>
+Some readers may wish to skip to Section 2, 
+which defines<tt> { } </tt>directly, before returning.</p>
+
+<a name="1.1"></a>
+<p><b>1.1 Short Examples</b></p>
+
+<table>
+<tr><td valign=top><tt>0{x</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The first element of vector<tt> x</tt></td></tr>
+<tr><td valign=top><tt>¯1{x</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The last element of<tt> x</tt></td></tr>
+<tr><td valign=top><tt>0 ¯1{x</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The first and last element of<tt> x</tt></td></tr>
+<tr><td valign=top><tt>0{m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The first row of matrix<tt> m</tt></td></tr>
+<tr><td valign=top><tt>¯1{m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The last row of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>¯1 0{m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The last and first row of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>¯2 0{a</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The penultimate and first major cells of<tt> a</tt>&nbsp;;<br>
+ two<tt> ¯1</tt>-cells of<tt> a</tt></td></tr>
+<tr><td valign=top><tt>(&lt;i,j){m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The element at row<tt> i </tt>&amp; column<tt> j </tt>
+ of<tt> m</tt>&nbsp;;<tt> m[i;j]</tt></td></tr>
+<tr><td valign=top><tt>(&lt;i⊃j){m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The element at row<tt> i </tt>&amp; column<tt> j </tt>
+ of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>(&lt;(&lt;i),&lt;j){m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The element at row<tt> i </tt>&amp; column<tt> j </tt>
+ of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>j{i{m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The element at row<tt> i </tt>&amp; column<tt> j </tt>
+ of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>i{j{⍤1 m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The element at row<tt> i </tt>&amp; column<tt> j </tt>
+ of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>(&lt;∘⊃¯1){m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The last column  of<tt> m</tt>&nbsp;;<tt> ∘ ←→ &lt;''</tt></td></tr>
+<tr><td valign=top><tt>¯1{⍉m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The last column of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>¯1{⍤1 m</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The last column of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>(&lt;0 0 ¯1 ¯1){a</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>A<tt> ¯4</tt>-cell of<tt> a</tt></tt></td></tr>
+<tr><td valign=top nowrap><tt>((⌽⍳⌈/x)∘.&lt;x){' ⎕'</tt><td>&nbsp;</td>
+ <td>A histogram of non-negative integer vector<tt> x</tt></td></tr>
+<tr><td valign=top><tt>(⍋a){a</tt><td>&nbsp;</td>
+ <td>Sort the major cells of real array<tt> a</tt></td></tr>
+<tr><td valign=top><tt>(b⍋a){a</tt><td>&nbsp;</td>
+ <td>Sort the major cells of character array<tt> a</tt>&nbsp;,<tt> </tt>
+ according to alphabet<tt> b</tt></td></tr>
+
+<tr><td valign=top><tt>(<<<0){m</tt><td>&nbsp;</td>
+ <td>all but the first row of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>(<<<0 ¯1){m</tt><td>&nbsp;</td>
+ <td>all but the first and last rows of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>(<(<&lt;i),<&lt;j)){m</tt><td>&nbsp;</td>
+ <td>all but the row<tt> i </tt>&amp; column<tt> j </tt>of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>(<<¨>i,j){m</tt><td>&nbsp;</td>
+ <td>all but the row<tt> i </tt>&amp; column<tt> j </tt>of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>(<(&lt;i),<&lt;j){m</tt><td>&nbsp;</td>
+ <td>Row<tt> i </tt>and all but column<tt> j </tt>of<tt> m</tt></td></tr>
+<tr><td valign=top><tt>(<(<&lt;i),&lt;j){m</tt><td>&nbsp;</td>
+ <td>All but row<tt> i</tt>&nbsp;,<tt> </tt>and column<tt> j </tt>of<tt> m</tt></td></tr>
+
+<tr><td valign=top><tt>i{m</tt><td>&nbsp;</td>
+ <td>Row<tt> i </tt>of matrix<tt> m</tt></td></tr>
+<tr><td valign=top><tt>i¨{</tt><td>&nbsp;</td>
+ <td>A verb selecting row<tt> i </tt>of a matrix</td></tr>
+<tr><td valign=top><tt>x i¨{}m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but row<tt> i </tt>is<tt> x </tt></td></tr>
+<tr><td valign=top><tt>x i⍤¯}m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but row<tt> i </tt>is<tt> x </tt></td></tr>
+<tr><td valign=top><tt>x(<∘⊃i)¨{}m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but column<tt> i </tt>is<tt> x </tt></td></tr>
+<tr><td valign=top><tt>x(<∘⊃i)⍤¯}m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but column<tt> i </tt>is<tt> x </tt></td></tr>
+<tr><td valign=top><tt>x i¨{}⍤¯1 m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but column<tt> i </tt>is<tt> x </tt></td></tr>
+<tr><td valign=top><tt>x i¨{⍤1}m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but column<tt> i </tt>is<tt> x </tt></td></tr>
+<tr><td valign=top><tt>x i¨{}¨⍉m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but column<tt> i </tt>is<tt> x </tt></td></tr>
+<tr><td valign=top><tt>x i¨{⍤⍉}m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but column<tt> i </tt>is<tt> x </tt></td></tr>
+<tr><td valign=top><tt>x(<<&lt;i)¨{m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but all except row<tt> i </tt>is<tt> x </tt></td></tr>
+<tr><td valign=top><tt>x 0 0¨⍉}m</tt><td>&nbsp;</td>
+ <td>Like<tt> m</tt>&nbsp;,<tt> </tt>but the diagonal is<tt> x</tt></td></tr>
+<tr><td valign=top><tt>x b/}y</tt><td>&nbsp;</td>
+ <td>Like<tt> y</tt>&nbsp;,<tt> </tt>but the positions
+ selected by<tt> b </tt>are<tt> x </tt></td></tr>
+<tr><td valign=top><tt>a←1⊢}a</tt><td>&nbsp;</td>
+ <td>Replace every element of<tt> a </tt>
+ by<tt> 1</tt>&nbsp;;<tt> a[;&#133;;]←1 </tt></td></tr>
+
+<tr><td valign=top><tt>{(&lt;a),(&lt;b),&lt;c</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>The cartesian product of<tt> a</tt>&nbsp;,<tt> b</tt>&nbsp;,<tt> </tt>
+ and<tt> c </tt></td></tr>
+<tr><td valign=top><tt>{⍳¨&gt;⍳a</tt>&nbsp;</td><td>&nbsp;</td>
+ <td nowrap>The &ldquo;position&rdquo; of each element 
+ of<tt> a</tt>&nbsp;;<br>
+ <tt> (&lt;⍴a)⊤¨&gt;(⍴a)⍴⍳×/⍴a</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>⌽¨&gt;}c</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>⍉c</tt>&nbsp;,<tt> </tt>where<tt> c </tt>is a cube 
+ &mdash;<tt> (⍴c)^.=0{⍴c</tt></td></tr>
+<tr><td valign=top><tt>&gt;{⍤&gt;/(&lt;⍤0⌽p),&lt;a</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>Pick a (nested) element of<tt> a </tt>with path<tt> p</tt></td></tr>
+</table>
+
+<a name="1.2"></a>
+<p><b>1.2 Text Formatting</b></p>
+
+Carim 
+<acronym title="Carim, Halit, Contest Number 3: Paragraphics, The I.P. Sharp Newsletter, Volume 5, Number 1, I.P. Sharp Associates Limited, 1977 1.">[1977]</acronym> 
+and Smith 
+<acronym title="Smith, Bob Asa, Paragraphics Perfected, The I.P. Sharp Newsletter, Volume 7, Number 2, I.P. Sharp Associates Limited, 1979 3.">[1979]</acronym>
+discussed the text
+formatting or &ldquo;paragraphing&rdquo; problem. 
+Given: a string<tt> ⍵ </tt>of words separated by blanks, and a positive
+integer<tt> ⍺ </tt>of the desired width. Replace appropriate
+elements of<tt> ⍵ </tt>by the &ldquo;new line&rdquo; 
+character<tt> nl</tt>&nbsp;,<tt> </tt>so that
+lines are no wider than<tt> ⍺</tt>&nbsp;,<tt> </tt>
+and each line contains all
+the words that fit within the line. (To focus on
+essentials, assume words are 
+at most<tt> ⍺ </tt>in length, and
+adjacent words are separated by exactly one blank.)</p>
+
+<p>Our solution has two constituents, both employing<tt> { </tt>
+and both of interest in their own right.</p>
+
+<pre>classify: (⍴⍵)⍴(⍴⍺)↓(+\i&lt;⍴⍺) i¨{}i←⍋⍺,,⍵</pre>
+
+<p>Non-decreasing vector<tt> ⍺ </tt>partitions the real numbers
+into contiguous intervals;<tt> classify </tt>computes the
+index of the interval which contains<tt> ⍵</tt>&nbsp;.<tt> </tt>
+That is, if<tt> z←⍺&nbsp;classify&nbsp;⍵</tt>&nbsp;,<tt> </tt>
+then<tt> ⍴z ←→ ⍴⍵</tt>&nbsp;,<tt> </tt>and<tt> i{z </tt>is the least
+non-negative integer such 
+that<tt> (i{⍵)&lt;(i{z){⍺</tt>&nbsp;.<tt> </tt>
+(<tt>i{z </tt>is<tt> ⍴⍺ </tt>if<tt> (i{⍵)≥¯1{⍺</tt>&nbsp;.)<tt> </tt>
+Examples:</p>
+
+<pre>
+    ¯1 0 2 4 7.5 classify 2
+3
+    ¯1 0 2 4 7.5 classify ¯99
+0
+    ¯1 0 2 4 7.5 classify ¯99 ¯1 99 2 1.5 2.5 6 7 7.5 
+0 1 5 3 2 3 4 4 5
+</pre>
+
+<p>The second constituent solves a version of the
+transitive closure problem.</p>
+
+<pre>tc: (x⍳n)↑x←0{⍉{⍀(1 1+n)⍴n⌊⍵,n←⍴⍵</pre>
+
+<p>Integer vector<tt> ⍵ </tt>represents a directed acyclic graph,
+whose nodes art labelled<tt> ⍳0{⍴⍵</tt>&nbsp;.<tt> i{⍵ </tt>is the terminus
+of the arc originating at 
+node<tt> i</tt>&nbsp;.<tt> </tt>
+(If<tt> (i{⍵)≥⍴⍵</tt>&nbsp;,<tt> </tt>
+node<tt> i </tt>has no outgoing arc.)<tt> tc⍵ </tt>
+computes the nodes
+reachable from node<tt> 0</tt>. For examp1e,
+</p>
+
+<pre>
+    x←1 3 4 6 7 8 9 10 12 13 15 15 15 15 15
+    (⍳0{⍴x),¨&lt;x
+0  1  2  3  4  5  6  7  8  9 10 11 12 13 14
+1  3  4  6  7  8  9 10 12 13 15 15 15 15 15
+</pre>
+
+<p><tt>tc </tt>is useful in resolving multiple quotations,
+overlapping substring occurrences, and others, as
+well as in text formatting.</p>
+
+<p>Having<tt> classify </tt>and<tt> tc </tt>in hand, 
+we are ready to solve the text formatting problem.</p>
+
+<pre>
+fit: nl (¯1+(tc e classify ⍺+s){s)¨{}⍵ ⊣
+       e←1↓(s-1),⍴⍵ ⊣ s←(l&lt;¯1↓1,l)/⍳0{⍴⍵ ⊣ l←⍵∊' '
+</pre>
+
+<p><tt>⍺ </tt>is the maximum width of a line, 
+and<tt> ⍵ </tt>is a string.
+First, compute<tt> s</tt>&nbsp;,<tt> </tt>
+the index of the starting letter of
+each word; and<tt> e</tt>&nbsp;,<tt> </tt>
+one plus the index of the ending
+letter of each word. 
+If a line were to start at word<tt> i</tt>&nbsp;,<tt> </tt>
+then the next line starts at the first word which
+ends beyond<tt> i{⍺+s </tt>&mdash; at 
+word<tt> i{e classify ⍺+s</tt>&nbsp;.<tt> </tt>We
+know the first line starts at word<tt> 0</tt>&nbsp;,<tt> </tt>
+so the lines (except the first) start at 
+words<nobr><tt> tc e classify ⍺+s</tt>&nbsp;.<tt> </tt></nobr>
+Replace the character preceding the starts of these
+words with new-lines (<tt>nl</tt>), and we are done.</p>
+
+<pre>
+    t
+now is the time for all good men to chew up all the 
+    foobars in their country. the quick brown fox
+    jumps over the lazy dog.
+
+    20 fit t                 25 fit t
+now is the time for      now is the time for all
+all good men to chew     good men to chew up all 
+up all the foobars       the foobars in their
+in their country.        country. the quick brown
+the quick brown fox      fox jumps over the lazy
+jumps over the lazy      dog.
+dog.
+</pre>
+
+<a name="1.3"></a>
+<p><b>1.3 Latin Square Analysis of Variance</b></p>
+
+<pre>
+latin:  n×ss(mean,⍵)-mean+/(>0 1 2⊃1 0 2⊃1 2 0)⍉x←
+          ⍵(((0{⍺)⍳⍺),¨>{⍳¨>⍴⍺)¨{}(3⍴n)⍴0 ⊣ n←0{⍴⍺
+mean:   (+/⍵)÷¯1{1,⍴⍵
+ss:     ⍵+.*2
+</pre>
+
+<p><tt>⍺ </tt>is a Latin square, 
+a matrix of<tt> 0{⍴⍺ </tt>symbols where
+each symbol occurs in a row (column) exactly once.
+Numeric matrix<tt> ⍵ </tt>are data from an experiment 
+with design<tt> ⍺</tt>&nbsp;:<tt> (&lt;i,j){⍵ </tt>
+is the datum for row factor<tt> i</tt>&nbsp;,<tt> </tt>
+column factor<tt> j</tt>&nbsp;,<tt> </tt>
+and treatment factor<tt> (&lt;i,j){⍺</tt>&nbsp;<tt> </tt>.
+From<tt> ⍺ </tt>and<tt> ⍵</tt>&nbsp;,<tt> latin </tt>
+computes the treatments,
+rows, and columns sums of squares. 
+The rank-3 array<tt> x </tt>
+within<tt> latin </tt>is an expansion of<tt> ⍵</tt>&nbsp;,<tt> </tt> 
+indicating where the data
+would fit in a complete block design.</p>
+
+<p>Example: (Mendenhall &amp; Scheaffer 
+<acronym title="Mendenhall, William, and Scheaffer, Richard L., Mathematical Statistics with Applications, Duxbury Press, 1973.">[1973]</acronym>)
+</p>
+
+<pre>
+  sq           data             sq latin data
+3 1 2 4      44 41 30 40      626 365 226.5
+2 3 4 1      41 42 49 49
+1 4 3 2      59 41 59 34
+4 2 1 3      58 37 53 59
+</pre>
+
+
+<a name="1.4"></a>
+<p><b>1.4 Databases</b></p>
+
+<p><tt>a </tt>is a 4-dimensional array implementing a database.
+The scalar<tt> (&lt;i,j,k,l){a </tt>is the number of people who<br>
+&nbsp; &nbsp; live in the<tt> i</tt>-th city,<br>
+&nbsp; &nbsp; are<tt> j </tt>years old,<br>
+&nbsp; &nbsp; have at least<tt> k </tt>years of schooling, and<br>
+&nbsp; &nbsp; are in income bracket<tt> l</tt>.</p>
+
+<p>Three scenarios in the use of this database:</p>
+
+<p>One, index array<tt> i0 </tt>has been used to analyze the
+database<tt> +/+/a </tt>(city vs. age), 
+and index array<tt> j0 </tt>has
+been used to analyze the database<tt> +⌿+⌿a </tt>
+(education vs. income). 
+The index array<tt> i0∘.(,¨>)j0 </tt>can be used
+to explore in greater detail (in database<tt> a</tt>)<tt> </tt>
+the cases analyzed in the previous two studies.</p>
+
+<p>Two,<tt> i1 </tt>selects all people of age 25 in Toronto or
+Montreal, and<tt> j1 </tt>selects high school graduates living
+in those two cities.<tt> i1,j1 </tt>selects Torontonians or
+Montrealers, who are 25 years old or have at least 12
+years of education.</p>
+
+<p>Three, people in age range<tt> y←25+⍳22 </tt>are 
+&ldquo;in their prime&rdquo;; having less than<tt> s </tt>
+years of schooling is &ldquo;less than well-educated&rdquo;; 
+and income brackets 0 through<tt> b </tt>are &ldquo;lower income&rdquo;.
+Then<tt> (<(<∘),(&lt;y),(<<⍳s),<<⍳1+b){a </tt>
+selects Yuppies.</p>
+
+<p>Exercise: Do the above with<tt> [;] </tt>indexing.</p>
+
+<a name="1.5"></a>
+<p><b>1.5 Lagrange Interpolation Polynomial</b></p>
+
+<pre>
+lagrange: (×/(⍵∘.-c)÷⍤2 z-⍤¯1 c)+.×fz ⊣ c←(<¨>¨>⍳0{⍴⍺){z ⊣
+            z←0{⍉⍺ ⊣ fz←1{⍉z
+</pre>
+
+<p><tt>⍺ </tt>is a 2-column matrix with distinct rows; 
+each row<tt> (z,f&nbsp;z) </tt>
+is a sample from a univariate complex
+function<tt> f</tt>&nbsp;.<tt> lagrange </tt>
+interpolates<tt> ⍺ </tt>at<tt> ⍵</tt>&nbsp;,<tt> </tt>
+using a<tt> (¯1+0{⍴⍺)</tt>-th degree polynomial.</p>
+
+<p>Examples:</p>
+
+<pre>
+    x← 1  2 ¯6.2
+    y←20 ¯5  5.5
+    a←x,⍪y
+
+    y ≡ a lagrange x
+1
+    a lagrange ¯2 ¯1 0 1 2
+55.47 50.23 38.41 20 ¯5
+
+    b←y⌹x∘.*⍳0{⍴x
+    (¯2 ¯1 0 1 2∘.*⍳0{⍴x)+.×b
+55.47 50.23 38.41 20 ¯5
+</pre>
+
+<a name="1.6"></a>
+<p><b>1.6 Triangular Matrix Inversion</b></p>
+
+<p>A square matrix<tt> ⍵ </tt>is upper triangular 
+if<tt> (0=⍵)∨c∘.≤c←⍳0{⍴⍵</tt>&nbsp;.<tt> </tt>
+There is a simple computation for
+inverting such a matrix: invert a<tt> 2&nbsp;2 </tt>triangular
+matrix of numbers, 
+without using the commutativity of<tt> ×</tt>&nbsp;<tt> </tt>
+then generalize to a (conceptual)<tt> 2&nbsp;2 </tt>triangular
+matrix of matrices, substituting<tt> +.× </tt>for<tt> ×</tt>&nbsp;.</p>
+
+<pre>
+ri: (ai,-ai+.×b+.×di)⍪(c,di) ⊣ 
+      ai←⍙(<( &lt;i),&lt;i){⍵ ⊣ b←  (<( &lt;i),<&lt;i){⍵ ⊣
+      c←  (<(<&lt;i),&lt;i){⍵ ⊣ di←⍙(<(<&lt;i),<&lt;i){⍵ ⊣ i←⍳⌈n÷2
+  : 1≥n←0{⍴⍵
+  : ÷⍵
+</pre>
+
+<p><tt>ri </tt>quarters<tt> ⍵</tt>&nbsp;:<tt> ai</tt>&nbsp;,<tt> b</tt>&nbsp;,<tt> c</tt>&nbsp;,<tt> </tt>
+and<tt> di </tt>are respectively the
+inverse of the top left, the top right, the bottom
+left, and the inverse of the bottom right. The two
+recursive steps in<tt> ri </tt>can be performed in parallel;
+thus<tt> ri </tt>shows how to compute the inverse of a
+triangular matrix in<tt> (2⍟n)*2 </tt>parallel time.</p>
+
+<p>Section 3.3 exhibits a computation for the inverse of
+a general matrix, also using<tt> {</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="2"></a>
+<p><b>2. Definitions of<tt> { </tt>and<tt> }</tt></b></p>
+
+<p><tt>{ </tt>is a verb;<tt> } </tt>is a monadic adverb.
+Here, we define the four cases arising 
+therefrom:<tt> {⍵</tt>&nbsp;,<tt> ⍺{⍵</tt>&nbsp;,<tt> v}⍵</tt>&nbsp;,<tt> </tt>
+and<tt> ⍺v}⍵</tt>&nbsp;.</p>
+
+
+<a name="2.1"></a>
+<p><b>2.1 All</b></p>
+
+<pre>{⍵:  (↓⍴¨&gt;⍵)⍴&lt;⍤1⍉(×/k)⍴⍤&gt;⍉¨&gt;((⌽×\⌽1↓k,1),¨&gt;k)⍴¨&gt;⍵ ⊣ k←×/⍤⍴⍤&gt;⍵
+</pre>
+
+<p><tt>{⍵ </tt>has rank 1, and computes the Cartesian product of
+the opened elements of<tt> ⍵</tt>&nbsp;.<tt> </tt>
+The result satisfies<tt> ⍴{⍵ ←→ ↓⍴¨&gt;⍵ </tt>
+and<tt> ⍴¨&gt;⍵ ←→ (⍴{⍵) ←→ (⍴{⍵)⍴&lt;⍴⍵</tt>&nbsp;.</p>
+
+
+<a name="2.2"></a>
+<p><b>2.2 From</b></p>
+
+<p>Dyadic<tt> { </tt>encompasses all computations expressible 
+by<tt> [;] </tt>indexing of APL\360, 
+as well as the new negative
+indexing and complementary indexing. 
+The left rank is<tt> 0</tt>&nbsp;,<tt> </tt>
+the right rank is infinite; i.e. the definition
+applies to each scalar of<tt> ⍺ </tt>
+and to<tt> ⍵ </tt><i>in toto</i>. 
+Note the key role played by 
+monadic<tt> {</tt>&nbsp;.</p>
+
+<pre>
+⍺{⍵:  ((<⍴⍵)⊥⍤&gt;{⍺ fi ⍵){,⍵
+fi:   (⍴a)⍴(a≡⍤0⊃¨&gt;a)⊖i,¨&lt;(⍳¨&gt;s)~⍤,¨&gt;i←s|⍤&gt;¨&gt;a ⊣
+        a←(⊢¨&gt;&gt;⍺),((⍴⍴⍵)-⍴,&gt;⍺)⍴<∘ ⊣ s←⍴⍵
+</pre>
+
+<p>Where<tt> ⍵ </tt>is a vector 
+and<tt> ⍺∊⍳⍴⍵</tt>&nbsp;,<tt> </tt> 
+is primitive.</p>
+
+<p>Otherwise, successive opened elements in<tt> &gt;⍺ </tt>select
+along successive axes of<tt> ⍵</tt>&nbsp;.<tt> i←&gt;k{,&gt;⍺ </tt>
+is the index for axis<tt> k</tt>&nbsp;.<tt> i </tt>
+may be an array of integers in the
+range<nobr><tt> -k{⍴⍵ </tt></nobr>to<tt> ¯1+k{⍴⍵</tt>&nbsp;;<tt> </tt>
+negative<tt> i </tt>is equivalent 
+to<tt> (k{⍴⍵)|i </tt>(negative indexing).<tt> i </tt> 
+may also be boxed;
+integers therein indicate positions to be excluded
+(complementary indexing). The noun<tt> ∘</tt>&nbsp;,<tt> </tt> 
+having value<tt> &lt;''</tt>&nbsp;,<tt> </tt>
+is useful in complementary indexing.</p>
+
+<p>It is instructive to consider simpler computations
+for<tt> ⍺{⍵ </tt>in two special cases.
+If each opened element of<tt> &gt;⍺ </tt>
+is an integer array,</p>
+
+<pre>
+    ⍺{⍵ ←→ &gt;(s⊥⍤&gt;s|¨&gt;{&gt;⍺){,&lt;⍤(-⍴,&gt;⍺)⍵ ⊣ s←&lt;(⍴,&gt;⍺)↑⍴⍵
+</pre>
+
+<p>Furthermore, if<tt> ⍺ </tt>is an integer, i.e. 
+if<tt> ⍺∊(-n)+⍳2×n←0{⍴⍵</tt>&nbsp;,<tt> </tt>
+then<tt> ⍺ </tt>selects a major cell of<tt> ⍵</tt>&nbsp;;<tt> </tt>
+and</p>
+
+<pre>
+    ⍺{⍵ ←→ &gt;((0{⍴⍵)|⍺){<⍤¯1 ⍵
+</pre>
+
+
+<a name="2.3"></a>
+<p><b>2.3 Select</b></p>
+
+<pre>v}⍵:  (v{⍳¨&gt;⍴⍵){⍵</pre>
+
+<p><tt>v} </tt>has infinite monadic rank.<tt> v </tt>is applied 
+to<tt> {⍳¨&gt;⍴⍵</tt>&nbsp;,<tt> </tt>
+the result is then used to select 
+from<tt> ⍵</tt>&nbsp;.<tt> v}⍵ </tt>
+is commonly, but not always, equivalent to<tt> v⍵</tt>&nbsp;.</p>
+
+
+<a name="2.4"></a>
+<p><b>2.4 Merge</b></p>
+
+<p>The dyadic case of the derived verb<tt> v} </tt>produces a
+merge of its arguments. 
+Both the left and the right rank are infinite. 
+Positions in<tt> ⍵ </tt>selected by<tt> v </tt>are
+replaced by<tt> ⍺</tt>&nbsp;.<tt> ⍺v}⍵ </tt>
+is a new array; neither<tt> ⍺ </tt>nor<tt> ⍵ </tt>
+nor<tt> v </tt>are affected by the computation 
+of<tt> ⍺v}⍵</tt>&nbsp;.<tt> </tt>
+Schueler 
+<acronym title="Schueler, J. Henri, Messages 2007301 and 2007738, Sharp Internal APL Service, I.P. Sharp Associates Limited, 1986 11 27.">[1986]</acronym>
+proposes the following definition.
+It combines in one 
+phrase<tt> {⍵</tt>&nbsp;,<tt> ⍺{⍵</tt>&nbsp;,<tt> v}⍵</tt>&nbsp;,<tt> </tt>
+and<tt> ⍺v}⍵</tt>&nbsp;.</p>
+
+<pre>
+⍺v}⍵: ((⌽i,⍤,j)⍳i){⌽⍵,⍤,(⍴j)⍴⍺ ⊣ j←v}i←{⍳¨&gt;⍴⍵
+</pre>
+
+<p>Variable<tt> j </tt>in the definition indicates 
+positions in<tt> ⍵ </tt>
+selected by<tt> v</tt>&nbsp;.<tt> </tt>
+In this paper, we assume either<tt> ⍴⍺ </tt>
+matches<tt> ⍴j</tt>&nbsp;,<tt> </tt>
+or<tt> ⍺ </tt>is a scalar.</p>
+
+<p><tt>v</tt>&nbsp;,<tt> </tt>
+the verbal argument to<tt> }</tt>&nbsp;,<tt> </tt>
+is not restricted to any
+subclass of verbs. In particular,<tt> v </tt>need not be a
+&ldquo;selection function&rdquo;.
+<br>&nbsp;</p>
+
+
+
+<a name="3"></a>
+<p><b>3. Some Primitives in Terms of<tt> { </tt>and<tt> }</tt></b></p>
+
+<p>In this section, we define some primitives, both old
+and new, in terms of<tt> { }</tt>&nbsp;.<tt> </tt>
+The intent is to increase
+understanding of these primitives and
+of<tt> { }</tt>&nbsp;,<tt> </tt>
+rather than to present a formal system of definitions.</p>
+
+<a name="3.1"></a>
+<p><b>3.1 Old Selection</b></p>
+
+<pre>
+⌽⍵:   (-1+⍳0{⍴⍵){⍵
+
+⊖⍵:   (-1+⍳0{⍴⍵){⍵
+
+⍺⌽⍵:  ((0{⍴⍵)|⍺+⍳0{⍴⍵){⍵
+
+⍺⊖⍵:  ⍺⌽¨⍉⍵
+
+n⌿⍵:  (((-0∊1↑n)++\(⍳+/n)∊+\n){(0+.=n)↓⍋×n){⍵
+
+n⍀⍵:  (n×+\n){(0{1↑0⍴⍵)⍪>(+/n)⍴<⍤¯1 ⍵
+
+⍉⍵:   (⌽⍳0{⍴⍴⍵)⍉⍵
+
+⍺⍉⍵:  ((>{⍳¨>(⍴⍵)⌊.+¯×~l)+.×(⍴⍵)⊥l){,⍵ ⊣ l←⍺∘.=⍳1+⌈/⍺
+</pre>
+
+<a name="3.2"></a>
+<p><b>3.2 Cuts</b></p>
+
+<p>Iverson 
+<acronym title="Iverson, Kenneth Eugene, Rationalized APL, I.P. Sharp Research Report Number 1, Revision 1, I.P. Sharp Associates Limited, 1983 4 4.">[1983]</acronym> and 
+<acronym title="Iverson, Kenneth Eugene, A Dictionary of APL, I.P. Sharp Associates Limited, 1986 7.">[1986]</acronym> 
+described a family of verbs
+derived from the phrase<tt> n⍤v </tt>(adverb<tt> ⍤ </tt>with nounal
+left argument<tt> n </tt>
+and verbal right argument<tt> v</tt>&nbsp;.<tt> </tt>
+All derived verbs in this family apply<tt> v </tt>to rectangular
+pieces cut from<tt> ⍵</tt>&nbsp;;<tt> </tt>
+the exact nature of the cut is
+determined by<tt> n</tt>&nbsp;.<tt> </tt>
+Currently,<tt> n∊¯3+⍳7 </tt>is permissible.</p>
+
+<p>All cuts have infinite monadic rank and infinite
+right rank, i.e. apply to all 
+of<tt> ⍵</tt>&nbsp;.<tt> 0⍤v</tt>&nbsp;,<tt> 3⍤v</tt>&nbsp;,<tt> </tt>
+and<tt> ¯3⍤v </tt>have left rank 2; the others have left rank 1.</p>
+
+<pre>
+⍺  0⍤v ⍵:  v (<⍺ ci ⍵){⍵
+
+   0⍤v ⍵:  (0 ¯1∘.×⍴⍵) 0⍤v ⍵
+
+⍺  1⍤v ⍵:  (i⍪⍥,⍤0(1↓i,⍴⍺)-i) 0⍤v ⍵ ⊣ i←⍺/⍳0{⍴⍺
+
+   1⍤v ⍵:  (⍵≡⍤¯1 ¯⊢0{⍵) 1⍤v ⍵
+
+  ¯1⍤v     ←→ 1⍤(v⍤(1¨↓))
+
+   2⍤v     ←→ 1⍤(v⍤⊖)¨⊖
+
+  ¯2⍤v     ←→ 2⍤(v⍤(¯1¨↓))
+
+⍺  3⍤v ⍵:  (⍺ ti ⍵) 0⍤v ⍵  :  1≥⍴⍴⍺  :  (⍉1,⍪⍺)⍙⍵
+
+   3⍤v ⍵:  ((⍴⍴⍵)⍴⌊/⍴⍵) 3⍤v ⍵
+
+⍺ ¯3⍤v ⍵:  ((⍺≡⍤(1¨{⍤2)i)⌿i←⍺ ti ⍵) 0⍤v ⍵
+        :  1≥⍴⍴⍺
+        :  (⍉1,⍪⍺)⍙⍵
+
+  ¯3⍤v ⍵:  ((⍴⍴⍵)⍴⌊/⍴⍵) ¯3⍤v ⍵
+
+ci:  ((l×¯1-s)+(⍴⍵)|0{a)+¨>(¯1*l)×¨>⍳¨>|s ⊣ l←0>s ⊣
+       s←1{a ⊣ a←⍺,0 1∘.×(1{⍴⍺)↓⍴⍵
+
+ti:  1 0 2⍉i,¨<(×1{⍺)×⍤1(|1{⍺)⌊⍤1(⍴⍵)-⍤1 i ⊣
+       i←(0{⍺)×⍤1 l\,>{⍳¨>⌈(l/⍴⍵)÷l/0{⍺ ⊣ l←0≠0{⍺
+</pre>
+
+<p>This dense and dry description imparts little sense
+of the utility of<tt> n⍤v</tt>&nbsp;.<tt> </tt>
+The usefulness end power of
+cuts are better illustrated through examples. But,
+given the title of the current text, such examples
+are more suitable for another paper. (Stay tuned.)
+</p>
+
+
+<a name="3.3"></a>
+<p><b>3.3 Two Primitives from Linear Algebra</b></p>
+
+<pre>
+u.v⍵:  (0{⍉⍵) u.v ⍙ (&lt;¨&gt;¨&gt;(⍳0{⍴⍵),¨&gt;0){⍵
+    :  1=¯1{⍴⍵
+    :  u⌿,⍵
+</pre>
+
+<p>Iverson 
+<acronym title="Iverson, Kenneth Eugene, Two Combinatoric Operators, APL 76 Conference Proceedings, 1976 9 22.">[1976]</acronym> 
+proposed a generalization of the determinant; 
+Iverson 
+<acronym title="Iverson, Kenneth Eugene, Determinant-Like Functions Produced by the Dot Operator, Sharp APL Technical Notes Number 42, I.P. Sharp Associates Limited, 1982 4 1.">[1982]</acronym> 
+and 
+<acronym title="Iverson, Kenneth Eugene, A Dictionary of APL, I.P. Sharp Associates Limited, 1986 7.">[1986]</acronym> 
+refined the idea. 
+The above is an adaptation of a recursive
+definition in Hoffman &amp; Kunze 
+<acronym title="Hoffman, Kenneth Myron, and Kunze, Ray Alden, Linear Algebra, Second Edition, Chapter 5, Prentice-Hall, 1971.">[1971]</acronym>, 
+and works by
+&ldquo;expansion by minors&rdquo; along the first column of
+matrix<tt> ⍵</tt>&nbsp;.<tt> </tt>
+The definition demonstrates the key role
+played by<nobr><tt> ⍺u.v⍵</tt>&nbsp;,</nobr><tt> </tt>
+and motivates the choice of<nobr><tt> u.v⍵ </tt></nobr>to
+denote the generalized determinant.</p>
+
+<p><tt>-.× </tt>is the ordinary determinant.</p>
+
+<pre>
+⌹⍵:   (adj⍵)÷-.×⍵ : ≠/⍴⍵ : (⌹(+⍉⍵)+.×⍵)+.×+⍉⍵
+adj:  ⍉(¯1*+/&gt;i)×-.×(&lt;¨&gt;¨&gt;i){⍵ ⊣ i←{⍳¨&gt;⍴⍵
+</pre>
+
+<p><tt>⍵ </tt>is a complex matrix;<tt> ⌹ </tt>
+is as in APL\360, but
+extended to the complex domain; 
+and<tt> adj </tt>is the
+&ldquo;classical adjoint&rdquo; of mathematics. 
+The above is a grossly inefficient 
+(not to mention numerically unstable) 
+means of computing<tt> ⌹</tt>&nbsp;, 
+but is useful for
+theoretical investigations. 
+McDonnell &amp; Shallit
+<acronym title="McDonnell, Eugene Edward, and Shallit, Jeffrey Outlaw, Extending APL to Infinity, APL 80 Conference Proceedings, 1980 6 24.">[1980]</acronym> 
+employed this definition to assign a meaning
+to<tt> ⌹⍵ </tt>where<tt> 0=-.×⍵</tt>&nbsp;;<tt> </tt>
+<i>viz</i>.,<nobr><tt> ⌹⍵ ←→ ¯×0≠adj⍵</tt>&nbsp;.</nobr>
+<br>&nbsp;</p>
+
+
+
+<a name="4"></a>
+<p><b>4. Further Applications</b></p>
+
+<a name="4.1"></a>
+<p><b>4.1 Combinations</b></p>
+
+<pre>
+comb:  (c/k),(-1+⌽↓⍳¨&gt;⌽c){1+(⍺-1)⍙⍵-1 ⊣ c←(⍺-1)!(⍺-1)+⌽k ⊣ 
+         k←⍳1+⍵-⍺
+    :  0=⍺
+    :  1 0 ⍴0
+</pre>
+
+<p>All size<tt> ⍺ </tt>combinations (subsets) 
+of<tt> ⍳⍵</tt>&nbsp;;<tt> </tt> 
+combinations and elements therein are in ascending order. 
+This is a restatement, in modern terms,
+of the algorithm in Hui 
+<acronym title="Hui, Roger Kwok Wah, The N-Queens Problem, APL Quote Quad, Volume 11, Number 3, 1981 3.">[1981]</acronym>.
+In words, the rows in<tt> ⍺&nbsp;comb&nbsp;⍵ </tt>whose first
+element is<tt> k</tt>&nbsp;,<tt> </tt>
+are formed by prefixing<tt> k </tt>
+to<nobr><tt> k+1+(⍺-1)comb⍵-k+1</tt>&nbsp;.<tt> </tt></nobr>
+But the latter is just the 
+last<nobr><tt> (⍺-1)!⍵-k+1 </tt></nobr>
+rows of<tt> (⍺-1)comb&nbsp;⍵-1</tt>&nbsp;,<tt> </tt>
+incremented by one.</p>
+
+<p>The phrase<tt> (⍉(⍺=+⌿t)t←(⍵⍴2)⊤⍳2*⍵)∘∇'⍺/⍵'⍤1⍳⍵ </tt>
+is equivalent to<tt> ⍺comb⍵</tt>&nbsp;,<tt> </tt>
+but requires space (and time) exponential in the size 
+of the desired result.</p>
+
+<p>Examples:</p>
+
+<pre>
+  2 comb 4          3 comb 5         4 comb 6
+0 1               0 1 2            0 1 2 3
+0 2               0 1 3            0 1 2 4
+0 3               0 1 4            0 1 2 5
+1 2               0 2 3            0 1 3 4
+1 3               0 2 4            0 1 3 5
+2 3               0 3 4            0 1 4 5
+                  1 2 3            0 2 3 4
+                  1 2 4            0 2 3 5
+                  1 3 4            0 2 4 5
+                  2 3 4            0 3 4 5
+                                   1 2 3 4
+                                   1 2 3 5
+                                   1 2 4 5
+                                   1 3 4 5
+                                   2 3 4 5
+</pre>
+
+<a name="4.2"></a>
+<p><b>4.2 Compositions</b></p>
+
+<pre>
+comp:  (c/k),((⍺-1)↑⍤0 c/-k)+(-1+⌽↓⍳¨&gt;⌽c){(⍺-1)⍙⍵ ⊣
+         c←(⍺-2)!(⍺-2)+⌽k ⊣ k←⍳1+⍵
+    :  1≥⍺
+    :  ((⍺≥⍤×⍵),⍺)⍴⍵
+</pre>
+
+<p>All size<tt> ⍺ </tt>compositions 
+of<tt> ⍵</tt>&nbsp;,<tt> </tt> in ascending order:
+all vectors<tt> x </tt>of non-negative integers, 
+such that<tt> (⍺=⍴x)^(⍵=+/x)</tt>&nbsp;.<tt> </tt>
+For example,<tt> ⍺comp⍵ </tt>are the
+exponents in the expansion of 
+an<tt> ⍺</tt>-nomial<tt> (a+b+&#133;+z</tt>&nbsp;,<tt> ⍺ </tt>
+terms) raised to the<tt> ⍵</tt>-th power.</p>
+
+<p>The current definition of<tt> comp </tt>is a restatement, 
+in modern terms, of the algorithm in Hui 
+<acronym title="Hui, Roger Kwok Wah, Workspace 880 hui∆util, Sharp APL Service, I.P. Sharp Associates Limited, 1982 12 20.">[1982]</acronym>. 
+In words, the rows in<tt> ⍺comp⍵ </tt>
+whose first element is<tt> k</tt>&nbsp;,<tt> </tt>
+are formed by prefixing<tt> k </tt>
+to<nobr><tt> (⍺-1)comp⍵-k</tt>&nbsp;.</nobr><tt> </tt>
+But the latter is just the last 
+<nobr><tt> (⍺-2)!(⍺-2)+1+⍵-k </tt></nobr>rows 
+of<nobr><tt> (⍺-1)comp⍵</tt>&nbsp;,</nobr><tt> </tt>
+with the first column decremented by<tt> k</tt>&nbsp;.</p>
+
+<p>The phrase<tt> ⍉(⍵=+⌿t)/t←(⍺⍴1+⍵)⊤⍳(1+⍵)*⍺ </tt>
+is equivalent
+to<tt> ⍺comp⍵</tt>&nbsp;,<tt> </tt>
+but requires space (and time) exponential
+in the size of the desired result.</p>
+
+<p>Examples:</p>
+
+<pre>
+  2 comp 3          3 comp 3
+0 3               0 0 3
+1 2               0 1 2
+2 1               0 2 1
+3 0               0 3 0
+                  1 0 2 
+                  1 1 1
+                  1 2 0
+                  2 0 1
+                  2 1 0
+                  3 0 0
+</pre>
+
+<a name="4.3"></a>
+<p><b>4.3 Permutations</b></p>
+
+<pre>perm:  ⍪⌿k,⍤¯1 (⍙⍵-1){⍤¯ 1 k~⍤1 0 k←⍳⍵
+    :  1≥⍵
+    :  (1,⍵)⍴0
+</pre>
+
+<p>All permutations of<tt> ⍳⍵</tt>&nbsp;,<tt> </tt>
+in ascending order. This is
+a restatement, in modern terms, of the algorithm in
+Hui 
+<acronym title="Hui, Roger Kwok Wah, The N-Queens Problem, APL Quote Quad, Volume 11, Number 3, 1981 3.">[1981]</acronym>. 
+In words, the rows in<tt> perm⍵ </tt>whose first
+element is<tt> k</tt>&nbsp;,<tt> </tt> 
+are formed by prefixing<tt> k </tt>to the result
+of permuting<tt> (⍳⍵)~k </tt>
+by<tt> perm⍵-1</tt>&nbsp;;<tt> </tt>
+in other words,<tt> (k=0{⍉t)⌿t←perm ⍵ ←→ 
+k,(perm ⍵-1){(⍳⍵)~k</tt>&nbsp;.</p>
+
+<p>The phrase<tt> (^/(⍳⍵)∊⍤1 t)⌿t←⍉(⍵⍴⍵)⊤⍳⍵*⍵ </tt>
+is equivalent
+to<tt> perm⍵</tt>&nbsp;,<tt> </tt>
+but requires space (and time) exponential
+in the size of the desired result.</p>
+
+<p>Examples:</p>
+
+<pre>
+  perm 3            perm 4
+0 1 2             0 1 2 3
+0 2 1             0 1 3 2
+1 0 2             0 2 1 3
+1 2 0             0 2 3 1
+2 0 1             0 3 1 2
+2 1 0             0 3 2 1
+                  1 0 2 3
+                  1 0 3 2
+                  1 2 0 3
+                  1 2 3 0
+                   &#133;
+
+sup:  (0,1+t)⍪⍪k⌿,⍤¯1(k∘.≠k)∘∇'⍺\⍵'⍤¯1(¯1+s↑t){⍤¯ 1 e ⊣
+        e←k~⍤1 0 k ⊣ k←1↓⍳⍵ ⊣ s←((0{⍉t)⍳1),2-⍵ ⊣ t←⍙ ⍵-1
+   :  1≥⍵
+   :  (1,⍵)⍴0
+</pre>
+
+<p>All self-upgrading permutations of<tt> ⍳⍵</tt>&nbsp;,<tt> </tt> 
+in ascending order.
+The algorithm is due to H.A. Rothe (McDonnell
+<acronym title="McDonnell, Eugene Edward, Magic Squares and Permutations, APL Quote Quad, Volume 7, Number 3, 1976 9.">[1976]</acronym>).
+In words, the rows in<tt> sup⍵ </tt>whose first
+element is<tt> 0</tt>&nbsp;,<tt> </tt>
+are formed by prefixing<tt> 0 </tt>
+to<tt> 1+sup⍵-1</tt>&nbsp;;<tt> </tt>
+the rows whose first element 
+is<tt> k </tt>(<tt>0≠k</tt>)<tt> </tt>has<tt> 0 </tt>in
+column<tt> k</tt>&nbsp;,<tt> </tt>
+the other columns 
+are<nobr><tt> (sup⍵-2){(⍳⍵)~k,0</tt>&nbsp;.</nobr></p>
+
+<p>The phrase<tt> (∧/t=⍋⍤1 t)⌿t←perm⍵ </tt>is equivalent 
+to<tt> sup⍵</tt>&nbsp;,<tt> </tt>
+but requires space (and time) exponential in the size
+of the desired result.</p>
+
+<p>Examples:</p>
+
+<pre>
+  sup 3         sup 4
+0 1 2         0 1 2 3
+0 2 1         0 1 3 2
+1 0 2         0 2 1 3
+2 1 0         0 3 2 1
+              1 0 2 3
+              1 0 3 2
+              2 1 0 3
+              2 3 0 1
+              3 1 2 0
+              3 2 1 0
+
+sdp: x⍪⊖⌽x←(⌽m-t),(r⍴⌊⍵÷2),⍤1 t←⍪⌿k,⍤¯1⊂(k∘.≠k)∘∇'⍺\⍵'⍤¯1
+       (s↓⍙⍵-4+r){⍤¯ 1 e ⊣ e←((⍳⍵)~0,m,r⍴⌊⍵÷2)~⍤1 k,⍪m-k ⊣
+       k←⌽(⌈⍵÷2)+⍳¯1+⌊⍵÷2 ⊣ s←0,⌊(⍵-4)÷2 ⊣ m←⍵-1
+   : (1≥⍵)∨2≤r ⊣ r←4|⍵
+   : ((1≥⍵),⍵)⍴0
+</pre>
+
+<p>All self-downgrading permutations of<tt> ⍳⍵</tt>&nbsp;,<tt> </tt>
+in ascending order. 
+The algorithm is due to E.E. McDonnell
+(McDonnell
+<acronym title="McDonnell, Eugene Edward, Magic Squares and Permutations, APL Quote Quad, Volume 7, 
+Number 3, 1976 9.">[1976]</acronym>), 
+and derives by observing that a
+choice for the first element of a row immediately
+determines three other elements of that row. We
+first generate the upper right corner 
+(local variable<tt> t </tt>in<tt> sdp</tt>),<tt> </tt>
+whence the full result obtains easily.</p>
+
+<p>The phrase<tt> (∧/t=⍒⍤1&nbsp;t)⌿t←perm⍵ </tt>is equivalent 
+to<tt> sdp⍵</tt>&nbsp;,<tt> </tt>
+but requires space (and time) exponential in the size
+of the desired result.</p>
+
+<p>Examples:</p>
+
+<pre>
+  sdp 4                  sdp 5
+1 3 0 2                1 4 2 0 3
+2 0 3 1                3 0 2 4 1
+
+  sdp 8                  sdp 9
+1 7 3 5 2 4 0 6        1 8 3 6 4 2 5 0 7
+1 7 4 2 5 3 0 6        1 8 5 2 4 6 3 0 7
+2 3 7 6 1 0 4 5        2 3 8 7 4 1 0 5 6
+2 4 7 1 6 0 3 5        2 5 8 1 4 7 0 3 6
+3 2 6 7 0 1 5 4        3 2 7 8 4 0 1 6 5
+3 5 1 7 0 6 2 4        3 6 1 8 4 0 7 2 5
+4 2 6 0 7 1 5 3        5 2 7 0 4 8 1 6 3
+4 5 1 0 7 6 2 3        5 6 1 0 4 8 7 2 3
+5 3 0 6 1 7 U 2        6 3 0 7 4 1 8 5 2
+5 4 0 1 6 7 3 2        6 5 0 1 4 7 8 3 2
+6 0 3 5 2 4 7 1        7 0 3 6 4 2 5 8 1
+6 0 4 2 5 3 7 1        7 0 5 2 4 6 3 8 1
+
+≤⍵: ↑,(⍋⌈/t){(t⍳⌈/t)⌽t←⍉{⍀(1 1+⌈/⍵)⍴⍵,(⍳⌈/⍵)~⍵
+</pre>
+
+<p>The cycle representation of a mix (a generalized
+permutation). For example,<tt> <nobr>≤4 5 2 1 0 3</nobr> ←→
+<nobr>2 4 0 5 3 1</nobr></tt>&nbsp;;<tt> </tt>
+the cycles are<tt> 2</tt>&nbsp;,<tt> 4&nbsp;0</tt>&nbsp;,<tt> </tt>
+and<nobr><tt> 5 3 1</tt>&nbsp;.</nobr><tt> </tt>
+Knuth 
+<acronym title="Knuth, Donald Ervin, The Art of Computer Programming, Volume 1: Fundamental Algorithms, Second Edition, Section 1.3.3, Addison-Wesley, 1973.">[1973]</acronym>
+has a description of such representations; but
+here, 1s in<tt> c=⌈\c </tt>(rather than<tt> c=⌊\c</tt>)<tt> </tt>delimit cycles,
+so that<tt> (⍳n)≡≤⍳n</tt>&nbsp;.<tt> </tt> 
+Iverson
+<acronym title="Iverson, Kenneth Eugene, Notation as a Tool of Thought, 1979 ACM Turing Award Lecture, Communications of the ACM, Volume 92, Number 8, 1980 8.">[1980]</acronym> 
+contains a similar
+algorithm for<tt> ≤⍵</tt>&nbsp;.</p>
+
+<pre>
+≥⍵:       ((⍋c++\c){⍵)⍵¨{}⍳1+⌈/⍵ ⊣ c←⍵=⌈\⍵
+≥⍵:  ((c/⍵)(1⌽c)/}1⌽⍵)⍵¨{}⍳1+⌈/⍵ ⊣ c←⍵=⌈\⍵
+</pre>
+
+<p><tt>≥⍵ </tt>is the permutation whose cycle representation 
+is<tt> ⍵</tt>&nbsp;<tt> </tt>
+The first definition is modified from Iverson
+<acronym title="Iverson, Kenneth Eugene, Notation as a Tool of Thought, 1979 ACM Turing Award Lecture, Communications of the ACM, Volume 92, Number 8, 1980 8.">[1980]</acronym>; 
+the second is a linear-time computation. For
+a permutation<tt> ⍵</tt>&nbsp;,<tt> ≤≥⍵ ←→ ⍵ ←→ ≥≤⍵</tt>&nbsp;.</p>
+
+<p>In general,<tt> ⍋⍵ </tt>and<tt> ⍒⍵ </tt>require time of 
+order<tt> ×/(⍴⍵),2⍟0{⍴⍵</tt>&nbsp;,<tt> </tt>
+but for permutations<tt> ⍵</tt>&nbsp;,<tt> </tt>linear-time
+computations exist:</p>
+
+<pre>
+⍋⍵:  (⍳0{⍴⍵)    ⍵ ¨{}⍵
+⍒⍵:  (⍳0{⍴⍵)(-1+⍵)¨{}⍵
+</pre>
+
+<a name="4.4"></a>
+<p><b>4.4 Permutation Groups</b></p>
+
+<p><tt>perm n</tt>&nbsp;,<tt> </tt>
+the set of permutations of<tt> ⍳n</tt>&nbsp;,<tt> </tt>
+forms a group under<tt> {</tt>&nbsp;:</p>
+
+<table>
+<tr><td nowrap>&nbsp; &nbsp;</td><td><tt>∨/(perm n)∧.=p{q</tt></td>
+ <td nowrap>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td><td>closure</td></tr>
+<tr><td></td><td><tt>p{q{r&nbsp; ←→ (p{q){r</tt></td>
+ <td></td><td>associativity</td></tr>
+<tr><td></td><td><tt>(⍳n){p ←→ p</tt></td>
+ <td></td><td>identity element</td></tr>
+<tr><td></td><td><tt>(⍋p){p ←→ ⍳n</tt></td>
+ <td></td><td>inverse element</td></tr>
+</table>
+
+<p>This is the &ldquo;symmetric group of 
+degree<tt> n</tt>&rdquo;.
+The group table is<tt> p∘.({⍤1)p←perm&nbsp;n</tt>&nbsp;.</p>
+
+<p>In ordinary arithmetic, the<tt> ⍺</tt>-th power of 
+a number<tt> ⍵ </tt>
+is the product<tt> ×⌿⍺⍴⍵</tt>&nbsp;.<tt> </tt>
+Similarly, the<tt> ⍺</tt>-th power of a
+permutation<tt> ⍵ </tt>is<tt> {⌿(⍺,⍴⍵)⍴⍵</tt>&nbsp;;<tt> </tt>
+or, more concisely,<tt> {⌿⍺⌿⍉⍪⍵</tt>&nbsp;.</p>
+
+<p>A subgroup of a group is a subset of group elements
+which form a group in their own right (under the same
+operation). The smallest subgroup containing a
+permutation<tt> ⍵</tt>&nbsp;,<tt> </tt>
+the subgroup generated by<tt> ⍵</tt>&nbsp;,<tt> </tt>
+is the set of all distinct powers 
+of<tt> ⍵</tt>&nbsp;:<nobr><tt> ↑{⍀(!⍴⍵)⌿⍉⍪⍵</tt>&nbsp;.</nobr><tt> </tt> 
+This expression, although concise, is rather profligate,
+as the size of the subgroup is much smaller than<tt> !⍴⍵ </tt>
+for<tt> 2<⍴⍵</tt>&nbsp;.<tt> </tt>
+In fact, the size is exactly 
+the least common multiple of the lengths of the cycles 
+of<tt> ⍵</tt>&nbsp;,<tt> ∧⌿1⍤⍴c=⌈\c←≤⍵</tt>&nbsp;.<tt> </tt>
+Therefore,</p>
+
+<pre>
+sg: {⍀(∧⌿1⍤⍴c=⌈\c←≤⍵)⌿⍉⍪⍵
+
+  sg 2 5 1 0 3 4        sg 1 4 5 2 0 3
+2 5 1 0 3 4           1 4 5 2 0 3
+1 4 5 2 0 3           4 0 3 5 1 2
+5 3 4 1 2 0           0 1 2 3 4 5
+4 0 3 5 1 2
+3 2 0 4 5 1
+0 1 2 3 4 5
+</pre>
+
+<p>Let<tt> ⍵ </tt>be a set of permutations &mdash; 
+a matrix whose rows
+are permutations. To compute the members of the
+subgroup generated by<tt> ⍵</tt>&nbsp;,<tt> </tt>
+we reason as follows: Since
+the subgroup must be closed, 
+it contains<tt> ⍵∘.({⍤1)⍵</tt>&nbsp;;<tt> </tt>
+or, in standard matrix form,<tt> ↑⍪⌿⍵∘.({⍤1)⍵</tt>.<tt> </tt>
+This process is repeated, until no more new permutations
+are introduced. Thus we have</p>
+
+<pre>
+sgm: '↑⍪⌿⍵∘.({⍤1)⍵'∇∘. ¯(⍉⍪⍳¯1{⍴⍵)⍪⍵
+</pre>
+
+<p>The &ldquo;process&rdquo; is the derived 
+verb<tt> '↑⍪⌿⍵∘.({⍤1)⍵'∇∘</tt>&nbsp;;<tt> </tt>
+the augmentation of<tt> ⍵ </tt>by the identity 
+permutation<tt> ⍳¯1{⍴⍵ </tt>converts a limit 
+computation<tt> v.&nbsp;¯ </tt>into the 
+desired closure computation.</p>
+
+<p>In general, no one permutation generates the entire
+group, else<tt> { </tt>on permutations would be commutative.
+Herstein 
+<acronym title="Herstein, Israel Nathan, Topics in Algebra, Second Edition, Xerox College Publishing, 1975.">[1975]</acronym> 
+(Exercise 2.10.11) tells us there
+exists a generator of size 
+two:<tt> p←(⌽⍳2⌊n),2↓⍳n </tt>
+and<tt> q←1⌽⍳n </tt>
+suffice to generate<tt> p1←p </tt>
+and<tt> q1←(1⌽⍳n-1),n-1</tt>&nbsp;,<tt> </tt>
+which are like<tt> p </tt>and<tt> q </tt>except<tt> ¯1{⍵ </tt>
+is invariant 
+under<tt> p1{⍵ </tt>and<tt> q1{⍵</tt>&nbsp;.<tt> </tt>
+Therefore,</p>
+
+<pre>
+pqgen:   ((|t)/0&lt;t←(p pqe ⍵),¯1){p,¨&lt;q←1⌽⍳n ⊣ 
+           p←(⌽⍳2⌊n),2↓⍳n ⊣ n←0{⍴⍵
+
+pqe:     m shrink (,((|t)/0&lt;t){¯1 0 0,¨&lt;2 ¯1,m-1),k ⊣
+           t←(¯1↓k⌽⍺) ⍙ ¯1↓⍵ ⊣ k←m|1+⍺⍳¯1{⍵
+   :     2≥m←0{⍴⍵
+   :     (⍺≡⍵)↓¯1
+
+shrink:  ⍺ ⍙ (0≠t)/t←((0&lt;l/⍵){¯2,⍺)|l 1⍤(+/) ⍵
+      :  ∧/l←s≠¯1↓2,s←×⍵
+      :  ⍵
+</pre>
+
+<p><tt>⍵≡{⌿y←pqgen⍵ </tt>and<tt> (y∧.=p)∧.∨(y∧.=q) </tt>
+for permutation<tt> ⍵</tt>&nbsp;.<tt> </tt>
+That is,<tt> sgm&nbsp;p,¨&lt;q </tt>is the entire permutation group.</p>
+
+<p>What is the significance of permutation groups?
+Let<tt> G </tt>be a group table of a finite group of 
+order<tt> n</tt>&nbsp;.<tt> </tt>
+If<tt> relabel:(0{t)⍳t←&lt;⍤¯2⍵</tt>&nbsp;,<tt> </tt>
+the columns of<tt> relabel&nbsp;G </tt>are
+distinct permutations of<tt> ⍳n</tt>&nbsp;,<tt> </tt>and</p>
+
+<pre>
+    relabel G ←→ relabel H∘.({⍤1)H←⍉relabel G
+</pre>
+
+<p>In other words, every finite group<tt> G </tt>
+of order<tt> n </tt>is
+isomorphic to a subgroup<tt> H </tt>of the permutation group
+of degree<tt> n</tt>&nbsp;.<tt> </tt>
+This is the finite case of Cayley&rsquo;s
+Theorem, named
+in honor of the English mathematician
+who first observed the fact (Herstein 
+<acronym title="Herstein, Israel Nathan, Topics in Algebra, Second Edition, Xerox College Publishing, 1975.">[1975]</acronym>, 
+Section 2.9).</p>
+
+<p>We illustrate Cayley&rsquo;s Theorem with an example.
+Let<tt> G </tt>be a group table of the 
+group of transpositions
+(reflections and rotations)
+of the square.<tt> G </tt>in this
+instance is a matrix of boxed literal vectors.
+(More about the unusual element names later.) 
+</p>
+
+<table>
+<tr><td><tt>&nbsp; &nbsp; G</tt></td></tr>
+<tr><td><tt>⊢&nbsp; ⍒&nbsp; ⍒⍒ ⍋⌽ ⌽&nbsp; ⍋&nbsp; ⍋⍒ ⍒⌽ &nbsp; &nbsp;</tt></td><td><tt>⊢ &nbsp;</tt>identity</td></tr>
+<tr><td><tt>⍒&nbsp; ⍒⍒ ⍋⌽ ⊢&nbsp; ⍒⌽ ⌽&nbsp; ⍋&nbsp; ⍋⍒</tt></td><td><tt>⍒ &nbsp;</tt>rotate<tt> ○1÷2 </tt>radians</td></tr>
+<tr><td><tt>⍒⍒ ⍋⌽ ⊢&nbsp; ⍒&nbsp; ⍋⍒ ⍒⌽ ⌽&nbsp; ⍋ </tt></td><td><tt>⍒⍒&nbsp;</tt>rotate<tt> ○2÷2 </tt>radians</td></tr>
+<tr><td><tt>⍋⌽ ⊢&nbsp; ⍒&nbsp; ⍒⍒ ⍋&nbsp; ⍋⍒ ⍒⌽ ⌽ </tt></td><td><tt>⍋⌽&nbsp;</tt>rotate<tt> ○3÷2 </tt>radians</td></tr>
+<tr><td><tt>⌽&nbsp; ⍋&nbsp; ⍋⍒ ⍒⌽ ⊢&nbsp; ⍒&nbsp; ⍒⍒ ⍋⌽</tt></td><td><tt>⌽ &nbsp;</tt>reflect along<tt> x</tt>-axis</td></tr>
+<tr><td><tt>⍋&nbsp; ⍋⍒ ⍒⌽ ⌽&nbsp; ⍋⌽ ⊢&nbsp; ⍒&nbsp; ⍒⍒</tt></td><td><tt>⍋ &nbsp;</tt>reflect along<tt> f:-⍵</tt></td></tr>
+<tr><td><tt>⍋⍒ ⍒⌽ ⌽&nbsp; ⍋&nbsp; ⍒⍒ ⍋⌽ ⊢&nbsp; ⍒ </tt></td><td><tt>⍋⍒&nbsp;</tt>reflect along<tt> y</tt>-axis</td></tr>
+<tr><td><tt>⍒⌽ ⌽&nbsp; ⍋&nbsp; ⍋⍒ ⍒&nbsp; ⍒⍒ ⍋⌽ ⊢ </tt></td><td><tt>⍒⌽&nbsp;</tt>reflect along<tt> f:⍵</tt></td></tr>
+</table>
+
+<pre>
+    ⍴G
+8 8
+
+    relabel G
+0 1 2 3 4 5 6 7
+1 2 3 0 7 4 5 6
+2 3 0 1 6 7 4 5
+3 0 1 2 5 6 7 4
+4 5 6 7 0 1 2 3
+5 6 7 4 3 0 1 2
+6 7 4 5 2 3 0 1
+7 4 5 6 1 2 3 0
+
+    H←⍉relabel G
+</pre>
+
+<p>The columns of<tt> relabel G</tt>&nbsp;,<tt> </tt> 
+the rows of<tt> H</tt>&nbsp;,<tt> </tt> are distinct
+permutations of<tt> ⍳8</tt>&nbsp;,<tt> </tt>
+and<tt> H </tt>is a subgroup of the
+permutation group of degree 8. 
+After relabelling,<nobr><tt> H∘.({⍤1)H</tt>&nbsp;,</nobr><tt> </tt>
+the group table of<tt> H</tt>&nbsp;,<tt> </tt> 
+is identical to the
+relabelled version of<tt> G</tt>&nbsp;.</p>
+
+<pre>
+    relabel H∘.({⍤1)H
+0 1 2 3 4 5 6 7
+1 2 3 0 7 4 5 6
+2 3 0 1 6 7 4 5
+3 0 1 2 5 6 7 4
+4 5 6 7 0 1 2 3
+5 6 7 4 3 0 1 2
+6 7 4 5 2 3 0 1
+7 4 5 6 1 2 3 0
+
+    (relabel G)≡relabel H∘.({⍤1)H
+1
+</pre>
+
+<p>(The names for the elements of<tt> G </tt>are due to
+considerations discovered independently by Thomson
+<acronym title="Thomson, Norman D., The Geometric Primitives of APL, APL 79 Conference Proceedings, APL Quote Quad, Volume 9, Number 4, 1979 5 30.">[1979]</acronym>, 
+Hui 
+<acronym title="Hui, Roger Kwok Wah, The N-Queens Problem, APL Quote Quad, Volume 11, Number 3, 1981 3.">[1981]</acronym>, 
+and Benkard &amp; Seebe 
+<acronym title="Benkard, J. Philip, and Seebe, John N., Reflection on Grades, APL 83 Conference Proceedings, APL Quote Quad, Volume 13, Number 3, 1993 4 10.">[1983]</acronym>:</p>
+
+<p>(<tt>pm:⍵∘.=⍳0{⍴⍵ </tt>and<tt> mp:⍵⍳1 </tt>are an inverse pair, 
+mapping permutations to boolean matrices and vice versa. 
+Let<tt> f </tt>be a string of<tt> ⊢ ⍒ ⍋ ⌽</tt>&nbsp;,<tt> </tt> 
+a function on permutations;
+and<tt> t </tt>be a transposition of the square.
+Identify<tt> f </tt>and<tt> t</tt>&nbsp;,<tt> </tt>if
+</p>
+
+<pre>
+    f p ←→ t¨pm p    (←→ mp t pm p)
+    t m ←→ f¨mp m    (←→ pm f mp m)
+</pre>
+
+<p>In other words,<tt> G </tt>may be viewed as a group of
+transpositions of the square, or isomorphically as a
+group of functions on permutations. We saw
+previously that<tt> G </tt>is also isomorphic to a subgroup of
+the permutations, by Cayley&rsquo;s Theorem.</p>
+
+<p>(Table<tt> G </tt>above is a compact presentation of numerous
+identities involving the functions<tt> ⊢ ⍒ ⍋ ⌽ </tt>applied to
+permutations: The entry<tt> (&lt;i,j){G </tt>is equivalent to
+the result of 
+composing<tt> (&lt;i,0){G </tt>
+and<tt> (&lt;0,j){G</tt>&nbsp;.<tt> </tt>
+For example, the entry at the intersection of row<tt> ⍒ </tt>
+column<tt> ⍋⍒ </tt>is<tt> ⍋</tt>&nbsp;,<tt> </tt>
+whence<tt> ⍒⍋⍒ ←→ ⍋</tt>&nbsp;;<tt> </tt>
+similarly,<tt> ⍋⍋ ←→ ⊢</tt>&nbsp;,<tt> ⍒⍒⍒ ←→ ⍋⌽</tt>&nbsp;,<tt> ⍒⍒⍒⍒ ←→ ⊢</tt>&nbsp;,<tt> </tt>and so forth.)
+<br>&nbsp;</p>
+
+
+
+<a name="5"></a>
+<p><b>5. Conclusion</b></p>
+
+<p><tt>{ </tt>has more expressive power 
+than<tt> [;]</tt>&nbsp;,<tt> </tt>
+without the anomalous syntax.
+Because of this,<tt> { </tt>can be used in
+verb phrase;
+and as the paper shows, derived verbs
+involving<tt> { </tt>have many uses.</p>
+
+<p><tt>} </tt>allows verbs other than 
+indexing to indicate
+elements are to be replaced.
+Unlike &ldquo;indexed
+assignment&rdquo;,<tt> } </tt>
+requires no special syntax, and
+has no side effects.
+<br>&nbsp;</p>
+
+
+
+<a name="ack"></a>
+<p><b>Acknowledgments</b></p>
+
+<p>It is a pleasure to thank Fred Appleyard, Bob
+Bernecky, Paul Berry, Maxine Hersch, Ken Iverson, and
+Henri Schueler, whose comments, criticisms, and
+corrections led to numerous improvements in the
+paper.</p>
+
+<p>Ideas herein evolved over many conversations with
+K.E. Iverson.
+Any remaining errors, strategic or tactical,
+stylistic or technical, are of course mine.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Benkard, J. Philip, and Seebe, John N.,
+<i>Reflection on Grades</i>, 
+APL 83 Conference Proceedings, APL Quote-Quad, Volume 13, Number 3,
+1993 4 10.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Carim, Halit, 
+<i>Contest Number 3: Paragraphics</i>, 
+The I.P. Sharp Newsletter, Volume 5, Number 1, 
+I.P. Sharp Associates Limited, 1977 1.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Falkoff, Adin D., and
+Iverson, Kenneth Eugene,
+<a target=_main href="http://www.jsoftware.com/papers/APLDesign.htm"><i>The Design of APL</i></a>, 
+IBM Journal of Research and Development, 
+Volume 17, Number 4, 1973 7.
+(Reprinted in McDonnell 
+<acronym title="McDonnell, Eugene Edward, A Source Book in APL, APL Press, 1981 9.">[1981]</acronym>.)
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Herstein, Israel Nathan,
+<i>Topics in Algebra</i>, Second Edition, Xerox College
+Publishing, 1975.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Hoffman, Kenneth Myron, and
+Kunze, Ray Alden,
+<i>Linear Algebra</i>, Second Edition, Chapter 5,
+Prentice-Hall, 1971.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Hui, Roger Kwok Wah,
+<a target=_main href="http://www.jsoftware.com/papers/nqueens.htm"><i>The N-Queens Problem</i></a>, 
+APL Quote-Quad, Volume 11, Number 3, 1981 3.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Hui, Roger Kwok Wah,
+<i>Workspace</i><tt> 880 hui∆util</tt>&nbsp;,<tt> </tt>
+Sharp APL Service,
+I.P. Sharp Associates Limited, 1982 12 20.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Iverson, Kenneth Eugene,
+<i>Two Combinatoric Operators</i>,
+APL 76 Conference Proceedings, 1976 9 22.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Iverson, Kenneth Eugene,
+<a target=_main href="http://www.jsoftware.com/papers/tot.htm"><i>Notation as a Tool of Thought</i></a>, 
+1979 ACM Turing Award Lecture, Communications of the ACM, 
+Volume 92, Number 8, 1980 8.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Iverson, Kenneth Eugene,
+<a target=_main href="http://www.jsoftware.com/papers/satn42.htm"><i>Determinant-Like Functions Produced
+by the Dot Operator</i></a>, 
+Sharp APL Technical Notes Number 42,
+I.P. Sharp Associates Limited, 1982 4 1.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Iverson, Kenneth Eugene,
+<a target=_main href="http://www.jsoftware.com/papers/RationlizedAPL.htm"><i>Rationalized APL</i></a>, 
+I.P. Sharp Research Report
+Number 1, Revision 1, I.P. Sharp Associates
+Limited, 1983 4 4.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Iverson, Kenneth Eugene,
+<a target=_main href="http://www.jsoftware.com/papers/APLDictionary.htm"><i>A Dictionary of APL</i></a>, 
+I.P. Sharp Associates
+Limited, 1986 7.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Knuth, Donald Ervin,
+<i>The Art of Computer Programming, Volume 1:
+Fundamental Algorithms</i>, Second Edition, Section
+1.3.3, Addison-Wesley, 1973.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+McDonnell, Eugene Edward,
+<a target=_main href="http://www.jsoftware.com/papers/eem/magicsq.htm"><i>Magic Squares and Permutations</i></a>, 
+APL Quote-Quad,
+Volume 7, Number 3, 1976 9.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+McDonnell, Eugene Edward,
+<a target=_main href="http://www.jsoftware.com/jwiki/Doc/A%20Source%20Book%20in%20APL"><i>A Source Book in APL</i></a>, 
+APL Press, 1981 9.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+McDonnell, Eugene Edward, and
+Shallit, Jeffrey Outlaw,
+<a target=_main href="http://www.jsoftware.com/papers/eem/infinity.htm"><i>Extending APL to Infinity</i></a>, APL 80 Conference
+Proceedings, 1980 6 24.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Mendenhall, William, and
+Scheaffer, Richard L.,
+<i>Mathematical Statistics with Applications</i>,
+Duxbury Press, 1973.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Schueler, J. Henri,
+Messages 2007301 and 2007738, 
+Sharp Internal APL Service,
+I.P. Sharp Associates Limited,
+1986 11 27.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Smith, Bob Asa,
+<i>Paragraphics Perfected</i>, The I.P. Sharp
+Newsletter, Volume 7, Number 2, 
+I.P. Sharp Associates Limited, 1979 3.
+</td></tr>
+<tr><td valign=top>&#149;&nbsp;</td><td>
+Thomson, Norman D.,
+<i>The Geometric Primitives of APL</i>, APL 79
+Conference Proceedings, APL Quote-Quad, Volume 9,
+Number 4, 1979 5 30.
+</td></tr>
+<table>
+<br>
+
+
+<a name="xa"></a>
+<p><b>Appendix A: Notation</b></p>
+
+<p>Brief explanations on less familiar aspects of the
+notation are given here; full descriptions can be
+found in <i>A Dictionary of APL</i> (Iverson 
+<acronym title="Iverson, Kenneth Eugene, A Dictionary of APL, I.P. Sharp Associates Limited, 1986 7.">[1986]</acronym>).
+Basically, expressions which would return results in
+an older APL (such as APL\360) work as before, but
+some expressions which previously caused errors now
+return results, The following conventions apply:</p>
+
+<table>
+<tr><td><tt>⍺</tt><td><td>&nbsp;</td><td>
+ the left &nbsp; nounal argument of a verb</td></tr>
+<tr><td><tt>⍵</tt><td><td>&nbsp;</td><td>
+ the right nounal argument of a verb</td></tr>
+<tr><td><tt>m</tt><td><td>&nbsp;</td><td>
+ the left &nbsp; nounal argument of a verb</td></tr>
+<tr><td><tt>n</tt><td><td>&nbsp;</td><td>
+ the right nounal argument of a verb</td></tr>
+<tr><td><tt>u</tt><td><td>&nbsp;</td><td>
+ the left  &nbsp; verbal argument of a verb</td></tr>
+<tr><td><tt>v</tt><td><td>&nbsp;</td><td>
+ the right verbal argument of a verb</td></tr>
+<tr><td><tt>mx</tt><td><td>&nbsp;</td><td>
+ the monadic rank of verb<tt> x </tt></td></tr>
+<tr><td><tt>lx</tt><td><td>&nbsp;</td><td>
+ the left &nbsp; &nbsp; &nbsp; &nbsp; rank of verb<tt> x </tt></td></tr>
+<tr><td><tt>rx</tt><td><td>&nbsp;</td><td>
+ the right &nbsp; &nbsp; &nbsp; rank of verb<tt> x </tt></td></tr>
+<tr><td><tt>⍙</tt><td><td>&nbsp;</td><td>
+ self-reference (recursion)</td></tr>
+</table>
+
+
+<a name="xa1"></a>
+<p><b>A.1 Direct Definition</b></p>
+
+<p>A direct definition consists of 2 or 4 parts,
+separated by colons. Examples:</p>
+
+<pre>
+root:  ⍵*÷⍺
+oder:  'nein' : ⍺∨⍵ : 'ja'
+fact:  ⍵×⍙⍵-1 : 0=⍵ : 1
+</pre>
+
+<p><tt>3 root 4 5 6 </tt>computes the 
+cube roots of<tt> 4 5 6</tt>&nbsp;;<nobr><tt> 0 oder 0 </tt></nobr>
+ist<tt> 'nein'</tt>&nbsp;;<nobr><tt> 1 oder 0 </tt></nobr>
+ist<tt> 'ja'</tt>&nbsp;;<tt> </tt> 
+and<tt> fact&nbsp;5 </tt>is<tt> 120</tt>&nbsp;.
+</p>
+
+
+<a name="xa2"></a>
+<p><b>A.2 Rank</b></p>
+
+<p>The ranks of a verb are three 
+integers<tt> mv,lv,rv</tt>&nbsp;,<tt> </tt>
+the monadic rank, left rank, and right rank,
+respectively. A verb need only be defined on
+arguments of rank bounded by its rank(s); the
+extension to arguments of higher rank is uniform for
+all verbs. The intrinsic ranks of a verb<tt> u </tt>may be
+augmented by the adverb<tt> ⍤</tt>&nbsp;,<tt> </tt>
+thus:<tt> u⍤n</tt>&nbsp;.</p>
+
+<p>For positive rank<tt> r</tt>&nbsp;,<tt> ⍵ </tt>
+is split into<tt> f←(-r)↓⍴⍵ </tt>cells,
+each with shape<tt> (-r)↑⍴⍵</tt>&nbsp;.<tt> </tt>
+We speak of<tt> f </tt>as the frame
+or the outer shape of<tt> ⍵ </tt>relative to 
+rank<tt> r </tt>(or relative to<tt> v</tt>&nbsp;,<tt> </tt>
+the verb whose rank is<tt> r</tt>);<tt> </tt>
+and the
+cells as rank-<tt>r </tt>cells 
+or simply<tt> r</tt>-cells. 
+A negative rank indicates the number 
+of leading axes to exclude
+from the cell shape: the excluded axes become the
+frame.<tt> ¯1</tt>-cells are also known as 
+&ldquo;major cells&rdquo;.
+Many verbs are defined in terms of major cells.</p>
+
+<p><tt>v⍵: ⍵ </tt>is split into<tt> f←(mv)↓⍴⍵ </tt>
+rank-<tt>mv </tt>cells. 
+The result obtains by applying<tt> v </tt>to 
+each<tt> mv</tt>-cell of<tt> ⍵</tt>&nbsp;,<tt> </tt>
+with a necessarily common result 
+cell shape<tt> c</tt>&nbsp;.<tt> </tt>
+The overall result has shape<tt> f,c</tt>&nbsp;.</p>
+
+<p><tt>⍺v⍵: ⍺ </tt>is split into<tt> fa←(-lv)↓⍴⍺ </tt>
+rank-<tt>lv </tt>cells;<tt> ⍵ </tt>
+into<tt> fb←(-rv)↓⍴⍵ </tt>rank-<tt>rv </tt>cells.
+One of the following
+must hold:<tt> fa </tt>matches<tt> fb</tt>&nbsp;,<tt> </tt> 
+or both of<tt> fa </tt>or<tt> fb </tt>is empty. 
+If the former,<tt> v </tt>is applied to corresponding
+cells of<tt> ⍺ </tt>and<tt> ⍵ </tt>
+to obtain the result cells; if the
+latter, the single cell for the empty frame is
+applied against every cell of the other argument, to
+obtain the result cells. The overall result has
+shape<tt> fa,((0=⍴fa)/fb),c</tt>&nbsp;.</p>
+
+<p>The familiar scalar functions and scalar extension of
+APL\360, are special cases of this cellular verb
+application and cellular extension, 
+where all ranks<tt> 0</tt>&nbsp;.</p>
+
+<p>The preceding is stated more succinctly 
+below.<tt> </tt>(<tt>u⍤&gt;⍵ </tt>
+applies<tt> u </tt>to the open of each scalar of<tt> ⍵</tt>&nbsp;.)<p>
+
+<pre>
+ u⍤n⍵:  u⍤&gt; (0{r)enc⍵ ⊣ r←⌽3⍴⌽n
+⍺u⍤n⍵:  (f⍴a) u⍤&gt; (f⍴b) ⊣ f←(⍴a),(0=⍴⍴a)/⍴b ⊣ 
+          a←(1{r)enc⍺ ⊣ b←(2{r)enc⍵ ⊣ r←⌽3⍴⌽n
+enc:  (t↓⍴⍵)⍴(t↑⍴⍵)enl,⍵ ⊣ t←-((0≤⍺)×⍺⌊⍴⍴⍵)+(0>⍺)×0⌈⍺+⍴⍴⍵
+enl:  (&lt;⍺⍴⍵),⍺⍙(×/⍺)↓⍵  :  ''≡⍵  :  ⍵
+</pre>
+
+<p>Intrinsic ranks of primitive verbs:</p>
+
+<table>
+<tr><td>Monadic</td><td>&nbsp;</td>
+ <td><tt>0</tt>&nbsp;</td><td>&nbsp; &nbsp; &nbsp;</td>
+ <td><tt>+ - × ÷ * ⍟ ⌈ ⌊ | ! ○ ? ⍳ ~ &gt;</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>1</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>≤ ≥ ⌽ ⍎ {</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>2</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>⌹</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>¯</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>&lt; ⊃ ⍋ ⍒ , ⍪ ⊢ ⊣ ⊖ ⍴ ≠ ↑ ↓ ⍕ ⍉</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>Dyadic</td><td>&nbsp;</td>
+ <td><tt>0 0</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>+ - × ÷ * ⍟ ⌈ ⌊ | ! ○ ? ∧ ∨ &lt; ≤ = ≥ &gt; ≠ ⍲ ⍱</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>0 1</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>⌽</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>0 ¯</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>∊ {</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>1 0</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>⍳</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>1 ¯</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>⍴ ↑ ↓ ⍉</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>2 ¯</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>⍕</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>¯ 2</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>⌹</tt>&nbsp;</td>
+ </tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>¯ ¯</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>&lt; ⊃ ⍋ ⍒ , ⍪ ⊢ ⊣ ⊖ ~ ≡ ⊥ ⊤</tt>&nbsp;</td>
+ </tr>
+</table>
+
+
+<a name="xa3"></a>
+<p><b>A.3 Nouns</b></p>
+
+<table>
+<tr><td><tt>∘ &nbsp;</tt>&nbsp;</td><td>&nbsp;</td>
+ <td width=70>Jot</td><td>&nbsp;</td>
+ <td><tt>&lt;''</tt></td></tr>
+<tr><td><tt>¯ &nbsp;</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>Infinity</td><td>&nbsp;</td>
+ <td><tt>⌊/⍳0; 0 1 ¯ 2 ←→ 0 1,(⌊/⍳0),2</tt></td></tr>
+</table>
+
+
+<a name="xa4"></a>
+<p><b>A.4 Verbs</b></p>
+
+<table>
+<tr><td valign=top><tt>+⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top width=70>Mate</td><td>&nbsp;</td>
+ <td>The complex conjugate of<tt> ⍵ </tt></td></tr>
+<tr><td valign=top><tt>&lt;⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Box</td><td>&nbsp;</td>
+ <td>Satisfies<tt> (0=⍴⍴&lt;⍵)^(⍵≡&gt;&lt;⍵)^(~⍵≡&lt;⍵)</tt></td></tr>
+<tr><td valign=top><tt>&gt;⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Open</td><td>&nbsp;</td>
+ <td><tt>&lt;. ¯1</tt>&nbsp;<tt> </tt>i.e. the inverse
+ of<tt> &lt;⍵</tt>&nbsp;.<tt> ⍵≡&gt;&lt;⍵ </tt>
+ for all<tt> ⍵</tt>&nbsp;,<tt> </tt>but<tt> ⍵≡&lt;&gt;⍵ </tt>
+ only if<tt> ⍵ </tt>boxed.</td></tr>
+<tr><td valign=top><tt>≤⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Cycle</td><td>&nbsp;</td>
+ <td>See Section 4.</td></tr>
+<tr><td valign=top><tt>≥⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Mix</td><td>&nbsp;</td>
+ <td>See Section 4.</td></tr>
+<tr><td valign=top><tt>≠⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Sieve</td><td>&nbsp;</td>
+ <td><tt>(⍳0{⍴c)=c⍳c←,&lt;⍤¯1 ⍵</tt>&nbsp;;<tt> </tt>
+ see<tt> ↑⍵</tt></td></tr>
+<tr><td valign=top><tt>⍺~⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Less</td><td>&nbsp;</td>
+ <td><tt>(~⍺∊(<⍤¯1) ⍵)⌿⍺</tt>&nbsp;;<tt> </tt>
+ the major cells of<tt> ⍺</tt>&nbsp;,<tt> </tt>
+ less those for<tt> ⍵</tt></td></tr>
+<tr><td valign=top><tt>⍺∧⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>LCM</td><td>&nbsp;</td>
+ <td>Equivalent to &ldquo;and&rdquo; 
+ for boolean<tt> ⍺ ⍵</tt></td></tr>
+<tr><td valign=top><tt>⍺∨⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>GCD</td><td>&nbsp;</td>
+ <td>Equivalent to &ldquo;or&rdquo;&nbsp; 
+ for boolean<tt> ⍺ ⍵</tt></td></tr>
+<tr><td valign=top><tt>↑⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Nub</td><td>&nbsp;</td>
+ <td><tt>(≠⍵)⌿⍵</tt>&nbsp;;<tt> </tt>
+ distinct major cells of<tt> ⍵</tt></td></tr>
+<tr><td valign=top><tt>⍺↑⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Take</td><td>&nbsp;</td>
+ <td>If<tt> (⍴,⍺)≥⍴⍴⍵</tt>&nbsp;,<tt> ⍺↑⍵ </tt>is as in APL\360;
+ else<tt> ⍺↑⍵ ←→ (⍺,((⍴,⍺)-⍴⍴⍵)↑⍴⍵)↑⍵</tt>&nbsp;.</tt></td></tr>
+<tr><td valign=top><tt>↓⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Raze</td><td>&nbsp;</td>
+ <td><tt>&gt;⍪¨&gt;/,⍵</tt>&nbsp;;<tt> </tt>
+ the inverse of<tt> 1⍤&lt;⍵ </tt></td></tr>
+<tr><td valign=top><tt>⍺↓⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Drop</td><td>&nbsp;</td>
+ <td>If<tt> (⍴,⍺)≥⍴⍴⍵</tt>&nbsp;,<tt> ⍺↓⍵ </tt>is as in APL\360;
+ else<tt> ⍺↓⍵ ←→ ((⍴⍴⍵)↑⍺)↓⍵</tt>&nbsp;.</tt></td></tr>
+<tr><td valign=top><tt>⊃⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td nowrap valign=top>Box open</td><td>&nbsp;</td>
+ <td><tt>&lt;⍵ </tt>if<tt> ⍵ </tt>is open;<tt> ⍵ </tt>
+ itself if not</td></tr>
+<tr><td valign=top><tt>⍺⊃⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Link</td><td>&nbsp;</td>
+ <td><tt>(&lt;⍺),⊃⍵</tt></td></tr>
+<tr><td valign=top><tt>⍺⊣⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Left</td><td>&nbsp;</td>
+ <td><tt>⍺</tt></td></tr>
+<tr><td valign=top><tt>⊢⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Right</td><td>&nbsp;</td>
+ <td><tt>⍵</tt></td></tr>
+<tr><td valign=top><tt>⍺⊢⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Right</td><td>&nbsp;</td>
+ <td><tt>⍵</tt></td></tr>
+<tr><td valign=top><tt>{⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>All</td><td>&nbsp;</td>
+ <td>See Section 2.</td></tr>
+<tr><td valign=top><tt>⍺{⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>From</td><td>&nbsp;</td>
+ <td>See Section 2.</td></tr>
+<tr><td valign=top><tt>⍺≡⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Match</td><td>&nbsp;</td>
+ <td>Is<tt> ⍺ </tt>identical to<tt> ⍵</tt>&nbsp;?</td></tr>
+<tr><td valign=top><tt>⍪⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Table</td><td>&nbsp;</td>
+ <td><tt>((1↑(⍴⍵),1),×/1↓⍴⍵)⍴⍵</td></tr>
+<tr><td valign=top><tt>⍺⍪⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Over</td><td>&nbsp;</td>
+ <td><tt>⍺,[⎕io] ⍵</tt></td></tr>
+<tr><td valign=top><tt>⍋⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Grade</td><td>&nbsp;</td>
+ <td><tt>⍋⍵ </tt>is a permutation of<tt> ⍳0{⍴⍵</tt>&nbsp;,<tt> </tt>
+ and<tt> (⍋⍵){⍵ </tt>is in ascending order.</td></tr>
+<tr><td valign=top><tt>⍒⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Downgrade</td><td>&nbsp;</td>
+ <td><tt>⍒⍵ </tt>is a permutation of<tt> ⍳0{⍴⍵</tt>&nbsp;,<tt> </tt>
+ and<tt> (⍒⍵){⍵ </tt>is in descending order.</td></tr>
+</table>
+
+
+<a name="xa5"></a>
+<p><b>A.5 Adverb</b></p>
+
+<table>
+<tr><td valign=top><tt>n⌿⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Replicate</td><td>&nbsp;</td>
+ <td valign=top><tt>¯</tt>&nbsp;</td><td nowrap>&nbsp; &nbsp; &nbsp;</td>
+ <td>See Section 3.</td></tr>
+<tr><td valign=top><tt>u⌿⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Down</td><td>&nbsp;</td>
+ <td valign=top><tt>¯</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>(0{⍵) u(1{⍵) u &#133; u(¯1{⍵)</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>n/⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Replicate</td><td>&nbsp;</td>
+ <td valign=top><tt>¯</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>n⌿¨⍉⍵</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>m¨v⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>With</td><td>&nbsp;</td>
+ <td valign=top><tt>rv</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>m v ⍵</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>u¨n⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>With</td><td>&nbsp;</td>
+ <td valign=top><tt>lu</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>⍵ u n</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>u¨v⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Under</td><td>&nbsp;</td>
+ <td valign=top><tt>mv</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>v. ¯1 u v ⍵</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>⍺u¨v⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Under</td><td>&nbsp;</td>
+ <td valign=top><tt>mv mv</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>v. ¯1 (v⍺) u (v⍵)</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>⍺v⊂⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Swap</td><td>&nbsp;</td>
+ <td valign=top><tt>rv lv</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>⍵ v ⍺</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>v}⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Select</td><td>&nbsp;</td>
+ <td valign=top><tt>¯</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>See Section 2.</td></tr>
+<tr><td valign=top><tt>⍺v}⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Merge</td><td>&nbsp;</td>
+ <td valign=top><tt>¯ ¯</tt></td><td>&nbsp;</td>
+ <td>See Section 2.</td></tr>
+<tr><td valign=top><tt>⍺m.v⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Tie</td><td>&nbsp;</td>
+ <td valign=top><tt>¯ ¯</tt></td><td>&nbsp;</td>
+ <td><tt>m </tt>is a non-negative integer indicating the
+ length of the prefixes in the frames of<tt> ⍺ </tt>
+ and<tt> ⍵ </tt>which must agree, with the other
+ axes free to contribute to the result shape.<tt> m </tt>
+ may also be<tt> ∘</tt>&nbsp;;<tt> ∘.v ←→ 0 .v</tt></tr>
+<tr><td valign=top><tt>u.n⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Ply</td><td>&nbsp;</td>
+ <td valign=top><tt>mu</tt></td><td>&nbsp;</td>
+ <td>For<tt> n≥0</tt>&nbsp;:<tt> u.0⍵ ←→ ⍵</tt>&nbsp;;<tt> u.(k+1)
+ ←→ u u.k ⍵</tt>&nbsp;;<tt> </tt>
+ and<tt> u. ¯⍵ ←→ u.k⍵ </tt>where<tt> k </tt>
+ is the least positive integer such
+ that<tt> (u.k⍵)≡u.(k+1)⍵</tt>&nbsp;.<br>
+ For<tt> n&lt;0</tt>&nbsp;:<tt> u.n ←→ v.(|n)</tt>&nbsp;,<tt> </tt>
+ where<tt> v </tt>is the inverse of<tt> u</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top><tt>u.v⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Alternant</td><td>&nbsp;</td>
+ <td valign=top><tt>2</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>See Section 3.</td></tr>
+<tr><td valign=top><tt>m∇n⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Define</td><td>&nbsp;</td>
+ <td valign=top><tt>¯</tt></td><td>&nbsp;</td>
+ <td><tt>⍎m </tt>(a gross simplication)</td></tr>
+<tr><td valign=top><tt>⍺m∇n⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Define</td><td>&nbsp;</td>
+ <td valign=top><tt>¯ ¯</tt></td><td>&nbsp;</td>
+ <td><tt>⍎n </tt>(a gross simplication)</td></tr>
+<tr><td valign=top><tt>m⍤v</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Cut</td><td>&nbsp;</td>
+ <td valign=top><tt> </tt></td><td>&nbsp;</td>
+ <td>See Section 3.</td></tr>
+<tr><td valign=top><tt>u⍤n</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Rank</td><td>&nbsp;</td>
+ <td valign=top><tt>n</tt>&nbsp;</td><td>&nbsp;</td>
+ <td>See Section A.2 above.</td></tr>
+<tr><td valign=top><tt>u⍤v⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>On</td><td>&nbsp;</td>
+ <td valign=top><tt>mv</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>u v ⍵</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>⍺u⍤v⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>On</td><td>&nbsp;</td>
+ <td valign=top><tt>mv mv</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>(v⍺) u (v⍵)</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>u⍥v⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Upon</td><td>&nbsp;</td>
+ <td valign=top><tt>mv</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>u v ⍵</tt>&nbsp;</td></tr>
+<tr><td valign=top><tt>⍺u⍥v⍵</tt>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top>Upon</td><td>&nbsp;</td>
+ <td nowrap valign=top><tt>lv rv</tt>&nbsp;</td><td>&nbsp;</td>
+ <td><tt>u ⍺ v ⍵</tt>&nbsp;</td></tr>
+</table>
+<br>
+
+
+
+<a name="xb"></a>
+<p><b>Appendix B: Annotated Examples</b></p>
+
+<p><tt>⍺{⍵</tt>&nbsp;,<tt> </tt>&ldquo;from&rdquo;, 
+begins with the primitive notion of
+selecting an element from a vector &mdash;<tt> 1=⍴⍴⍵ </tt>
+and<tt> ⍺∊⍳⍴⍵</tt>&nbsp;.</p>
+
+<pre>
+    x←31 41 59 26 53 58 97 93
+
+    0{x              7{x              3{x
+31               93                26
+</pre>
+
+<p><tt>⍺{⍵ </tt>is defined 
+for scalar<tt> ⍺ </tt>
+and array<tt> ⍵</tt>&nbsp;.<tt> </tt> 
+(The extension to<tt> ⍺ </tt>
+with higher rank will be explained later.) 
+<tt>&gt;⍺ </tt>must be a scalar or a vector, 
+and the length of<tt> ,&gt;⍺ </tt>must be 
+no greater than the rank 
+of<tt> ⍵</tt>&nbsp;.<tt>  &gt;k(,&gt;⍺ </tt>
+is the index for axis<tt> k</tt>&nbsp;.<tt> </tt>
+</p>
+
+<pre>
+    ⊢m←4 5⍴⍳12
+ 0  1  2  3  4
+ 5  6  7  8  9
+10 11 12 13 14
+15 16 17 18 19
+
+    (<(<1),<2){m
+7
+
+    (<(<1 2),<4 3 2){m
+ 9  8  7
+14 13 12
+</pre>
+
+<p>The left argument to<tt> { </tt>can be simplified by
+exploiting the permissiveness of monadic<tt> > </tt>on open
+arrays. (An open array is one which is not boxed.)
+Dyadic<tt> ⊃ </tt>may also be useful in this regard. 
+The last two examples can be restated thus:</p>
+
+<pre>
+    (<1 2){m
+7
+
+    (<1 2⊃4 3 2){m
+ 9  8  7
+14 13 12
+</pre>
+
+<p>In<tt> (<1 2){m</tt>&nbsp;,<tt> 1 ←→ >0{,><1 2 </tt>
+is the index for axis 0 (rows);<tt> 2 ←→ >0{,><1 2 </tt>
+is the index for axis 1 (columns).
+In<tt> (<1 2⊃4 3 2){m</tt>&nbsp;,<tt> 1 2 ←→ <nobr>>0{,><1 2⊃4 3 2</nobr> </tt>
+are row indices and<tt> 4 3 2 ←→ <nobr>>1{,><1 2⊃4 3 2</nobr> </tt>are
+column indices.</p>
+
+<p>Where the left argument of<tt> ⍺{⍵ </tt>is open, 
+&ldquo;major cells&rdquo;
+of<tt> ⍵ </tt>are selected. Major cells of<tt> ⍵ </tt>
+are the
+subarrays of rank<tt> ¯1+⍴⍴⍵ </tt>
+along the leading axis of<tt> ⍵</tt>&nbsp;.</p>
+
+<pre>
+    2{m
+10 11 12 13 14
+
+    0{m
+0 1 2 3 4
+</pre>
+
+<p><tt>2{m </tt>is row<tt> 2 </tt>of<tt> m</tt>&nbsp;,<tt> </tt>
+because<tt> 2 ←→ >0{,>2 </tt>is the index
+for axis 0;<tt> 0{m </tt>is row 0 of<tt> m </tt>
+because<tt> 0 ←→ >0{,>0</tt>&nbsp;.</p>
+
+<p>Indices<tt> i </tt>for an axis of length<tt> l </tt>may be integers in
+the range<tt> -l </tt>to<tt> ¯1+l</tt>&nbsp;;<tt> </tt>
+negative<tt> i </tt>is equivalent to<tt> l|i</tt>&nbsp;.<tt> </tt>
+As indices<tt> ¯1 ←→ ¯1+l</tt>&nbsp;,<tt> ¯2 ←→ ¯2+l</tt>&nbsp;,<tt> </tt>
+and s0 on.</p>
+
+<pre>
+    (<0 ¯1){m
+4
+
+    (<¯1⊃0 ¯1 1){m
+15 19 16
+
+    ¯2{m
+10 11 12 13 14
+</pre>
+
+<p>The left rank of<tt> ⍺{⍵ </tt>is<tt> 0</tt>&nbsp;,<tt> </tt>
+and the right rank is infinite: 
+each scalar of<tt> ⍺ </tt>is applied against all 
+of<tt> ⍵</tt>&nbsp;,<tt> </tt>to get an individual result 
+with shape<tt> c</tt>&nbsp;;<tt> </tt> 
+the overall result of<tt> ⍺{⍵ </tt>has shape<tt> (⍴⍺),c</tt>&nbsp;.<tt> </tt> 
+This produces &ldquo;scattered indexing&ldquo;, 
+an effect not directly
+computable with<tt> [;] </tt>indexing of APL\360.</p>
+
+<pre>
+    (0 1⊃¯1 ¯1){m
+1 19
+
+    (<¯1⊃0 ¯1 1){m
+15 19 16
+
+    (2 2⍴0 1⊃¯1 ¯1⊃¯1 0⊃0 ¯2){m
+ 1 19
+15  3
+
+    2 0 ¯1{m
+10 11 12 13 14
+ 0  1  2  3  4
+15 16 17 18 19
+
+
+    (2 2⍴2 0 ¯1 3){m
+10 11 12 13 14
+ 0  1  2  3  4
+
+15 16 17 18 19
+15 16 17 18 19
+
+    ((<1⊃2 3),<2 3⊃1){m
+ 7  8
+11 16
+
+      x←3 1 4 1 5 9 2 7
+      ((⌽⍳⌈/x)∘.&lt;x){'.⎕'
+.....⎕..
+.....⎕..
+.....⎕.⎕
+.....⎕.⎕
+....⎕⎕.⎕
+..⎕.⎕⎕.⎕
+⎕.⎕.⎕⎕.⎕
+⎕.⎕.⎕⎕⎕⎕
+⎕⎕⎕⎕⎕⎕⎕⎕
+</pre>
+
+<p>In all the examples above.<tt> >k{,>⍺ </tt> are integer 
+arrays.<tt> >k{,>⍺ </tt>may also be boxed; 
+integers therein indicate
+positions to be excluded. This is &ldquo;complementary
+indexing&rdquo;.</p>
+
+<pre>
+    (<(<1),<2){m           <font face="Times">row 1, column 2</font>
+7
+
+    (<(<1),<<2){m          <font face="Times">row 1, excluding column 2</font>
+5 6 8 9
+
+    (<(<<1),<2){m          <font face="Times">column 2, excluding row 1</font>
+2 12 17
+
+    (<(<<1),<<2){m         <font face="Times">excluding row 1 &amp; column 2</font>
+0   1  3  4
+10 11 13 14
+15 16 18 19
+
+    (<(<<¯1),<2){m         <font face="Times">column 2, excluding row</font> ¯1 
+2 7 12
+
+    (<(<<''),<2){m         <font face="Times">column 2, excluding nothing</font>
+2 7 12 17
+
+    (<(<∘),<2){m           ∘ ←→ <''
+2 7 12 17
+
+    (<∘⊃2){m               ∘⊃2 ←→ (<∘),<2
+2 7 12 17
+
+    i←0 1
+    j←0 1 2
+
+    m
+ 0  1  2  3  4
+ 5  6  7  8  9
+10 11 12 13 14
+15 16 17 18 19
+
+    (<(&lt;i),&lt;j){m                 (<(&lt;i),<&lt;j){m 
+0 1 2                        3 4
+5 6 7                        8 9
+
+    (<(<&lt;i),&lt;j){m                (<(<&lt;i),<&lt;j){m 
+10 11 12                     13 14
+15 16 17                     18 19
+</pre>
+
+<p>In Section 3.3, we use complementary and scattered
+indexing in concert, to produce succinct definitions
+for the generalized determinant and for<tt> ⌹⍵</tt>&nbsp;.</p>
+
+<p>The following are examples of<tt> [;] </tt>indexing, and
+expressions using<tt> { </tt>which compute the same result.
+Recall that<tt> ∘ ←→ <''</tt>&nbsp;.</p>
+
+<pre>
+    a[i]              i{a
+    a[i;]             i{a
+    a[i;;]            i{a
+    a[i;j;k]          (&lt;i⊃j⊃k){a
+    a[i;j;k;;;]       (&lt;i⊃j⊃k){a
+    a[i;j;]           (&lt;i⊃j){a
+    a[i;;j]           (&lt;i⊃∘⊃j){a
+    a[;;j]            (<∘⊃∘⊃j){a 
+</pre>
+
+<p><tt>{⍵</tt>&nbsp;,<tt> </tt>
+&ldquo;all&rdquo;, computes the cartesian product of the
+opened elements of its vector argument<tt> ⍵</tt>&nbsp;.</p>
+
+<pre>
+    {1 2⊃4 5 6 7
+┌───┬───┬───┬───┐
+│1 4│1 5│1 6│1 7│
+├───┼───┼───┼───┤
+│2 4│2 5│2 6│2 7│
+└───┴───┴───┴───┘
+
+   {'cr'⊃'ao'⊃'dmntw'
+┌───┬───┬───┬───┬───┐
+│cad│cam│can│cat│caw│
+├───┼───┼───┼───┼───┤
+│cod│com│con│cot│cow│
+└───┴───┴───┴───┴───┘
+
+┌───┬───┬───┬───┬───┐
+│rad│ram│ran│rat│raw│
+├───┼───┼───┼───┼───┤
+│rod│rom│ron│rot│row│
+└───┴───┴───┴───┴───┘
+</pre>
+
+<p><tt>{⍵ </tt>is closely related to selecting from rectangular
+arrays. For example,<tt> ⍺{⍵ </tt>(Section 2.2) 
+and<tt> ⍺⍉⍵ </tt>
+(Section 3.1) are both defined in terms of monadic<tt> {</tt>&nbsp;.</p>
+
+<p>In particular, the phrase<tt> {⍳¨>⍴⍵ </tt>
+plays a key role in
+the definition of<tt> ⍺v}⍵ </tt>
+(&ldquo;merge&rdquo;).<tt> ⍴{⍳¨>⍵ ←→ ⍴⍵</tt>&nbsp;;<tt> </tt> 
+each opened element is the &ldquo;position&rdquo;
+of an element of<tt> ⍵</tt>&nbsp;,<tt> </tt>
+a number represented in base<tt> ⍴⍵</tt>&nbsp;.</p>
+
+<pre>
+    ⊢a←2 3 4⍴⍳24
+ 1  2  3  4
+ 5  6  7  8
+ 9 10 11 12
+           
+13 14 15 16
+17 18 19 20
+21 22 23 24
+
+    ⍳¨⍴a
+┌───┬─────┬───────┐
+│0 1│0 1 2│0 1 2 3│
+└───┴─────┴───────┘
+
+    {⍳¨>⍴a
+┌─────┬─────┬─────┬─────┐
+│0 0 0│0 0 1│0 0 2│0 0 3│
+├─────┼─────┼─────┼─────┤
+│0 1 0│0 1 1│0 1 2│0 1 3│
+├─────┼─────┼─────┼─────┤
+│0 2 0│0 2 1│0 2 2│0 2 3│
+└─────┴─────┴─────┴─────┘
+
+┌─────┬─────┬─────┬─────┐
+│1 0 0│1 0 1│1 0 2│1 0 3│
+├─────┼─────┼─────┼─────┤
+│1 1 0│1 1 1│1 1 2│1 1 3│
+├─────┼─────┼─────┼─────┤
+│1 2 0│1 2 1│1 2 2│1 2 3│
+└─────┴─────┴─────┴─────┘
+</pre>
+
+<p><tt>⍺v}⍵ </tt>produces a &ldquo;merge&rdquo; 
+of<tt> ⍺ </tt>and<tt> ⍵</tt>&nbsp;;<tt> </tt>
+positions<tt> (v i){i←{⍳¨>⍴⍵ </tt>in<tt> ⍵ </tt>
+are replaced by<tt> ⍺</tt>&nbsp;.<tt> </tt>
+In words, the
+verb<tt> v </tt>is applied to<tt> i←{⍳¨>⍴⍵</tt>&nbsp;,<tt> </tt>
+the result is then
+used to select from<tt> i</tt>&nbsp;,<tt> </tt>
+to obtain positions in<tt> ⍵ </tt>to be
+replaced by<tt> ⍺</tt>&nbsp;.<tt> </tt> 
+In this paper, we assume<tt> ⍺ </tt>is either
+a scalar, or<tt> ⍴⍺ ←→ (v i){i</tt>&nbsp;.</p>
+
+<pre>
+    1 0{3 1 4 1 5 9
+1 3
+
+    1 0¨{3 1 4 1 5 9
+1 3
+
+    (¯1 8) 1 0¨{3 1 4 1 5 9
+8 ¯1 4 1 5 9
+
+    (¯1 ¯2 ¯3) 1 1 1¨{}3 1 4 1 5 9
+3 ¯3 4 1 5 9
+</pre>
+
+<p>The phrase<tt> n¨v </tt>is a monadic verb derived from the
+dyadic adverb<tt> ¨ </tt>(&ldquo;with&rdquo;), 
+array<tt> n</tt>&nbsp;,<tt> </tt>
+and verb<tt> v</tt>&nbsp;;<tt> n¨v ⍵ ←→ n v ⍵</tt>&nbsp;.<tt> n¨v </tt>
+is a verb, and therefore can be used
+as argument to adverbs such as<tt> }</tt>&nbsp;;<tt> n v </tt>
+on the other hand is a sentence fragment, 
+being neither a noun nor
+a verb nor an adverb nor punctuation.</p>
+
+<p><tt>⍺v}⍵ </tt>is a new array; 
+neither<tt> ⍺ </tt>nor<tt> ⍵ </tt>nor<tt> v </tt>are
+affected by the computation of<tt> ⍺v}⍵</tt>&nbsp;.<tt> </tt>
+We could of
+course assign the result to any name.</p>
+
+<pre>
+    m
+ 0  1  2  3  4
+ 5  6  7  8  9
+10 11 12 13 14
+15 16 17 18 19
+
+    ¯1 (<1 2)¨{}m             <font face="Times">a single element</font>
+ 0  1  2  3  4
+ 5  6 ¯1  8  9
+10 11 12 13 14
+15 16 17 18 19
+
+    (¯1 ¯2 ¯3 ¯4 ¯5) 1¨{}m    <font face="Times">row 1</font>
+ 0  1  2  3  4
+¯1 ¯2 ¯3 ¯4 ¯5
+10 11 12 13 14
+15 16 17 18 19
+
+    ¯1 (<∘⊃2)¨{}m             <font face="Times">column 2</font>
+ 0  1 ¯1  3  4
+ 5  6 ¯1  8  9
+10 11 ¯1 13 14
+15 16 ¯1 18 19
+
+    ¯1 ¯2 ¯3 ¯4 ¯5 (0 1⊃¯1 ¯1⊃¯1 0⊃0 ¯2}¨{}m
+ 0 ¯1  2 ¯4  4
+ 5  6  7  8  9
+10 11 12 13 14
+¯3 16 17 18 ¯2
+</pre>
+
+<p>The last example, &ldquo;scattered replacement&rdquo;, is not
+directly computable with<tt> [;] </tt>indexing.</p>
+
+<pre>
+    ¯1 (<(<1),<2)¨{}m
+ 0  1  2  3  4
+ 5  6 ¯1  8  9
+10 11 12 13 14
+15 16 17 18 19
+
+    ¯1 (<(<1),<<2)¨{}m
+ 0  1  2  3  4
+¯1 ¯1  7 ¯1 ¯1
+10 11 12 13 14
+15 16 17 18 19
+
+    ¯1 (<(<<1),<2)¨{}m
+ 0  1 ¯1  3  4
+ 5  6  7  8  9
+10 11 ¯1 13 14
+15 16 ¯1 18 19
+
+    ¯1 (<(<<1),<<2)¨{}m
+¯1 ¯1  2 ¯1 ¯1
+ 5  6  7  8  9
+¯1 ¯1 12 ¯1 ¯1
+¯1 ¯1 17 ¯1 ¯1
+</pre>
+
+<p><tt>v</tt>,<tt> </tt>the verbal argument 
+to<tt> }</tt>&nbsp;,<tt> </tt>
+need not involve<tt> {</tt>&nbsp;.<tt> </tt>
+In fact,<tt> v </tt>need not be a 
+&ldquo;selection function&rdquo; at all.
+</p>
+
+<pre>
+    (¯1) ¯2 ¯3¨↑}4 5⍴99
+99 99 99 99 99
+99 99 99 99 99
+99 99 ¯1 ¯1 ¯1
+99 99 ¯1 ¯1 ¯1
+
+    (¯1 ¯2 ¯3 ¯4) 0 0¨⍉}m
+¯1  1  2  3  4
+ 5 ¯2  7  8  9
+10 11 ¯3 13 14
+15 16 17 ¯4 19
+
+    (¯1 ¯2 ¯3 ¯4) 0 0¨⍉⍤⊖}m
+ 0  1  2 ¯4  4
+ 5  6 ¯3  8  9
+10 ¯2 12 13 14
+¯1 16 17 18 19
+
+    '*' 0 0¨⍉} '⍟' 0 0¨⍉⍤⊖}5 5⍴'.'
+*...⍟
+.*.⍟.
+..*..
+.⍟.*.
+⍟...*
+
+   '⍟' (' '=x)/}x←'cogito, ergo sum'
+cogito,⍟ergo⍟sum
+</pre>
+
+<p>In the last example,<tt> / </tt>is an adverb; 
+hence<tt> (' '=x)/ </tt>
+is a verb, and is the argument to<tt> }</tt>&nbsp;.
+</p>
+<br>
+
+
+<a name="errata"></a>
+<p><b>Errata</b></p>
+
+<table>
+<tr><td valign=top>3.1</td><td nowrap>&nbsp; &nbsp;</td><td>
+The expression for<tt> ⍺⍉⍵ </tt>fails for 
+scalar<tt> ⍵</tt>&nbsp;.<tt> </tt>
+Replace<tt> ⍳1+⌈/⍺ </tt>
+by<tt> ⍳0⌈1+⌈/⍺</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>References</td><td>&nbsp;</td><td>
+APL Quote-Quad should be APL Quote Quad.
+ </td></tr>
+<tr><td valign=top nowrap>Appendix B</td><td>&nbsp;</td><td>
+The array<tt> a </tt>should be<tt> 2 3 4⍴1+⍳24 </tt>
+instead of<tt> 2 3 4⍴⍳24</tt>&nbsp;.
+ </td></tr>
+</table>
+
+
+
+<br><hr>
+
+<font size=-1>
+<p>Originally appeared in the 
+<a target=_parent href="http://portal.acm.org/citation.cfm?id=28322">APL 87 Proceedings</a>,
+APL Quote Quad, Volume 17, Number 4, 1987-05.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2010-04-26 09:25</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2017-10-19 14:45</font></td></tr>
+</table>
+
+</td></tr></table>
+<br>
+</body>
+</html>

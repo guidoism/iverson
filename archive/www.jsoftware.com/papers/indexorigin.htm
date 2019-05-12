@@ -1,0 +1,270 @@
+﻿
+<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Is Index Origin 0 a Hindrance?</title>
+<link href="https://www.jsoftware.com/papers/adoc.css" rel=stylesheet></head>
+<body>
+<table width=550 align=center><tr><td>
+
+<br>
+<p align=center><font size=+2>Is Index Origin 0 a Hindrance?</font>
+<br><b>Roger Hui</b></p>
+<br>
+
+<p>At 2010-07-24 06:16, in response to an e-mail 
+from Morten Kromberg of Dyalog APL, 
+I posted the following 
+<a href="http://www.jsoftware.com/pipermail/programming/2010-July/019909.html">article</a> 
+to the J Programming Forum:</p>
+
+<table><tr><td nowrap>&nbsp; &nbsp; &nbsp;</td>
+<td><p>I have been asked by some APL colleagues about 
+index origin 0 in J.  The question is, does the choice
+of a fixed value of 0 for index origin a hindrance to
+your work?  The question is specifically addressed
+to &ldquo;ordinary domain experts&rdquo;, 
+people with no software engineering in their background 
+and are not
+professional mathematicians.</p>
+
+<p>In case you did not know, in APL there is a choice
+known as the index origin, controlled by the variable 
+quad-io, of counting from 1 instead of from 0, affecting 
+the left argument of<tt> { </tt>and the result of<tt> i.</tt>&nbsp;,<tt> </tt>
+among other things.  
+I will say no more than this to avoid biasing your answers.</p>
+</td><td nowrap>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</td></tr></table>
+
+<p>This survey is of course unscientific and biased
+(e.g. the people who never took up J 
+because they can not abide by index origin 0 are unlikely to respond).  
+I have tabulated the relevant responses
+as of 2010-07-26 23:10.
+Positive opinions of index origin 0 are marked by
+<img src="https://www.jsoftware.com/papers/img/greencheck.bmp">; negative opinions are marked by
+<img src="https://www.jsoftware.com/papers/img/redx.bmp">.  The salient comment in a response
+and a link to the response are also included.
+</p>
+
+<table>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Tom Arneson</td><td>&nbsp;</td>
+ <td valign=top>land surveyor</td><td>&nbsp;</td>
+ <td valign=top>I have no problem with J fixing index origin at 0.</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019910.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Leigh Halliwell</td><td>&nbsp;</td>
+ <td valign=top>mathematics</td><td>&nbsp;</td>
+ <td valign=top>Occasionally the zero index-origin trips me up; 
+however, it&rsquo;s one of the
+peculiarities of the language that I accept
+in order to use the power of J.</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019912.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Jim Russell</td><td>&nbsp;</td>
+ <td valign=top>developer with no formal training</td><td>&nbsp;</td>
+ <td valign=top>Having always considered an index as a way 
+to express an offset from the &ldquo;first&rdquo; item, a 0 index origin is, 
+to me, the only sensible option.</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019915.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Devon McCormick</td><td>&nbsp;</td>
+ <td valign=top>developer with little formal training</td><td>&nbsp;</td>
+ <td valign=top>I find index origin<tt> 0 </tt>to be the sensible choice, especially given that we
+can use<tt> _1 </tt>to index the last element of an array.</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019917.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>June Kim</td><td>&nbsp;</td>
+ <td valign=top>?</td><td>&nbsp;</td>
+ <td valign=top>I am okay with index origin 0. &#133;
+some of my friends, whom I would call ordinary domain experts 
+without much experience in programming, felt uncomfortable about it, 
+at least in the beginning.</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019921.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/redx.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Bo Jacoby</td><td>&nbsp;</td>
+ <td valign=top>?</td><td>&nbsp;</td>
+ <td valign=top>&nbsp;</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019927.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/redx.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>R.E. Boss</td><td>&nbsp;</td>
+ <td valign=top>mathematician</td><td>&nbsp;</td>
+ <td valign=top>The main reason I would prefer an index origin of 1 is because I expect the
+first, second, third, ... element to have index 1, 2, 3, ...
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019922.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/redx.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Harvey Hahn</td><td>&nbsp;</td>
+ <td valign=top>education, music, etc.</td><td>&nbsp;</td>
+ <td valign=top>Personally, I&rsquo;ve 
+always felt that a 0-origin was an awkward concept &#133;
+There are lots of things in life 
+you don&rsquo;t like, but you learn to live with them.  
+To me, 0-origin is one of them.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019923.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Henry Rich</td><td>&nbsp;</td>
+ <td valign=top>software</td><td>&nbsp;</td>
+ <td valign=top>I think index origin 0 is perfect.  
+What we need is a terminology to 
+replace &ldquo;first, second, ...etc&rdquo;.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019924.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Eldon Eller</td><td>&nbsp;</td>
+ <td valign=top>EE</td><td>&nbsp;</td>
+ <td valign=top>Initially the zero origin bit me once 
+in  while, but it was a most a minor and 
+transitory annoyance.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019926.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Neville Holmes</td><td>&nbsp;</td>
+ <td valign=top>systems engineer<br>college teacher</td><td>&nbsp;</td>
+ <td valign=top>I taught J for a decade or more and can&rsquo;t 
+recall any problems with fixed origin 0 either in teaching or
+in student project work.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019929.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/redx.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Graham Parkhouse</td><td>&nbsp;</td>
+ <td valign=top>civil engineer</td><td>&nbsp;</td>
+ <td valign=top>I always used<tt> ⎕io </tt>as 1 in APL, 
+so moving to J, this was a major difficulty for me. 
+I accept that supplying the <i>choice</i> of 0 or 1 is not a
+great idea.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019932.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Steven Taylor</td><td>&nbsp;</td>
+ <td valign=top>?</td><td>&nbsp;</td>
+ <td valign=top>As strange as it sounds, no choice 
+(with a, &ldquo;it&rsquo;s less error prone + more
+elegant&rdquo; hunch esp. when working with others) 
+gives me a disproportionate amount of clarity and confidence.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019938.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Zsbán Ambrus</td><td>&nbsp;</td>
+ <td valign=top>mathematics</td><td>&nbsp;</td>
+ <td valign=top>I am disqualified from the survey, 
+and I find zero based indexing much
+more convenient that one based indexing.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019939.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Michel Dumontier</td><td>&nbsp;</td>
+ <td valign=top>mathematics</td><td>&nbsp;</td>
+ <td valign=top>&#133; this fact [index origin 0] was accepted 
+(acquis in french) for me and I believed the topic closed.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019943.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Joey Tuttle</td><td>&nbsp;</td>
+ <td valign=top>physics, EE, engineering maths</td><td>&nbsp;</td>
+ <td valign=top>I am happy that j has a single/fixed index origin 
+and that it is 0.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019944.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Ian Shannon</td><td>&nbsp;</td>
+ <td valign=top>environmental science</td><td>&nbsp;</td>
+ <td valign=top>0 is the right choice &mdash; 
+it make the calculation of indexes cleaner &#133;
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019945.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Chris Burke</td><td>&nbsp;</td>
+ <td valign=top>finance, insurance</td><td>&nbsp;</td>
+ <td valign=top>Since people are born at age 0, 
+and durations start at time 0, then<tt> ⎕io </tt>
+0 is very much better than<tt> ⎕io </tt>1. 
+Indeed, I would say that incorrect
+adjustments for<tt> ⎕io </tt>1 
+(e.g. dat[16] not recognized as the value for
+age/duration 15) 
+was the primary reason for program bugs in that business.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019946.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Fraser Jackson</td><td>&nbsp;</td>
+ <td valign=top>econometrics<br>statistics</td><td>&nbsp;</td>
+ <td valign=top>I find J fine as it is with a fixed origin 0.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019947.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Pablo Landherr</td><td>&nbsp;</td>
+ <td valign=top>finance</td><td>&nbsp;</td>
+ <td valign=top>The choice of a fixed value for index origin 
+in general and 0 in particular
+have made a slight majority of problems easier to code in J 
+compared to APL
+(where I did most problem solving prior to J).
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019950.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/redx.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>David Porter</td><td>&nbsp;</td>
+ <td valign=top>EE</td><td>&nbsp;</td>
+ <td valign=top>Having the index 
+origin set to zero is not a great loss, but it did add one more 
+annoyance to learning the language.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019952.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Patrick van Beek</td><td>&nbsp;</td>
+ <td valign=top>actuary</td><td>&nbsp;</td>
+ <td valign=top>I find index 0 difficult to work when working 
+with arrays in the abstract
+&#133; but in my work I don&rsquo;t
+find origin 0 a hindrance.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019953.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+<tr><td valign=top><img src="https://www.jsoftware.com/papers/img/greencheck.bmp"></td><td>&nbsp;</td>
+ <td valign=top nowrap>Alex Rufon</td><td>&nbsp;</td>
+ <td valign=top>economics</td><td>&nbsp;</td>
+ <td valign=top>&#133; a fixed value of 0 is not a hindrance to my work.
+</td><td>&nbsp;</td>
+ <td valign=top><a href="http://www.jsoftware.com/pipermail/programming/2010-July/019956.html"><img src="https://www.jsoftware.com/papers/img/link.bmp"></a>
+ </tr>
+
+</table>
+
+<br><hr>
+
+<font size=-1>
+<p><script src="https://www.jsoftware.com/papers/apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2010-07-26 17:05</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2013-09-28 19:10</font></td></tr>
+</table>
+
+</td></tr></table>
+<br><br><br>
+
+</body>
+</html>

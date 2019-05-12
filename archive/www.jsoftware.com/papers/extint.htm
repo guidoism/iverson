@@ -1,0 +1,173 @@
+<html>
+<head>
+<title>J Papers</title>
+<link rel="stylesheet" href="https://www.jsoftware.com/papers/jweb.css" type="text/css">
+</head>
+<body>
+
+<center><h3>Extended Integers in J<br>by Roger K.W. Hui</h3></center>
+<p>[Published in Vector Vol.13 No.2. The display of extended integers is that used in J4.]<br>
+<p>J3.02, released in June 1996, provides extended integers; the facilities are similar to 
+those described in the recent series of Vector articles by Sullivan [1995, 1996].  
+The monad
+<code>x:</code> applies to integers and produces extended precision integers.
+Extended constants may also be entered as a sequence of decimal digits terminated by an x, 
+for example, the 2-element vector
+<code>1234x 56x</code> is equivalent to
+<code>x: 1234 56</code> .  Various primitives produce extended results if the argument(s) are extended.  For example:
+<pre>   ! 40
+8.15915e47
+
+   ! 40x
+815915283247897734345611269596115894272000000000
+   */ x: &gt;: i. 40
+   
+815915283247897734345611269596115894272000000000</pre>
+<p>Some verbs v signal domain error on some extended arguments because the result is not integral; 
+however,
+<code>&lt;.@v</code> and
+<code>&gt;.@v</code> are closed on extended arguments.  For example:
+<pre>   1234 % 5x
+|domain error
+|   1234    %5x
+
+   1234 &lt;.@% 5x
+246
+
+   1234 % 2x
+617
+
+   1234 &gt;.@% 2x
+617
+
+   ] r=. &lt;.@%: 2 * 10^50x
+14142135623730950488016887
+
+    *: r + ,. _1 0 1
+199999999999999999999999964868192079803881021136996
+199999999999999999999999993152463327265781997170769
+200000000000000000000000021436734574727682973204544</pre>
+<p>Verbs which have not been extended but will be extended, signal nonce error on extended arguments 
+(for example, the monad
+<code>&lt;.@o.</code> , the floor of  times); verbs which have not been extended 
+and will not be extended (for example
+<code>%.</code> , matrix inverse and matrix divide), signal 
+domain error on extended arguments.  
+Comparisons involving extended integers are exact.
+Various non-integer values can be computed to a large number of decimal places using extended integers. 
+For example, the golden ratio phi can be computed to 40 decimal places using several different methods:
+<p>Method 1.  Phi is
+<code>-:1+%:5</code> , half of one plus the square root of 5.
+<pre>   -: 1 + %: 5
+1.61803
+
+   &lt;.@-: s + &lt;.@%: 5 * *: s=. 10^40x
+16180339887498948482045868343656381177203</pre>
+<p>Method 2.  Phi is the limit of the continued fraction
+<code>(+%)/n$1</code> .
+<pre>
+   (+%)/20$1
+1.61803</pre>
+<p>Pairs of integers are used to represent fractions. The number of terms required can be 
+estimated using ordinary (non-extended) operations.  Thus:
+<pre>   reduce=: % +./
+   plus  =: [: reduce +/@(*|.) , *&amp;{:
+   recip =: |.
+   reduce 10 25x          Reduce to lowest terms
+2 5
+
+   3 4x plus 5 6x         Sum in lowest terms
+19 12
+
+   recip 3 4x             Reciprocal
+4 3
+
+   (plus recip)/ 20$1x    20 terms of continued fraction
+6765 4181
+
+   x=. (+%)/\ 20$1        Now estimate # of terms req'd
+   (-:1+%:5) - x          Approximation errors
+0.618034 _0.381966 0.118034 _0.04863268 0.01803399 ...
+
+   2 %/\ (-:1+%:5) - x    Ratios in approximation errors
+_1.61803 _3.23607 _2.42705 _2.69672 _2.58885 _2.62931 ...
+
+   _5[\ 2 %/\ (-:1+%:5) - x       Present in 5 columns
+_1.61803 _3.23607 _2.42705 _2.69672 _2.58885
+_2.62931 _2.61375 _2.61967 _2.61741 _2.61827
+_2.61794 _2.61807 _2.61802 _2.61804 _2.61803
+_2.61803 _2.61803 _2.61803 _2.61803        0
+
+   2.6 ^. 10^40           About 96 terms are required
+96.3917
+
+   y=. (plus recip)/\ 100 2$1x
+   $y
+100 2
+
+   ,. &lt;.@%/&quot;1 (95)}. (10^40x 0) *&quot;1 y
+16180339887498948482045868343656381177204
+16180339887498948482045868343656381177202
+16180339887498948482045868343656381177203
+16180339887498948482045868343656381177202
+16180339887498948482045868343656381177203
+</pre>
+<p>Method 3.  Using the verbs previously defined to work on integer pairs representing fractions, 
+we have:
+<pre>
+   (plus recip)/\ 10 2$1x
+ 1  1
+ 2  1
+ 3  2
+ 5  3
+ 8  5
+13  8
+21 13
+34 21
+55 34
+89 55</pre>
+
+<p>It is seen (and easily proved) that partial sums of the continued fraction are ratios of 
+consecutive Fibonacci numbers.  Fibonacci numbers are rows of the powers of the 
+matrix
+<code>0 1,:1 1</code> , computed efficiently by repeated squaring. 
+(See Hui [1996], &quot;Linear Recurrences and Matrix Powers&quot;.)  Thus:
+<pre>   x  =: +/ .*      Matrix product
+   pow=: 4 : 'x/ x~^:(b#i.-#b=.#:y.) x.'
+   
+   ] M=: x: 0 1,:1 1
+0 1
+1 1
+
+   M pow 4
+2 3
+3 5
+
+   M x M x M x M
+2 3
+3 5
+
+   M pow 100
+218922995834555169026 354224848179261915075
+354224848179261915075 573147844013817084101
+
+   &lt;.@% / (10^40x 0) * |. {: M pow 100
+16180339887498948482045868343656381177203x</pre>
+<p>Finally, the phrase m&amp;|@^ is supported by special code, on extended integer arguments and 
+ordinary integer arguments alike, making it possible to compute the final result even when the 
+intermediate result is enormous. For example:
+<pre>   1e6 | 2 ^ 24
+777216
+
+   2 (1e6&amp;|@^) 24
+777216
+
+   2 (1e6&amp;|@^) 10^100x
+109376</pre>
+
+<h3>References</h3>
+Hui, Roger K.W., Linear Recurrences and Matrix Powers, Vector, Volume 12, Number 4, 1996 4.
+<p>Sullivan, John, Multi-Precision Arithmetic: Parts I-IV, 
+Vector, Volume 12, 1-4, 1995 7 and 10, 1996 1 and 4.</p>
+</body>
+</html>

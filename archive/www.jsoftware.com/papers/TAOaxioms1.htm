@@ -1,0 +1,714 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>TAO Axioms</title>
+<link href="adoc.css" rel=stylesheet></head>
+<body>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>TAO Axioms</font><br><br>
+<b>Ad&aacute;m Brudzewsky<br>
+Jay Foad<br>
+Roger Hui</b>
+<br>&nbsp;</p>
+
+<hr><br>
+
+<a name="I"></a> <p><b>I. Introduction</b></p>
+
+<p>This paper describes the extensions to monadic<tt> ⍋ </tt>
+and<tt> ⍒ </tt> in Dyalog APL version 17.0,
+under the rubric &ldquo;total array ordering&rdquo; 
+or TAO.
+(Since<tt> ⍸ </tt>is based on<tt> ⍋ </tt>it too
+is similarly extended.)</p>
+
+<p>The goal of TAO is to be able to sort any array.
+An &ldquo;array&rdquo; is an array whose items are numbers, 
+characters,<tt> ⎕null</tt>&nbsp;,<tt> </tt>
+or other arrays.
+For now, the ordering is <i>not</i> total 
+because<tt> ⎕or </tt>and namespaces and &#133;
+are excluded,
+because for now ordering those other things
+would be contentious but of little incremental benefit.</p>
+
+<p>TAO posits a dyadic function which 
+indicates how two arrays compare to each other.</p>
+
+<table>
+<tr><td rowspan=3 nowrap><tt>⍺ cmp ⍵ &nbsp;=</tt></td><td rowspan=3>&nbsp;</td> <td rowspan=3><img src="img/bracket.bmp"></td>
+    <td><tt>¯1 </tt>     if<tt> ⍺ </tt>strictly precedes</td><td><tt>⍵ </tt></td></tr>
+<tr><td><tt>&nbsp;0 </tt>if<tt> ⍺ </tt>exactly matches</td>  <td><tt>⍵ </tt></td></tr>
+<tr><td><tt>&nbsp;1 </tt>if<tt> ⍺ </tt>strictly follows</td> <td><tt>⍵ </tt></td></tr>
+</table>
+
+<p>An alternative is a boolean function<tt> le </tt>
+which indicates whether<tt> ⍺ </tt>precedes or matches<tt> ⍵ </tt>
+(is &ldquo;less than or equal to&rdquo; in the ordering).
+The &ldquo;signum&rdquo; result of<tt> cmp </tt>is handier in practice,
+easier to use in quicksort, for instance.  In any case,<tt> cmp </tt>
+and<tt> le </tt>can be defined in terms of the other:</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  (⍵ le ⍺) - (⍺ le ⍵)
+   ⍺ le  ⍵  ←→  1 > ⍺ cmp ⍵
+
+</pre>
+
+
+
+<a name="II"></a> <p><b>II. Axioms</b></p>
+
+<a name="0"></a> <p><b>0. Backward Compatible</b></p>
+
+<p>If<tt> ⍋⍵ </tt>has a result in current Dyalog APL,
+then it has the same result under the TAO.
+This means, among other things, that:</p>
+
+<table>
+<tr><td valign=top nowrap>&#149; &nbsp;</td><td>
+TAO comparisons are <i>exact</i>, that is, as if<tt> ⎕ct←⎕dct←0 </tt>and<tt> ⎕fr←1287</tt>&nbsp;.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>
+If<tt> ⍺ </tt>and<tt> ⍵ </tt>are (scalar) characters, then they are compared
+according to their internal bit patterns as unsigned integers,<tt> ⎕ucs x </tt>
+in Unicode or<tt> ⎕av⍳x </tt>in Classic.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="1"></a> <p><b>1. Itemwise in Ravel Order</b></p>
+
+<p>If<tt> ⍺ </tt>and<tt> ⍵ </tt>have the same shape and are non-empty, then
+
+<pre>
+   ⍺ cmp ⍵  ←→  ⊃ 0 ~⍨ , ⍺ cmp¨ ⍵
+</pre>
+
+<p>That is, the result of<tt> ⍺ cmp ⍵ </tt>
+is the first non-zero value in comparing corresponding
+items in ravel order.
+If the comparisons are all zeros, then the result is<tt> 0</tt>&nbsp;.</p>
+
+<table>
+<tr valign=top height=22><td colspan=2>Notes:
+ </td></tr>
+
+<tr><td valign=top nowrap>&#149; &nbsp;</td><td>
+The existing<tt> ⍋ </tt>is consistent with this axiom.
+ </td></tr>
+
+<tr><td valign=top>&#149;</td><td>
+In practice, proceeding in ravel order, you&rsquo;d stop comparing
+items as soon as you found a pair which do not match.
+ </td></tr>
+
+</table>
+<br>
+
+
+
+<a name="2"></a> <p><b>2. Complex Numbers</b></p>
+
+<p>If<tt> ⍺ </tt>and<tt> ⍵ </tt>are (scalar) complex numbers, then</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  (9 11○⍺) cmp (9 11○⍵) 
+</pre>
+
+<p>That is, compare the real and imaginary parts.</p>
+
+<table>
+<tr valign=top height=22><td colspan=2>Notes:
+ </td></tr>
+
+<tr><td valign=top nowrap>&#149; &nbsp;</td><td>
+Because of the itemwise axiom, the imaginary parts
+matter only if the real parts match.
+ </td></tr>
+
+<tr><td valign=top>&#149;</td><td>
+In school it is taught that &ldquo;the complex numbers
+can not be ordered&rdquo;.  What about that?
+The complete statement is &ldquo;the complex numbers
+can not be ordered if field (arithmetic) properties 
+are preserved&rdquo;.
+A TAO does not (and can not) claim to order the complex numbers
+<i>and</i> preserve arithmetic properties.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="int"></a> <p><b>Interlude</b></p>
+
+<p>We have come to the end of the easy parts.
+The axioms listed so far are likely non-controversal.
+Additional axioms are required.
+We can expect them to be somewhat arbitrary,
+even more so than the axioms already listed.</p>
+
+<table>
+<tr><td valign=top nowrap>&#149; &nbsp;</td><td><tt>⎕null</tt> <i>v</i> numbers <i>v</i> characters</td></tr>
+<tr><td valign=top>&#149;</td><td>arrays 
+ with the same rank but different shapes</td></tr>
+<tr><td valign=top>&#149;</td><td>arrays with different ranks</td></tr>
+</table>
+<br>
+
+
+
+<a name="3"></a> <p><b>3. Type:<tt> ⎕null</tt> <i>v</i> Number <i>v</i> Character</b></p>
+
+<p>How do a<tt> ⎕null</tt>&nbsp;,<tt> </tt>a number, 
+and a character compare?
+There are six simple choices;
+any of the six axioms, together with the other axioms, derive a TAO which
+is consistent and complete.</p>
+
+<p>Dyalog APL implements the following choice:<tt> ⎕null </tt>
+precedes numbers, and numbers precede characters.
+<br>&nbsp;</p>
+
+
+
+<a name="4"></a> <p><b>4. Shape: Dictionary Order</b></p>
+
+<p>If<tt> ⍺ </tt>and<tt> ⍵ </tt>
+have the same rank and are not both empty, then</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  (s pad ⍺) cmp (s pad ⍵) ⊣ s←(⍴⍺)⌈(⍴⍵)
+</pre>
+
+<p>Pad<tt> ⍺ </tt>and<tt> ⍵ </tt>as in<tt> s↑x </tt>to the common maximal
+shape<tt> s </tt>but the fill is
+a hypothetical array &beta;
+which precedes all other arrays, then compare.
+</p>
+
+<hr width=68% align=left>
+
+<p>T0. &nbsp;If<tt> ⍺ </tt>and<tt> ⍵ </tt>have the same rank 
+but different shapes, and are not both empty, then</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  ⊃ 0 ~⍨ ((m⍴⍺)cmp¨(m⍴⍵)), (⌽⍴⍺)cmp(⌽⍴⍵)
+</pre>
+
+<p>where<tt><br>
+ &nbsp;&nbsp; m ← ×/ (∨\ ⌽<\⌽ (⍴⍺)≠(⍴⍵)) / (⍴⍺)⌊(⍴⍵)
+</tt></p>
+
+<p>This can be seen as follows. 
+In axiom 4,<nobr><tt> s pad ⍺ </tt></nobr>
+and<nobr><tt> s pad ⍵ </tt></nobr>are two arrays 
+with the same shape.
+Comparing corresponding items in ravel order (axiom 1), 
+we can stop no later than the first point
+where one item is &beta; and the other is not.
+The number of items before that point is the
+value<tt> m </tt>calculated above,
+the product of the minimal shape elements 
+including and after the rightmost different element in the shape.</p>
+
+<p>If<tt> (m⍴⍺)cmp¨(m⍴⍵) </tt>has a non-zero element,
+the first such element is the result of<tt> ⍺ cmp ⍵</tt>&nbsp;;<tt> </tt> 
+if it is all zeros,
+then the argument shorter 
+in the rightmost different axis precedes,
+because that argument would have a &beta; item and 
+the other one not; 
+that is,<tt> (⌽⍴⍺)cmp(⌽⍴⍵)</tt>&nbsp;.<tt> </tt>QED.</p>
+
+<p>Example a:</p>
+
+<pre>
+   ⍴⍺
+1 2 3 5 7 11
+   ⍴⍵
+2 1 3 4 7 11
+</pre>
+
+<p>then at most<nobr><tt> 308=×/4 7 11 </tt></nobr>items need to be compared.</p>
+
+<p>Example b:</p>
+
+<pre>
+   ⍴⍺                 ⍴⍵
+3 5                4 3
+   ⍺                  ⍵
+3 2 7 3 4          1 8 9
+5 3 5 7 0          7 7 2
+2 3 9 1 6          3 9 7
+                   7 2 8
+</pre>
+
+<p><tt>⍺ </tt>and<tt> ⍵ </tt>can be compared per axiom 4, with both arguments
+padded by &beta; to the maximal shape<tt> s</tt>&nbsp;.<tt> </tt>
+In such comparison, at most<tt> m </tt>items need be compared,
+per T0.</p>
+
+<pre>
+   ⊢ s←(⍴⍺)⌈(⍴⍵)
+4 5
+
+   s pad ⍺            s pad ⍵
+<u>3 2 7</u> 3 4          <u>1 8 9</u> β β
+5 3 5 7 0          7 7 2 β β
+2 3 9 1 6          3 9 7 β β
+β β β β β          7 2 8 β β
+
+   ⊢ m ← ×/ (∨\ ⌽<\⌽ (⍴⍺)≠(⍴⍵)) / (⍴⍺)⌊(⍴⍵)
+3
+   ×/ ⊃⌽ (⍴⍺) (≠⊂⌊) (⍴⍵)
+3
+</pre>
+
+
+<p>T1. If<tt> ⍺ </tt>
+and<tt> ⍵ </tt>have the same rank
+and exactly one of<tt> ⍺ </tt>or<tt> ⍵ </tt>is empty, then</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  (0∊⍴⍵)-(0∊⍴⍺)
+</pre>
+
+<p>If<tt> ⍺ </tt>is empty and<tt> ⍵ </tt>
+is not,<nobr><tt> s pad ⍺ </tt></nobr>is an array of &beta; 
+and<nobr><tt> s pad ⍵ </tt></nobr>is not,
+and so<tt> ⍺ </tt>precedes<tt> ⍵</tt>&nbsp;.<tt> </tt>
+Similarly<tt> ⍺ </tt>follows<tt> ⍵ </tt>
+if<tt> ⍺ </tt>is not empty but<tt> ⍵ </tt>is.</p>
+
+<table>
+<tr valign=top height=22><td colspan=2>Notes:
+ </td></tr>
+
+<tr><td valign=top nowrap>&#149; &nbsp;</td><td>
+<p>The hypothetical array &beta; is
+not necessarily a scalar, nor numeric, nor character.
+It is used as scaffolding or bookkeeping device 
+to derive more convenient
+formulations which do not explicitly 
+use &beta;.
+Neither T0 nor T1 explicitly use &beta;.
+ <br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>&#149;</td><td>
+<p>Why the &ldquo;and are not both empty&rdquo; caveat in the antecedent
+of axiom 4?  If<tt> ⍺ </tt>and<tt> ⍵ </tt>have the same rank
+but <i>are</i> both empty,
+padding to the common maximal shape
+leads to two possibilities:</p>
+
+<p>a. The maximal shape<tt> s </tt>contains a zero. 
+Padding produces two empty arrays with the same shape.
+The comparison remains unresolved:
+still comparing two empty arrays, but with possibly 
+less information than before (about the shapes).</p>
+
+<p>b. The maximal shape<tt> s </tt><i>does not</i> contain a zero. 
+Padding produces two non-empty identical arrays,
+and comparing them gives a<tt> 0 </tt>result.
+For example:</p>
+
+<pre>
+   (0 4⍴'a')cmp(4 0⍴0) ←→ (4 4⍴β)cmp(4 4⍴β) ←→ 0
+</pre>
+
+<p>This is incorrect if the original arrays
+do not match.
+ <br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>&#149;</td><td>
+<p>In T0, it&rsquo;d be incorrect to use<tt> (m⍴⍺)cmp(m⍴⍵) </tt>
+instead of<tt> (m⍴⍺)cmp¨(m⍴⍵)</tt>&nbsp;,<tt> </tt>
+because in the event of a tie the former would lead to the
+prototypes being compared.
+ <br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>&#149;</td><td>
+<p>In T0, the value<tt> m </tt>can also be computed as<nobr><tt> m←×/⊃⌽(⍴⍺)(≠⊂⌊)(⍴⍵)</tt>&nbsp;.</nobr>
+ <br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>&#149;</td><td>
+<p>This axiom, together with the previous ones,
+dictate the following results:</p>
+<pre>
+   'short' cmp 'sesquipedalian'
+1
+   1 2 3 cmp 1 2 3 ¯4 ¯5
+¯1
+   (x⍪8) cmp (x,8) ⊣ x←2 2⍴1 2 3 4
+¯1
+</pre>
+ </td></tr>
+</table>
+<br>
+
+
+<a name="5"></a> <p><b>5. Empty <i>v</i> Empty</b></p>
+
+<p>If<tt> ⍺ </tt>and<tt> ⍵ </tt>have the same rank and are
+both empty, then</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  (⍺⍴⍨1+⍴⍺) cmp (⍵⍴⍨1+⍴⍵)
+</pre>
+
+<table>
+<tr valign=top height=22><td colspan=2>Notes:
+ </td></tr>
+
+<tr><td valign=top nowrap>&#149; &nbsp;</td><td>
+This axiom dictates that if<tt> ⍺ </tt>
+and<tt> ⍵ </tt>are both empty,
+comparisons are first decided by prototypes,
+then by shapes.
+ </td></tr>
+<tr><td valign=top>&#149;</td><td>
+If<tt> ⍺ </tt>and<tt> ⍵ </tt>are both empty
+and have the same shape, both axiom 1 and axiom 5
+are applicable, and lead to the same results.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="6"></a> <p><b>6. Rank: Visual Fidelity</b></p>
+
+<p>It remains to resolve the case where<tt> ⍺ </tt>
+and<tt> ⍵ </tt>have different ranks.</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  x cmp ⍵
+            ←→  ⍺ cmp y
+</pre>
+if<tt> (,⍺)≡(,x) </tt>and the <i>display</i> of<tt> ⍺ </tt>
+matches that of<tt> x </tt>
+(if the elements of<tt> ⍺ </tt>and<tt> x </tt>match 
+and<tt> ⍺ </tt>&ldquo;looks like&rdquo;<tt> x</tt>);<tt> </tt>
+similarly if<tt> (,⍵)≡(,y) </tt>and the display of<tt> ⍵ </tt>
+matches that of<tt> y</tt>&nbsp;.</p>
+
+<table>
+<tr valign=top height=22><td colspan=2>Notes:
+ </td></tr>
+
+<tr><td valign=top nowrap>&#149; &nbsp;</td><td>
+<p>This axiom &ldquo;justifies&rdquo; how
+to compare arrays with different ranks.  Alternatively,
+you can dispense with the visual fidelity mumbo jumbo
+and just say by fiat that</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  ((⊂r⍴⍺),⍴⍴⍺) cmp ((⊂s⍴⍵),⍴⍴⍵)
+</pre>
+
+<p>where<tt> r←(⍴⍺),⍨(m-⍴⍴⍺)⍴1 </tt>and<tt> s←(⍴⍵),⍨(m-⍴⍴⍵)⍴1 </tt>
+with<tt> m </tt>being the larger of the ranks of<tt> ⍺ </tt>and<tt> ⍵</tt>&nbsp;.
+That is, a smaller-rank array is extended with leading 1-axes,
+and a tie in the resultant comparison is resolved in favor
+of the smaller-rank array.
+ <br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>&#149;</td><td>
+<p>Using axiom 6, T1 can be simplified to say: If exactly one of<tt> ⍺ </tt>
+or<tt> ⍵ </tt>is empty, then</p>
+
+<pre>
+   ⍺ cmp ⍵ ←→ (0∊⍴⍵)-(0∊⍴⍺)
+
+</pre></td></tr>
+
+<tr><td valign=top>&#149;</td><td>
+<p>This axiom, together with the previous ones,
+dictate that</p>
+
+<pre>
+   'aardvark' cmp 'z'
+¯1
+   1 2 3 cmp 999
+¯1
+   (2 4⍴⍳8) cmp 9 10 11
+¯1
+</pre>
+
+<p>These would not be the results if a smaller-rank array
+always precedes a larger-rank one.
+ <br>&nbsp;</p></td></tr>
+
+</table>
+<br>
+
+
+
+<a name="III"></a> <p><b>III. Model</b></p>
+
+<p>The present model does not make the simplest use of the axioms,
+but instead exploits properties readily derivable from them.  
+It arbitrarily chooses to 
+make<tt> ⎕null </tt>precede numbers precede characters,
+and only models Unicode (non-Classic).</p>
+
+<pre>
+cmp←{  ⍝ compare basic arrays, results in ¯1, 0, or 1
+  ⎕ct←⎕dct←0
+  tp ←{(⍵≡⎕null)+(326≠t)×3-2|t←⎕dr ⍵}  ⍝ 1:⎕null 2:num 3:char 0:other
+  rk ←{⍵⍴⍨((⍺-⍴⍴⍵)⍴1),⍴⍵}
+  fnz←{⊃0~⍨,⍵}                         ⍝ first nonzero value
+  em ←{×/(∨\⌽<\⌽⍺≠⍵)/⍺⌊⍵}
+  nvn←{⎕fr←1287 ⋄ (9 11○⍤1 0⊢⍺)(>-<)(9 11○⍤1 0⊢⍵)}
+
+  ⍺{11::0 ⋄ ⍺≡⍵}⍵:0                    ⍝ match (trap DECF v complex)
+  |c←(0∊⍴⍵)-(0∊⍴⍺):c                   ⍝ one is empty & the other not
+  (0∊⍴⍺)∧(0∊⍴⍵):(⍺⍴⍨1+⍴⍺)∇(⍵⍴⍨1+⍴⍵)    ⍝ both are empty
+  (⍴⍴⍺)≢(⍴⍴⍵): c+((⍴⍴⍺)∇(⍴⍴⍵))×0=c←(r rk ⍺)∇(r rk ⍵) ⊣ r←(⍴⍴⍺)⌈(⍴⍴⍵)
+  ( ⍴⍺)≢( ⍴⍵): c+((⌽⍴⍺)∇(⌽⍴⍵))×0=c←fnz(m⍴⍺)∇¨(m⍴⍵)   ⊣ m←(⍴⍺)em(⍴⍵)
+
+  s←tp ⍺                               ⍝ simple arrays
+  t←tp ⍵
+  (s≠t)∧×s×t:×s-t                      ⍝ different simple types
+  1=s×t: 0                             ⍝ both ⎕null
+  4=s×t: fnz ⍺ nvn ⍵                   ⍝ both nums
+  9=s×t: fnz ×(⎕ucs ⍺)-(⎕ucs ⍵)        ⍝ both chars
+
+  |c←(⊃⍺)∇(⊃⍵):c ⋄ (1↓,⍺)∇(1↓,⍵)       ⍝ non-simple arrays
+}
+
+</pre>
+
+
+
+<a name="IV"></a> <p><b>IV. Tests</b></p>
+
+<p>Each assertion is listed with the key axioms used in its resolution,
+which may not be the ones used by the<tt> cmp </tt>model for that assertion.
+</p>
+
+<pre>
+assert←{⍺←'assertion failure' ⋄ 0∊⍵:⍺ ⎕signal 8 ⋄ shy←0}
+
+ z←cmpQA
+⍝ testing cmp
+
+ assert ¯1='a'cmp'b'                        ⍝ compatible
+ assert  0='abc'cmp'abc'                    ⍝ compatible
+ assert ¯1='ABC'cmp'abc'                    ⍝ compatible
+ assert ¯1='abc 'cmp'xyz'                   ⍝ shape
+ assert  1='abc 'cmp'abc'                   ⍝ shape
+ assert  1=('abc',⎕ucs 0)cmp'abc'           ⍝ shape
+ assert ¯1='abc'cmp'z'                      ⍝ rank; shape
+ assert ¯1=(1 3⍴'abc')cmp'xyz'              ⍝ rank
+
+ assert ¯1=3 cmp 4                          ⍝ compatible
+ assert  0=3 cmp 3                          ⍝ compatible
+ assert ¯1=3 cmp 3+⎕ct÷2                    ⍝ compatible
+ assert  1=1e308 cmp ¯1e308                 ⍝ compatible
+ assert ¯1=3j¯4 cmp 3j5                     ⍝ complex
+ assert ¯1=3 cmp 3j5                        ⍝ complex
+ assert  1=3 cmp 3j¯5                       ⍝ complex
+ assert  1=1e1000 cmp 1j1                   ⍝ complex
+
+ assert ¯1=(⊂'abc')cmp⊂'abx'                ⍝ itemwise
+ assert ¯1=(⊂'chthonic')cmp⊂'syzygy'        ⍝ itemwise; shape
+ assert ¯1=(⊂1 2 3 4)cmp⊂3 5 7 11           ⍝ itemwise
+ assert ¯1=(⊂1 2 3 4)cmp⊂3 5 7              ⍝ itemwise; shape
+
+ assert ¯1=3 cmp,3                          ⍝ rank
+ assert ¯1='abc'cmp 1 3⍴'abc'               ⍝ rank
+ assert ¯1=(⊂'ab')cmp 1 1 1⍴⊂'ab'           ⍝ rank; itemwise
+
+ assert ¯1=0 cmp'0'                         ⍝ type
+ assert ¯1=0 cmp(⎕ucs 0)                    ⍝ type
+ assert ¯1=3j4 cmp'a'                       ⍝ type
+ assert  1='xyz'cmp⊂'pqr'                   ⍝ rank; itemwise; shape
+ assert ¯1='abc'cmp⊂'pqr'                   ⍝ rank; itemwise; shape
+ assert ¯1='pqr'cmp⊂'pqr'                   ⍝ rank; itemwise; shape
+ assert  1='pqr'cmp⊂3 4⍴⍳12                 ⍝ rank; itemwise; type
+ assert ¯1=2 3 4 cmp⊂2 3 4⍴⎕d               ⍝ rank; itemwise; type
+
+ assert  0=(1 2,⎕null)cmp 1 2,⎕null         ⍝ itemwise; type
+ assert ¯1=(1 2,⎕null)cmp 1 2,¯2            ⍝ itemwise; type
+ assert ¯1=(1 2,⎕null)cmp 1 2,'a'           ⍝ itemwise; type
+ assert ¯1=1 2j3 cmp 1 2j3,⎕null            ⍝ shape
+ assert ¯1='hart'cmp'hart',⎕null            ⍝ shape
+ assert ¯1=(3⍴⎕null)cmp 4⍴⎕null             ⍝ shape
+ assert ¯1=(0⍴⎕null)cmp ⍬                   ⍝ empty; type
+ assert ¯1=(0⍴⎕null)cmp''                   ⍝ empty; type
+
+ assert ¯1=(,3)cmp,⊂,3                      ⍝ itemwise; rank
+ assert  1=(,4)cmp,⊂,3                      ⍝ itemwise; rank
+ assert ¯1=(,'a')cmp,⊂,'a'                  ⍝ itemwise; rank
+ assert  1=(,'b')cmp,⊂,'a'                  ⍝ itemwise; rank
+ assert ¯1=(,3)cmp,⊂,'3'                    ⍝ itemwise; type
+ assert  1=(,'z')cmp,⊂,0                    ⍝ itemwise; type
+
+ assert  1=((2 2⍴⍳4),¯1)cmp 3 2⍴⍳6          ⍝ shape
+ assert  1=((2 2⍴⍳4),99)cmp 3 2⍴⍳6          ⍝ shape
+
+ assert ¯1=⍬ cmp⌈/⍬                         ⍝ shape
+ assert ¯1=''cmp ⎕ucs 0                     ⍝ shape
+ assert ¯1=⍬ cmp,⊂⍬                         ⍝ shape
+ assert ¯1=''cmp⊂''                         ⍝ shape
+ assert ¯1=(0 4 5⍴0)cmp'a'                  ⍝ shape
+ assert ¯1=(4 0 5⍴0)cmp'a'                  ⍝ shape
+
+ assert ¯1=⍬ cmp''                          ⍝ empty
+ assert ¯1=⍬ cmp 0⍴⊂'abc'                   ⍝ empty
+ assert ¯1=(2 0⍴0)cmp 0 2⍴0                 ⍝ empty
+ assert ¯1=(2 0⍴0)cmp 0 2⍴'a'               ⍝ empty
+ assert  1=(2 0⍴'a')cmp 0 2⍴0               ⍝ empty
+ assert ¯1=(2 0⍴'a')cmp 0 2⍴'a'             ⍝ empty
+ assert ¯1=(2 0 0⍴0)cmp 0 0 2⍴0             ⍝ empty
+ assert ¯1=(2 0 0⍴0)cmp 0 0 2⍴'a'           ⍝ empty
+ assert  1=(2 0 0⍴'a')cmp 0 0 2⍴0           ⍝ empty
+ assert ¯1=(2 0 0⍴'a')cmp 0 0 2⍴'a'         ⍝ empty
+
+ assert  1=(0⍴⊂2 3 4⍴5)cmp 0⍴⊂2 3 2⍴5       ⍝ empty; shape
+ assert ¯1=(0⍴⊂2 3 4⍴5)cmp 0⍴⊂2 3 5⍴5       ⍝ empty; shape
+ assert  1=(0⍴⊂1 3⍴'a')cmp 0⍴⊂3⍴'a'         ⍝ empty; rank
+ assert ¯1=(0⍴⊂1 3⍴'a')cmp 0⍴⊂1 1 1 3⍴'a'   ⍝ empty; shape
+
+ z←1
+
+</pre>
+
+
+
+<a name="V"></a> <p><b>V. Discussion</b></p>
+
+<p>The best that one can expect for a set of axioms
+is that they are consistent, complete, and minimal.
+The present set is minimal because none of them 
+can be derived from the others.
+They are complete because any two arrays
+(the arrays we care about) 
+can then be compared.
+Are they consistent?
+We believe they are, but we don&rsquo;t have a proof, 
+and all it takes for non-consistency 
+is one example which shows that the axioms 
+give contradictory results 
+or which contradicts deeply held intuitions about ordering.</p>
+
+<p>Reasoning about the TAO is easier as axioms than as
+an algorithmic description of how to produce
+the result of<tt> cmp</tt>&nbsp;.<tt> </tt>
+Among other things, the axioms can be considered in any order,
+and they can be considered independently of each other.</p>
+
+<p>As usual with axioms, properties 
+which can be readily derived
+from them have been omitted.  
+For example<nobr><tt> ⍺ cmp ⍵ ←→ </nobr>
+<nobr>(⊂⍺) cmp (⊂⍵) </nobr></tt>
+is seen to be true by the itemwise axiom.
+There is one <nobr><i>non</i> property</nobr>
+which should be mentioned:  
+It is tempting to think that
+if<tt> ⍺ </tt>and<tt> ⍵ </tt>are vectors
+and<tt> x </tt>is a scalar, then</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  (x,⍺) cmp (x,⍵)
+</pre>
+
+<p>However, prepending loses 
+information:<tt> ⍬≢'' </tt>but<tt> (0,⍬)≡0,''</tt>&nbsp;.<tt> </tt>
+This is a property of Dyalog arrays and a TAO can not compensate for that.</p>
+
+<p>A TAO depends on the exact details of arrays.  
+Therefore, the TAO derived from these axioms 
+likely differs from the TAO in other dialects and languages.
+<br>&nbsp;</p>
+
+
+
+<a name="ax"></a> <p><b>Appendix. Theorems</b></p>
+
+<p><b>T0.</b> &nbsp;If<tt> ⍺ </tt>and<tt> ⍵ </tt>have the same rank 
+but different shapes, and are not both empty, then</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  ⊃ 0 ~⍨ ((m⍴⍺)cmp¨(m⍴⍵)), (⌽⍴⍺)cmp(⌽⍴⍵)
+</pre>
+
+<p>where<tt><br>
+ &nbsp;&nbsp; m ← ×/ (∨\ ⌽<\⌽ (⍴⍺)≠(⍴⍵)) / (⍴⍺)⌊(⍴⍵)</tt></p>
+
+<p><b>T1.</b> &nbsp;If exactly one of<tt> ⍺ </tt>or<tt> ⍵ </tt>is empty, then</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  (0∊⍴⍵)-(0∊⍴⍺)
+
+</pre>
+
+<p>A &ldquo;leaf&rdquo; is a subarray which is 
+simple<tt> (1≥|≡⍵) </tt>or empty.
+The function<tt> firstleaf←{⊃⍣((1=≡⍵)⍱0∊⍴⍵)⊢⍵}⍣≡ </tt>
+computes the first (leftmost) leaf.</p>
+
+<p><b>T2.</b> &nbsp;If exactly one of<tt> ⍺ </tt>
+or<tt> ⍵ </tt>is simple, then</p>
+
+<table>
+<tr><td><tt>&nbsp; &nbsp;⍺ cmp ⍵</tt>&nbsp; &nbsp;</td>
+ <td><tt>←→ &nbsp;⍺ cmp (firstleaf¨ ⍵) &nbsp; &nbsp; &nbsp;</tt></td>
+ <td><tt>⍺ </tt>is simple;<tt> ⍵ </tt>is not</td>
+ </tr>
+<tr><td>&nbsp;</td>
+ <td><tt>←→ &nbsp;(firstleaf¨ ⍺) cmp ⍵</tt></td>
+ <td><tt>⍵ </tt>is simple;<tt> ⍺ </tt>is not</td>
+ </tr>
+</table>
+
+<p>Corollary. If exactly one of<tt> ⍺ </tt>or<tt> ⍵ </tt>is simple,
+then<nobr><tt> ⍺ cmp ⍵ </tt></nobr>obtains without recursion.
+</p>
+
+<p><b>T3.</b> &nbsp;There is no largest array.</p>
+
+<p>Corollary. There is no largest scalar.</p>
+
+<p>Corollary. There is no largest array for a given shape.</p>
+
+<p><b>T4.</b> &nbsp;There is no smallest array.</p>
+
+<p><b>T5.</b> &nbsp;<tt> cmp </tt>and<tt> le </tt>in terms of<tt> ⍋</tt>&nbsp;:</p>
+
+<pre>
+   ⍺ cmp ⍵  ←→  1-1⊃⍋⍺ ⍵ ⍺ ⊣ ⎕io←0
+   ⍺ le  ⍵  ←→  (⍳2)≡⍋⍺ ⍵
+</pre>
+
+<p>Except: If<tt> ⍺ </tt>and<tt> ⍵ </tt>are scalars
+and one is a DECF and the other a complex number, then
+
+<pre>
+   ⍺ cmp ⍵  ←→  1-1⊃⍋(,⍺)(,⍵)(,⍺) ⊣ ⎕io←0
+   ⍺ le  ⍵  ←→  (⍳2)≡⍋(,⍺)(,⍵)
+</pre>
+
+
+
+<br><hr>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2018-01-04 10:50</font></td></tr>
+<tr><td><font size=-1>updated:</font></td>       <td><font size=-1>2018-06-22 13:25</font></td></tr>
+</table>
+
+</td></tr></table>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+</html>

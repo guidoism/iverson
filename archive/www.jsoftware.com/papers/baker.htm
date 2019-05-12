@@ -1,0 +1,95 @@
+<html>
+<head>
+<title>J Papers</title>
+<link rel="stylesheet" href="https://www.jsoftware.com/papers/jweb.css" type="text/css">
+</head>
+<body>
+
+<CENTER>
+<H3>Little JOBS and Big JOBS<BR>Using Delphi 2.0 to control J 3.02 automation 
+server OBjects</H3>
+<H3>John D. Baker<BR>J96 User Conference</H3></CENTER><BR>OLE automation is a 
+Windows operating system service that allows one application to automate or 
+control the exposed objects of another application. OLE automation makes it 
+possible for one application to efficiently use the facilities of others. This 
+talk will show how Delphi 2.0 applications can use J's EXE and DLL automation 
+servers. <BR><BR>Delphi 2.0 is a 32 bit Object Pascal client/server oriented 
+visual programming environment that has attracted a large and loyal following. 
+Many factors have contributed to Delphi's success. I would single out the 
+following:<BR><BR>
+<UL>
+  <LI>Delphi's high speed optimizing Object Pascal compiler. Competing products 
+  like Visual Basic and PowerBuilder have yet to release compilers. (Power 
+  Builder 5.0 will include a native code compiler when it's released. There has 
+  been no official word on a Visual Basic compiler yet.) 
+  <LI>The Object Pascal language. There has long been a need for a serious 
+  compiled Windows programming tool that is not based on C++. 
+  <LI>The intelligent use of easily customized visual components. 
+  <LI>A productive integrated development environment. 
+  <LI>Integrated support for a wide variety of local and SQL database systems. 
+  <LI>The ability to build OLE automation servers and controllers. 
+  <LI>The limitations of competing database development tools.(I was attracted 
+  to Delphi when I read about the massive runtime support files required to run 
+  new FoxPro applications.) </LI></UL>Delphi has many strengths but array 
+processing is not one of them. Object Pascal has fixed the outrageous 
+limitations imposed on arrays by early versions <BR>of Pascal. For example in 
+Object Pascal:<BR><BR>
+<UL>
+  <LI>An entire array can be passed as argument. 
+  <LI>Facilities exist to determine the shape of an array at runtime. 
+  <LI>Variant arrays can include other arrays as elements. 
+  <LI>Strings, (indexed like arrays), can now be larger than 256 characters. 
+  (Delphi 2.0 strings can be as large as 2 gigabytes.) </LI></UL>Be still my 
+beating heart!<BR><BR>What is Delphi still missing?<BR><BR>
+<UL>
+  <LI>Empty arrays! The most fundamental and least understood array concept. 
+  <LI>Complex numbers. You can define a complex type and easily declare complex 
+  arrays in Delphi. Unfortunately you are left with the tiny matter of 
+  <BR>providing all the standard and transcendental complex functions. 
+  <LI>Common matrix processing facilities, matrix product, matrix inverse, 
+  determinants, least squares and polynomial evaluation. 
+  <LI>Array oriented search and membership functions. 
+  <LI>A coherent boxed array model! </LI></UL>J programmers could go on beating up 
+on Delphi arrays but that's not the way to <BR>win friends and influence people. 
+Besides, J has its own limitations and weaknesses. <BR><BR>The glory of OLE 
+automation is that it offers programmers an easy way to combine the strengths of 
+different programming tools.<BR><BR>Together, Delphi and J, can easily do things 
+that would require mountains of code in either one<BR><BR>
+<H3>Example JOBS<BR>(J automation OBjectS)</H3>There are many ways to use J 
+automation servers from Delphi but most applications will be:<BR><BR>
+<UL>
+  <LI>Little JOBS 
+  <LI>Big JOBS </LI></UL>A Little JOB is a J automation server that contains few, 
+if any, J words. A little JOB is basically a super array calculator. This is the 
+way most Delphi programmers will use J.<BR><BR>A Big JOB is an automation server 
+loaded with a large J system. J programmers can use Delphi to give their big 
+JOBS a polished state-of-the-art Windows interface.<BR><BR>The remainder of this 
+presentation will demonstrate examples of little and big JOBS.<BR>
+<H3>Little JOB #1: Prime Factors</H3>In this example I will program, from 
+scratch, a simple Delphi/OLE/J application that computes the prime factors of 
+the first 1000 integers and displays the results in a Delphi grid.<BR>
+<H3>Little JOB #2: Sunrise and Sunset Times</H3>This example will demonstrate 
+the automation of a nontrivial, but easily understood, J array algorithm that 
+computes the time of sunrise and sunset for any point on Earth.<BR>
+<H3>Little JOB #3: Storing J Words In Delphi Databases</H3>I will demonstrate a 
+Delphi application that controls a J workspace. By clicking on a few controls 
+entire J workspaces can be saved in Delphi <BR>tables. A few more clicks will 
+suffice to generate J scripts, on the fly, from database entries.<BR>
+<H3>A Big JOB: Running a J macro-processor from Delphi</H3>If time permits I 
+will show how Delphi can control the execution of a large J application.<BR>
+<H3>Finally: Caveats, Limitations and Gotcha's</H3>New technologies are born 
+with congenital defects. OLE automation, as it is currently supported by Delphi 
+and J, has a few rough edges. 
+<UL>
+  <LI>Delphi OLE calls do not yield J return codes. This is definitely a problem 
+  with Delphi since Visual Basic properly handles J return codes. 
+  <LI>Delphi can easily read nested arrays from J but going the other way is 
+  difficult.(I haven't figured it out yet.) There are no problems with sending 
+  flat arrays of type double or floating. Character arrays require a little 
+  voodoo to handle the varbyte representation. 
+  <LI>J is currently an asymmetric OLE automation server. It excels as a server 
+  but is a poor client or controller. 
+  <LI>OLE automation requires a lot of RAM to be effective. A 16 megabyte 
+  machine is marginal for Delphi/OLE/J combinations. </LI></UL>
+</body>
+</html>

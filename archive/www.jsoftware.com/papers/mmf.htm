@@ -1,0 +1,155 @@
+<html>
+<head>
+<title>J Papers</title>
+<link rel="stylesheet" href="https://www.jsoftware.com/papers/jweb.css" type="text/css">
+</head>
+<body>
+
+<div align="center"><h2><i>Memory Mapped Files in J</i></h2>
+<h3>Chris Burke<br>
+<a href="mailto:cburke@jsoftware.com">cburke@jsoftware.com</a>
+</h3></div>
+
+J 4.02 supports memory-mapped files. A memory-mapped file can be associated with a J noun - referencing the noun is equivalent to reading the file; changing the noun's value changes the file.</P>
+
+<P>Some benefits:<br>
+<li>There is no need for explicit file i/o operations.<br>
+<li>Memory-mapped files can be much larger than system RAM, yet they can be accessed without page thrashing.<br>
+<li>Accessing memory-mapped files is very efficient, and faster than a normal file read.<br>
+<li>A file can be memory-mapped by two processes on the same machine, allowing them to share data.
+</li></li></li></li>
+
+<P>
+For example, a demo of memory-mapped files we have given at conferences and presentations uses a CDROM that the New York Stock Exchange distributes each month with detailed trade and quote information. J nouns are mapped to 7 files with a combined size of 650MB, and these nouns can be used just like any other J noun. Talk about big arrays!</P>
+
+<P>
+Memory-mapped files are an essential part of Windows 95/98 and NT (Win32), where they are used to implement virtual memory management. Thus, the new facility in J just hooks into code that is already part of the operating system.</P>
+
+<P>
+This note will give an overview of memory-mapped files, and how they are defined in J. The basic ideas are pretty simple, though undoubtedly the underlying Win32 code is complex.</P>
+
+<B><P>Win32 Memory Management</B><br>
+To understand memory-mapped files, we first need a basic understanding of how memory is organized in Win32. In particular, when a process such as J references a particular memory location, how is that reference translated into a reference to physical memory?</P>
+
+<P>
+It turns out that the translation is done in two steps - the memory reference is first translated into a file reference (i.e. a file storage location on the hard disk), and from then into a physical memory reference. Lets look at the steps in turn.</P>
+
+<P>
+Note: in the following discussion, the term &quote memory reference &quote, while singular, will typically refer to a block of memory. For example, if you read a single byte from a file, Win32 in fact will read in the block containing this byte. Typically, the minimum size block Win32 works with is a page, which is a block of 4KB.</P>
+
+<B><P>Process Memory</B><br>
+When a process such as J is started, it is allocated a private <I>virtual address space</I> (VAS) of 4GB (2^32). All memory references for a process are made within its VAS. The VAS is the working memory for the process, as well as the only way by which the process can communicate with the outside world.</P>
+
+<P>
+In theory, a process can use any 4-byte integer as a memory pointer, though in practice, Win32 imposes some restrictions on what may be used. For example, Win NT disallows write access to memory used by system DLLs; Win 95/98 does not, and hence is less stable.</P>
+
+<P>
+The VAS is <I>private</I> in that a process may not access another processes VAS; moreover, if process A references memory location X, and process B also references memory location X, typically the values will be different. </P>
+
+<P>
+The VAS is <I>virtual</I> in that the memory locations do not correspond directly with physical storage. A simple consequence is that the process itself knows nothing about where the physical data resides on the machine, and hence has no direct control over physical memory. As a user you may be aware that your machine has so many bytes RAM (and cache), and hard drive - but the process knows only about the VAS it has been allocated.</P>
+
+<P>
+Initially, the VAS is empty - if the process tries to access an arbitrary memory address this will likely result in an access violation. A process can only use memory addresses that are in use and therefore valid, and Win32 keeps track of these memory addresses. The process itself can allocate memory in the VAS, and Win32 also allocates some addresses on behalf the process.</P>
+
+<P>
+For example,Win32 allocates memory addresses for the executables (J.EXE) and any related files (J.DLL), plus the Windows system DLLs. Note that the VAS needs to have these addresses in order that the process can uses the files.</P>
+
+<B><P>File References</B><br>
+Now we get to the really interesting part - Win32 associates <I>all</I> valid memory addresses in a VAS with file storage. Vice versa, when a process needs to access a file, then, if not already done so, Win32 first allocates a memory address in the VAS for that file.</P>
+
+<P>
+In the case of files such as J.EXE, there is an obvious association - the memory address Win32 allocates for J.EXE is associated with the J.EXE file itself, and the same is true for the Windows system DLLs. But what about when a process itself allocates memory?</P>
+
+<P>
+It turns out that Win32 maintains a file on the hard disk called the <I>paging file</I>. When a process allocates memory, a equal amount of space is allocated in the paging file, and the memory-address in the VAS is associated with the address of the corresponding space in the paging file.</P>
+
+<P>
+Therefore, we now have the first part of the memory address translation - when a process references a valid memory address, Win32 simply looks up the corresponding file address.</P>
+
+<B><P>Physical Memory</B><br>
+Physical memory comes in various flavors: on-chip cache, off-chip cache, and system memory. As far as we are concerned, all this memory is treated the same. Also, just as for a VAS, Win32 associates each page of physical memory in use with a file reference.</P>
+
+<P>
+This gives us the second part of the memory address translation - after the file reference is determined, Win32 simply looks to see if there is a corresponding physical memory address. If so, it is used; if not (i.e. the file reference is not currently associated with physical memory), Win32 creates the association. If necessary, Win32 makes RAM available for the new association by deleting existing associations (and first updating the file system if the RAM contents have changed).</P>
+
+<P>In summary:<br>
+<li>Each process has its own virtual memory address space (VAS).<br>
+<li>All used memory in the VAS is associated with file storage.<br>
+<li>All used physical memory is also associated with file storage.<br>
+<li>When a process references memory in its VAS, Win32 translates this to a file reference, then translates this to a physical memory reference, creating the association if required.</p>
+</li></li></li></li>
+
+<B><P>Memory-Mapped Files</B><br>
+The mapping between VAS memory addresses and file references is known as <I>memory mapping</I>.</P>
+
+<P>
+A memory-mapped file is simply a file for which there is an associated memory reference in some processes VAS. Thus after J is loaded, the files J.EXE and J.DLL, as well as the Windows system DLLs are all memory-mapped files.</P>
+
+<P>
+Now suppose you read a file in J, for example:</p>
+
+<pre>
+   dat=: fread 'profile.ijs'
+</pre>
+
+<P>
+In order for the file to be read, Win32 must first associate the file with a memory address in the VAS. The &quote file read &quote then becomes a memory copy, starting from that memory address.</P>
+
+<P>
+The result of the read is assigned to a variable <code>dat</code>. This variable in turn must be stored in the VAS, and hence must have a file reference associated with it (in the page file).</P>
+
+<P>
+Thus, in this example, two memory-mappings have been used - one for the file <code>profile.ijs</code>, and one for the variable <code>dat</code> in the paging file.</P>
+
+<P>
+Note that the contents of <code>profile.ijs</code> were physically copied from the hard disk to RAM. Also, if at some later stage Win32 needs to page out this part of RAM, then the contents will again be copied, this time to the paging file.</P>
+
+<B><P>Memory Mapping in J</B><br>
+Now we come to the crux of the matter.</P>
+
+<P>
+We can simplify this process - instead of doing the file read, we can have Win32 simply memory-map the file, i.e. associate the file with a memory address in the VAS, and we can then create a J name <code>dat</code> which points to that memory address. As far as J is concerned, this would have essentially the same affect as before - the variable <code>dat</code> would point to a file location representing the contents of the file. In the first case, the file reference for this data is in the Win32 paging file and the actual data in RAM or in the paging file; in the second case, the file reference is the actual file reference for <code>profile.ijs</code> and the data remains on file.</P>
+
+<P>
+This second method explicitly creates a memory-mapped file in J.</P>
+
+<P>
+Clearly, the second method is more efficient than the first, since no actual data is copied. </P>
+
+<B><P>Housekeeping</B><br>
+Quite a bit of housekeeping is needed to make all this work.</P>
+
+<P>
+First, the Win32 API provides functions for explicitly mapping a file to a memory address in the VAS. These are not discussed here - instead see the lab <I>Mapped Files</I>.</P>
+
+<P>
+But we also need some way of creating a J noun (here <code>dat</code>), whose data address is the memory address of the file in the VAS. To allow this, changes were made for J402.</P>
+
+<B><P>J Noun</B><br>
+A J noun has the following parts:<br><br>
+<li>a <I>header</I>, that gives the type, rank, shape, address of the data, and other information
+<li>the <I>data</I> itself
+<li>a <I>locale entry</I> (symbol table entry) to address the header.
+</li></li></li>
+
+<p>
+In versions of J prior to J402, the header and data were always stored in contiguous memory, but in J402, the header and data can be stored in separate locations. Also, J402 has utilities that allow you to create a noun's header and locale entry. This now gives us the ability to associate a name with a memory-mapped file:<br>
+<br>
+<li>First use the Win32 API facilities to memory-map a file, returning the file's VAS memory address.
+<li>Then use utilities provided in J402 to create a noun's header and corresponding locale entry. The address of the data in the header is the VAS address for the memory-mapped file.</P>
+</li></li>
+
+<P>
+After this is done, the noun appears just like any other noun in J.</P>
+
+<P>
+When you create the new noun, you also specify the datatype. A character datatype will work for any file, but you can also specify any other datatype if the file is in the right format, for example, a file of integer data should have 4 bytes per element, with the value for each <code>n</code> being <code>|. (4#256) #: n</code>. Similarly, you can specify the shape of the data.</P>
+
+<P>
+The above describes a file which only contains data, but you can also memory-map a file which contains both a header and data. In this case the file is self-describing and you need only specify the filename.</P>
+
+<P>
+For detailed information on the J implementation, and an example of a large memory-mapped database , see the labs <I>Mapped Files</I>, and <I>Mapped Files Database</I>.</P>
+</body>
+</html>

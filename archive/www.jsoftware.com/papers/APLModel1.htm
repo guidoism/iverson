@@ -1,0 +1,1212 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Practical Uses of a Model of APL</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>Practical Uses of a Model of APL</font><br><br>
+
+<b>Kenneth E. Iverson<br>
+I.P. Sharp Associates<br>
+Toronto, Ontario, Canada<br><br>
+
+Arthur T. Whitney<br>
+Edmonton, Alberta, Canada
+</b></p>
+
+<br><hr>
+
+
+
+<a name="abs"></a>
+<p><b>Abstract</b></p>
+
+<p>This paper discusses the use of a general model of APL
+(written in APL) which allows convenient definition of new
+operators and functions and experimentation with their use. 
+Use of the model is illustrated by a number of functions and
+operators, some of which have been previously discussed, 
+and some (such as the operator <i>til</i>) which are new. 
+Details of the model itself are not treated.
+<br>&nbsp;</p>
+
+
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>The effective use of new facilities introduced into APL systems
+is often long delayed, 
+not only because of a programmer&rsquo;s
+tendency to cling to familiar ways, 
+but also because the abstract, formal treatment necessary 
+to the specification of a new facility
+often makes its assimilation and use seem unduly difficult.
+Working models of new facilities available 
+before their actual introduction can be very helpful 
+in teaching, their use, and very effective 
+in speeding their widespread application.</p>
+
+<p>However, the development of an accurate model for each new
+facility can, especially in the case of new operators, 
+be burdensome, and we have found that a general model of the
+APL interpreter, developed primarily 
+for use by the language designers 
+in the design and modelling of new extensions, 
+can also be useful in providing specific models 
+for the enlightenment of users.</p>
+
+<p>This paper discusses such uses of the general model,
+employing illustrations executed 
+by the version available 
+on the I.P. Sharp Associates APL system. 
+Except for information necessary 
+for understanding its use, 
+details of the model will not be discussed here.</p>
+
+<p>The model incorporates a number 
+of facilities proposed in earlier papers 
+[<acronym title="Iverson, K.E., 
+Operators and Functions, Research Report #RC7091, 
+IBM Corp., 1978.">1</acronym> 
+<acronym title="Bernecky, R., and Iverson, K.E., 
+Operators and Enclosed Arrays, 
+APL Users Meeting, I.P. Sharp Associates, 1980.">2</acronym> 
+<acronym title="Iverson, K.E., and Wooster, P.K., 
+A Function Definition Operator, APL Quote Quad, 
+Vol.12, No.1, Sept. 1981 (Proceedings of APL81).">3</acronym>]; 
+the more fundamental among them are illustrated below. 
+The model, invoked by executing the 
+function<tt> ∆APL</tt>&nbsp;,<tt> </tt>
+accepts character input and parses and executes the
+expression entered.<tt> 0</tt>-origin 
+indexing is used throughout the paper.</p>
+
+<table>
+<tr><td colspan=2><pre>
+   ∆APL
+</pre></td></tr>
+<tr><td width=200 valign=top nowrap><pre>
+   a←1 2 3    
+   mp←+.×     
+   dot←.
+
+   a mp a
+14
+   a + dot × a
+14
+</pre></td><td valign=top>
+<p><tt>← </tt>may be used 
+to assign names to functions and operators 
+as well as to variables 
+[<acronym title="Iverson, K.E., 
+Operators and Functions, Research Report #RC7091, 
+IBM Corp., 1978.">1</acronym> 
+<acronym title="Iverson, K.E., and Wooster, P.K., 
+A Function Definition Operator, APL Quote Quad, 
+Vol.12, No.1, Sept. 1981 (Proceedings of APL81).">3</acronym>]
+</td></tr> 
+<tr><td valign=top><pre>
+   cf←'⍺+÷⍵' ∇ '⍵∆⍵'
+
+   a cf a
+2 2.5 3.33333333
+   cf a
+2 2.5 3.33333333
+</pre></td><td valign=top><p>
+The function definition operator<tt> ∇ </tt>
+may be used to define ambivalent functions
+<acronym title="Iverson, K.E., and Wooster, P.K., 
+A Function Definition Operator, APL Quote Quad, 
+Vol.12, No.1, Sept. 1981 (Proceedings of APL81).">[3]</acronym>
+</p></td></tr>
+<tr><td valign=top><pre>
+   cf/a
+1.42857143
+   cf\a
+1 1.5 1.42857143
+   +.×⌿ 3 2 2⍴⍳12
+118 131
+518 575
+</pre></td><td valign=top><p>
+Operators apply to defined and derived functions 
+as well as to primitives
+</p></td></tr>
+<tr><td valign=top><pre>
+   q←×∇-
+   a q a
+1 4 9
+   q a
+¯1 ¯2 ¯3
+   r←*∇'10*⍵'
+   3 r a
+3 9 27
+   r 1
+10 100 1000
+</pre></td><td valign=top><p>
+The operator<tt> ∇ </tt>applies to functions
+as well as to character vectors
+</p></td></tr>
+<tr><td valign=top><pre>
+   ⊣←'⍺'∇''
+</pre></td><td valign=top><p>
+An assignment can be made to a graphic 
+name<tt> </tt>(<tt>⊣ </tt>is now the
+function <i>lev</i> which returns 
+its left argument)</p></td></tr>
+<tr><td colspan=2><pre>
+
+   c1←2 2⍴'bare'⊣c2←2 2⍴'bear'
+
+   c1
+ba
+re
+   c2
+be
+ar
+</pre></td></tr>
+<tr><td valign=top><pre>
+   <img src="img/timesobar.bmp">←+.×
+
+   a <img src="img/timesobar.bmp"> a
+14
+</pre></td><td valign=top><p>
+New composite symbols can be used
+</p></td></tr>
+</table>
+
+<p>Assignment of values to graphic symbols is, 
+of course, intended for use in language design, 
+and is not proposed for general inclusion in the language. 
+It is, nevertheless, convenient for use in experimentation 
+by programmers as well as by language designers.</p>
+
+<p>The use of new composite symbols is possible 
+because the model receives and handles arbitrary 
+input<tt> </tt>(<tt>⎕arbin </tt>in IPSA APL), 
+that is, all terminal inputs including backspace and
+attention are transmitted directly to it.
+The model also incorporates a definition from 
+<acronym title="Iverson, K.E., 
+Operators and Functions, Research Report #RC7091, 
+IBM Corp., 1978.">[1]</acronym> 
+which illustrates the notion 
+that an operator may produce an
+ambivalent derived function &mdash; 
+specifically, the monadic derived function 
+produced by reduction is supplemented 
+by a dyadic case in which the left argument 
+specifies the width of the &ldquo;window&rdquo;
+over which reduction is applied. For example:</p>
+
+<table>
+<tr><td><tt>&nbsp; &nbsp;p←13 11 7 5 3 2</tt></td></tr>
+<tr><td width=200 nowrap><tt>&nbsp; &nbsp;2 -/ p<br> 
+2 4 2 2 1</tt>
+</td><td valign=top>Pairwise differences</td></tr>
+<tr><td><tt>&nbsp; &nbsp;(4+/p)÷4<br> 
+9 6.5 4.25</tt>
+</td><td valign=top>Running Averages</td></tr>
+<tr><td><tt>&nbsp; &nbsp;^/2 ≥/p<br>
+1</tt><br>&nbsp;
+</td><td valign=top>Test for decreasing sequence</td></tr>
+</table>
+
+
+
+<a name="a"></a>
+<p><b>A. Some New Functions</b></p>
+
+<p>We will further illustrate the use 
+of the model in simple cases
+by defining a few functions 
+(most of which have been defined 
+in earlier papers 
+[<acronym title="Iverson, K.E., 
+Operators and Functions, Research Report #RC7091, 
+IBM Corp., 1978.">1</acronym> 
+<acronym title="Bernecky, R., and Iverson, K.E., 
+Operators and Enclosed Arrays, 
+APL Users Meeting, I.P. Sharp Associates, 1980.">2</acronym>]) 
+for use in later examples:</p>
+
+<table>
+<tr><td width=200 nowrap><pre>
+   ∩←'(l∊⍵)/l←,⍺' ∇ ''
+</pre></td><td valign=top>Set intersection</td></tr>
+<tr><td valign=top><pre>
+   ~←'(~l∊⍵)/l←,⍺' ∇ ~
+
+   'abacus' ∩ 'scab'
+abacs
+
+   'abacus' ~ 'scab'
+u
+</pre></td><td valign=top><p>
+Set difference. Note that the monadic definition 
+of<tt> ~ </tt>is preserved.</td></tr>
+<tr><td valign=top colspan=2><tt>&nbsp; &nbsp;∪←'' ∇ '((⍳⍴⍵)=⍵⍳⍵)/⍵←,⍵'</tt></td></tr>
+<tr><td>&nbsp;</td><td><p>
+<i>Nub</i> (set of distinct elements)
+<br>&nbsp;</p></td></tr>
+<tr><td valign=top><pre>
+   ∪ 'abacus'
+abcus
+
+   <img src="img/cupbar.bmp">←'' ∇ '(∪⍵)∘.=⍵'
+
+   <img src="img/cupbar.bmp"> 'abacus'
+1 0 1 0 0 0
+0 1 0 0 0 0
+0 0 0 1 0 0
+0 0 0 0 1 0
+0 0 0 0 0 1
+</pre></td><td valign=top><i>Distribution</i> 
+<acronym title="Iverson, K.E., 
+Operators and Functions, Research Report #RC7091, 
+IBM Corp., 1978.">[1]</acronym></td></tr>
+<tr><td valign=top><pre>
+   <img src="img/cupbar.bmp"> ⍳3
+1 0 0
+0 1 0
+0 0 1
+</pre></td><td valign=top><p>
+<img src="img/cupbar.bmp"><tt> </tt>applied to
+any vector of distinct elements
+produces an identity matrix
+</p></td></tr>
+<tr><td valign=top><pre>
+   ⎕←w←r⊥<img src="img/cupbar.bmp">⍳⍴r←8 4 5 2
+40 10 2 1
+
+   +/w×1 2 3 4
+70
+   r⊥1 2 3 4
+70
+
+</pre></td><td valign=top><p>
+The weights associated with the radix<tt> r</tt>
+</td></tr>
+</table>
+
+
+
+<a name="b"></a>
+<p><b>B. Enclosed Arrays</b></p>
+
+<p>Enclosed arrays provide a good example 
+of a notion whose formal treatment 
+makes it seem unduly difficult. 
+For example, a graphic display of enclosed arrays 
+is very helpful to the beginner,
+but the definition of a suitable display 
+is recursive and somewhat complicated. 
+However, its behaviour is immediately evident 
+from a model. 
+The definition of display, 
+(i.e., of the function<tt> ⍕</tt>)<tt> </tt>
+used here, is a modification 
+(due largely to P.K. Wooster) 
+of the definition in 
+<acronym title="Bernecky, R., and Iverson, K.E., 
+Operators and Enclosed Arrays, 
+APL Users Meeting, I.P. Sharp Associates, 1980.">[2]</acronym>, 
+and may be illustrated as follows:</p>
+
+<pre>
+   ⎕ps←0 0 ¯3 ¯3
+
+   ⎕←q←2 2⍴(&lt;a),(&lt;(&lt;c1),&lt;c2),&lt;a∘.×a
+        |¯¯¯¯¯¯¯¯¯|
+|¯¯¯¯¯| ||¯¯| |¯¯||
+|1 2 3| ||ba| |be||
+|_____| ||re| |ar||
+        ||__| |__||
+        |_________|
+
+|¯¯¯¯¯|
+|1 2 3|   |¯¯¯¯¯|
+|2 4 6|   |1 2 3|
+|3 6 9|   |_____|
+|_____|
+</pre>
+
+<p>The last two elements of the system 
+variable<tt> ⎕ps </tt>
+determine the row and column spacing 
+between enclosed elements, 
+injecting &ldquo;box&rdquo; decorations 
+in one of the spaces 
+if the arguments are negative. 
+The first two elements control the vertical and
+horizontal positioning of the 
+elements,<tt> ¯1 </tt>denoting top (or left)
+justification,<tt> 0 </tt>centering, 
+and<tt> 1 </tt>bottom (or right) justification.
+For example:</p>
+
+<pre>
+   ⎕ps←¯1 1 0 3
+
+   q
+1 2 3   ba   be
+        re   ar
+1 2 3     1 2 3
+2 4 6
+3 6 9
+</pre>
+
+<p>In later examples it will be convenient 
+to use two further functions. 
+The first is the boolean <i>match</i> 
+(called <i>idem</i> in 
+<acronym title="Iverson, K.E., and Wooster, P.K., 
+A Function Definition Operator, 
+APL Quote Quad, Vol.12, No.1, 
+Sept. 1981 (Proceedings of APL81).">[3]</acronym>),
+denoted by<tt> ≡</tt>&nbsp;,<tt> </tt>
+which compares its left and right arguments and
+yields a scalar<tt> 0 </tt>
+unless they match in every respect. 
+We will also define its monadic case 
+to yield<tt> 1 </tt>if its argument is <i>simple</i>,
+that is, contains no enclosed elements.</p>
+
+<p>The second function 
+is a variant of <i>link</i>, 
+defined as follows:</p>
+
+<pre>
+   ;←'(&lt;⍺),∆⍵' ∇ '⍵ ⋄ &lt;⍵ ⋄ →≡⍵'
+</pre>
+
+<p>In words,<tt> ;x </tt>encloses<tt> x </tt>
+if<tt> x </tt>is simple, and<tt> x;y </tt>
+catenates the enclose of<tt> x </tt>
+to<tt> y</tt>&nbsp;,<tt> </tt>
+first enclosing<tt> y </tt>if it is simple. 
+For example:</p>
+
+<pre>
+   ⎕ps←0 0 ¯3 ¯3
+
+   c1;c2
+|¯¯| |¯¯|
+|ba| |be|
+|re| |ar|
+|__| |__|
+
+   c1;c2;a
+|¯¯| |¯¯| |¯¯¯¯¯|
+|ba| |be| |1 2 3|
+|re| |ar| |_____|
+|__| |__|
+
+   ;⌿c1
+|¯¯| |¯¯|
+|ba| |re|
+|__| |__|
+
+   q≡2 2⍴a;(c1;c2);a∘.×a
+1
+</pre>
+
+<p>The<tt> ∆ </tt>occurring in the definition 
+of<tt> ; </tt>is a &ldquo;self-reference&rdquo; 
+to the function being defined 
+<acronym title="Iverson, K.E., and Wooster, P.K., 
+A Function Definition Operator, 
+APL Quote Quad, Vol.12, No.1, 
+Sept. 1981 (Proceedings of APL81).">[3]</acronym>; 
+since it is used monadically, 
+it refers to the monadic case 
+and therefore encloses its argument 
+if it is simple. 
+It should also be noted 
+that this use of the semicolon 
+as a function need not conflict 
+with its use as a
+separator in bracket indexing.
+<br>&nbsp;</p>
+
+
+
+<a name="c"></a>
+<p><b>C. The Disposition of Axes</b></p>
+
+<p>The effect of an axis operator 
+in an expression such as<tt> f⍤1&nbsp;0&nbsp;t </tt>
+is simply to apply the function<tt> f </tt>
+to the subarrays along the indicated axes 
+of the argument<tt> t</tt>&nbsp;,<tt> </tt>
+and the axes resulting from applying<tt> f </tt> 
+to each subarray are placed last 
+in the overall result. 
+As simple as these rules are, 
+their effects can be bewildering 
+until the user develops some familiarity 
+with their application in specific instances. 
+Such familiarity can be gained 
+by applying some simple function 
+(such as ravel or scan) in a
+number of eases:</p>
+
+<table>
+<tr><td width=200 nowrap><pre>
+   ⎕←t←3 2 4⍴⍳124
+ 0  1  2  3
+ 4  5  6  7
+
+ 8  9 10 11
+12 13 14 15
+
+16 17 18 19
+20 21 22 23
+</pre></td></tr>
+<tr><td valign=top><pre>
+   ,⍤1 2 t
+ 0  1  2  3  4  5  6  7
+ 8  9 10 11 12 13 14 15
+16 17 18 19 20 21 22 23
+</pre><td valign=top><p>
+The result of the ravelled 2-by-4 subarrays
+are placed along the last axis.
+</p></td></tr>
+<tr><td valign=top><pre>
+   ,⍤0 1 t
+0  4  8 12 16 20
+1  5  9 13 17 21
+2  6 10 14 18 22
+3  7 11 15 19 23
+</pre><td valign=top><p>
+The result of the ravelled 3-by-2 subarrays
+are placed along the last axis.
+</p></td></tr>
+<tr><td valign=top><pre>
+   ,⍤0 t
+0  8 16
+1  9 17
+2 10 18
+3 11 19
+
+4 12 20
+5 13 21
+6 14 22
+7 15 23
+</pre><td valign=top><p>
+Although the ravel of each vector 
+along axis 0 produces no change, 
+the placement of the result
+along the last axis effects 
+an overall transposition.
+</p></td></tr>
+<tr><td valign=top><pre>
+   +\⍤0 t
+0  8 24
+1 10 27
+2 12 30
+3 14 33
+
+4 16 36
+5 18 39
+6 20 42
+7 22 45
+</pre><td valign=top><p>
+Because the axis resulting
+from the scan of each vector is placed last,
+the result differs (by a transposition) 
+from the result of<tt> +\[0]t</tt>&nbsp;.<tt> </tt>
+Compare with the preceding result.
+</p></td></tr>
+</table>
+
+<p>Although the definition of the axis operator 
+used here is adopted from 
+<acronym title="Bernecky, R., and Iverson, K.E., 
+Operators and Enclosed Arrays, 
+APL Users Meeting, I.P. Sharp Associates, 1980.">[2]</acronym>,
+the representation 
+of the right argument<tt> i </tt>
+differs slightly; 
+the older definition would be satisfied by
+replacing<tt> f⍤i </tt>by<tt> f⍤(;i)</tt>&nbsp;.<tt> </tt> 
+In other words, an enclosed right
+argument is treated as in 
+<acronym title="Bernecky, R., and Iverson, K.E., 
+Operators and Enclosed Arrays, 
+APL Users Meeting, I.P. Sharp Associates, 1980.">[2]</acronym>,
+but a simple argument is treated
+as a single entity and specifies 
+(in the dyadic case of the resulting function) 
+both the left and right axes of application.
+For example:</p>
+
+<pre>
+   c1
+ba
+re
+   c2
+be
+ar
+   c1,⍤1 c2
+babe
+bear
+   c1,⍤0 c2
+brba
+aeer
+
+</pre>
+
+
+
+<a name="d"></a>
+<p><b>D. Composition and Related Operators</b></p>
+
+<p>For a single scalar argument<tt> s</tt>&nbsp;,<tt> </tt> 
+the composition of two functions<tt> f </tt>
+and<tt> g </tt>(denoted by<tt> f⍤g</tt>)<tt> </tt>
+is easy to understand, 
+since<tt> f⍤g&nbsp;s </tt>is equivalent 
+to<tt> f&nbsp;g&nbsp;s</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+   ⍳⍤⌊ 3.6                ⍳⌊3.6
+0 1 2                  0 1 2
+   +/⍤⍳⍤⌊ 3.6             +/⍳⌊ 3.6
+3                      3
+</pre>
+
+<p>However, much of the importance (and difficulty) 
+of composition stems from its use 
+with non-scalar arguments, 
+in which case the entire composed function<tt> f⍤g </tt>
+is applied individually to each of the subarrays 
+to which<tt> g </tt>
+(according to its axes of application) applies. 
+For example:</p>
+
+<pre>
+   +/⍤⍳⍤⌊ v← 2.5 3.6 4.9 6.4
+1 3 6 15
+
+   ⎕←l← &lt;⍤⍳⍤⌊ v
+|¯¯¯| |¯¯¯¯¯| |¯¯¯¯¯¯¯| |¯¯¯¯¯¯¯¯¯¯¯|
+|0 1| |0 1 2| |0 1 2 3| |0 1 2 3 4 5|
+|___| |_____| |_______| |___________|
+
+   +/⍤&gt; l
+1 3 6 15
+</pre>
+
+<p>Note that the expressions<tt> +/⍳⌊ </tt>
+and<tt> &lt;⍳⌊ </tt>and<tt> +/&gt; </tt>
+corresponding to the foregoing compositions 
+would not even be valid for the given arguments. 
+In some cases, 
+the corresponding expressions are valid, 
+but yield different results. 
+For example:</p>
+
+<pre>
+   a←3 2 2⍴1 0 1 1 1 0 2 1 1 0 3 1
+
+   a        ⌹a         ⍉⍤⌹a         ⍉⌹a
+1 0       1 0       1 ¯1          1  1  1
+1 1      ¯1 1       0  1         ¯1 ¯2 ¯3
+
+1 0       1 0       1 ¯2          0  0  0
+2 1      ¯2 1       0  1          1  1  1
+
+1 0       1 0       1 ¯3
+3 1      ¯3 1       0  1
+</pre>
+
+<p>The operator denoted by<tt> ¨ </tt>
+(called <i>with</i> in 
+<acronym title="Bernecky, R., and Iverson, K.E., 
+Operators and Enclosed Arrays, 
+APL Users Meeting, I.P. Sharp Associates, 1980.">[2]</acronym>) 
+applies in two distinct ways. 
+Applied to a function and a variable, 
+it produces the monadic function obtained 
+by supplying the variable as one
+argument of the (dyadic) function. 
+For example:</p>
+
+<pre>
+   (exp←10¨*) 1 2 3
+10 100 1000
+   (sq←*¨2) 1 2 3
+149
+</pre>
+
+<p>Applied to two functions, as in<tt> f¨g</tt>&nbsp;,<tt> </tt> 
+it is equivalent to composition, 
+with a final application of the function<tt> gi </tt>
+which is inverse to<tt> g</tt>&nbsp;.<tt> </tt> 
+Thus, for a scalar argument<tt> s</tt>&nbsp;,<tt> </tt> 
+we have<tt> f¨g&nbsp;s ←→ gi&nbsp;f&nbsp;g&nbsp;s</tt>&nbsp;.<tt> </tt> 
+The extension to general arguments 
+is like that of composition. 
+For example:</p>
+
+<table>
+<tr><td width=200 nowrap><pre>
+   +\¨⌽v←1 2 3 4 5
+15 14 12 9 5
+
+   ⌈¨(*¨.5) v
+1 4 4 4 9
+
+   ⎕←m←3 4⍴⍳12
+0  1  2  3
+4  5  6  7
+8  9 10 11
+</pre></td></tr>
+<tr><td valign=bottom><tt>&nbsp; &nbsp;+/¨(*¨2⍤0)m</tt></td>
+<td valign=top>Lengths of columns</td></tr>
+<tr><td colspan=2><tt>8.9442719 10.3440804 11.8321569 13.3790882</tt><br>&nbsp;</td></tr>
+<tr><td valign=bottom><tt>&nbsp; &nbsp;+/¨(*¨2⍤1)m</tt></td> 
+<td valign=top>Lengths of rows</td></tr>
+<tr><td colspan=2><tt>3.74165739 11.22497216 19.13112647</tt></td></tr>
+</table>
+
+<p>In the foregoing discussion 
+of the operators<tt> ¨ </tt>and<tt> ⍤</tt>&nbsp;,<tt> </tt> 
+only the monadic case 
+of the derived function was considered, 
+that is, it was applied to a single argument. 
+The dyadic cases of<tt> f⍤g </tt>
+and<tt> f¨g </tt>are similar, 
+the function<tt> g </tt>being applied 
+(along appropriate axes) 
+to both the left and right arguments. For example:</p>
+
+<pre>
+   a +⍤÷ b←1+a←1 2 3
+1.5 0.83333333 0.58333333
+   a+¨÷b
+0.66666667 1.2 1.71428571
+   c ×⍤(+/⍤0) c←3 3⍴⍳9
+81 144 225
+</pre>
+
+<p>The composition in the expression<tt> a&nbsp;f⍤g&nbsp;b </tt>
+(referred to in 
+<acronym title="Bernecky, R., and Iverson, K.E., 
+Operators and Enclosed Arrays, 
+APL Users Meeting, I.P. Sharp Associates, 1980.">[2]</acronym>
+as<tt> f </tt><i>on</i><tt> g</tt>)<tt> </tt>
+applies the dyadic (case of the) function<tt> f </tt>
+to the results of the monadic 
+function<tt> g</tt>&nbsp;;<tt> </tt>
+the composition in the expression<tt> a&nbsp;f⍥g&nbsp;b </tt>
+(to be referred to as<tt> f </tt><i>upon</i><tt> g</tt>)<tt> </tt>
+applies the <i>monadic</i> function<tt> f </tt>
+to the result of <i>dyadic</i><tt> g</tt>&nbsp;,<tt> </tt>
+as in<tt> f&nbsp;a&nbsp;g&nbsp;b</tt>&nbsp;.<tt> </tt>
+The difference may be illustrated as follows:</p>
+
+<pre>
+   c1             c2
+ba             be
+re             ar
+
+   c1 ,⍤, c2
+barebear
+   c1 ,⍥, c2
+baberear
+   a &lt;⍤÷ b←⌽a←1 2 3 4
+0 0 1 1
+   a &lt;⍥÷ b
+|¯¯¯¯| |¯¯¯¯¯¯¯¯¯¯| |¯¯¯| |¯|
+|0.25| |0.66666667| |1.5| |4|
+|____| |__________| |___| |_|
+</pre>
+
+<p>We will conclude this section 
+with a rather complex expression
+involving operators, 
+the purpose being to illustrate 
+how to &ldquo;read&rdquo; such expressions. If:</p>
+
+<pre>
+   a←2 3 4 5⍴⍳120
+   v←(i←1);(j←2 0);(k←3);(l←4 2 0)
+</pre>
+
+<p>then it is possible to write a function of<tt> v </tt>
+such that the ravel of<tt> a </tt>
+indexed by its result is equivalent 
+to<tt> a[i;j;k;l]</tt>&nbsp;.<tt> </tt>Thus:</p>
+
+<pre>
+   a[i;j;k;l] ≡ (,a)[&gt;∘.+¨&gt;/v×¨&gt;r⊥<img src="img/cupbar.bmp">⍳⍴r←⍴a]
+</pre>
+
+<p>An understanding of the expression in the brackets can be gained
+by executing it piece-by-piece:</p>
+
+<pre>
+   ⎕←z←r⊥<img src="img/cupbar.bmp">⍳⍴r←⍴a
+60 20 5 1
+   v
+|¯| |¯¯¯| |¯| |¯¯¯¯¯|
+|1| |2 0| |3| |4 2 0|
+|_| |___| |_| |_____|
+   ⎕←y←v ×¨&gt; z
+|¯¯| |¯¯¯¯| |¯¯| |¯¯¯¯¯|
+|60| |40 0| |15| |4 2 0|
+|__| |____| |__| |_____|
+   ∘.+¨&gt;/y
+|¯¯¯¯¯¯¯¯¯¯¯|
+|119 117 115|
+| 79  77  75|
+|___________|
+</pre>
+
+<p>The expression for<tt> z </tt>
+(whose details were shown in <a href="APLModel1.htm#a">Section A</a>)
+yields the weights appropriate to the successive axes 
+in indexing the ravel of the argument<tt> a</tt>&nbsp;.<tt> </tt> 
+The vector<tt> y </tt>is obtained 
+by multiplying each element 
+of the list of indices<tt> </tt>(<tt>v</tt>)<tt> </tt>
+by the appropriate weight, 
+and the final result shown is the application
+of the plus-outer-product<tt> </tt>(<tt>∘.+</tt>)<tt> </tt>
+between each of the disclosed elements 
+of<tt> y</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="e"></a>
+<p><b>E. The Definition of Operators</b></p>
+
+<p>A dyadic operator can be defined in terms of expressions
+involving its two arguments 
+(to be denoted by<tt> <u>⍺</u> </tt>
+and<tt> <u>⍵</u> </tt>and the
+two arguments of the derived function produced (to be denoted
+by<tt> ⍺ </tt>and<tt> ⍵</tt>).<tt> </tt>
+For example, if the dyadic 
+operator<tt> </tt><img src="img/timesobar.bmp"><tt> </tt>
+were defined by the 
+expression<tt> '(<u>⍺</u>⍺)×<u>⍵</u>⍵' ∇ '⍵∆⍵'</tt>&nbsp;,<tt> </tt>
+then<tt> 3.5 ⌊<img src="img/timesobar.bmp">⌈ 6.5 </tt>
+would yield<tt> 21</tt>&nbsp;,<tt> </tt>
+and<tt> 3.5 ⌈<img src="img/timesobar.bmp">⌊ 6.5 </tt>
+would yield<tt> 24</tt>&nbsp;.</p>
+
+<p>Since either or both 
+of the arguments<tt> <u>⍺</u> </tt>
+or<tt> <u>⍵</u> </tt>may be either a variable or a function, 
+and since definitions must sometimes be provided 
+for two or more of the four possible cases, 
+each definition will be associated 
+with an indication of the case it defines. 
+For example, if</p>
+
+<pre>
+<img src="img/timesobar.bmp">←(1 1;0 1) ∇ ('''(<u>⍺</u>⍺)×<u>⍵</u>⍵''∇''⍵∆⍵'''; '''''∇''<u>⍺</u>¨×⍤<u>⍵</u>⍵''')
+</pre>
+
+<p>then<tt> ⌊<img src="img/timesobar.bmp">⌈ </tt>
+behaves as described above, 
+and<tt> 3<img src="img/timesobar.bmp">⌈ 6.5 </tt>
+yields<tt> 21</tt>&nbsp;.</p>
+
+<p>In general, the definition of a dyadic operator 
+requires as the left argument of<tt> ∇ </tt>
+a vector whose<tt> k</tt>th element 
+is the enclosed representation 
+(using<tt> 0 </tt>to denote a variable 
+and<tt> 1 </tt>to denote a function) 
+of the case represented by the<tt> k</tt>th element 
+of the right argument. 
+In the definition of a monadic operator, 
+each case is indicated by a single quantity, 
+and the left argument of<tt> ∇ </tt>
+is therefore one of<tt> 0</tt>&nbsp;,<tt> </tt>
+or<tt> 1</tt>&nbsp;,<tt> </tt>
+or<tt> 0;1</tt>&nbsp;,<tt> </tt>or<tt> 1;0</tt>&nbsp;.</p>
+
+<a name="til"></a>
+<p>We will conclude this section with the definition 
+of a new dyadic operator denoted by<tt> ⍨ </tt>
+(and called <i>til</i> as an abbreviation of <i>tilde</i>):</p>
+
+<pre>
+   ⍨←1 1 ∇ '''(<u>⍵</u>⍵)<u>⍺</u>⍺''∇''⍵∆⍵'''
+</pre>
+
+<p>This operator is of great practical interest 
+because it subsumes a number of important special cases 
+arising from its use with the identity function<tt> ⊢ </tt>
+(defined as<tt> ⊢←'⍵'∇'⍵'</tt>),<tt> </tt>
+and with a sequence of functions, 
+as in<tt> f⍨g⍨h</tt>&nbsp;:</p>
+
+<table>
+<tr><td valign=top>a)</td><td>&nbsp;</td><td>
+<p>Since</p>
+
+<pre>
+   ⍺ f⍨⊢⍵ ←→ (⊢⍵) f ⍺ ←→ ⍵ f ⍺
+</pre>
+
+<p>the function<tt> f⍨⊢ </tt>is 
+the <i>commutation</i> of<tt> f</tt>&nbsp;.
+<br>&nbsp;.</p>
+</td></tr>
+
+<tr><td valign=top>b)</td><td>&nbsp;</td><td>
+<p>Since</p>
+
+<pre>
+   ⍺ f⍨g⍨h ⍵ ←→ (g⍺) f (h⍵)
+     f⍨g⍨h ⍵ ←→ (g⍵) f (h⍵)
+</pre>
+
+<p>the operator <i>til</i> provides 
+a generalization of the operators illustrated above, 
+for instance by the operator<tt> </tt><img src="img/timesobar.bmp"><tt> </tt>, 
+applying an arbitrary dyadic function<tt> f </tt>
+to the results of two monadic functions<tt> g </tt>
+and<tt> h</tt>&nbsp;.<tt> </tt>
+Moreover, the use of the identity function 
+for either<tt> g </tt>or<tt> h </tt>provides cases which
+might be called &ldquo;left composition&rdquo; 
+and &ldquo;right composition&rdquo;:</p>
+
+<pre>
+   f⍨g⍨⊢⍵ ←→ (g⍵) f ⍵
+   f⍨⊢⍨h⍵ ←→ ⍵ f (h⍵)
+</pre>
+
+<p>For example, if the propositions<tt> p </tt>
+and<tt> q </tt>are defined 
+by<tt> p←2¨| </tt>and<tt> q←3¨&lt;</tt>&nbsp;,<tt> </tt>
+then:</p>
+
+<pre>
+   ^⍨p⍨q v←1 2 3 4 5 6 7
+0 0 0 0 1 0 1
+
+   ∨⍨p⍨q v
+1 0 1 1 1 1 1
+
+   +⍨p⍨q v
+1 0 1 1 2 1 2
+</pre>
+
+<p>Finally, the function<tt> cf </tt>
+(defined in the introduction 
+by<tt> '⍺+÷⍵'∇'⍵∆⍵'</tt>)<tt> </tt>
+may now be defined by<tt> cf←+⍨⊢⍨÷ </tt>or,
+since<tt> + </tt>is commutative, 
+by<tt> cf←+⍨÷</tt>&nbsp;,<tt> </tt>
+and the expression for indexing the ravel 
+of an array<tt> a </tt>
+(given at the end of <a href="APLModel1.htm#d">Section D</a>) 
+can now be defined by:</p>
+
+<pre>
+   q←>⍥(∘.+¨>/)⍥(×¨>⍤¯1⍨(⊥⍨⍴⍨(<img src="img/cupbar.bmp">⍤⍳⍤⍴⍤⍴)))
+</pre>
+</td></tr>
+</table>
+
+
+
+<a name="f"></a>
+<p><b>F. Merge as a Dyadic Case of Selection</b></p>
+
+<p>If<tt> s </tt>is a dyadic selection function 
+such that<tt> i s a </tt>selects from<tt> a </tt>
+an array determined by the &ldquo;indices&rdquo; 
+(or other parameters) provided 
+by the variable<tt> i</tt>&nbsp;,<tt> </tt>
+then the derived function<tt> i¨s </tt>
+is a derived selection function 
+which is monadic, and selection from<tt> a </tt>
+is obtained by the expression<tt> i¨s&nbsp;a</tt>&nbsp;.<tt> </tt>
+For example, if<tt> m←3&nbsp;3⍴⍳9</tt>&nbsp;,<tt> </tt>
+then<tt> 0&nbsp;0¨⍉ </tt>is a monadic selection function 
+such that<tt> 0&nbsp;0¨⍉ </tt>
+selects the diagonal vector<tt> 0&nbsp;4&nbsp;8 </tt>
+when applied to<tt> m</tt>&nbsp;.</p>
+
+<p>Consider a definition of the dyadic case 
+of such a derived function 
+which returns the entire right argument, 
+but with the elements of the left argument substituted 
+for the selected elements
+of the right argument. 
+The dyadic function therefore provides a
+<i>merge</i> of its arguments. For example:</p>
+
+<pre>
+   m←3 3⍴⍳9
+   m                       (10+⍳3) 0 0 ¨⍉ m
+0 1 2                   10  1  2
+3 4 5                    3 11  5
+6 7 8                    6  7 12
+</pre>
+
+<p>This definition of a dyadic case 
+will be extended to other selection functions in the same manner. 
+Consider, for example, the following indexing function, 
+defined in terms of the function<tt> q </tt>
+defined at the end of the preceding section:</p>
+
+<pre>
+   s←'(,⍵)[⍵q⍺]'∇''
+   ⎕←i←?4 2⍴3              i s m
+1 2                     5 6 0 3
+2 0
+0 0
+1 0
+</pre>
+
+<p>The function<tt> ⌷ </tt>(called <i>from</i>) 
+is incorporated in the model
+using the definition of<tt> s </tt>above, 
+but adopting the merge definition for the dyadic case 
+of the derived function<tt> i¨⌷</tt>&nbsp;.<tt> </tt>
+Thus:</p>
+
+<pre>
+   (10+⍳4) i¨⌷ m
+12 1  2
+13 4 10
+11 7  8
+</pre>
+
+<p>A different approach to the treatment 
+of merge functions may be found in 
+<acronym title="Pesch, R.H., Indexing and Indexed Replacement in APL, 
+APL Quote Quad, Vol.12, No.1, Sept. 1981.">[4]</acronym>.
+<br>&nbsp;</p>
+
+
+
+<a name="g"></a>
+<p><b>G. Function Attributes</b></p>
+
+<p>An APL function is defined 
+not only by the result it produces
+for each argument in its domain, 
+but by certain <i>attributes</i>, 
+some of which (like the axes of application) 
+are manifest in every use of the function, 
+and some of which 
+(like the <i>identity element</i> and the <i>inverse</i>) 
+become manifest only upon the application 
+of some operator. 
+For example, the results of the functions<tt> ^ </tt>
+and<tt> ⌊ </tt>are identical for boolean arguments, 
+but differ in their identity elements,<tt> ^/⍳0 </tt>
+yielding<tt> 1</tt>&nbsp;,<tt> </tt> 
+and<tt> ⌊/⍳0 </tt>yielding infinity; 
+the inverse of a function is manifested 
+in the application of the dual operator.</p>
+
+<p>The representation of attributes 
+will be introduced into the representation 
+of functions as follows: 
+any segment (as delimited by diamonds) 
+which begins with a right parenthesis 
+represents an attribute; 
+the first token following the parenthesis 
+denotes the name of the attribute specified, 
+and what follows (after the delimiting space) 
+specifies the attribute.</p>
+
+<p>For example, the name<tt> ∆⌿ </tt>
+denotes the identity element attribute, and the 
+expression<tt> mp←'⍺+.×⍵&nbsp;⋄)∆⌿&nbsp;<img src="img/cupbar.bmp">⍳1↑⍴⍵'∇'' </tt>
+defines<tt> mp </tt>as a matrix product function 
+whose identity function produces an identity matrix 
+of appropriate shape. 
+Thus, if<tt> ⍴a ←→ 5&nbsp;4&nbsp;4</tt>&nbsp;,<tt> </tt>
+then<tt> mp ⌿ 5&nbsp;0&nbsp;0↓a </tt>is a 4-by-4 identity matrix.</p>
+
+<p>The following is a list of attributes 
+(together with suggested names) 
+which we have found useful 
+and have incorporated into the APL model:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;<td>
+<p>Axes<tt> </tt>(<tt>∆⍤</tt>)</p>
+
+<p>The axes of application, which may be specified
+independently for the monadic and dyadic cases.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>2.</td><td>&nbsp;<td>
+<p>Scope<tt> </tt>(<tt>~;</tt>)</p>
+
+<p>The names to be exempted 
+from the localization otherwise applied to names 
+which are assigned values within a function. 
+Except for the inclusion 
+of the name<tt> </tt>(<tt>~;</tt>)<tt> </tt> 
+for identifying the attribute, 
+the scheme agrees with that proposed in 
+<acronym title="Iverson, K.E., and Wooster, P.K., 
+A Function Definition Operator, APL Quote Quad, 
+Vol.12, No.1, Sept. 1981 (Proceedings of APL81).">[3]</acronym>.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>3.</td><td>&nbsp;<td>
+<p>Identity Element<tt> </tt>(<tt>∆⌿</tt>)</p>
+
+<p>The identity elements associated 
+with the primitive functions are 
+(because limited to scalar functions) 
+all constants; in the more general case they may, 
+like the example of matrix product given above, 
+be functions of the shapes of the arguments.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>4.</td><td>&nbsp;<td>
+<p>Merge<tt> </tt>(<tt>⍺<u>⍺</u>¨∆⍵</tt>)</p>
+
+<p>This attribute will indicate that 
+the derived function<tt> <u>⍺</u>¨∆ </tt>
+(for a variable<tt> <u>⍺</u></tt>)<tt> </tt> 
+is a selection function which extends 
+to a <i>merge</i> in the dyadic case 
+in the manner discussed 
+in <a href="APLModel1.htm#f">Section F</a>.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>5.</td><td>&nbsp;<td>
+<p>Inverse<tt> </tt>(<tt>∆⍣¯1</tt>)</p>
+
+<p>This attribute gives the inverse function 
+to be used when the dual operator is applied 
+to the function. 
+The name<tt> ∆⍣¯1 </tt>used above arises 
+from the <i>power</i> operator<tt> ⍣ </tt>
+incorporated in the model 
+(which applies its monadic left argument 
+the number of times specified 
+by the variable right argument). 
+The result of<tt> f⍣¯1 </tt>is the inverse 
+of<tt> f</tt>&nbsp;.<tt> </tt>
+For example,<tt> *⍣¯1 </tt>is equivalent 
+to<tt> ⍟</tt>&nbsp;.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>6.</td><td>&nbsp;<td>
+<p>Inverses: left and right cases<tt> </tt>(<tt>⍺¨∆⍣¯1</tt>)<tt> </tt>
+(<tt>∆¨⍵⍣¯1</tt>)</p>
+
+<p>If<tt> v </tt>is a variable and<tt> f </tt>
+is a function, then<tt> v¨f </tt>produces
+a monadic function (the <i>left case</i> of<tt> f</tt>),<tt> </tt> 
+and<tt> f¨v </tt>produces a function, 
+either or both of which may possess inverses.
+These attributes provide the appropriate inverses.</p>
+
+<p>For example, the inverses of<tt> +¨v </tt>
+and<tt> v¨+ </tt>are both<tt> (-v)¨+</tt>&nbsp;,<tt> </tt>
+the inverse of<tt> -¨v </tt>is<tt> +¨v</tt>&nbsp;,<tt> </tt>
+and<tt> v¨- </tt>is self-inverse.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>7.</td><td>&nbsp;<td>
+<p>Derivative<tt> </tt>(<tt>∆<img src="img/deltaumlaut.bmp"></tt>)</p>
+
+<p>The model incorporates the specification 
+of derivatives for a few cases. 
+For example,<tt> 1¨○<img src="img/deltaumlaut.bmp"> </tt>
+is equivalent to<tt> 2¨○</tt>&nbsp;.
+<br>&nbsp;</p></td></tr>
+
+<tr><td valign=top>8.</td><td>&nbsp;<td>
+<p>Variant<tt> </tt>(<tt>∆:</tt>)</p>
+
+<p>The model provides a few cases 
+of the variant operator discussed in 
+<acronym title="Iverson, K.E., Operators and Functions, 
+Research Report #RC7091, IBM Corp., 1978.">[1]</acronym>. 
+For example,<tt> (⍳:1)&nbsp;3 </tt>
+is<tt> 1&nbsp;2&nbsp;3</tt>&nbsp;,<tt> </tt>
+and<tt> (⍳:0)&nbsp;3 </tt>
+is<tt> 0&nbsp;1&nbsp;2</tt>&nbsp;.<tt> </tt>
+This use of the colon need not
+conflict with the present use provided that 
+(as proposed for the double use of the semicolon) 
+the older usage is given priority. 
+Thus the colon in<tt> l:a&nbsp;b&nbsp;c </tt>
+at the beginning of an expression 
+will indicate that<tt> l </tt>is a label,
+and the use of the variant<tt> l:a </tt>would 
+(at the beginning of an expression) 
+have to be indicated by parentheses, 
+as in<tt> (l:a)&nbsp;b&nbsp;c</tt>&nbsp;.
+<br>&nbsp;</p></td></tr>
+</table>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/opfns.htm"><i>Operators and Functions</i></a>, 
+Research Report
+#RC7091, IBM Corp., 1978.
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+Bernecky, R., and Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/opea.htm"><i>Operators and Enclosed Arrays</i></a>, 
+APL Users Meeting, I.P. Sharp Associates, 1980.
+</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+Iverson, K.E., and Wooster, P.K., 
+<i>A Function Definition Operator</i>, 
+APL Quote Quad, Vol.12, No.1, Sept. 1981
+(Proceedings of APL81).
+</td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+Pesch, R.H., <i>Indexing and Indexed Replacement in APL</i>,
+APL Quote Quad, Vol.12, No.1, Sept. 1981.
+</td></tr>
+</table>
+
+
+
+<br><hr>
+
+<font size=-1>
+<p>First appeared in APL82, APL Quote-Quad, Volume 13, Number 1, 1982-09.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2009-10-10 21:30</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2012-08-29 21:25</font></td></tr>
+</table>
+
+</td></tr></table>
+
+<br><br><br>
+
+</body>
+</html>

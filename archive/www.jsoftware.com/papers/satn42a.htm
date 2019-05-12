@@ -1,0 +1,464 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>SATN-42: Determinant-Like Functions Produced by the Dot Operator</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><b>SATN-42</b><br>
+<font size=+2>Determinant-Like Functions<br>Produced by the Dot Operator</font><br><br>
+<b>K.E. Iverson</b>
+<br>&nbsp;</p>
+
+
+
+<a name="abstract"></a>
+<p><b>Abstract</b></p>
+
+<p>The operator denoted by the dot has been extended
+to provide a monadic function (as in<tt> -.×m</tt>&nbsp;)
+as well as the established dyadic inner product function
+(as in<tt> n+.×m</tt>&nbsp;).
+The case<tt> -.×m </tt>(on a square matrix<tt> m</tt>&nbsp;)
+is the familiar determinant function,
+and the general case<tt> f.g m </tt>is defined analogously
+as reduction by<tt> f </tt>over a set of<tt> !n←1↑⍴m </tt>
+&ldquo;products&rdquo; produced by reduction by<tt> g </tt>
+over<tt> !n </tt>distinct sets of<tt> n </tt>elements 
+chosen one from each row and column of the argument.
+The extension to non-square arguments allows the use
+of<tt> -.× </tt>on an<tt> n+1 </tt>by<tt> n </tt>argument
+to compute the signed volume of the simplex it represents
+in<tt> n</tt>-space.</p>
+
+<br><hr>
+
+
+
+<a name="intro"></a>
+<p><b>Introduction</b></p>
+
+<p>The determinant is an important function 
+defined on square matrices 
+&#151; applied to a matrix of coefficients 
+of a set of linear equations
+it determines the character of the solutions,
+applied to the matrix of partial derivatives 
+of a vector function on vector arguments
+it yields the volume transformation effected by the function,
+and applied to the matrix<tt> s,1 </tt>it yields<tt> !1↓⍴s </tt>
+times the signed value of the simplex of<tt> n←1↑⍴s </tt>vertices
+in<tt> (n-1)</tt>-space.</p>
+
+<p>The determinant of a square matrix<tt> m </tt>
+is defined as the alternating sum 
+(i.e. reduction by<tt> -</tt>&nbsp;)
+of the<tt> !n←1↑⍴m </tt>products over<tt> n </tt>
+elements chosen (in each of the<tt> !n </tt>possible ways)
+one from each row and column.
+Analogous calculations in which other function pairs
+are substituted for<tt> - </tt>and<tt> × </tt>
+lead to other useful functions;
+examples include the 
+pairs<tt> ⌈⌊</tt>&nbsp;,<tt> ∧∨</tt>&nbsp;,<tt> </tt>
+and<tt> +×</tt>&nbsp;,<tt> </tt>
+the last (called the <i>permanent</i>)
+being useful in combinatorics
+<acronym title="Ryser, H.J., Combinatorial Mathematics, 
+Carus Mathematical Monograph Number 14, 
+Mathematical Association of America, 
+distributed by John Wiley and Sons, Inc., 
+Providence, R.I., 1963.">[1]</acronym>.</p>
+
+<p>Because of the utility of cases other than 
+the pair<tt> -×</tt>&nbsp;,<tt> </tt>
+we introduce a dyadic operator instead 
+of a specific determinant function;
+because the result of the dot operator is defined only
+for the dyadic case of the resulting function
+(as in<tt> a+.×b </tt>and<tt> a^.=b</tt>),
+we adopt its monadic case for the &ldquo;determinant&rdquo; operator.
+Thus<tt> -.×b </tt>is the determinant of<tt> b</tt>&nbsp;,<tt> </tt>
+and<tt> +.×b </tt>is the permanent.
+<br>&nbsp;</p>
+
+
+
+<a name="defn"></a>
+<p><b>Formal Definition of<tt> f.g b</tt></b></p>
+
+<p>The function<tt> dop </tt>in workspace<tt> 1 satn42 </tt>
+models the determinant operator.
+For example, if<tt> m </tt>is a magic square of order 3, then:</p>
+
+<pre>
+      m
+6 7 2
+1 5 9
+8 3 4
+
+      -.×m                       '-×'dop m
+360                        360
+
+      +.×m                       '+×'dop m
+900                        900
+
+      ∨.^m                       '∨^'dop m
+2                          2
+</pre>
+
+<p><tt>dop </tt>and its supporting functions are displayed below;
+the subsequent comments may be helpful in grasping their details.
+Origin 1 is assumed throughout:</p>
+
+<pre>
+dop⋄(1↑⍺)cr⍎(¯1↑⍺),'/x',0⍴x←all ⍵
+
+all⋄((⍳k),k←⍴⍴y)⍉⍵[y←perm⍴⍵;]
+
+perm⋄(s,⍴s)⍴⍉mf 1+s⊤¯1+⍳×/s←(⌊/⍵)↑⌽⍳1↑⍵
+
+mf⋄0≠1↑⍴⍵⋄⍵⋄⍵[,1;],[1]x+⍵[(1↑⍴x)⍴1;]≤x←mf 1 0↓⍵
+
+cr⋄0≠⍴⍴x←⍵⋄⍵⋄⍺cr⍎⍺,'/x'
+</pre>
+
+<p>The diagonal section<tt> 1&nbsp;1⍉m </tt>
+contains one element from each row and column,
+and is therefore one of the sets of elements
+over which the reduction<tt> g/ </tt>
+is to be applied in evaluating<tt> f.g m</tt>&nbsp;.<tt> </tt>
+All such sets can be obtained 
+from the expression<tt> 1&nbsp;1⍉m[p;]</tt>&nbsp;,<tt> </tt>
+where<tt> p </tt>is one of the<tt> !n </tt>permutations
+of order<tt> n←1↑⍴m</tt>&nbsp;.<tt> </tt>
+Consequently, if<tt> ap </tt>is an array of all permutations
+of order<tt> n</tt>&nbsp;,<tt> </tt>
+then a suitable section of<tt> m[ap;] </tt>provides all the
+required sets of elements,
+and<tt> g/ </tt>over this section produces
+an array of all &ldquo;products&rdquo; to which
+reduction by<tt> f </tt>is to be applied.
+For example:</p>
+
+<pre>
+      ⎕←ap←perm ⍴m               ⎕←r←all m
+1 2 3                      6 5 4
+     
+1 3 2                      6 3 9
+     
+     
+2 1 3                      1 7 4
+     
+2 3 1                      1 3 2
+     
+     
+3 1 2                      8 7 9
+     
+3 2 1                      8 5 2
+
+      ⍴ap
+3 2 1 3
+
+      ⎕←pr←×/r                   -/pr
+120                        120 162
+162                         28   6
+                           504  80
+ 28                              -/-/pr
+  6                        ¯42 22 424
+                                 -/-/-/pr
+504                        360
+ 80
+</pre>
+
+<p>The permutations<tt> ap </tt>are in lexical order,
+but the outer shape of the array is<tt> ⌽⍳n </tt>
+rather than<tt> !n</tt>&nbsp;,<tt> </tt>
+and the shape of the array of products 
+is therefore<tt> ⌽⍳n </tt> as well.
+Reduction by<tt> f </tt>is therefore carried out
+over a succession of axes (beginning with the last) 
+as provided by the recursively-defined 
+function<tt> cr</tt>&nbsp;.<tt> </tt>
+The reader may wish to verify that the pattern
+of reduction provided by this argument of rank<tt> n </tt>
+ensures that the function<tt> f </tt>applies over the products
+in an order such that the permutations 
+which produced them alternate in parity.
+This ordering is significant 
+for any non-associative function<tt> f</tt>&nbsp;;<tt> </tt>
+for the case<tt> -.× </tt>it ensures agreement
+with the established definition of the determinant.
+<br>&nbsp;</p>
+
+
+
+<a name="nonsq"></a>
+<p><b>Non-Square Arguments</b></p>
+
+<p>Except for one important case,
+the extension of the determinant functions
+to non-square arguments may not greatly increase their utility.
+However, the extension is straightforward;
+if<tt> &gt;/⍴m</tt>&nbsp;,<tt> </tt>
+then<tt> ×/s←(1↓⍴m)↑⌽⍳1↑⍴m </tt>distinct sets
+of<tt> 1↓⍴m </tt>elements can be selected without repetition
+of either column or row,
+and these are arranged in lexical order in an array 
+of shape<tt> s</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+      ⎕←m←?4 2⍴9
+6 4
+5 5
+4 3
+1 4
+
+      ⎕←ap←perm ⍴m               ⎕←r←all m
+1 2                        6 5
+1 3                        6 3
+1 4                        6 4
+
+2 1                        5 4
+2 3                        5 3
+2 4                        5 4
+
+3 1                        4 4
+3 2                        4 5
+3 4                        4 4
+
+4 1                        1 4
+4 2                        1 5
+4 3                        1 3
+
+      ⎕←pr←×/r
+30 18 24
+20 15 20
+16 20 16
+ 4  5  3
+      -/-/r
+0 0 1 ¯1
+      -/-/pr
+21
+      -.×m
+21
+</pre>
+
+<p>For a wide matrix<tt> m</tt>&nbsp;,<tt> </tt>
+the result of<tt> f.g m </tt>is equivalent
+to<tt> f.g (⌊\⍴m)↑m</tt>&nbsp;.</p>
+
+<p>The case of<tt> -.× </tt>applied to an<tt> n+1 </tt>
+by<tt> n </tt>matrix is of special interest
+because it is equivalent to<tt> -.×m,1</tt>&nbsp;,<tt> </tt>
+and can therefore be used to compute the volume
+of the simplex defined by<tt> m </tt>without explicit
+catenation of a final column of ones.
+<br>&nbsp;</p>
+
+
+
+<a name="eval"></a>
+<p><b>Evaluation Methods</b></p>
+
+<p>Because of the special properties 
+of the ordinary determinant,
+the function<tt> -.× </tt>on a square matrix is treated specially
+and is evaluated by the process used in matrix inversion;
+the time taken therefore varies 
+as the cube of the order of the matrix.</p>
+
+<p>All other cases are treated by explicit evaluation
+of each of the<tt> ÷/!|-\⍴m </tt>
+sets of<tt> ¯1↑⍴m </tt>elements;
+the time therefore varies as the product 
+of the foregoing quantities.</p>
+
+<p>Although the model shows the computation 
+of an aray<tt> a </tt>of &ldquo;products&rdquo;
+of the form<tt> g/v </tt>followed by repeated
+reductions<tt> f/&#133;f/a</tt>&nbsp;,<tt> </tt>
+the processes are merged so that the reductions
+are effected as early as possible.
+Consequently the number of intermediate results
+recorded in the reductions 
+does not exceed<tt> ⍴⍴a</tt>&nbsp;.<tt> </tt>
+The scheme can be illustrated by evaluating<tt> -/-/a </tt>
+for a matrix<tt> a</tt>&nbsp;,<tt> </tt>
+beginning at the right of the last row,
+keeping the result of its reduction
+while reducing the penultimate row,
+and then applying reduction
+(the one applied to the reduction of<tt> -/a</tt>&nbsp;)
+to these two results before proceeding
+with the reduction of another row.
+<br>&nbsp;</p>
+
+
+
+<a name="use"></a>
+<p><b>Comments on Uses of<tt> f.g m</tt></b></a>
+
+<p>Applications of the ordinary determinant (&nbsp;<tt>-.×</tt>&nbsp;)
+on square matrices will not be discussed except to remark
+that it may be used as a test for invertibility
+before applying the function<tt> ⌹</tt>&nbsp;.</p>
+
+<p>If<tt> a</tt>&nbsp;,<tt> b</tt>&nbsp;,<tt> </tt>and<tt> c </tt>
+are two-element vectors, then<tt> -.×m←3&nbsp;2⍴a,b,c </tt>yields
+twice the signed area of the triangle 
+with vertices<tt> a</tt>&nbsp;,<tt> b</tt>&nbsp;,<tt> </tt>
+and<tt> c</tt>&nbsp;,<tt> </tt>
+<i>signed</i> because the sign of the result depends
+on the order of the vertices,
+positive if they are in counterclockwise order,
+and negative if in clockwise order.  
+For example, if<tt> a←1&nbsp;1 </tt>and<tt> b←1&nbsp;0 </tt>
+and<tt> c←0&nbsp;1 </tt>then:</p>
+
+<pre>
+      -.×3 2⍴a,b,c
+¯1
+      -.×3 2⍴b,a,c
+1
+</pre>
+
+<p>Questions concerning the position of point<tt> a </tt>
+in relation to the line<tt> bc </tt>are more easily posed
+and answered in terms of the ordering of the points
+(i.e. in terms of the signed area)
+than in terms such as &ldquo;above<tt> bc</tt>&rdquo;
+(or should it be &ldquo;left of<tt> bc</tt>&rdquo;
+if<tt> bc </tt>is nearly vertical), 
+or &ldquo;<tt>a </tt>lies on the line<tt> bc</tt>&rdquo;
+(for example, does it lie on the line if<tt> b </tt>
+and<tt> c </tt>are coincident?).</p>
+
+<p>The signed result of<tt> -.× </tt>is significant
+in higher dimensions as well;
+if<tt> a</tt>&nbsp;,<tt> b</tt>&nbsp;,<tt> c</tt>&nbsp;,<tt> </tt>and<tt> d </tt>
+are points in three-space
+(in a dextral coordinate system),
+then<tt> -.×&nbsp;4&nbsp;3⍴a,b,c,d </tt>gives (<tt>!3 </tt>times)
+the signed volume of the tetrahedron,
+the results being zero if the points are coplanar,
+and positive if the 
+points<tt> b</tt>&nbsp;,<tt> c</tt>&nbsp;,<tt> </tt>and<tt> d </tt>
+are in counterclockwise order when viewed 
+from<tt> a</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+      a←1 1 1
+      b←1 0 0
+      c←0 1 0
+      d←0 0 1
+   
+      -.×4 3⍴a,b,c,d
+2
+      -.×4 3⍴a,c,b,d
+¯2
+</pre>
+
+<p>We will illustrate the use of functions 
+other than<tt> - </tt>and<tt> × </tt>
+in the context of the so-called assignment problem:
+one of<tt> n </tt> persons (or machines) is to be
+assigned to each one of<tt> n </tt>tasks in some optimal way,
+the cost associated with assigning person<tt> i </tt> to task<tt> j </tt>
+being given by element<tt> m[i;j] </tt>
+of the square matrix<tt> m</tt>&nbsp;.</p>
+
+<p>If we wish to minimize the sum of the costs in the assignment,
+then the optimal value is given by<tt> ⌊.+m</tt>&nbsp;,<tt> </tt>
+since the summation (<tt>+/</tt>) is applied to each
+of the<tt> !1↑⍴m </tt>possible assignments,
+and the minimum (<tt>⌊</tt>) is applied over them.
+Other useful function pairs in assignment type problems
+include<tt> ⌈+</tt>&nbsp;,<tt> ⌊×</tt>&nbsp;,<tt> ⌈×</tt>&nbsp;,<tt> ⌊⌈</tt>&nbsp;,
+and<tt> ⌈⌊</tt>&nbsp;.</p>
+
+<p>A square boolean matrix<tt> b </tt>is said
+to be a <i>Latin square</i> 
+if it contains exactly<tt> 1↑⍴b </tt>ones,
+with one in each row and one in each column;
+one boolean matrix<tt> c </tt>is said to cover 
+another,<tt> d</tt>&nbsp;,<tt> </tt>
+if<tt> ∧/,c≥d</tt>&nbsp;.<tt> </tt>
+The expression<tt>  ∨.∧c </tt>yields<tt> 1 </tt>
+if<tt> c </tt>covers a Latin square,
+and the expression<tt>  +.∧c </tt>tells
+how many distinct Latin squares 
+are covered by<tt> c</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="ack"></a>
+<p><b>Acknowledgements</b></p>
+
+<p>The system programming for this extension to the
+APL system was done by D.B. Allen.
+I am grateful to Mr. Allen and to Mr. E.E. McDonnell
+for comments on a draft of this paper.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+Ryser, H.J., <i>Combinatorial Mathematics</i>,
+Carus Mathematical Monograph Number 14,
+Mathematical Association of America,
+distributed by John Wiley and Sons, Inc.,
+Providence, R.I., 1963.
+ </td></tr>
+</table>
+
+
+
+<br><hr>
+
+<a name="err"></a>
+<p align=center><b>Errata</b></p>
+
+<table>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+In the last paragraph of &ldquo;Evaluation Methods&rdquo;,
+it should say &ldquo;array&rdquo; instead of &ldquo;aray&rdquo;.
+ </td></tr>
+
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+References should be Reference as there is only one.
+ </td></tr>
+</table>
+
+
+
+<br><hr>
+<font size=-1><p>First appeared as SHARP APL Technical Note 42, 
+Determinant-Like Functions Produced by the Dot Operator, 1982-04-01.</p>
+
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2009-11-08 21:45</font></td></tr>
+<tr><td><font size=-1>updated:</font></td><td><font size=-1>2012-09-24 14:05</font></td></tr>
+</table>
+
+</td></tr></table>
+
+
+<br><br><br>
+</body>
+</html>

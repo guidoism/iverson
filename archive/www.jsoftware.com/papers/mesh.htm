@@ -1,0 +1,208 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>An Amuse-Bouche from APL History</title>
+<link href="https://www.jsoftware.com/papers/adoc.css" rel=stylesheet></head>
+<body>
+
+<table width=520 align=center><tr><td>
+
+<br>
+<p align=center><font size=+2>An Amuse-Bouche from APL History</font><br><br>
+<b>Roger K.W. Hui</b></p>
+
+<br><hr>
+
+<p>The phrase<tt> x[⍋⍒(⍴x)⍴0&nbsp;1] </tt>appeared on the back of I.P. Sharp T-shirts 
+in the 1970s and 1980s. 
+It performs a perfect shuffle.</p>
+
+<pre>
+   x←'ABCDEFGHIJKLMNOPQ'
+   x[⍋⍒(⍴x)⍴0 1]
+IAJBKCLDMENFOGPHQ
+</pre>
+
+<p>I was curious about its provenance and found the following:</p>
+
+<p>Smith, Robert A., <i>Problem Section</i>, APL Quote Quad,
+Volume 3, Number 1, <nobr>1971-06-11</nobr>, page 21.</p>
+
+<table><tr><td width=18 nowrap>&nbsp;</td><td>
+<p>2: Mesh Problem (K.E. Iverson): 
+Given vectors<tt> a</tt>&nbsp;,<tt> b </tt>
+and<tt> p </tt>such that<tt> a </tt>and<tt> b </tt>
+are either both numeric or both character and
+
+<pre>
+      p∊ 0 1
+      (⍴a)=+/~p
+      (⍴b)=+/p
+</pre>
+
+<p>Write an APL expression whose value, in either origin, is the vector obtained 
+by storing consecutive values left to right of<tt> a </tt>into the 0&rsquo;s 
+of<tt> p </tt>
+and<tt> b </tt>into the 1&rsquo;s of<tt> p</tt>&nbsp;.<tt> </tt>
+For example:</p>
+
+<pre>
+   a←'O JS'
+   b←'TMONE'
+   p←1 0 1 0 0 1 1 1 0
+</pre>
+
+<p>yields<tt> &nbsp; TOM JONES</tt></p>
+
+<p>There are two known minimal solutions.<br>
+(<i>cf.</i> Algorithm 48, APL <tt>⍞</tt>, Vol. 11 No. 6).</p>
+</td></tr></table>
+
+<p>Robert A. Smith of Laurel, Maryland was the editor of the problem section 
+in the APL Quote Quad.  He is now better known as Bob Smith
+of Boolean Bob, NARS, NARS2000, and 386<sup>MAX</sup> (and other) fame.</p>
+
+<p><i>Mesh</i> was described in &sect;1.9
+of <a href="http://www.jsoftware.com/papers/APL.htm"><i>A Programming Language</i></a>, 1962:</p>
+
+<table><tr><td width=18 nowrap>&nbsp;</td><td>
+<p>A logical vector <b><i>u</i></b> 
+and the two vectors 
+<b><i>a</i></b> = 
+<img src="https://www.jsoftware.com/papers/img/uboscore.bmp">/<b><i>c</i></b> and
+<b><i>b</i></b> = <b><i>u</i></b>/<b><i>c</i></b>,
+obtained by compressing a vector <b><i>c</i></b>,
+collectively determine the vector <b><i>c</i></b>.
+The operation which specifies <b><i>c</i></b>
+as a function of <b><i>a</i></b>, <b><i>b</i></b>, and
+<b><i>u</i></b> is called a <i>mesh</i>
+and is defined as follows:
+If <b><i>a</i></b> and <b><i>b</i></b> are
+arbitrary vectors and if <b><i>u</i></b>
+is a logical vector such that +/<img src="https://www.jsoftware.com/papers/img/uboscore.bmp">
+= <i>&nu;</i>(<b><i>a</i></b>) and +/<b><i>u</i></b> 
+= <i>&nu;</i>(<b><i>b</i></b>), then the <i>mesh of</i>
+<b><i>a</i></b> <i>and</i> <b><i>b</i></b> <i>on</i>
+<b><i>u</i></b> is denoted by 
+<nobr>\<b><i>a</i></b>, <b><i>u</i></b>, <b><i>b</i></b>\</nobr>
+and is defined as the vector <b><i>c</i></b>
+such that <img src="https://www.jsoftware.com/papers/img/uboscore.bmp">/<b><i>c</i></b>
+= <b><i>a</i></b> and <b><i>u</i></b>/<b><i>c</i></b> 
+= <b><i>b</i></b>.
+The mesh operation is equivalent to choosing successive
+components of <b><i>c</i></b> from <b><i>a</i></b>
+or <b><i>b</i></b> according as the successive components
+of <b><i>u</i></b> are 0 or 1.
+If, for example, <b><i>a</i></b> = <nobr>(s, e, k),</nobr>
+<b><i>b</i></b> = <nobr>(t, a),</nobr> and 
+<b><i>u</i></b> = <nobr>(0, 1, 0, 1, 0),</nobr> then
+<nobr>\<b><i>a</i></b>, <b><i>u</i></b>, <b><i>b</i></b>\ =</nobr>
+<nobr>(s, t, e, a, k).</nobr>  As a further example, &#133;</p>
+</td></tr></table>
+
+<p>Algorithm 48, entitled &ldquo;Merging&rdquo;, was a 13-line branching
+and looping function submitted by
+James H. Burrill and Clark Wiedmann.  
+The 13 lines included one comment line and three error-checking lines.
+There was an additional note that the function can be used
+to merge, rearrange, or rotate vectors.
+</p>
+
+<p>In the immediately following issue of the APL Quote Quad, Volume 3, 
+Number 2 &amp; 3, <nobr>1971-10-01</nobr>, there were two relevant articles.
+The first (page 52) was Algorithm 67 submitted 
+by H.J. Myers of the IBM San Jose Programming Center.</p>
+
+<table><tr><td width=18 nowrap>&nbsp;</td><td>
+<pre>
+    ∇ z←a merge b
+[1]   ⍝Algorithm 48a
+[2]   →((⍴a←,a)>⍴b←,b)/e1
+[3]   z←b[⍋⍋a]
+[4]   →0
+[5]  e1:'length error'
+    ∇
+</pre>
+</td></tr></table>
+
+<p>The second (page 61) was solution 2 in the problem section:</p>
+
+<table><tr><td width=18 nowrap>&nbsp;</td><td>
+<p>2.<tt> &nbsp;(a,b)[⍋⍋p] </tt>or<tt> (b,a)[⍋⍒p] </tt>. 
+This problem were incorrectly attributed to Ken Iverson
+who has since informed me that he learned of it from Luthor Woodrum.
+It illustrates a beautiful and succinct use of the sort operators.
+Note the interesting relationship between the two solutions.
+Using this idea, Algorithm 48 in Vol. 11, No. 6 of this magazine
+can be shortened to</p>
+
+<pre>
+    ∇ z←a merge b
+[1]   →(0⍴a=b),0⍴∧/a
+[2]   z←b[⍋⍒a]
+    ∇
+</pre>
+</td></tr></table>
+
+<p>From the above,
+we can say that the mesh problem was due to Ken Iverson
+and the solution to Luthor Woodrum
+and perhaps to H.J. (Joseph) Myers.</p>
+
+<p>More recently,<tt> x[⍋⍒(⍴x)⍴0 1] </tt>is the subject of a 
+<a href="http://archive.vector.org.uk/art10010570"><i>Vector</i> article</a>
+by Norman Thomson (2005-05) and a
+<a href="http://dfns.dyalog.com/n_ripple.htm">D-function page</a> by John Scholes (<nobr>2007-03-05</nobr>), 
+and is item 6 of 
+<a href="http://www.jsoftware.com/papers/amuse-bouches.htm"><i>Sixteen APL Amuse-Bouches</i></a>
+by myself (<nobr>2014-10-27</nobr>).</p>
+
+<p>In Dyalog APL, <i>mesh</i> can be implemented as a monadic operator:</p>
+
+<pre>
+   M←{(⍺,⍵)[⍋⍋⍺⍺]}   ⍝ or M←{(⍵,⍺)[⍋⍒⍺⍺]}
+
+   'O JS' (1 0 1 0 0 1 1 1 0 M) 'TMONE'
+TOM JONES
+</pre>
+
+<p>The &ldquo;selfie&rdquo;<tt> x(b&nbsp;M)x </tt>
+or<tt> b&nbsp;M⍨&nbsp;x </tt>(same left and right arguments) is 
+equivalent to the<tt> merge </tt>
+functions described above.  Moreover:</p>
+
+<pre>
+   1 0 1 1 1 1 1 M⍨ ⍳7
+1 0 2 3 4 5 6
+   1 1 1 1 1 1 0 M⍨ ⍳7
+1 2 3 4 5 6 0
+</pre>
+
+<p>These 
+two permutations,<tt> p←(⌽⍳2⌊n),2↓⍳n </tt>and<tt> q←1⌽⍳n</tt>&nbsp;,<tt> </tt>
+suffice to generate the 
+entire group of permutations of order<tt> n </tt>
+(see &sect;4.4 of my 
+<a href="http://www.jsoftware.com/papers/from.htm">APL87 paper</a> or
+exercise 2.10.11 of Herstein&rsquo;s <i>Topics in Algebra</i>).
+Therefore, repeated application of<tt> M </tt>with 
+left arguments<tt> 1≠⍳n </tt>and<tt> n≠1+⍳n </tt>
+suffice to effect any permutation of a vector of length<tt> n</tt>&nbsp;.</p>
+
+
+<br><hr>
+<font size=-1>
+<p><script src="https://www.jsoftware.com/papers/apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2014-10-25 09:10</font></td></tr>
+<tr><td><font size=-1>updated:       </font></td><td><font size=-1>2014-10-28 09:45</font></td></tr>
+</table>
+
+
+</td></tr></table>
+
+<br><br><br>
+
+</body>
+</html>

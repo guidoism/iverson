@@ -1,0 +1,1136 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>A Commentary on APL Development</title>
+<link href="adoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<br>
+
+<table width=520 align=center><tr><td>
+
+<p align=center><font size=+2>A Commentary on APL Development</font><br><br>
+<b>Kenneth E. Iverson</b></p>
+
+
+
+<br><hr>
+
+<a name="intro"></a>
+<p>Because <i>A Dictionary of APL</i> 
+<acronym title="Iverson, K.E., “A Dictionary of APL”, 
+APL Quote Quad, Vol 18, No.1, September 1987.">[1]</acronym> 
+was designed for concise and convenient reference, 
+it is important that it be
+supplemented by other treatments of the language, 
+concerning matters such as style and literacy 
+<acronym title="Berry, M., and R. Pesch, “Style and Literacy in APL”, 
+Proceedings APL86, July 1986, APL Quote Quad, Vol 16, No.4.">[2]</acronym>, 
+discussion of the means used to eradicate anomalies 
+that have crept into the language 
+<acronym title="Iverson, K.E., “APL87”, APL Quote Quad, 
+Vol 17, No.4.">[3]</acronym>, 
+illustrations of analytic uses of the language
+<acronym title="Iverson, K.E., “Notation as a Tool of Thought”, 
+CACM 23, August 1980.">[4]</acronym>, 
+and explorations of the uses 
+of particular verbs, adverbs, and conjunctions 
+<acronym title="Hui, Roger, “Some Uses of { and }”, 
+Proceedings APL87, APL Quote Quad, 
+Vol 17, No.4, May 1987.">[5]</acronym>.</p>
+
+<p>The present paper treats the rationale 
+for many of the less familiar facilities 
+defined in the dictionary, 
+rectifies the definition of <i>rank</i>, 
+provides simpler definitions for the conjunctions
+denoted by <i>cup</i> and <i>cap</i>, 
+and discusses the matter
+of treating sets and set-like operations. 
+The order of treatment
+parallels that of the dictionary.</p>
+
+<p>Although some of the facilities in APL 
+have been introduced in response 
+to demands from programmers, 
+most have been motivated by knowledge 
+of their utility in some branch of mathematics. 
+Moreover, they have invariably been generalized 
+from the special cases on which they were based.</p>
+
+<p>For example, <i>reduction</i>, <i>inner product</i>, 
+and <i>outer product</i>
+were not demanded by programmers 
+and are still not demanded 
+by programmers in other languages. 
+Moreover, although they were suggested 
+by the sigma notation, 
+by the matrix product of linear algebra, 
+and by the outer product of tensor analysis, 
+it is the generalization of these ideas that
+has made them fruitful in general programming.</p>
+
+<p>The exploitation of these facilities 
+has been a long process of discovery by programmers, 
+discovery often impeded
+by the fact that the implementation 
+of a given construct might well remain 
+too inefficient for serious use 
+until the discovery of its utility motivated 
+more efficient implementation.
+Reductions and inner products on boolean functions
+provide a case in point.</p>
+
+<p>The motivation for the newer verbs and adverbs defined
+in the dictionary remains largely mathematical, 
+and the process of discovery and exploitation continues. 
+For example, programmers have taken to the rank adverb, 
+and its efficiency in the Sharp APL implementation 
+has already been shaiply improved 
+by embodying its treatment 
+within individual primitive verbs.</p>
+
+<p>If the development of APL is to benefit fully 
+from experience in use, 
+it is essential that the process be slow and conservative. 
+Early examples of this conservative approach
+(such as the adoption of notation 
+for the circular functions) 
+occur in Section 4 of <i>The Evolution of APL</i>
+<acronym title="Falkoff, A.D., and K.E. Iverson, 
+The Evolution of APL, 
+ACM SIGPLAN Notices 13, August 1978.">[6]</acronym>, 
+and the &ldquo;The Story of<tt> ○</tt>&rdquo;
+<acronym title="McDonnell, E.E., The Story of ○ , 
+APL Quote Quad, Vol 8, No.2, December 1977.">[7]</acronym>. 
+A more recent example will now be discussed.</p>
+
+<p>Although Section IIC of 
+<acronym title="Iverson, K.E., “A Dictionary of APL”, 
+APL Quote Quad, Vol 18, No.1, September 1987.">[1]</acronym> 
+states that adverbs and conjunctions 
+may produce results of any class, 
+none of those defined in the dictionary 
+produce anything other than verbs. 
+The potential of adverbs producing conjunctions 
+was recognized as early as 1978 
+<acronym title="Iverson, K.E., “Operators and Functions”, 
+IBM Research Report RC 7091, 1978.">[8]</acronym>, 
+but was avoided by introducing a collection of conjunctions, 
+as in<tt> f<img src="imag/plusobar.bmp">g&nbsp;⍵ ←→ (f⍵)+(g⍵)</tt>&nbsp;,<tt> </tt>
+and<tt> p<img src="imag/andobar.bmp">q⍵ ←→ (p⍵)^(q⍵)</tt>&nbsp;.<tt> </tt>
+Somewhat
+later, Arthur Whitney suggested the conjunction <i>til</i> 
+<acronym title="Iverson, K.E., and A.T. Whitney, 
+“Practical Uses of a Model of APL”, 
+APL Quote Quad, Vol 13, No.1, September 1982. ">[9]</acronym>,
+which provided a more general facility for this purpose,
+but which still avoided the introduction of constructs 
+that produce adverbs or conjunctions.</p>
+
+<p>The present paper proposes an adverb (called <i>yoke</i>)
+that produces a conjunction; 
+it supersedes several facilities proposed in the dictionary, 
+the <i>withe</i> conjunction<tt> </tt>(<img src="imag/withe.bmp">),<tt> </tt> 
+the <i>union</i> and <i>
+intersection</i><tt> </tt>(<tt>∪ ∩</tt>),<tt> </tt> 
+and the concomitant notion
+of <i>combining rank</i>.</p>
+
+
+
+<a name="box"></a>
+<p><b>Box</b><tt> </tt>(<tt>&lt;</tt>).<tt> </tt> 
+The importance of box rests on the fact that 
+it provides a <i>scalar</i> encoding 
+of <i>any</i> noun to which it is applied.
+Because the result is a scalar, 
+arrays of boxed elements can be handled conveniently 
+by existing selection and structural functions, 
+and because the inverse <i>open</i><tt> </tt>(<tt>&gt;</tt>)<tt> </tt>
+has rank 0, 
+<i>any</i> function<tt> f </tt>can be handled 
+with the convenience of a scalar function 
+by using the simply-related function<tt> f¨&gt;</tt>&nbsp;.<tt> </tt>
+For example, if<tt> f:+⌿(-⍳⍴⍺)⌽⍺∘.×⍵,0×1↓⍺</tt>&nbsp;,<tt> </tt>
+then<tt> c1&nbsp;f&nbsp;c2 </tt>
+is the coefficient vector of the polynomial equal to
+the product of polynomials 
+with coefficients<tt> c1 </tt>and<tt> c2</tt>&nbsp;,<tt> </tt>
+and<tt> f¨&gt;/bc </tt>produces the boxed coefficient 
+of the product of a list<tt> bc </tt>
+of boxed coefficients.</p>
+
+<p>The convenience of scalar encodings 
+can be illuslrated by the implicit scalar encodings 
+used for numeric values:
+the increasingly complex 
+lists<tt> 12 </tt>and<tt> 12.34 </tt>and<tt> 12.34j45.6 </tt>
+represent integers, rationals, and complex numbers, 
+but in APL only the scalar encodings are relevant
+and the details of the representations can, 
+for most purposes, be ignored.</p>
+
+<p>The analogue of box used in other dialects 
+(where it is called <i>enclose</i>, and denoted by<tt> ⊂</tt>),<tt> </tt> 
+differs in two significant respects:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+<tt>a </tt>differs from<tt> &lt;a </tt>
+for <i>any</i> argument<tt> a</tt>&nbsp;;<tt> </tt>
+whereas<tt> a </tt>differs from<tt> ⊂a </tt>
+only if<tt> a </tt>is not a simple scalar. 
+For example, if<tt> a←'I'</tt>&nbsp;,<tt> </tt> 
+then<tt> &lt;a </tt>is a one-letter word,<tt> &lt;&lt;a </tt>
+is a one-word sentence, 
+and<tt> &lt;&lt;&lt;a </tt>is a one-sentence paragraph; 
+each distinct (i.e. distinguishable), 
+whereas<tt> a </tt>and<tt> ⊂a </tt>
+and<tt> ⊂⊂a </tt>and<tt> ⊂⊂⊂a </tt>are not distinct.
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+In other dialects, a certain list of functions 
+(usually characterized as &ldquo;mathematical&rdquo;) 
+apply to enclosed numeric arguments 
+as if they were not enclosed; 
+thus<tt> (⊂3&nbsp;4)+(⊂5&nbsp;6) </tt>
+is equivalent to<tt> (<3&nbsp;4)+¨>(<5&nbsp;6)</tt>&nbsp;.<tt> </tt>
+The use of such an explicit list 
+raises questions concerning the characterization 
+of any new functions, user defined, or derived functions. 
+For example, would the defined 
+function<tt> f:⍺+÷⍵ </tt>qualify? 
+It is mathematical in the sense that<tt> 3&nbsp;f&nbsp;4 </tt>
+produces the result<tt> 3.25</tt>&nbsp;,<tt> </tt>
+and in that<tt> f/i </tt>evaluates 
+the continued fraction represented 
+by the integers<tt> i</tt>&nbsp;.
+</td></tr>
+</table>
+
+
+
+<a name="cycle"></a>
+<p><b>Cycle, Mix, and Mix Index</b><tt> </tt>(<tt>≤ ≥ ]</tt>). 
+These functions all concern permutations, 
+and their importance rests on the importance 
+of permutations in mathematics, 
+and on the importance of sorting 
+(a particular case of permutation) 
+in data processing.</p>
+
+<p>Any reordering or <i>permutation</i> 
+of the vector<tt> ⍳n </tt>
+is called a <i>permutation vector</i>; 
+it can be used with indexing
+to produce a corresponding ordering 
+of the major cells of an array. 
+For example, if<tt> p←0&nbsp;3&nbsp;1&nbsp;2</tt>&nbsp;,<tt> </tt>
+then<tt> p{'rstu' </tt>yields<tt> 'rust'</tt>&nbsp;.</p>
+
+<p>Since<tt> { </tt>permits negative indexing 
+(selecting from the tail end), 
+an argument such as<tt> q←0&nbsp;¯1&nbsp;1&nbsp;2 </tt>
+can produce the same permutation as<tt> p</tt>&nbsp;.</p>
+
+<p>In the dictionary, the term <i>mix</i> 
+is introduced to characterize such a vector, 
+but since any mix<tt> q </tt>can be reduced
+to the equivalent permutation vector 
+by the expression<tt> (⍴q)|q</tt>&nbsp;,<tt> </tt>
+we will here simplify the discussion 
+by speaking only of permutation vectors.</p>
+
+<p>The permutation<tt> s←4&nbsp;5&nbsp;2&nbsp;1&nbsp;0&nbsp;3 </tt>
+used for illustration in the dictionary is said 
+to have cycles<tt> 5&nbsp;3&nbsp;1 </tt>
+and<tt> 4&nbsp;0 </tt>and<tt> 2 </tt>
+because when used in indexing it &ldquo;cycles&rdquo; 
+the elements in each group of positions, 
+but never intermixes different groups. 
+For example:</p>
+
+<pre>
+s←'abcdef'
+b←s{a ←→ efcbad
+c←s{b ←→ adcfeb
+d←s{c ←→ ebcdaf
+e←s{d ←→ afcbed
+f←s{e ←→ edcfab
+g←s{f ←→ abcdef
+           2
+         0   4
+          1 3 5
+</pre>
+
+<p>Any permutation can be defined 
+by specifying its cycles.
+Since any rotation of a cycle 
+(such as<tt> 1⌽5&nbsp;3&nbsp;1 </tt>
+or<tt> 2⌽5&nbsp;3&nbsp;1</tt>)<tt> </tt> 
+represents the same reordering, 
+we can adopt a &ldquo;standard&rdquo; form 
+in which the largest element 
+is in the leading position 
+(as was done in the example, 
+with<tt> 5&nbsp;3&nbsp;1 </tt>
+and<tt> 4&nbsp;0 </tt>and<tt> 2</tt>).<tt> </tt> 
+Finally, if these cycles are put in increasing
+order according to their leading elements 
+and then catenated to form a single 
+vector,<tt> c←2&nbsp;4&nbsp;0&nbsp;5&nbsp;3&nbsp;1</tt>&nbsp;,<tt> </tt>
+the breaks between the successive cycles 
+can be determined by the expression<tt> c=⌈\c</tt>&nbsp;,<tt> </tt> 
+and<tt> c </tt>is called 
+the cycle representation
+of the permutation<tt> s</tt>&nbsp;.</p>
+
+<p>The cycle representation of a permutation<tt> s </tt>is given
+by the cycle function<tt> </tt>(<tt>c←≤s</tt>),<tt> </tt>
+and the corresponding permutation
+is obtained from the cycle representation 
+by the mix function<tt> </tt>(<tt>s←≥c</tt>).</p>
+
+<p>The cycle representation is useful in identifying 
+distinct groups that are not intermixed by a permutation, 
+and in finding the &ldquo;power&rdquo; 
+of a permutation 
+(the number of times it must be applied 
+to restore the original order); 
+this is given by the least common muItiple 
+of the lengths of thc cycles, that is, 
+by<tt> ^/,(c=⌈\c)1⍤⍴c</tt>&nbsp;.</p>
+
+<p>Moreover, since the function<tt> ≥ </tt>treats 
+any &ldquo;incomplete&rdquo; argument<tt> c </tt>
+as if the missing elements of<tt> ⍳⌈/c </tt>
+are single cycles (that do not move), 
+then<tt> ≥5&nbsp;3&nbsp;1 </tt>
+produces a permutation that cycles 
+the elements<tt> 5</tt>&nbsp;,<tt> 3</tt>&nbsp;,<tt> </tt>
+and<tt> 1</tt>&nbsp;;<tt> </tt> 
+and<tt> ≥4 1 </tt>interchanges elements<tt> 4 </tt>
+and<tt> 1</tt>&nbsp;.</tt> </tt>
+Such commonly useful permutations 
+are otherwise relatively awkward to specify.</p>
+
+<p>All the permutations of order<tt> n </tt>can be arranged 
+in a<tt> !n </tt>by<tt> n </tt>table<tt> T </tt>
+in &ldquo;lexical order&rdquo;, 
+that is, the rows evaluated
+as numbers in a base<tt> n </tt>
+system<tt> </tt>(<tt>n⊥⍤1&nbsp;T</tt>)<tt> </tt>
+are in increasing order. 
+For example, if<tt> n←3</tt>&nbsp;,<tt> </tt>
+then<tt> T </tt>is the table:</p>
+
+<pre>
+0 1 2
+0 2 1
+1 0 2
+1 2 0
+2 0 1
+2 1 0
+</pre>
+
+<p>A given permutation<tt> p </tt>
+can therefore be identified by its index in such a table; 
+the expression<tt> ]p </tt>
+yields the index of<tt> p</tt>&nbsp;.<tt> </tt> 
+Consequently,<tt> r←(n-⍳n←⍴p)⊤]p </tt>
+yields the <i>reduced representation</i> 
+of<tt> p </tt>and<tt> 2|+/r </tt>
+yields its <i>parity</i>,
+both as defined in 
+<acronym title="Iverson, K.E., “Notation as a Tool of Thought”, 
+CACM 23, August 1980.">[4]</acronym>.</p>
+
+<p>The dyadic expression<tt> i]a </tt>
+yields that permutation of the major cells 
+of a produced by the permutation 
+of order<tt> 1↑⍴a </tt>whose mix index 
+is<tt> i</tt>&nbsp;.<tt> </tt> 
+For example, if<tt> a←'abcd'</tt>&nbsp;,<tt> </tt>
+then<tt> 1]a </tt>reverses the last two elements 
+of<tt> a</tt>&nbsp;,<tt> </tt>
+and<tt> 5]a </tt>reverses the last three, 
+and<tt> 4]a </tt>rotates the last three.</p>
+
+<p>Finally,<tt> i]⍳n </tt>produces row<tt> i </tt>
+of the table of permutations 
+of order<tt> n</tt>&nbsp;,<tt> </tt> 
+and<tt> (⍳!n)]⍳n </tt>produces the entire table.</p>
+
+
+
+<a name="nub"></a>
+<p><b>Nub in, Nubsieve, and Nub</b><tt> </tt>(<tt>= ≠ ↑</tt>).<tt> </tt> 
+The expression<tt> ≠a </tt>produces a boolean result 
+that defines a <i>classification</i> or <i>set</i>, 
+the 1&rsquo;s in the result identifying 
+the set of distinct major cells of<tt> a</tt>&nbsp;.<tt> </tt>
+The expression<tt> (≠a)⌿a </tt>
+produces a <i>selection</i> based 
+on the classification<tt> ≠a</tt>&nbsp;,<tt> </tt> 
+yielding the <i>nub</i> of<tt> a</tt>&nbsp;.<tt> </tt>
+The expression<tt> ↑a </tt>is equivalent 
+to<tt> (≠a)⌿a</tt>&nbsp;,<tt> </tt>
+and therefore produces 
+a combined classification and selection. 
+For example:</p>
+
+<pre>
+   a           ≠a            ↑a
+ABC         1 0 1          ABC
+ABC                        DEF
+DEF
+</pre>
+
+<p>Chapter 2 of 
+<acronym title="Iverson, K.E., Applied Mathematics for Programmers, 
+I.P. Sharp Associates, 1984.">[10]</acronym>
+may be consulted for a discussion
+of classifications and sets, 
+where they are introduced 
+by the following statement of their role 
+in mathematics and data processing:</p>
+
+<blockquote>It is often necessary to separate 
+a collection of objects into several classes, 
+and then perform some operation upon each of the classes. 
+The operation performed is often trivial compared 
+to the complexity of the classification procedure itself, 
+and classification is therefore an important matter. 
+Indeed, most computation involves some classification, 
+even though the classification process
+may be implicit rather that explicit.</blockquote>
+
+<p>Further examples of the use of classification may be
+found in the treatment 
+of graphs and barcharts in Chapter 4 of 
+<acronym title="Iverson, K.E., Mathematics and Programming, 
+I.P. Sharp Associates, July 1986.">[11]</acronym>, 
+and in the treatment of directed graphs and trees 
+in Chapter 6 of 
+<acronym title="Iverson, K.E., Applied Mathematics for Programmers, 
+I.P. Sharp Associates, 1984.">[10]</acronym>.</p>
+
+<p>Two further examples of the use of <i>nub</i>, 
+and of classifications based upon it, will now be discussed:</p>
+
+<pre>
+   an←3 1 4 1 3 2
+   ↑an
+3 1 4 2
+    =an
+1 0 0 0 1 0
+0 1 0 1 0 0
+0 0 1 0 0 0
+0 0 0 0 0 1
+</pre>
+
+<p>The last result is an &ldquo;auto-classification&rdquo; 
+of<tt> an </tt>produced by the <i>Nub-in</i> function defined 
+by<tt> (↑an)∘.=an</tt>&nbsp;.<tt> </tt>
+If<tt> an </tt>is a list of account numbers, and if</p>
+
+<pre>
+   de1←35 40 21 52 25 17
+</pre>
+
+<p>then the expression<tt> (=an)+.×dep </tt>
+may be seen to produce a summary 
+of the deposits to individual accounts.</p>
+
+<p>The second example concerns the use 
+of the matrix<tt> =an </tt>
+as a post-multiplier rather than as a pre-multiplier. 
+If<tt> an </tt>is a list of arguments 
+to a function<tt> F </tt>that is expensive to compute, 
+then it is desirable to apply<tt> F </tt>
+only to the distinct elements 
+(as in<tt> F↑an</tt>),<tt> </tt>
+and then distribute the results for all arguments, 
+as in<tt> (F↑an)+.×=an</tt>&nbsp;.<tt> </tt>
+An expression of this form is used in 
+<acronym title="Iverson, K.E., “Notation as a Tool of Thought”, 
+CACM 23, August 1980.">[4]</acronym>, 
+to derive Newton&rsquo;s symmetric functions
+for determining the coefficients 
+of a polynomial from its roots.</p>
+
+
+
+<a name="less"></a>
+<p><b>Less</b><tt> </tt>(<tt>~</tt>).<tt> </tt> 
+Because <i>less</i> applies to the major cells 
+of its two array arguments 
+as a &ldquo;set-like&rdquo; function (differences), 
+its further discussion will be deferred 
+to the final section.</p>
+
+
+
+<a name="nand"></a>
+<p><b>Nand, Nor, Right, and Left</b><tt> </tt>(<tt>⍲ ⍱ ⊢ ⊣</tt>).<tt> </tt>
+Boolean functions (that are defined 
+on the boolean arguments<tt> 0 </tt>
+and<tt> 1</tt>&nbsp;,<tt> </tt>
+and produce boolean results) 
+are very generally useful. 
+Because there are four possible pairs of two arguments 
+(shown in the columns of the table<tt> 2&nbsp;2⊤⍳4</tt>)<tt> </tt>
+for each of which two different results are possible, 
+there are<tt> 16 </tt>(that is,<tt> 2*4</tt>)<tt> </tt>
+distinct dyadic boolean functions. 
+Of these, two are constants,
+one is the negation of the left argument, 
+one is the negation of the right argument, 
+and the remaining twelve are provided in APL. 
+The relations<tt> &lt;</tt>&nbsp;,<tt> ≤</tt>,&nbsp;<tt> </tt>
+etc. provide six, the <i>or</i> and <i>and</i> provide two, 
+and the set is completed by <i>nand</i> and <i>nor</i>, 
+and by <i>right</i> and <i>left</i> 
+(or, more precisely, by<tt> ⊢⍤0 </tt>and<tt> ⊣⍤0</tt>).</p>
+
+<p><i>Nand</i> and <i>nor</i> also have 
+the interesting property that 
+either can be used alone to produce 
+all of the other boolean functions. 
+The four missing dyadic booleans can be expressed
+as<tt> 0⍤0 </tt>and<tt> 1⍤0 </tt>
+and<tt> ⊢⍤~ </tt>and<tt> ⊣⍤~</tt>&nbsp;.</p>
+
+<p>Programmers largely rely on the boolean functions 
+<i>or</i>, <i>and</i>, and <i>not</i>, 
+but it should be noted that others of the set
+can provide briefer, and perhaps clearer, statements:</p>
+
+<table>
+<tr><td>For</td><td>&nbsp; &nbsp;</td><td>Substitute</td><td>&nbsp; &nbsp; &nbsp;</td><td>&nbsp; &nbsp;and read as</td></tr>
+<tr><td><tt>~a∨b</tt></td>         <td>&nbsp;</td><td align=center><tt>a⍱b</tt></td>   <td>&nbsp;</td><td>(neither)<tt> a </tt>nor<tt> b</tt></td></tr>
+<tr><td><tt>a^~b</tt></td>         <td>&nbsp;</td><td align=center><tt>a&gt;b</tt></td><td>&nbsp;</td><td><tt>a </tt>exceeds<tt> b</tt></td></tr>
+<tr><td><tt>(~a)∨b</tt></td>       <td>&nbsp;</td><td align=center><tt>a≤b</tt></td>   <td>&nbsp;</td><td><tt>a </tt>implies<tt> b</tt></td></tr>
+<tr><td><tt>(a^~b)∨(~a)^b</tt></td><td>&nbsp;</td><td align=center><tt>a≠b</tt></td>   <td>&nbsp;</td><td><tt>a </tt>differs from<tt> b</tt></td></tr>
+</table>
+
+<p>Some uses of left and right are discussed 
+in Section IIIE of the dictionary. 
+A few others are worth noting:</p>
+
+<table>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+The expressions<tt> ⊣⍀m </tt>and<tt> ⊣\m </tt>replicate 
+the leading row and the leading column 
+of a matrix<tt> m</tt>&nbsp;.
+</td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+Expressions such as<tt> s*.5⊣s←+/x*2 </tt>
+and<tt> s÷⍴x⊣s←+/x </tt>
+may be used instead of<tt> (+/x*2)*.5</tt>
+and<tt> (+/x)÷⍴x</tt>&nbsp;;<tt> </tt> 
+they tend to give prominence 
+to the overall functions 
+(square root and division of<tt> s</tt>)<tt> </tt> 
+and to subordinate the detail involved 
+in computing their arguments.
+</td></tr>
+<tr><td valign=top>&#149;</td><td>&nbsp;</td><td>
+The foregoing use of<tt> ⊣ </tt>
+may be read as &ldquo;where&rdquo;, 
+as in &ldquo;square root of<tt> s</tt>&nbsp;,<tt> </tt> 
+where<tt> s </tt>is the sum of squares 
+of<tt> x</tt>&rdquo;.<tt> </tt> 
+The usage may be extended to reduce the use of
+parentheses to any desired degree.
+</td></tr>
+</table>
+
+
+
+<a name="words"></a>
+<p><b>Words</b><tt> </tt>(<tt>⊥</tt>).<tt> </tt>
+The definition of the monad<tt> ⊥ </tt>
+formalizes an essential process 
+that has long been ill-defined 
+and divergent in dialects. 
+It introduces new classes of names that might
+be used in various ways, as in<tt> 2r3 </tt>
+as a constant name 
+for the rational number<tt> 2÷3</tt>&nbsp;.</p>
+
+<p>A function that parses a sentence<tt> s </tt> 
+and shows its execution piece-by-piece 
+can be very useful as a teaching or de-bugging tool; 
+use of the expression<tt> ⊥s </tt>
+could significantly simplify its definition.</p>
+
+<p>The function<tt> ⊥ </tt>might well be extended 
+to a new dyadic case in which a boxed left argument 
+would specify the parameter<tt> p </tt>
+used in the dictionary definition of the monadic case. 
+This would provide considerable flexibility 
+in the rules for word formation.</p>
+
+
+
+<a name="circle"></a>
+<p><b>Circle</b><tt> </tt>(<tt>○</tt>).<tt> </tt> 
+The definition of the dyad<tt> k○⍵ </tt>
+has been extended to include 
+two existing primitives<tt> </tt>(<tt>13○⍵ </tt>
+for the identify function, 
+and<tt> 14○⍵ </tt>for the exponential), 
+together with appropriate inverses 
+for the cases<tt> ¯13○⍵ </tt>
+and<tt> ¯14○⍵</tt>&nbsp;.<tt> </tt> 
+The motivation rests on the frequent use, 
+in applied mathematics,
+of phrases such as<tt> ⍵×(*⍵)×(1○⍵)</tt>&nbsp;,<tt> </tt>
+which can now be written 
+in the form<tt> ×/k○⍵⊣k←13&nbsp;14&nbsp;1</tt>&nbsp;.</p>
+
+
+
+<a name="from"></a>
+<p><b>From, All, Merge</b><tt> </tt>(<tt>{ }</tt>).<tt> </tt>
+The indexing provided by <i>from</i>
+can serve as a convenient replacement 
+for all uses of the anomalous bracket-semicolon indexing. 
+Moreover, it provides <i>abbreviated</i> indexing 
+(allowing the selection of cells
+by specifying only the &ldquo;outer&rdquo; indices), 
+<i>negative</i> indexing
+(allowing convenient selection 
+from the tail end of an axis),
+and <i>complementary</i> indexing 
+(allowing specification 
+of &ldquo;all but&rdquo; an indicated set 
+of indices along any axis). 
+Hui 
+<acronym title="Hui, Roger, “Some Uses of { and }”, 
+Proceedings APL87, APL Quote Quad, 
+Vol 17, No.4, May 1987.">[5]</acronym>
+provides examples of uses of <i>from</i> 
+as well as discussion
+of the related <i>merge</i> adverb<tt> }</tt>&nbsp;.</p>
+
+<p>It should be noted that a definition 
+such as<tt> f←¯1&nbsp;2&nbsp;¯2¨{ </tt>
+cannot be made without negative indexing, 
+because the shape of the argument to which<tt> f </tt>
+might eventually be applied is not known.</p>
+
+<p>In the dictionary it is remarked that 
+the monad <i>all</i> can be used 
+to produce cartesian product, 
+as in<tt> {⍺⊃&lt;⍵</tt>&nbsp;.<tt> </tt> 
+It should be noted that 
+the cartesian product cannot be used
+conveniently to produce the effect of <i>all</i> 
+when applied to lists of more than two elements, 
+since, for example,<tt> a&nbsp;cp&nbsp;b&nbsp;cp&nbsp;c </tt>
+would produce items consisting of a two-element
+list made up of an item from<tt> a</tt>&nbsp;,<tt> </tt>  
+together with a boxed two-element
+list of items from<tt> b </tt>and<tt> c</tt>&nbsp;,<tt> </tt> 
+rather than three-element lists of items 
+from<tt> a</tt>&nbsp;,<tt> b</tt>&nbsp;,<tt> </tt>and<tt> c</tt>&nbsp;.<tt> </tt></p>
+
+
+
+<a name="swap"></a>
+<p><b>Swap</b><tt> </tt>(<tt>⊂</tt>).<tt> </tt> 
+The adverb<tt> ⊂ </tt>&ldquo;swaps&rdquo; 
+or &ldquo;commutes&rdquo; the arguments of its verb argument; 
+for example,<tt> n÷⊂+/x </tt>
+is<tt> </tt>&ldquo;<tt>n </tt><i>into</i> 
+the sum over<tt> x</tt>&rdquo;<tt> </tt> 
+and<tt> .5*⊂x </tt>is &ldquo;the square root 
+of<tt> x</tt>&rdquo;.<tt> </tt>
+The symbol<tt> ⊂ </tt>was chosen 
+for its similarity to the initial letter 
+of &ldquo;commute&rdquo;.</p>
+
+<p>Swap can greatly simplify expressions, 
+particularly when used in conjunction 
+with other adverbs, 
+as in<tt> ⍺+.×⊂⍵</tt>&nbsp;,<tt> </tt>
+or<tt> ⍺-⊂.×⍵</tt>&nbsp;.</p>
+
+<p>The monadic case<tt> </tt>(<tt>v⊂⍵←→⍵v⍵</tt>)<tt> </tt>
+can also be used to advantage. 
+For example,<tt> ∘.+⊂⍳n </tt>
+and<tt> ∘.×⊂⍳n </tt>
+produce addition and multiplication tables.</p>
+
+
+
+<a name="under"></a>
+<p><b>Under</b><tt> </tt>(<tt>¨</tt>).<tt> </tt> 
+This adverb was designed to embody 
+much of the notion of duality 
+that recurs in many applications of mathematics. 
+Simple examples occur in the duality of <i>and</i>
+and <i>or</i> in logic, 
+that is,<tt> ⍺∨⍵←→⍺^¨~⍵ </tt>
+and<tt> ⍺^⍵←→⍺∨¨~⍵</tt>&nbsp;.<tt> </tt>
+Better examples are provided 
+by cases where the right argument
+of<tt> ¨ </tt>is not self-inverse, 
+as in<tt> ⍺×⍵←→⍺+¨⍟⍵ </tt>
+to characterize the use 
+of &ldquo;addition under logarithm&rdquo; 
+to perform multiplication. 
+The use of base-10 logs would be characterized
+as<tt> ⍺×⍵←→⍺+¨(10¨⍟)⍵</tt>&nbsp;,<tt> </tt>
+using the definition of<tt> ¨ </tt>
+with a noun as argument.</p>
+
+
+
+<a name="rank"></a>
+<p><b>Rank</b><tt> </tt>(<tt>⍤</tt>).<tt> </tt> 
+The rank adverb applies to a verb left argument
+and a noun right argument. 
+According to the dictionary definition, 
+the &ldquo;effective&rdquo; rank 
+of the derived function<tt> u⍤r </tt>
+(that is, the ranks of the cells to which it applies) 
+is the lesser of the ranks 
+of the actual arguments 
+to which it applies,
+and the appropriate elements 
+of the three-element list<tt> r</tt>&nbsp;.<tt> </tt> 
+Moreover, each primitive verb 
+has an &ldquo;intrinsic&rdquo; rank 
+as specified in the header of its definition.</p>
+
+<p>Because of complications arising 
+from the use of negative ranks 
+(to indicate a<tt> ¯1</tt>-cell or<tt> ¯2</tt>-cell, etc., 
+as defined at the end of Section IIA in the dictionary), 
+the definitions of the rank adverb 
+and the rank of a function 
+need to be refined as follows:</p>
+
+<table>
+<tr><td valign=top>1.</td><td>&nbsp;</td><td>
+The rank of any verb<tt> u </tt>
+is characterized by an<tt> n-by-3 </tt>matrix, 
+where<tt> n </tt>is<tt> 1 </tt>for a primitive function, 
+and increases by<tt> 1 </tt>for each applications 
+of the rank adverb, 
+the newly-specified rank 
+being appended as a new last row.
+</td></tr>
+<tr><td valign=top>2.</td><td>&nbsp;</td><td>
+<p>When a verb is applied to an argument or arguments,
+the effective rank is determined 
+by applying the rows
+of the rank matrix in turn, 
+beginning with the last. 
+For example, if the rank matrix is</p>
+
+<pre>
+10 1 1
+¯1 1 1
+ 3 1 1
+</pre>
+
+<p>and the function is applied (monadically) 
+to a right argument 
+of shape<tt> 2&nbsp;3&nbsp;4&nbsp;5&nbsp;6</tt>&nbsp;,<tt> </tt> 
+then the successive effective (monadic) ranks 
+computed are<tt> 5 </tt>and<tt> 3 </tt>
+and<tt> 2 </tt>and<tt> 2</tt>; 
+the final cell size is<tt> 5&nbsp;6</tt>&nbsp;.</p>
+</td></tr>
+<tr><td valign=top>3.</td><td>&nbsp;</td><td>
+<p>The definitions 
+of composition<tt> </tt>(<tt>u⍤v</tt>)<tt> </tt>
+and under<tt> </tt>(<tt>u¨v</tt>)<tt> </tt>
+show that the rank of the derived function 
+is the rank of<tt> v</tt>&nbsp;.<tt> </tt>
+More precisely, it is the last row of the
+rank matrix of<tt> v </tt>only. 
+Moreover, the function<tt> v </tt>is then
+applied with its rank determined 
+by all except the last row 
+of its rank matrix.</p>
+
+<p>This definition provides for 
+what has been called &ldquo;close composition&rdquo;, 
+that is, the function<tt> u </tt>is applied
+to the result of applying<tt> v</tt>&nbsp;,<tt> </tt> 
+to each individual cell rather than to the overall result. 
+Observe, for example, the difference between the results 
+of<tt> ⍉⍤⌹a←?6&nbsp;5&nbsp;4⍴100</tt>&nbsp;,<tt> </tt>
+and<tt> ⍉⌹a</tt>&nbsp;.</p>
+
+<p>Finally, the application of<tt> v </tt>
+with the last row of its rank matrix removed 
+prevents an effective double reduction in rank 
+when the leading element 
+of the last row is negative.</p>
+</td></tr>
+<tr><td valign=top>4.</td><td>&nbsp;</td><td>
+An enclosed vector right argument to the rank adverb
+determines the rank of the result 
+without reference to the rank of the left argument. 
+For example, the rank matrix 
+of the function<tt> u⍤(&lt;3&nbsp;4&nbsp;5) </tt>
+is the matrix 
+with the single row<tt> 3 4 5</tt>&nbsp;.
+</td></tr>
+</table>
+
+
+
+<a name="tie"></a>
+<p><b>Tie</b><tt> </tt>(<tt>.</tt>).<tt> </tt>
+The expression<tt> m.v </tt>
+provides a generalization of the outer product, 
+in which a restricted number 
+of axes of the arguments 
+behave as in the outer product, 
+the first<tt> m </tt>axes of the argument 
+being required to &ldquo;run together&rdquo; 
+(and therefore agree).</p>
+
+<p>The outer product often produces a result of high rank
+which must then be pared down 
+by the use of<tt> ⍉</tt>&nbsp;,<tt> </tt>
+as in the following identity D.13 from
+<acronym title="Iverson, K.E., “Notation as a Tool of Thought”, 
+CACM 23, August 1980.">[4]</acronym>:</p>
+
+<pre>
+M+.×N ←→ +/1 3 3 2⍉M∘.×N
+</pre>
+
+<p>Tie can be used to express this identity 
+as<tt> M+.×N ←→ +/(⍉M)1&nbsp;.×N</tt>&nbsp;.</p>
+
+
+
+<a name="prefer"></a>
+<p><b>Prefer, Defer</b><tt> </tt>(<tt>⍥</tt>).<tt> </tt>
+Because functions apply only to cells
+(along the final axes), 
+it is sometimes necessary to apply a monad<tt> f </tt>
+after moving a specified list 
+of axes<tt> a </tt>to the tail end; 
+this is done by using the <i>defer</i> adverb 
+in the expression<tt> f⍥a</tt>&nbsp;.<tt> </tt> 
+Similarly, in applying a reduction 
+of the form<tt> f⌿</tt>&nbsp;,<tt> </tt>
+it may be desirable to first move 
+a specified axis<tt> s </tt>
+to the leading position, 
+using<tt> s⍥(f⌿)</tt>&nbsp;.</p>
+
+<p>Prefer and defer may also be used 
+with the identity function<tt> </tt>(<tt>⊢</tt>)<tt> </tt> 
+to perform transpositions 
+that are otherwise awkward to express. 
+Such uses occur in the discussion 
+of sets in a later section. 
+The application of the same transposition
+to each of the arguments 
+of a dyad<tt> f </tt>
+may be expressed using composition, 
+as in<tt> ⍺f⍤(⊢⍥a)⍵</tt>&nbsp;.</p>
+
+
+
+<a name="ply"></a>
+<p><b>Ply</b><tt> </tt>(<tt>.</tt>).<tt> </tt> 
+In a still unpublished 
+<a target=_parent href="http://www.jsoftware.com/papers/eem/powerop.htm">paper</a>, 
+E.E. McDonnell has
+suggested the adoption of a dyadic case to be defined in
+terms of the monadic case as follows:</p>
+
+<pre>
+⍺ u.n ⍵ ←→ >(n≠0){1¨↓,:(u¨>/).n ⍺,⍤<⍵
+</pre>
+
+<p>For example,<tt> 0 +.n 1 </tt>
+gives the<tt> n</tt>-th Fibonacci number,
+and<tt> 1&nbsp;∘∇'⍵×1+⍵÷⍺'.n&nbsp;1 </tt>
+gives<tt> !n</tt>&nbsp;.<tt> </tt> 
+The definition applies only 
+for non-negative values of<tt> n</tt>&nbsp;.</p>
+
+<p>The definition for the monad<tt> u.n⍵ </tt>
+and the dyad<tt> ⍺u.n⍵ </tt>
+should both be extended 
+to non-scalar arguments<tt> n</tt>&nbsp;,<tt> </tt>
+the outer shape of the result 
+being<tt> ⍴n</tt>&nbsp;.<tt> </tt> 
+For example,<tt> 0+.(⍳7)1 </tt>
+yields<tt> 0&nbsp;1&nbsp;1&nbsp;2&nbsp;3&nbsp;5&nbsp;8</tt>&nbsp;,<tt> </tt> 
+and<tt> 2¨×.(⍳5)&nbsp;1 </tt>
+is<tt> 1&nbsp;2&nbsp;4&nbsp;8&nbsp;15</tt>&nbsp;.</p>
+
+
+
+<a name="union"></a>
+<p><b>Union, Intersection</b><tt> </tt>(<tt>∪ ∩</tt>).<tt> </tt>
+These conjunctions, and the concomitant notion 
+of <i>combining</i> rank, 
+are superseded by the adverb <i>yoke</i> defined below.</p>
+
+
+
+<a name="yoke"></a>
+<p><b>Yoke</b><tt> </tt>(<tt>:</tt>).<tt> </tt> 
+The <i>yoke</i> defined here is an adverb 
+that produces a conjunction. 
+The symbol suggested for it<tt> </tt>(<tt>:</tt>)<tt> </tt>
+is already in use for the custom adverb, 
+and the semicolon is now suggested for that role.</p>
+
+<p>If<tt> f</tt>&nbsp;,<tt> g</tt>&nbsp;,<tt> </tt>
+and<tt> h </tt>are verbs, then:</p>
+
+<pre>
+⍺ f g: h ⍵ ←→ (f⍺) g (h⍵)
+  f g: h ⍵ ←→ (f⍵) g (h⍵)
+</pre>
+
+The ranks of<tt> f&nbsp;g:&nbsp;h </tt>
+are the minimum of the ranks 
+of<tt> f </tt>and<tt> h</tt>&nbsp;.</p>
+
+<p>For functions with scalar results, 
+the expression<tt> f⍪:g </tt>
+provides what was provided by<tt> f∪g</tt>&nbsp;;<tt> </tt>
+more generally, 
+one may use<tt> f,¨&lt;:g⍪:h⍪:i</tt>&nbsp;.</p>
+
+<p>The equivalents of<tt> f∪g∩+ </tt>and<tt> f∪g∩× </tt>
+in the dictionary
+(or of<tt> f+g </tt>and<tt> f×g </tt>in mathematics) 
+may now be provided 
+by<tt> f+:g </tt>and<tt> f×:g</tt>&nbsp;.<tt> </tt>
+Moreover,<tt> p^:q </tt>
+and<tt> p∨:q </tt>and<tt> p>:q </tt>
+provide propositions that define 
+the <i>intersection</i>, <i>union</i>, and <i>difference</i> 
+of the sets defined 
+by the propositions<tt> p </tt>and<tt> q</tt>&nbsp;.<tt> </tt> 
+Finally, the effect of <i>withe</i> 
+(a variant of <i>til</i>) 
+is given by<tt> ⊢g:h</tt>&nbsp;;<tt> </tt> 
+in particular,<tt> ⊢+:÷/c </tt>
+gives the continued fraction represented 
+by the list<tt> c</tt>&nbsp;.</p>
+
+
+
+<a name="sets"></a>
+<p><b>Sets</b>.
+In mathematics, sets are commonly defined by notation
+of the form:</p>
+
+<pre>
+S={x|Px}      T={x|Qx}
+</pre>
+
+<p>where<tt> P </tt>and<tt> Q </tt>are <i>propositions</i>, 
+that is, functions whose range comprises two elements, 
+sometimes called <i>true</i> and <i>false</i>, 
+but in APL more conveniently treated 
+as<tt> 0 </tt>and<tt> 1</tt>&nbsp;.<tt> </tt>
+For example, 
+if<tt> P:(⍵=⌊⍵)^(⍵&gt;0)^(⍵&lt;100)</tt>&nbsp;,<tt> </tt>
+then<tt> S </tt>is the set of integers lying strictly 
+between<tt> 0 </tt>and<tt> 100</tt>&nbsp;.</p>
+
+<p>Since a set such as<tt> S </tt>
+can only be used to answer the question 
+of whether an argument<tt> y </tt>belongs to<tt> S </tt>
+(expressed as<tt> y∊S</tt>),<tt> </tt>
+the set definition appears 
+to add nothing to the proposition 
+used in the definition; that is, 
+the expression<tt> Py </tt>provides the same result.</p>
+
+<p>However, expressions for the union and intersection
+of sets are more convenient than the corresponding expressions
+in terms of the the defining propositions, 
+that is,<tt> S∪T </tt>
+instead of<tt> (P⍵)∨(Q⍵)</tt>&nbsp;,<tt> </tt>
+and<tt> S∩T </tt>instead of<tt> (P⍵)^(Q⍵)</tt>&nbsp;.<tt> </tt>
+What is required to make the use 
+of propositions more palatable
+(and to exploit the use of booleans 
+other than the <i>or</i> and <i>and</i> 
+used in union and intersection) 
+are suitable conjunctions to link the propositions.</p>
+
+<p>This need is met by conjunctions 
+of the form<tt> b:</tt>&nbsp;,<tt> </tt>
+where<tt> b </tt>is a boolean function. 
+For example,<tt> P∨:Q </tt>produces
+the proposition analogous to the union 
+of sets<tt> S </tt>and<tt> T</tt>&nbsp;,<tt> </tt> 
+and<tt> P^:Q </tt>produces intersection. 
+Moreover,<tt> P&gt;:Q </tt>
+provides ordinary set difference, 
+and<tt> P≠:Q </tt>provides symmetric set difference. 
+Finally, a &ldquo;family of propositions&rdquo; 
+such as<tt> H←P,:Q,:R </tt>can be used 
+in a variety of ways such as direct evaluation, 
+as in<tt> H⍵</tt>&nbsp;,<tt> </tt>
+or in an intersection of sets and their complements, 
+as in<tt> (b¨(^.=))⍥H</tt>&nbsp;,<tt> </tt>
+where the propositions corresponding 
+to zeros in the parameter<tt> b </tt>are negated.</p>
+
+
+
+<a name="setops"></a>
+<p><b>Set-like operations</b>.
+A proposition defining a set is sometimes
+itself defined in terms of an exhasustive list of the
+elements belonging to the set, as in:</p>
+
+<pre>
+VOWELS: v/⍵∘.='AEIOU'
+</pre>
+
+<p>The union, intersection, and difference of two sets can
+then be represented by analogous operations 
+on the corresponding lists, 
+and these operations on lists 
+are often referred to by the names appropriate 
+to the operations on sets.</p>
+
+<p>Thus, if<tt> a </tt>and<tt> b </tt>
+are the lists representing the sets
+(propositions)<tt> A </tt>and<tt> B</tt>&nbsp;,<tt> </tt>
+then<tt> a⍪b </tt>
+(or<tt> ↑a⍪b </tt>to remove duplicate elements) 
+corresponds to <i>union</i><tt> (A∨:B)</tt>&nbsp;;<tt> a~b </tt>
+to <i>difference</i><tt> (A&gt;:B)</tt>&nbsp;;<tt> </tt>
+and<tt> a~a~b </tt>to <i>intersection</i><tt> (A^:B)</tt>&nbsp;.</p>
+
+<p>It should be noted that<tt> a⍪b </tt>
+and<tt> a~b </tt>concern the major cells 
+of the arguments. For example:</p>
+
+<pre>
+   a           b            a⍪b
+mno         stu          mno
+pqr         vwx          pqr
+stu                      stu
+                         stu
+                         vwx
+
+   a~b         a~a~b
+mno         stu
+pqr
+</pre>
+
+<p>Finally, major cells relative to any axis<tt> k </tt>
+can be treated by expressions 
+of the form<tt> a~⍤(k⍥⊢)b</tt>&nbsp;.
+<br>&nbsp;</p>
+
+
+
+<a name="ack"></a>
+<p><b>Acknowledgments</b></p>
+
+<p>I am indebted to John Sansom and other careful readers
+of the dictionary for raising many 
+of the questions addressed herein,
+and to Roland Pesch, Henri Schueler and E.E. McDonnell
+for helping provide some of the answers.
+<br>&nbsp;</p>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top>[1]</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/APLDictionary.htm">&ldquo;A Dictionary of APL&rdquo;</a>,
+APL Quote Quad, Vol 18, No.1, September 1987.
+</td></tr>
+<tr><td valign=top>[2]</td><td>&nbsp;</td><td>
+Berry, M., and R. Pesch, &ldquo;Style and Literacy in APL&rdquo;,
+Proceedings APL86, July 1986, APL Quote Quad, 
+Vol 16, No.4.
+</td></tr>
+<tr><td valign=top>[3]</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/APL87.htm">&ldquo;APL87&rdquo;</a>,
+APL Quote Quad, Vol 17, No.4.
+</td></tr>
+<tr><td valign=top>[4]</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/tot.htm">&ldquo;Notation as a Tool of Thought&rdquo;</a>,
+CACM 23, August 1980.
+</td></tr>
+<tr><td valign=top>[5]</td><td>&nbsp;</td><td>
+Hui, Roger, 
+<a target=_parent href="http://www.jsoftware.com/papers/from.htm">&ldquo;Some Uses of<tt> { </tt>and<tt> }</tt>&rdquo;</a>,
+Proceedings APL87, APL Quote Quad, Vol 17, No.4, May 1987.
+</td></tr>
+<tr><td valign=top>[6]</td><td>&nbsp;</td><td>
+Falkoff, A.D., and K.E. Iverson,
+<a target=_parent href="http://www.jsoftware.com/papers/APLEvol.htm"><i>The Evolution of APL</i></a>,
+ACM SIGPLAN Notices 13, August 1978.
+</td></tr>
+<tr><td valign=top>[7]</td><td>&nbsp;</td><td>
+McDonnell, E.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/eem/storyofo.htm"><i>The Story of</i><tt> ○</tt></a>&nbsp;,<tt> </tt>
+APL Quote Quad, Vol 8, No.2, December 1977.
+</td></tr>
+<tr><td valign=top>[8]</td><td>&nbsp;</td><td>
+Iverson, K.E., 
+<a target=_parent href="http://www.jsoftware.com/papers/opfns">&ldquo;Operators and Functions&rdquo;</a>,
+IBM Research Report RC 7091, 1978.
+</td></tr>
+<tr><td valign=top>[9]</td><td>&nbsp;</td><td>
+Iverson, K.E., and A.T. Whitney,
+<a target=_parent href="http://www.jsoftware.com/papers/APLModel.htm">&ldquo;Practical Uses of a Model of APL&rdquo;</a>,
+APL Quote Quad, Vol 13, No.1, September 1982.
+</td></tr>
+<tr><td valign=top>[10]</td><td>&nbsp;</td><td>
+Iverson, K.E., <i>Applied Mathematics for Programmers</i>,
+I.P. Sharp Associates, 1984.
+</td></tr>
+<tr><td valign=top>[11]</td><td>&nbsp;</td><td>
+Iverson, K.E., <i>Mathematics and Programming</i>,
+I.P. Sharp Associates, July 1986.
+</td></tr>
+</table>
+
+
+
+<br><hr>
+<font size=-1>
+<p>First appeared in the APL Quote Quad, Volume 19, Number 1, 1988-09.</p>
+<p><script src="apldisplay.js" type="text/javascript"></script></p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2009-10-03 19:00</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2013-05-08 09:45</font></td></tr>
+</table>
+
+
+</td></tr></table>
+<br>
+</body>
+</html>
+

@@ -1,0 +1,214 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>My Favorite APL Symbol</title>
+<link href="adoc.css" rel=stylesheet></head>
+<body>
+
+<table width=520 align=center><tr><td>
+
+<br>
+<p align=center><font size=+2>My Favorite APL Symbol</font><br>
+<b>Roger K.W. Hui</b></p>
+<br>
+
+
+<p align=center><img src="img/log.bmp">
+<br>&nbsp;</p>
+
+
+
+<a name="0"></a>
+<p><b>0. Introduction</b></p>
+
+<p>One of the distinguishing characteristics of APL is 
+its unique character set, containing 150-200 symbols.
+My favorite is<tt> <font size=+1>⍟</font></tt>&nbsp;,<tt> </tt>
+the symbol for logarithm.
+Originally, the log symbol was formed by &ldquo;overstriking&rdquo;
+<tt> <font size=+1>○</font> </tt>(circle) and<tt> <font size=+1>*</font> </tt>
+(exponential or power).  
+At present, <tt> <font size=+1>⍟</font> </tt>is Unicode 
+<acronym title="Unicode Consortium Unicode Standard 6.2, 2013.">[0]</acronym>
+code point 0x235F.
+<br>&nbsp;</p>
+
+
+
+<a name="1"></a>
+<p><b>1. Reasons for Liking</b><tt> <font size=+1>⍟</font></tt></p>
+
+<table>
+<tr><td valign=top nowrap>&#149; &nbsp;</td><td>It&rsquo;s kind of cute, possessing a radial symmetry.
+ </td></tr>
+
+<tr><td valign=top>&#149;</td><td>It denotes a function 
+for which conventional mathematical notation 
+<acronym title=
+"Abramowitz, Milton, and Irene A. Stegun, Handbook of Mathematical Functions, US National Bureau of Standards, 1964, Chapter 4.">[1]</acronym>
+does not have a good symbol:
+<table>
+<tr><td>&nbsp; &nbsp;</td><td><tt>⍟y</tt></td> <td><tt>&nbsp; ←→ &nbsp;</tt></td><td>ln <i>y</i>&nbsp; 
+ or &nbsp;log <i>y</i></td></tr>
+<tr><td></td><td><tt>x⍟y</tt></td><td><tt>&nbsp; ←→ &nbsp;</tt></td><td>log<sub><i>x&nbsp;</i></sub><i>y</i></td></tr>
+</table>
+ </td></tr>
+
+<tr><td valign=top>&#149;</td><td>It alludes 
+to<tt> 0=1+*○0j1</tt>&nbsp;,<tt> </tt>
+the most beautiful equation in all of mathematics
+<acronym title=
+"Hui, Roger K.W., Euler’s Identity, J Wiki Essay, 2010-02-04.">[2]</acronym>, 
+relating in one short phrase the fundamental quantities 0, 1, <i>e</i>, <i>&pi;</i>, 
+and<tt> 0j1 </tt>
+and the basic operations plus, times, and exponentiation.
+ </td></tr>
+
+<tr><td valign=top>&#149;</td><td>It is a visual pun 
+&mdash; the symbol looks like the cross section of a felled tree, i.e. a log
+<acronym title=
+"McDonnell, Eugene E., The Story of o, APL Quote-Quad, Volume 8, Number 2, 1977-12.">[3]</acronym>.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="2"></a>
+<p><b>2. Chronology</b></p>
+
+<table>
+<tr><td nowrap valign=top>1962-03</td><td>
+In <i>A Programming Language</i> 
+<acronym title=
+"Iverson, Kenneth E., A Programming Language, Wiley, New York, 1962.">[4]</acronym>,
+logarithm, exponential, and power were not assigned symbols.
+<br>&nbsp;
+ </td></tr>
+<tr><td nowrap valign=top>1966-03</td><td>
+In <i>Elementary Functions</i> <acronym title=
+"Iverson, Kenneth E., Elementary Functions: An Algorithmic Treatment, Science Research Associates, Inc., Chicago, 1966-03.">[5]</acronym>,
+exponential and power were denoted<tt> *y </tt>and<tt> x*y</tt>&nbsp;,<tt> </tt> 
+their definitions to this day.
+Natural logarithm was denoted<tt> *' </tt>and base-<tt>x </tt>logarithm
+was denoted<tt> (x*)'</tt>&nbsp;.<tt> </tt>
+(In the book,<tt> f' </tt>is the inverse of<tt> f</tt>&nbsp;.) 
+<br>&nbsp;
+ </td></tr>
+<tr><td nowrap valign=top>1966-11-27 &nbsp;</td><td>15:53:58 (GMT-7).  Initial implementation of <i>APL\360</i>
+<acronym title=
+"Hui, Roger K.W., Editor, APL Quotations and Anecdotes, 2010-09-18.">[6]</acronym>.
+<br>&nbsp;
+ </td></tr>
+<tr><td nowrap valign=top>1967-10-17</td><td>
+Natural logarithm was denoted by<tt> ⍟y </tt>no
+later than the publication of <i>The APL\360 Terminal System</i>
+<acronym title=
+"Falkoff, Adin D., and Kenneth E. Iverson, The APL\360 Terminal System, Report RC-1922, IBM, 1967-10-16.">[7]</acronym>,
+1967-10-17.
+The dyadic case<tt> x⍟y</tt>&nbsp;,<tt> </tt>
+base-<tt>x </tt>log of<tt> y</tt>&nbsp;,<tt> </tt>
+was undefined;
+instead, it was computed by a defined function 
+in the public library workspace<tt> 1&nbsp;utility </tt>
+<acronym title=
+"Conroy, C.A., Editor, APL\360 Newsletter Number 1, IBM, 1967-07.">[8]</acronym>.
+<br>&nbsp;
+ </td></tr>
+<tr><td nowrap valign=top>1968-08</td><td>
+Finally, natural logarithm was denoted<tt> ⍟y </tt>
+and the base-<tt>x </tt>logarithm of<tt> y </tt>was
+denoted<tt> x⍟y</tt>&nbsp;,<tt> </tt>
+their definitions to this day, 
+no later than the publication of
+<i>APL\360 User&rsquo;s Manual</i>
+<acronym title=
+"Falkoff, Adin D., and Kenneth E. Iverson, APL\360 User’s Manual, IBM, 1968-08; Table 3.2.">[9]</acronym>,
+August 1968.
+ </td></tr>
+</table>
+<br>
+
+
+
+<a name="ref"></a>
+<p><b>References</b></p>
+
+<table>
+<tr><td valign=top align=right>0.</td><td>&nbsp;</td><td> 
+Unicode Consortium 
+<a target=_parent href="http://www.unicode.org/charts/PDF/U2300.pdf"><i>Unicode Standard 6.2</i></a>, 
+2013.
+ </td></tr>
+<tr><td valign=top align=right>1.</td><td>&nbsp;</td><td> 
+Abramowitz, Milton, and Irene A. Stegun,
+<a target=_parent href="http://people.math.sfu.ca/~cbm/aands/page_67.htm"><i>Handbook
+of Mathematical Functions</i></a>,
+US National Bureau of Standards, 1964; Chapter 4.
+ </td></tr>
+<tr><td valign=top align=right>2.</td><td>&nbsp;</td><td> 
+Hui, Roger K.W.,  
+<a target=_parent href="http://www.jsoftware.com/jwiki/Essays/Euler's_Identity"><i>Euler&rsquo;s
+Identity</i></a>,
+J Wiki Essay, 2010-02-04.
+ </td></tr>
+<tr><td valign=top align=right>3.</td><td>&nbsp;</td><td> 
+McDonnell, Eugene E.,  
+<a target=_parent href="http://www.jsoftware.com/papers/eem/storyofo.htm"><i>The 
+Story of</i><tt> ○</tt></a>&nbsp;,<tt> </tt>
+APL Quote-Quad, Volume 8, Number 2, 1977-12.
+ </td></tr>
+<tr><td valign=top align=right>4.</td><td>&nbsp;</td><td> 
+Iverson, Kenneth E.,  
+<a target=_parent href="http://www.jsoftware.com/papers/APL.htm"><i>A Programming Language</i></a>, 
+ Wiley, New York, 1962.
+ </td></tr>
+<tr><td valign=top align=right>5.</td><td>&nbsp;</td><td> 
+Iverson, Kenneth E.,  
+<a target=_parent href="http://www.jsoftware.com/jwiki/Doc/Elementary_Functions_An_Algorithmic_Treatment"><i>Elementary 
+Functions: An Algorithmic Treatment</i></a>, 
+Science Research Associates, Inc., Chicago, 1966-03.
+ </td></tr>
+<tr><td valign=top align=right>6.</td><td>&nbsp;</td><td> 
+Hui, Roger K.W., Editor,   
+<a target=_parent href="http://www.jsoftware.com/papers/APLQA.htm#APL_birthday"><i>APL 
+Quotations and Anecdotes</i></a>, 
+2010-09-18.
+ </td></tr>
+<tr><td valign=top align=right>7.</td><td>&nbsp;</td><td> 
+Falkoff, Adin D., and Kenneth E. Iverson,   
+<a target=_parent href="http://www.jsoftware.com/papers/APL360TerminalSystem.htm"><i>The 
+APL\360 Terminal System</i></a>, 
+Report RC-1922, IBM, 1967-10-16.
+ </td></tr>
+<tr><td valign=top align=right>8.</td><td>&nbsp;</td><td> 
+Conroy, C.A., Editor,   
+<a target=_parent href="http://bitsavers.informatik.uni-stuttgart.de/pdf/ibm/apl/APL_Newsletter_1_Jul67.pdf"><i>APL\360
+Newsletter Number 1</i></a>, 
+IBM, 1967-07.
+ </td></tr>
+<tr><td valign=top align=right>9.</td><td>&nbsp;</td><td> 
+Falkoff, Adin D., and Kenneth E. Iverson,   
+<a target=_parent href="http://bitsavers.informatik.uni-stuttgart.de/pdf/ibm/apl/APL_360_Users_Manual_Aug68.pdf"><i>APL\360 
+User&rsquo;s Manual</i></a>, 
+IBM, 1968-08; Table 3.2.
+ </td></tr>
+</table>
+
+<br><hr>
+<p><font size=-1>
+<script src="apldisplay.js" type="text/javascript"></script>
+</font></p>
+
+
+<table>
+<tr><td><font size=-1>created: &nbsp;</font></td><td><font size=-1>2013-01-18 13:05</font></td></tr>
+<tr><td><font size=-1>updated:       </font></td><td><font size=-1>2013-12-25 11:20</font></td></tr>
+</table>
+
+
+</td></tr></table>
+
+<br><br><br>
+
+</body>
+</html>

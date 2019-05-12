@@ -1,0 +1,263 @@
+﻿<html>
+<head><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>A Note on Programming Style</title>
+<link href="jdoc.css" rel=stylesheet>
+</head>
+
+<body>
+
+<table width=520 align=center><tr><td>
+
+
+<p align=center><font size=+3>A Note on Programming Style</font><br><br>
+<b>Roger K.W. Hui<br>
+Kenneth E. Iverson</b></p>
+
+<p>We were pleased to see the uses of J in the October <i>Education Vector</i>, 
+particularly the Muller, van Woudenberg, and Young program for divided 
+differences and the fact that that it resulted from a mathematics program at 
+Strathclyde.  We would like to use it together with contributions from Norman 
+Thomson in the same issue to discuss certain matters of programming style:  
+although WMY followed &ldquo;the style of a Pascal program, which is a natural way 
+...&rdquo;, the use of vectors and matrices would be more natural to mathematicians, 
+and would better lend itself to analysis.  
+
+<p><b>Divided Differences</b></p>
+
+<p>As shown by the use of control structures in Thomson&rsquo;s <i>J-ottings 7</i>, the WMY 
+program can be made even more Pascal-like as follows:</p>
+
+<pre>
+dd0 =: 4 : 0
+ i=.0
+ n=.#x.
+ z=.(1<.n){.d=.y.
+ while. n>i=.1+i do.
+  dx=.(-i)}.(i|.x.)-x.
+  dy=.2 -~/\ d
+  d =.dy%dx
+  z =.z,{.d
+ end.
+)
+   x=.0 1 5 8
+   y=.4 6 18 6
+   x dd0 y
+4 2 0.2 _0.15
+</pre>
+
+<p>The expression for<tt> dx </tt>computes differences in<tt> x </tt>
+that are<tt> i </tt>apart, by taking the 
+difference between rotating<tt> x </tt>by<tt> i </tt>and<tt> x </tt>
+itself and discarding the last i entries.  
+The expression for<tt> dy </tt>divides<tt> d </tt>
+into overlapping windows of size 2 and applies<tt> -~/ </tt>
+(insert subtract from) to each window.</p>
+
+<p>The computation can also be expressed tacitly, 
+an expression that facilitates 
+investigation of the internal workings of the algorithm:</p>
+
+<pre>
+dix=: -@[ }. |. - ]
+dx =: >:@-&# dix [
+dy =: 2: -~/\ ] 
+dd =: (dy % dx)^:(i.@#@])
+
+   x dd y               {."1 x dd y
+    4  6 18 6        4 2 0.2 _0.15
+    2  3 _4 0
+  0.2 _1  0 0
+_0.15  0  0 0
+
+   x dx y               1 dix x
+1 4 3                1 4 3
+
+   x dy y               2 dix x
+2 12 _12             5 7
+
+                        3 dix x
+                     8
+
+   f=.dy % dx
+
+   x f y
+2 3 _4
+
+   x f x f y
+0.2 _1
+
+   x f x f x f y
+_0.15
+
+   x f^:3 y
+_0.15
+
+   x f^:0 1 2 3 y
+    4  6 18 6
+    2  3 _4 0
+  0.2 _1  0 0
+_0.15  0  0 0
+</pre>
+
+<p><b>Choleski Decomposition</b></p>
+
+<p>MWY and Thomson presented programs for the Choleski decomposition.  We 
+present here a recursive version.  
+Given a positive definite matrix<tt> A</tt>&nbsp;,<tt> </tt>the 
+Choleski method computes a lower triangular matrix<tt> L </tt>
+such that<tt> A-:L x h L</tt>&nbsp;,<tt> </tt> 
+where<tt> x=:+/ .* </tt>is the matrix product 
+and<tt> h=:+@|: </tt>is the conjugate transpose.  
+A recursive solution reveals itself by considering<tt> A </tt>as a 2-by-2 matrix of 
+matrices and substituting appropriate matrix operations for scalar ones in the 
+Choleski method for a 2-by-2 matrix of scalars.</p>
+
+<pre>
+x=: +/ . *                  matrix product
+h=: +@|:                    conjugate transpose
+Choleski =: 3 : 0
+ n=.#A=.y.
+ if. 1>:n do.
+  13!:8(,(A=|A)>0=A)}.12    check for positive definite
+  %:A
+ else.
+  p=.>.n%2 [ q=.<.n%2
+  X=.(p,p){.A [ Y=.(p,-q){.A [ Z=.(-q,q){.A
+  L0=.Choleski X
+  L1=.Choleski Z-(T=.(h Y) x %.X) x Y
+  L0,(T x L0),.L1
+ end.
+)
+
+   A                        random positive definite matrix
+  33   7j_8 7j_10    3j_4
+ 7j8     28   2j4 _10j_11
+7j10   2j_4    22     3j3
+ 3j4 _10j11  3j_3      16
+
+   L=. Choleski A
+
+   $L
+4 4
+
+   A -: L x h L             A true decomposition
+1
+
+   *./,(>:/~i.#L) >: 0~:L   L is lower triangular
+1
+
+   [ B=. 3 3$ 1 4 6  4 0 3  6 3 2
+1 4 6
+4 0 3
+6 3 2
+
+   Choleski B               B is not positive definite
+|assertion failure
+|       13!:8(,(A=|A)>0=A)}.12
+</pre>
+
+<p><b>QR Decomposition</b></p>
+
+<p>Thomson&rsquo;s <i>Technical Note on Matrix Decomposition</i> 
+presented the QR and 
+LU decompositions.  Both are amenable to the recursive approach used above 
+for the Choleski decomposition, with array operations playing a key role.  Here, 
+we present a solution for the QR decomposition; a recursive array LU 
+decomposition can be found in Aho, Hopcroft, and Ullman [1974, Section 6.4].
+
+<p>Given a matrix<tt> A </tt>where<tt> >:/$A</tt>&nbsp;,<tt> </tt>
+the QR decomposition produces an orthogonal 
+matrix<tt> Q </tt>and a square upper triangular matrix<tt> R </tt>
+such that<tt> A-:Q x R</tt>&nbsp;.<tt> </tt>A 
+recursive solution reveals itself by considering<tt> A </tt>as a 2-column matrix of 
+matrices and substituting matrix operations for scalar and vector ones in the 
+Gram-Schmidt method for two vectors.
+
+<pre>
+x=: +/ . *                  matrix product
+h=: +@|:                    conjugate transpose
+
+QR =: 3 : 0
+ n=.{:$A=.y.
+ if. 1>:n do.
+  (A%{.(,norm),0);norm=.%:(h A) x A
+ else.
+  m =.>.n%2
+  A0=.m{."1 A
+  A1=.m}."1 A
+  ('Q0';'R0')=.QR A0
+  ('Q1';'R1')=.QR A1 - Q0 x T=.(h Q0) x A1
+  (Q0,.Q1);(R0,.T),(-n){."1 R1
+ end.
+)
+
+   [ A=. j./_8+?2 7 4$20    A random matrix
+ _6j6  7j10  1j7 2j_3
+_4j_8  _8j6 5j_2  5j4
+ 10j7 _1j11 2j_1 8j_4
+_8j11  _7j6  2j7  5j5
+_8j_7  _1j4 _7j9 0j_3
+    5   3j7 10j1 8j_4
+ 2j_3 _7j_1 5j_5  0j1
+
+   $QR A                    Result is a 2-element boxed vector
+ 2
+   'QR'=.QR A               Assign first box to Q, second to R
+
+   $Q
+7 4
+
+   $R
+4 4
+
+   A -: Q x R                 A true decomposition
+1
+
+   >./,|(=i.{:$Q)-(h Q) x Q   Q is orthogonal
+8.51083e_16
+
+   *./,(<:/~i.#R) >: 0~:R     R is upper triangular
+1
+
+</pre>
+
+<b>References</b>
+
+<table>
+<tr><td valign=top nowrap>&#149; &nbsp;</td><td>
+Aho, Alfred V., John Hopcroft, and Jeffrey D. Ullman, 
+<i>The Design and Analysis of Computer Algorithms</i>, Addison-Wesley, 1974.
+ </td></tr>
+<tr><td valign=top>&#149; &nbsp;</td><td>
+Muller, Antje, Tineke van Woudenberg, and Alistair Young, <i>Two Numerical 
+Algorithms in J</i>, The Education Vector, Volume 12, Number 2, 1995 10.
+ </td></tr>
+<tr><td valign=top>&#149; &nbsp;</td><td>
+Strang, Gilbert, <i>Linear Algebra and its Applications</i>, Academic Press, 1976.
+ </td></tr>
+<tr><td valign=top>&#149; &nbsp;</td><td>
+Thomson, Norman, <i>J-ottings 7</i>, The Education Vector, Volume 12, Number 2, 
+1995 10.
+ </td></tr>
+<tr><td valign=top>&#149; &nbsp;</td><td>
+Thomson, Norman, <i>Technical Note on Matrix Decomposition</i>, The Education 
+Vector, Volume 12, Number 2, 1995 10.
+ </td></tr>
+</table>
+
+
+<br><hr>
+<font size=-1>
+<p>Originally appeared in <i>Vector</i>, Volume 12, Number 3, 1996-01.</p>
+</font>
+
+<table>
+<tr><td><font size="-1">created: &nbsp;</font></td><td><font size="-1">2008-12-08 00:00</font></td></tr>
+<tr><td><font size="-1">updated:</font></td><td><font size="-1">2013-07-23 23:15</font></td></tr>
+</table>
+
+</td></tr></table>
+
+<br><br><br>
+</body>
+</html>

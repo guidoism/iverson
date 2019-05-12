@@ -1,0 +1,199 @@
+<html>
+<head>
+<title>J Papers</title>
+<link rel="stylesheet" href="https://www.jsoftware.com/papers/jweb.css" type="text/css">
+</head>
+<body>
+
+<center><h2><i>Elegant Programming</i><p>
+
+&. dfh
+</h2>
+<h3>Chris Burke<br>
+<a href="mailto:cburke@jsoftware.com">cburke@jsoftware.com</a>
+
+</h3></center>
+
+<p>J defines inverses for many functions, and provides various ways of making use of them. 
+The elegant title expression provides an interesting example.
+
+<p>First define:
+
+<pre>
+   dfh=. 16&#. @ ('0123456789ABCDEF'&i.)    NB. decimal from hex
+
+   hex=. &. dfh</pre>
+
+<p>Then:
+
+<pre>
+   'FEED' + hex 'B'
+FEF8	
+
+   'FF' * hex '101'
+FFFF
+</pre>
+
+<p>Thus, <code>hex</code> is an adverb which returns a verb that works in hexadecimal.
+
+<h3>Under</h3>
+The definition of <code>hex</code> uses the conjunction <code>&.</code> (under). Given 
+verbs <code>u</code> and <code>v</code> where the inverse <code>v</code><sup>-1</sup> is 
+defined, then <code>u&.v</code> is equivalent to <code>v</code><sup>-1</sup><code> u v</code>.
+
+<p>Here are some examples, using <code>&.</code>:
+
+<p><i>inverse of natural log is the exponential:</i>
+
+<pre>
+   3 + &. ^. 4
+12</pre>
+
+<p><i>inverse of reciprocal is itself:</i>
+
+<pre>
+   am=. +/ % #       NB. arithmetic mean
+   hm=. am &. %      NB. harmonic mean
+   hm 2 3 5
+2.90323
+</pre>
+<p><i>inverse of open is box:</i>
+
+<pre>
+   n=. 'winston';(i.3 4);10 20
+   # &.> n
++-+-+-+
+|7|3|2|
++-+-+-+
+
+   $ &.> n
++-+---+-+
+|7|3 4|2|
++-+---+-+
+   
+   each=. &.>
+   |. each n
++-------+---------+-----+
+|notsniw|8 9 10 11|20 10|
+|       |4 5  6  7|     |
+|       |0 1  2  3|     |
++-------+---------+-----+
+</pre>
+
+<p><i>inverse of the binary representation is the base-2 value:</i>
+
+<pre>
+   bitwise=. &.#:
+
+   5 +. bitwise 6     NB. bitwise OR
+7
+
+   5 *. bitwise 6     NB. bitwise AND
+4
+
+   5 ~: bitwise 6     NB. bitwise XOR
+3</pre>
+
+<p><i>inverse of transpose is itself:</i>
+
+<pre>
+   +/\ i.3 4          NB. accumulate along columns
+ 0  1  2  3
+ 4  6  8 10
+12 15 18 21
+
+   +/\ &.|:  i.3 4    NB. accumulate along rows
+0  1  3  6
+4  9 15 22
+8 17 27 38</pre>
+
+<h3>Inverse</h3>
+You can access the inverse directly using <code>^:_1</code> (power of minus 1). For example, define:
+
+<pre>
+   inv=. ^:_1</pre>
+   
+<p><i>inverse of add 2 is subtract 2:</i>
+
+<pre>
+   +&2 inv 1 2 3
+_1 0 1
+</pre>   
+<p><i>inverse of sum scan is first differences: </i>
+
+<pre>
+   +/\ inv 2 3 5 7 11
+2 1 2 2 4</pre>
+
+<p><i>inverse of product scan is rate of increase:</i>
+
+<pre>
+   */\ inv 2 3 5 7 11
+2 1.5 1.66667 1.4 1.57143
+
+   ({.,}.%}:) 2 3 5 7 11
+2 1.5 1.66667 1.4 1.57143</pre>
+
+<p><i>inverse of <code>p:</code> determines number of smaller primes:</i>
+
+<pre>
+   p: 100000         NB. 100000'th prime
+1299721
+      
+   p: inv 1299721    NB. number of primes less than 1299721
+100000
+</pre>
+<h3>Obverse</h3>
+<p>You can define inverses for use with the conjunctions <code>&.</code> and <code>^:</code> 
+directly, using the conjunction <code>:.</code> (obverse). 
+The result of <code>u :. v</code> is a verb that is equivalent to <code>u</code> with an 
+assigned obverse <code>v</code>.
+
+<p>In general, the term <i>obverse</i> is used instead of <i>inverse</i>, since the defined 
+obverse need not be a true inverse, indeed it may be an unrelated verb.
+
+<p>For example:
+
+<pre>
+   %: (*:2) + (*:5)          NB. square root of 2^2 + 5^2
+5.38516
+    
+   2 + &. *: 5               NB. same
+5.38516
+   
+   2  +&.(*: :. (^&1r2)) 5   NB. same (inverse of <code>*:</code> is square root)
+5.38516
+   
+   2  +&.(*: :. (^&1r3)) 5   NB. using cube root as obverse
+3.07232</pre>
+
+<h3>Hex</h3>
+<p>Now lets take a closer look at the definition of <code>hex</code>:
+
+<pre>
+   dfh=. 16&#. @ ('0123456789ABCDEF'&i.)
+
+   hex=. &. dfh</pre>
+
+<p>The inverse of <code>'0123456789ABCDEF'&i.</code> is:
+
+<pre>
+   { & '0123456789ABCDEF'</pre>
+
+<p>while the inverse of <code>16&#.</code> is:
+
+<pre>
+   16 16 ... 16 &#:  </pre>
+
+<p>with as many 16's as required.
+
+<p>Also, the inverse of <code>f @ g</code> is <code>g</code><sup>-1</sup><code> @ f</code><sup>-1</sup>
+, hence the inverse of <code>dfh</code> can be calculated.
+
+<p>For any verb <code>f</code>:
+
+<pre>
+   f hex x <=>  f &. dfh x  <=>  dfh<sup>-1</sup> f dfh x
+</pre>
+</body>
+</html>
