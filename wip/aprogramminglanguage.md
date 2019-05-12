@@ -1,3 +1,4 @@
+## A Programming Language
 
 _To My Many Teachers_
 
@@ -44,7 +45,7 @@ Most of the concepts and operations needed in a programming language have alread
 
 ### 1.2 Programs
 
-A _program statement_ is the specification of some quantity or quantities in terms of some finite operation upon specified operands. Specification is symbolized by an arrow directed toward the specified quantity. thus “`y` is specified by `sin x`” is a statement denoted by
+A _program statement_ is the specification of some quantity or quantities in terms of some finite operation upon specified operands. Specification is symbolized by an arrow directed toward the specified quantity. thus “*y* is specified by sin *x*” is a statement denoted by
 
 `y ← sin x`
 
