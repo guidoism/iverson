@@ -1,25 +1,10 @@
- A Programming Language   
+# A Programming Language
 
-`This is some code in backticks 0123456789`
+![](APLimg/title.jpg)
   
-  
-![](APLimg/title.jpg)  
-  
-  
-  
-  
-  
-  
-  
-  
+_To My Many Teachers_
 
-  
-_To My Many Teachers_  
-  
-  
- 
-
-Preface
+## Preface
 
 Applied mathematics is largely concerned with the design and analysis of explicit procedures for calculating the exact or approximate values of various functions. Such explicit procedures are called algorithms or _programs_. Because an effective notation for the description of programs exhibits considerable syntactic structure, it is called a _programming language_.
 
@@ -50,7 +35,7 @@ _Mount Kisco, New York_
   
   
 
-Chapter 1   The Language
+## Chapter 1   The Language
 
 **1.1 Introduction**
 
@@ -65,9 +50,9 @@ Most of the concepts and operations needed in a programming language have alread
 
 **1.2 Programs**
 
-A _program statement_ is the specification of some quantity or quantities in terms of some finite operation upon specified operands. Specification is symbolized by an arrow directed toward the specified quantity. thus “_y_ is specified by sin _x_” is a statement denoted by
+A _program statement_ is the specification of some quantity or quantities in terms of some finite operation upon specified operands. Specification is symbolized by an arrow directed toward the specified quantity. thus “`y` is specified by `sin x`” is a statement denoted by
 
-      _y_ ← sin _x_.
+`      _y_ ← sin _x_`
 
 A set of statements together with a specified order of execution constitutes a _program_. The program is _finite_ if the number of executions is finite. The _results_ of the program are some subset of the quantities specified by the program. The _sequence_ or order of execution will be defined by the order of listing and otherwise by arrows connecting any statement to its successor. A cyclic sequence of statements is called a _loop_.
 
