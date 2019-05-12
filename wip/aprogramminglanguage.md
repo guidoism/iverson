@@ -1,9 +1,5 @@
  A Programming Language   
 
-<pre>
-this is some APL code. 0123456789.
-</pre>
-
 `This is some code in backticks 0123456789`
   
   
