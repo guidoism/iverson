@@ -51,9 +51,8 @@ A _program statement_ is the specification of some quantity or quantities in ter
 
 A set of statements together with a specified order of execution constitutes a _program_. The program is _finite_ if the number of executions is finite. The _results_ of the program are some subset of the quantities specified by the program. The _sequence_ or order of execution will be defined by the order of listing and otherwise by arrows connecting any statement to its successor. A cyclic sequence of statements is called a _loop_.
 
-`v ← x × 3.14156
- v ← v × x`
-
+    v ← x × 3.14156
+    v ← v × x
 
 ![](APLimg/prog1x1.bmp)
 
