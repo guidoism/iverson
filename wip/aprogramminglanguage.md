@@ -54,6 +54,11 @@ A set of statements together with a specified order of execution constitutes a _
     v ← x × 3.14156
     v ← v × x
 
+    z ← 1
+	z ← y × z
+	z ← 2 × z
+
+
 ![](APLimg/prog1x1.bmp)
 
 ![](APLimg/prog1x2.bmp)
