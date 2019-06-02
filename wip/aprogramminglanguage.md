@@ -51,8 +51,8 @@ A _program statement_ is the specification of some quantity or quantities in ter
 
 A set of statements together with a specified order of execution constitutes a _program_. The program is _finite_ if the number of executions is finite. The _results_ of the program are some subset of the quantities specified by the program. The _sequence_ or order of execution will be defined by the order of listing and otherwise by arrows connecting any statement to its successor. A cyclic sequence of statements is called a _loop_.
 
-![](program-1.1.svg)
-![](program-1.2.svg)
+<img src="program-1.1.svg" width="21em")
+<img src="program-1.2.svg" width="21em")
 
 Thus Program 1.1 is a program of two statements defining the result _v_ as the (approximate) area of a circle of radius _x_, whereas Program 1.2 is an infinite program in which the quantity _z_ is specified as (2_y_)_n_ on the _n_th execution of the two statement loop. Statements will be numbered on the left for reference.
 
@@ -60,7 +60,7 @@ A number of similar programs may be subsumed under a single more general program
 
 Program 1.3 illustrates the use of a branch point. Statement α5 is a comparison which determines the branch to statements β1, δ1, or γ1, according as _z_ > _n_, _z_ = _n_, or _z_ < _n_. The program represents a crude by effective process for determining _x_ = _n_2/3 for any positive cube _n_.
 
-![](program-1.3.svg)
+<img src="program-1.2.svg" width="80em")
 
 Program 1.4 shows the preceding program reorganized into a compact linear array and introduces two further conventions on the labeling of branch points. The listed successor of a branch statement is selected if none of the labeled conditions is met. Thus statement 6 follows statement 5 if neither of the arrows (to exit or to statement 8) are followed, i.e. if _z_ < _n_. Moreover, any unlabeled arrow is always followed; e.g., statement 7 is invariably followed by statement 3, never by statement 8.
 
